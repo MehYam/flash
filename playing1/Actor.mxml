@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:UIComponent xmlns:mx="http://www.adobe.com/2006/mxml"> <!--must be a way to use Sprite, if it matters -->
+	<mx:Script>
+		<![CDATA[
+			public var velocity:Point = new Point;
+			public var force:Point = new Point;
+			
+			public function onframe(frame:uint):void
+			{
+			}
+		]]>
+	</mx:Script>
+</mx:UIComponent>

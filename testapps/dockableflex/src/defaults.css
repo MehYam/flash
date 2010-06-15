@@ -1,0 +1,67 @@
+
+DockablePanel
+{
+	backgroundColor: #E2E2E2;
+	backgroundAlpha:0.4;
+	borderAlpha: 0.4;
+	borderColor: #E2E2E2;
+	borderThicknessBottom: 8;
+	borderThicknessLeft: 10;
+	borderThicknessRight: 10;
+	borderThicknessTop: 2;
+	cornerRadius: 4;
+	dropShadowEnabled: true;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+	roundedBottomCorners: true;
+	statusStyleName: "windowStatus";
+	titleStyleName: "windowStyles";
+	headerHeight:18;                  
+}
+FloatPanel {
+	backgroundColor: #E2E2E2;
+	backgroundAlpha:0.4;
+	borderAlpha: 0.4;
+	borderColor: #E2E2E2;
+	borderThicknessBottom: 8;
+	borderThicknessLeft: 10;
+	borderThicknessRight: 10;
+	borderThicknessTop: 2;
+	cornerRadius: 4;
+	dropShadowEnabled: true;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+	roundedBottomCorners: false;
+	statusStyleName: "windowStatus";
+	titleStyleName: "windowStyles";
+	headerHeight:18;
+
+	resizeButtonOverSkin: Embed(source="ResizeButton.swf",symbol="ResizeButtonDown");
+	resizeButtonUpSkin: Embed(source="ResizeButton.swf",symbol="ResizeButtonUp");
+	resizeButtonDownSkin: Embed(source="ResizeButton.swf",symbol="ResizeButtonDown");
+	resizeButtonWidth: 7;
+	resizeButtonHeight: 7;
+}
+
+DockableTabNavigator
+{
+	backgroundColor: #FFFFFF;
+	borderColor: #AAB3B3;
+	horizontalAlign: "left";
+	horizontalGap: -1;
+	paddingTop: 0;
+	tabOffset: 0;
+}
+
+DockHint {
+	hintSkin:ClassReference("net.goozo.mx.dockable.DockHint");
+	hintColorIn: #FFFF00;
+	hintColorOut: #FF0000;
+	hintAlpha: 0.3;
+	hintRadius: 4;
+}
+

@@ -1,0 +1,165 @@
+<gamedata>
+	<tileset defaultWidth="32" defaultHeight="32" defaultFrameLength="5">
+		<tile name="brick">
+			<frame x="0" y="0"/>
+		</tile>
+		<tile name="brickDissolve" frameLength="2">
+			<frame x="0" y="96"/>
+			<frame x="32" y="96"/>
+			<frame x="64" y="96"/>
+			<frame x="96" y="96"/>
+			<frame x="128" y="96"/>
+			<frame x="160" y="96"/>
+			<frame x="192" y="96"/>
+		</tile>
+		<tile name="pengoWait">
+			<frame x="32" y="0"/>
+		</tile>
+		<tile name="pengoWalkDown">
+			<frame x="64" y="0"/>
+			<frame x="128" y="0"/>
+		</tile>
+		<tile name="pengoWalkUp">
+			<frame x="96" y="0"/>
+			<frame x="160" y="0"/>
+		</tile>
+		<tile name="pengoWalkRight">
+			<frame x="192" y="0"/>
+			<frame x="224" y="0"/>
+		</tile>
+		<tile name="pengoWalkLeft" copy="pengoWalkRight" flip="horz"/>
+		<tile name="enemySmashDown">
+			<frame name="frame1" x="0" y="32"/>
+			<frame name="frame2" copy="frame1" flip="horz"/>
+		</tile>
+		<tile name="enemySmashUp">
+			<frame name="frame1" x="96" y="64"/>
+			<frame name="frame2" copy="frame1" flip="horz"/>
+		</tile>
+		<tile name="enemySmashLeft">
+			<frame x="32" y="32"/>
+			<frame x="64" y="32"/>
+		</tile>
+		<tile name="enemySmashRight" copy="enemySmashLeft" flip="horz"/>
+		<tile name="enemyWalkLeft" frameLength="3">
+			<frame x="96" y="32"/>
+			<frame x="128" y="32"/>
+			<frame x="160" y="32"/>
+			<frame x="128" y="32"/>
+		</tile>
+		<tile name="enemyWalkRight" copy="enemyWalkLeft" flip="horz"/>
+		<tile name="enemyWalkUp">
+			<frame x="192" y="32"/>
+			<frame x="224" y="32"/>
+		</tile>
+		<tile name="enemyWalkDown">
+			<frame x="0" y="64"/>
+			<frame x="32" y="64"/>
+		</tile>
+		<tile name="enemyCrush">
+			<frame name="frame1" x="64" y="64"/>
+			<frame name="frame2" copy="frame1" flip="horz"/>
+		</tile>
+	</tileset>
+	<levels>
+		<level name="0">
+			<path row="14" col="0" rd="-1" len="15"/>
+			<path row="10" col="1" cd="1" len="2"/>
+			<path row="11" col="2" rd="1" len="4"/>
+			<path row="14" col="3" cd="1" len="8"/>
+			<path row="13" col="10" rd="-1" len="2"/>
+			<path row="12" col="9" cd="-1" len="2"/>
+			<path row="11" col="8" rd="-1" len="2"/>
+			<path row="10" col="9" cd="1" len="2"/>
+			<path row="9" col="10" rd="-1" len="2"/>
+			<path row="8" col="11" cd="1" len="2"/>
+			<path row="9" col="12" rd="1" len="6"/>
+			<path row="7" col="12" rd="-1" len="8"/>
+			<path row="7" col="12" rd="-1" len="4"/>
+			<path row="13" col="4" rd="-1" len="2"/>
+			<path row="12" col="5" cd="1" len="2"/>
+			<path row="11" col="6" rd="-1" len="4"/>
+			<path row="8" col="7" cd="1" len="2"/>
+			<path row="7" col="8" rd="-1" len="2"/>
+			<path row="6" col="7" cd="-1" len="2"/>
+			<path row="10" col="5" cd="-1" len="2"/>
+			<path row="9" col="4" rd="-1" len="4"/>
+			<path row="6" col="3" cd="-1" len="2"/>
+			<path row="5" col="2" rd="-1" len="2"/>
+			<path row="4" col="3" cd="1" len="6"/>
+			<path row="3" col="8" rd="-1" len="2"/>
+			<path row="2" col="9" cd="1" len="2"/>
+			<path row="1" col="10" rd="-1" len="2"/>
+			<path row="0" col="9" cd="-1" len="4"/>
+			<path row="1" col="6" rd="1" len="2"/>
+			<path row="2" col="5" cd="-1" len="4"/>
+			<path row="1" col="2" rd="-1" len="2"/>
+			<path row="0" col="3" cd="1" len="2"/>
+			<path row="9" col="2" rd="-1" len="2"/>
+			<path row="7" col="10" rd="-1" len="4"/>
+		</level>
+		<level name="1">
+			<path row="0" col="0" rd="1" len="15"/>
+			<path row="12" col="1" cd="1" len="2"/>
+			<path row="13" col="2" rd="1" len="2"/>
+			<path row="11" col="2" rd="-1" len="6"/>
+			<path row="8" col="3" cd="1" len="2"/>
+			<path row="7" col="4" rd="-1" len="2"/>
+			<path row="9" col="4" rd="1" len="4"/>
+			<path row="12" col="5" cd="1" len="6"/>
+			<path row="11" col="10" rd="-1" len="2"/>
+			<path row="10" col="9" cd="-1" len="2"/>
+			<path row="9" col="8" rd="-1" len="2"/>
+			<path row="8" col="9" cd="1" len="2"/>
+			<path row="7" col="10" rd="-1" len="2"/>
+			<path row="6" col="11" cd="1" len="2"/>
+			<path row="7" col="12" rd="1" len="8"/>
+			<path row="14" col="11" cd="-1" len="8"/>
+			<path row="5" col="12" rd="-1" len="6"/>
+			<path row="0" col="11" cd="-1" len="4"/>
+			<path row="11" col="6" rd="-1" len="6"/>
+			<path row="6" col="7" cd="1" len="2"/>
+			<path row="5" col="8" rd="-1" len="2"/>
+			<path row="4" col="9" cd="1" len="2"/>
+			<path row="3" col="10" rd="-1" len="2"/>
+			<path row="2" col="9" cd="-1" len="4"/>
+			<path row="3" col="6" rd="1" len="2"/>
+			<path row="4" col="5" cd="-1" len="4"/>
+			<path row="3" col="2" rd="-1" len="4"/>
+			<path row="2" col="3" cd="1" len="2"/>
+			<path row="1" col="4" rd="-1" len="2"/>
+			<path row="0" col="5" cd="1" len="2"/>
+		</level>
+		<level name="2">
+			<path row="0" col="0" cd="1" len="3"/>
+			<path row="1" col="2" rd="1" len="2"/>
+			<path row="2" col="1" cd="-1" len="2"/>
+			<path row="3" col="0" rd="1" len="12"/>
+			<path row="4" col="1" cd="1" len="2"/>
+			<path row="5" col="2" rd="1" len="10"/>
+			<path row="14" col="3" cd="1" len="8"/>
+			<path row="13" col="10" rd="-1" len="2"/>
+			<path row="12" col="9" cd="-1" len="2"/>
+			<path row="11" col="8" rd="-1" len="6"/>
+			<path row="10" col="9" cd="1" len="2"/>
+			<path row="9" col="10" rd="-1" len="4"/>
+			<path row="8" col="11" cd="1" len="2"/>
+			<path row="7" col="12" rd="-1" len="4"/>
+			<path row="9" col="12" rd="1" len="6"/>
+			<path row="13" col="4" rd="-1" len="2"/>
+			<path row="12" col="5" cd="1" len="2"/>
+			<path row="11" col="6" rd="-1" len="6"/>
+			<path row="10" col="5" cd="-1" len="2"/>
+			<path row="9" col="4" rd="-1" len="6"/>
+			<path row="4" col="5" cd="1" len="6"/>
+			<path row="3" col="10" rd="-1" len="2"/>
+			<path row="2" col="11" cd="1" len="2"/>
+			<path row="1" col="12" rd="-1" len="2"/>
+			<path row="0" col="11" cd="-1" len="4"/>
+			<path row="1" col="8" rd="1" len="2"/>
+			<path row="2" col="7" cd="-1" len="4"/>
+			<path row="1" col="4" rd="-1" len="2"/>
+			<path row="0" col="5" cd="1" len="2"/>
+		</level>
+	</levels>
+</gamedata>

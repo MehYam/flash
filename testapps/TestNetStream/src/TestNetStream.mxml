@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute"
+	creationComplete="init()"
+>
+	<mx:Button x="10" y="10" label="Play" click="onPlay()"/>
+	<mx:Button x="83" y="10" label="Pause" click="onPause()"/>
+	<mx:Button x="156" y="10" label="Stop" click="onStop()"/>
+
+	<mx:Script>
+		<![CDATA[
+			
+			private var _connection:NetConnection = new NetConnection;
+			private var _stream:NetStream;
+			private function init():void
+			{
+				_connection.connect(null);
+				
+				_stream = new NetStream(_connection);
+	            _stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusEvent, false, 0, true);
+	            _stream.client = this;
+
+	            _stream.bufferTime = 8;
+			}
+			
+			private function netStatusEvent(e:NetStatusEvent):void
+			{
+				trace("netStatusEvent: " + e.info.code);
+			}
+			
+			public function onMetaData(metaData:Object):void
+			{
+				
+			}
+
+			private function onPlay():void
+			{
+//	            _stream.play("http://alder.directsong.com/gaia/Xdgas6EcYX.aem");
+	            _stream.play("http://alder.directsong.com/gaia/ekAw1TtPdU.aem");
+			}	
+			
+			private function onPause():void
+			{
+				_stream.togglePause();
+			}
+			
+			private function onStop():void
+			{
+				_stream.close();
+				_connection.close();
+			}
+			
+		]]>
+	</mx:Script>
+</mx:Application>

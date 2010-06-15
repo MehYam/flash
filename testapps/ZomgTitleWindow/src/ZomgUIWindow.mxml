@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+
+	creationComplete="onCreationComplete()"
+
+	paddingTop="25"
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off"
+	dropShadowEnabled="false"
+>
+<mx:Script><![CDATA[
+	import mx.containers.ControlBar;
+	import mx.core.IUIComponent;
+	import mx.core.DragSource;
+	import mx.managers.DragManager;
+	import mx.collections.ArrayCollection;
+	import mx.controls.TabBar;
+	import mx.events.CloseEvent;
+	import mx.core.FlexBitmap;
+	import mx.controls.Button;
+	import mx.core.Container;
+	import mx.core.UIComponent;
+	import mx.events.DragEvent;
+	import mx.events.MoveEvent;
+
+	private var _resizeButton:UIComponent;
+	public function set resizable(b:Boolean):void
+	{
+		setStyle("borderSkin", b ? Assets.borderSkin2 : Assets.borderSkin1);
+		
+		if (b && !_resizeButton)
+		{
+			_resizeButton = new Button();
+			_restoreButton = new Button();
+		}
+		else if (!b && _resizeButton)
+		{
+			removeChild(_resizeButton);
+			removeChild(_restoreButton);
+			_resizeButton = null;
+		}
+		//KAI: also need to ensure that a default style has been set
+		//KAI: need to invalidate, maybe just chrome
+	}
+
+	public function addStatusBarChrome(chrome:DisplayObjectContainer):void
+	{
+		var cb:DisplayObjectContainer = controlBar as DisplayObjectContainer;
+		if (cb)
+		{
+			while (chrome.numChildren)
+			{
+				cb.addChild(chrome.getChildAt(0));
+			}
+		}
+	}
+	public function addTitleBarChrome(chrome:DisplayObjectContainer):void
+	{
+		while (chrome.numChildren)
+		{
+			var child:DisplayObject = chrome.getChildAt(chrome.numChildren - 1);
+			chrome.removeChildAt(chrome.numChildren - 1);
+
+			_titleBarChrome.push(child);
+			titleBar.addChild(child);
+		}
+		invalidateDisplayList();
+	}
+
+	private var _closeButton:UIComponent;
+	private var _restoreButton:UIComponent;
+	private var _titleBarChrome:Array = [];
+	protected override function createChildren():void
+	{
+		super.createChildren();
+
+		if (!_closeButton)
+		{
+			_closeButton = new Button(); // TitleWindow has one built in, but this is easier for styling and positioning
+	
+			_closeButton.setStyle("upSkin", Assets.closeButton);
+			_closeButton.setStyle("downSkin", Assets.closeButtonDn);
+			_closeButton.setStyle("overSkin", Assets.closeButtonDn);
+			_closeButton.addEventListener(MouseEvent.CLICK, onCloseClick, false, 0, true);
+		
+			titleBar.addChild(_closeButton);
+			_titleBarChrome.push(_closeButton);
+		}
+
+		if (_resizeButton)
+		{
+			//KAI: this is slightly wrong - should create this in commitProperties()
+			_resizeButton.setStyle("upSkin", Assets.resizeButton);
+			_resizeButton.setStyle("overSkin", Assets.resizeButtonDn);
+			_resizeButton.setStyle("downSkin", Assets.resizeButtonDn);
+			_resizeButton.addEventListener(MouseEvent.MOUSE_DOWN, onResizeMouseDown, false, 0, true);
+
+			rawChildren.addChild(_resizeButton);
+			
+			_restoreButton.setStyle("upSkin", Assets.restoreButton);
+			_restoreButton.setStyle("overSkin", Assets.restoreButtonDn);
+			_restoreButton.setStyle("downSkin", Assets.restoreButtonDn);
+			
+			titleBar.addChild(_restoreButton);
+			_titleBarChrome.push(_restoreButton);
+
+//			const controlBarHeight:int = 23; 			
+//
+//			setStyle("paddingBottom", controlBarHeight);
+//			if (controlBar)
+//			{
+//				DisplayObject(controlBar).height = controlBarHeight;
+//			}
+		}
+
+		if (_tabs)
+		{
+			activateTabs();
+		}
+		
+		//KAI: not sure if this should be done here.  This whole function needs review really
+	}
+	
+//override public function get viewMetrics() : EdgeMetrics
+//{
+//    var metrics : EdgeMetrics = super.viewMetrics.clone();
+//    if( titleBar )
+//    {
+//        metrics.top = titleBar.height;
+//    }
+//    if( controlBar )
+//    {
+//        metrics.bottom = controlBar.height
+//    }
+//    return metrics;
+//}
+	
+	private static const TITLEBAR_CHROME_GAP:Number = 3;
+	private static const TITLEBAR_CHROME_PADDING_TOP:Number = 3;
+	override protected function layoutChrome(unscaledWidth:Number, unscaledHeight:Number):void
+	{
+		super.layoutChrome(unscaledWidth, unscaledHeight);
+
+		titleTextField.move(titleTextField.x, titleTextField.y + 1);
+
+		if (_resizeButton)
+		{			
+			_resizeButton.setActualSize(_resizeButton.getExplicitOrMeasuredWidth(), _resizeButton.getExplicitOrMeasuredHeight()); 
+			_resizeButton.move(unscaledWidth - _resizeButton.getExplicitOrMeasuredWidth() - 4, unscaledHeight - _resizeButton.getExplicitOrMeasuredHeight() - 4); //KAI: that should be soft-coded
+		}
+
+		var nextTitleBarX:Number = titleBar.width;
+		for each (var child:UIComponent in _titleBarChrome)
+		{
+			child.setActualSize(child.getExplicitOrMeasuredWidth(), child.getExplicitOrMeasuredHeight());
+			
+			nextTitleBarX -= (TITLEBAR_CHROME_GAP + child.width);
+			child.move(nextTitleBarX, TITLEBAR_CHROME_PADDING_TOP);
+		}
+		
+		if (_tabs)
+		{
+			_tabs.setActualSize(_tabs.getExplicitOrMeasuredWidth(), _tabs.getExplicitOrMeasuredHeight());
+			_tabs.move(0, 7);
+		}
+
+//			const controlBarHeight:int = 23; 			
+//
+//			setStyle("paddingBottom", controlBarHeight);
+//			if (controlBar)
+//			{
+//				DisplayObject(controlBar).height = controlBarHeight;
+//			}
+		if (controlBar)
+		{
+			setStyle("paddingBottom", controlBar.height);
+		}		
+	}
+
+	private function onCreationComplete():void
+	{
+		titleBar.addEventListener(MouseEvent.MOUSE_DOWN, onTitleBarMouseDown, false, 0, true);
+
+		addEventListener(Event.REMOVED, onRemoved, false, 0, true);		
+		addEventListener(TabDropEvent.TAB_DROP, onTabDrop, false, 0, true);
+	}
+
+	private function onRemoved(e:Event):void
+	{
+		WindowManager.instance.remove(DisplayObject(e.target));		
+	}
+
+	private static function isTabBarChild(obj:DisplayObject):Boolean
+	{
+		while(obj)
+		{
+			if (obj is TabBar)
+			{
+				return true;
+			}
+			obj = obj.parent;
+		}
+		return false;
+	}
+	private function isTitleBarChrome(obj:DisplayObject):Boolean
+	{
+		for each (var chrome:DisplayObject in _titleBarChrome)
+		{
+			if (chrome == obj)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	private function onTitleBarMouseDown(e:MouseEvent):void
+	{
+		if (!isTitleBarChrome(DisplayObject(e.target)) && !isTabBarChild(DisplayObject(e.target)))
+		{
+			// dispatchEvent fills in the remaining DragEvent fields we care about.
+			//KAI: kind of unnecessary though
+			dispatchEvent(WindowManager.toSnapEvent(this, e, WindowManagerEvent.DRAG_START));
+		}
+	}
+	
+	private function onResizeMouseDown(e:MouseEvent):void
+	{
+		dispatchEvent(WindowManager.toSnapEvent(this, e, WindowManagerEvent.RESIZE_START));
+	}
+	private function onCloseClick(e:Event):void
+	{
+		//KAI: this is all Panel's close button does
+		//dispatchEvent(new CloseEvent(CloseEvent.CLOSE));
+		parent.removeChild(this);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////
+	//////// tab dragging stuff - big hack
+	private function addDragListeners(stage:Stage, onMouseUp:Function):void
+	{
+		stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp, false, 0, true);
+		stage.addEventListener(Event.MOUSE_LEAVE, onMouseUp, false, 0, true);
+	}
+	private function removeDragListeners(stage:Stage, onMouseUp:Function):void
+	{
+		stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+		stage.removeEventListener(Event.MOUSE_LEAVE, onMouseUp);
+	}
+	private var _tabs:TabBar;
+	private var _dragStarter:DragStarter;
+	public function set tabMode(b:Boolean):void
+	{
+		//KAI: need to adhere to Invalidate/validate model
+		if (!_tabs)
+		{
+			_tabs = new ZomgTabBar;
+			_tabs.dataProvider = new ArrayCollection([]);
+			
+			invalidateDisplayList();
+		}
+	}
+
+/*
+DragManager implementation
+	private function onStartDragTab(e:MouseEvent):void
+	{
+		var dragImage:DragProxyImage = new DragProxyImage;
+		dragImage.init(DisplayObject(e.target), e, false);  //KAI: should be constructor.  Dopey fuckin' free code
+		
+		var dragSource:DragSource = new DragSource;
+        DragManager.doDrag(IUIComponent(e.target), dragSource, e, dragImage);
+	}
+    private function onDragEnter(event:DragEvent):void 
+    {
+		DragManager.acceptDragDrop(IUIComponent(event.currentTarget));
+    }
+    
+    // Called if the user drags the drag proxy away from the drop target.
+    private function onDragExit(event:DragEvent):void
+    {
+trace(this, "onDragExit");
+    }	                
+    // Called if the target accepts the dragged object and the user 
+    // releases the mouse button while over the drop target. 
+    private function onDragDrop(event:DragEvent):void 
+    {
+    	tabMode = true;
+    	
+    	_tabs.dataProvider.push("map");
+    }
+
+*/    
+	private var _dragImage:DragProxyImage;
+	private function onStartDragTab(e:MouseEvent):void
+	{
+		_dragImage = new DragProxyImage;
+		systemManager.popUpChildren.addChild(_dragImage);
+		_dragImage.dragSource(DisplayObject(e.target), e);
+		
+		addDragListeners(stage, onStopDraggingTab);
+	}
+	
+	private static function getParent(dobj:DisplayObject, cls:Class):DisplayObject
+	{
+		while (dobj)
+		{
+			if (dobj["constructor"] == cls)
+			{
+				return dobj;
+			}
+			dobj = dobj.parent;
+		}
+		return null;
+	}
+	
+	private function removeTab():void
+	{
+		var coll:ArrayCollection = ArrayCollection(_tabs.dataProvider);
+		coll.removeItemAt(0);
+		
+		if (coll.length == 1)
+		{
+			coll.removeItemAt(0);
+		}
+		
+		invalidateDisplayList();
+	}
+	private function onStopDraggingTab(e:Event):void
+	{
+		_dragImage.stopDrag(); // KAI: weak
+		_dragImage.parent.removeChild(_dragImage);
+		_dragImage = null;
+
+		removeDragListeners(stage, onStopDraggingTab);
+		
+		var me:MouseEvent = e as MouseEvent;
+		if (me)
+		{
+			var a:Array = stage.getObjectsUnderPoint(new Point(me.stageX, me.stageY));
+			var found:DisplayObject;
+			for each (var obj:Object in a)
+			{
+				var parent:DisplayObject = getParent(DisplayObject(obj), ZomgUIWindow);
+				if (parent)
+				{
+					found = parent;
+				}
+			}
+			if (found)
+			{
+				parent.dispatchEvent(new TabDropEvent(TabDropEvent.TAB_DROP, title));
+				removeTab();				
+			}
+			else if (found != this)
+			{
+				var newOne:ZomgUIWindow = new ZomgUIWindow;
+				newOne.title = title;
+				newOne.resizable = true;
+				newOne.width = width;
+				newOne.height = height;
+				newOne.move(me.stageX, me.stageY);
+
+				WindowManager.instance.add(newOne);
+
+				this.parent.addChild(newOne);
+				removeTab();				
+			}
+		}
+	}
+	private function activateTabs():void
+	{
+		titleBar.addChild(_tabs);
+		
+		_dragStarter = new DragStarter(_tabs);
+		_dragStarter.startListen(onStartDragTab);
+	}
+	private function onTabDrop(e:TabDropEvent):void
+	{
+		tabMode = true;
+
+		//KAI: hack
+		if (!_tabs.parent)
+		{
+			activateTabs();
+		}
+		else
+		{
+			const index:int = _tabs.selectedIndex;
+			ArrayCollection(_tabs.dataProvider).addItem(e.title);
+			_tabs.selectedIndex = index;
+
+			invalidateDisplayList();
+		}
+	}
+
+	public function mergeIntoTabs(source:ZomgUIWindow):void
+	{
+		source.parent.removeChild(source);
+		
+		tabMode = true;
+		if (!_tabs.parent)
+		{
+			activateTabs();
+		}
+		const index:int = _tabs.selectedIndex;
+		
+		ArrayCollection(_tabs.dataProvider).addItem(source.title);
+		if (source._tabs && ArrayCollection(source._tabs.dataProvider).length)
+		{
+			for each (var tab:String in ArrayCollection(source._tabs.dataProvider).source)
+			{
+				ArrayCollection(_tabs.dataProvider).addItem(tab);
+			}
+		}
+		else
+		{
+			ArrayCollection(_tabs.dataProvider).addItem(source.title);
+		}
+
+		_tabs.selectedIndex = index;
+		
+		invalidateDisplayList();
+	}
+
+	]]>
+</mx:Script>
+</mx:Panel>

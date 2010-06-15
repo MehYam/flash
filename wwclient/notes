@@ -1,0 +1,19 @@
+To Do
+-----
+
+Core
+- game data:
+	- list of players
+	- list of words found
+	- state of game
+- protocol pumps changes into game data, which get reflected in UI
+- could use binding extensively for this stuff
+
+Features
+
+UI/Visuals
+- need nice skin and formatting
+- animations/transitions on the board
+
+Server-side
+- get SGS running locally

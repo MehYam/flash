@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel borderSkin="assets.skins.containers.panels.GenericPanelSkin"
+	layout="absolute"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="500"
+	height="250"
+	creationComplete="handleCreationComplete(event)"
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off"
+	xmlns:code="http://code.google.com/p/flexlib/">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Button;
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			import mx.containers.Canvas;
+			import mx.controls.alertClasses.AlertForm;
+			import mx.core.mx_internal;
+			use namespace mx_internal;
+			public var container:Canvas;
+
+			private function handleCreationComplete(event:Event):void
+			{
+				this.filters = [new DropShadowFilter(5, 90, 0, 0.3, 12, 12, 1, 2, false, false, false)];
+			}
+
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				var paddingTop:Number = 15;
+				var paddingLeft:Number = 10;
+				var paddingRight:Number = 10;
+				var paddingBottom:Number = 10;
+				super.updateDisplayList(unscaledWidth + paddingLeft + paddingRight, unscaledHeight + paddingTop + paddingBottom);
+				var alert:Alert = this.parent as Alert;
+
+				if (alert)
+				{
+					if (!this.container)
+					{
+						this.container = new Canvas();
+						this.container.x = paddingLeft;
+						this.container.y = paddingTop;
+						this.container.clipContent = false;
+					}
+					var i:int;
+					var child:DisplayObject;
+					var alertForm:AlertForm;
+
+					for (i = 0; i < alert.numChildren; i++)
+					{
+						child = (alert.getChildAt(i) as UIComponent);
+
+						if (child is AlertForm)
+						{
+							alertForm = child as AlertForm;
+							break;
+						}
+					}
+					i = 0;
+
+					while (alertForm.numChildren > 0 && i < 100)
+					{
+						i++;
+						child = alertForm.getChildAt(0);
+
+						if (child != this.container)
+						{
+							if (child is Button)
+							{
+								// Simply require buttons to be at least a certain width.
+								child.width = Math.max(75, child.width);
+							}
+							this.container.addChild(child);
+						}
+					}
+					alertForm.addChild(this.container);
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:Panel>

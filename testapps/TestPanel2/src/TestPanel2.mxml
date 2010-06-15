@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+	<mx:VBox x="171" y="120" width="151" height="142" borderSkin="@Embed(source='borderSkin.png')">
+		<mx:Container backgroundColor="#ff0000" height="23" width="100%">
+			
+		</mx:Container>
+		<mx:Container backgroundColor="#ff00ff" height="100%" width="100%">
+			
+		</mx:Container>
+		<mx:Container backgroundColor="#fff0ff" height="23" width="100%">
+			
+		</mx:Container>
+	</mx:VBox>
+	
+</mx:Application>

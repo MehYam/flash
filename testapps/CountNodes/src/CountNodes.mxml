@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+	<mx:TextArea left="26" top="35" width="736" height="225"/>
+	<mx:Label x="26" y="268" text="Nodes:"/>
+	<mx:Text x="78" y="268" width="57" fontWeight="bold" id="txtNodes"/>
+	
+</mx:Application>

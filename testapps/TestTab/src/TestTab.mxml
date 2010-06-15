@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+<mx:Style>
+TabBar {
+   tabHeight: 17;
+   cornerRadius: 4;
+   backgroundColor: #000000;
+   borderColor: #666666;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+TabNavigator {
+   tabHeight: 17;
+   cornerRadius: 4;
+   backgroundColor: #000000;
+   borderColor: #666666;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+   cornerRadius: 5;
+   fillColors: #666666, #000000;
+   borderColor: #666666;
+   color: #cccccc;
+   textRollOverColor: #ffffff;
+   themeColor: #000000;
+   fontWeight: normal;
+
+}
+
+.mySelectedTabs {
+   fontWeight: bold;
+}
+</mx:Style>
+    <mx:TabBar>
+        <mx:dataProvider>
+            <mx:String>Alabama</mx:String>
+            <mx:String>Alaska</mx:String>
+            <mx:String>Arkansas</mx:String>
+        </mx:dataProvider>
+    </mx:TabBar>
+	<mx:TabNavigator x="306" y="110" width="200" height="200">
+		<mx:Canvas label="Tab 1" width="100%" height="100%">
+		</mx:Canvas>
+		<mx:Canvas label="foo" width="100%" height="100%">
+		</mx:Canvas>
+		<mx:Canvas label="bar" width="100%" height="100%">
+		</mx:Canvas>
+	</mx:TabNavigator>
+	<mx:Script>
+		<![CDATA[
+			
+		]]>
+	</mx:Script>
+</mx:Application>

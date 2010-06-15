@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	enterFrame="onframe(event)"
+	mouseDown="onMousedown(event)"
+	mouseUp="onMouseup(event)"
+	mouseMove="onMousemove(event)"
+	initialize="oninit()"
+	
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off"
+	focusEnabled="true"
+	
+	updateComplete="complete()"
+>
+<mx:Script>
+	<![CDATA[
+		import mx.core.UIComponent;   
+		
+		private var _cast:Array = [];
+		private function oninit():void
+		{
+
+			var ball:Actor = new BallActor;
+			addChild(ball);
+			
+			_cast.push(ball);
+
+			ball.height = ball.width = 40;
+			ball.x = 10;
+			ball.y = 10;
+		}
+
+		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+		{
+			drawGrid();
+		}		
+		static private const s_numRows:uint = 20;
+		static private const s_numCols:uint = 20;
+		private function drawGrid():void
+		{
+			const rowHeight:uint = this.height / s_numRows;
+			
+			graphics.lineStyle(1, 0, 0.5);
+			for (var i:uint = 0; i < s_numRows; ++i)
+			{
+				graphics.moveTo(0, rowHeight * i);
+				graphics.lineTo(this.width, rowHeight * i);
+			}
+			
+			const colWidth:uint = this.width / s_numCols;
+			for (var j:uint = 0; j < s_numCols; ++j)
+			{
+				graphics.moveTo(colWidth * j, 0);
+				graphics.lineTo(colWidth * j, this.height);
+			}			
+		}
+		private function complete():void
+		{
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown, false, 0, true);		
+			this.stage.addEventListener(KeyboardEvent.KEY_UP, keyUp, false, 0, true);		
+		}
+
+		private function keyDown(event:KeyboardEvent):void {
+			switch(event.keyCode) {
+				case 32:
+					_cast[0].velocity.x = _cast[0].velocity.y = 0;
+					break;
+				case 37: //left
+					_cast[0].force.x = -1;
+					break;
+				case 38: //up
+					_cast[0].force.y = -1;
+					break;
+				case 39: // right
+					_cast[0].force.x = 1;
+					break;
+				case 40: // down
+					_cast[0].force.y = 1;
+					break;
+			}
+		}
+		
+		private function keyUp(event:KeyboardEvent):void {
+			switch(event.keyCode) {
+				case 37: //left
+				case 39: // right
+					_cast[0].force.x = 0;
+					break;
+				case 38: //up
+				case 40: // down
+					_cast[0].force.y = 0;
+					break;
+			}
+		}
+
+		private var _force:Point = new Point(0, 0);
+		private var _frameNum:Number = 0;  // framerate dependency for now;  I don't care
+		private function onframe(event:Event):void {
+
+			++_frameNum;
+
+			for each (var actor:Actor in _cast)
+			{
+				actor.onframe(_frameNum);
+
+				actor.velocity.offset(actor.force.x, actor.force.y);
+
+				actor.x += actor.velocity.x;
+				actor.y += actor.velocity.y;				
+				
+				if (actor.x >= width) {
+					actor.x = width;
+					actor.velocity.x = - actor.velocity.x;
+				}
+				if (actor.x <= 0) {
+					actor.x = 0;
+					actor.velocity.x = - actor.velocity.x;
+				}
+				if (actor.y >= height) {
+					actor.y = height;
+					actor.velocity.y = - actor.velocity.y;
+				}
+				if (actor.y <= 0) {
+					actor.y = 0;
+					actor.velocity.y = - actor.velocity.y;
+				}
+			}
+		}
+
+		private var _bTracking:Boolean = false;		
+		private function onMousedown(event:MouseEvent):void {
+
+			_cast[0].x = event.localX;
+			_cast[0].y = event.localY;
+			
+//			h_velocity.x = 0;
+//			_velocity.y = 1;
+//			_force.x = 0.01;
+//			_force.y = 0.2;
+			
+			_bTracking = true;
+		}
+		private function onMouseup(event:MouseEvent):void {
+			
+			
+			_bTracking = false;
+		}
+
+		// KAI: need a "ring buffer" class here
+		private var moveCache:Array = [];
+		private function onMousemove(event:MouseEvent):void {
+			//debug.text = String((new Date()).time);
+			if (_bTracking) {
+				moveCache.push(
+					{
+						time: (new Date()).time,
+						x: event.localX,
+						y: event.localY
+					}
+				);
+				if (moveCache.length >= 20) {
+					moveCache.shift();
+				}
+			}
+		}
+	]]>
+</mx:Script>	
+</mx:Application>

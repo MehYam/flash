@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Border xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/halo" xmlns:local="*"
+		 minWidth="100" width="100%" height="100%" 
+		 backgroundColor="#3E67DA" dropShadowVisible="true"
+>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/halo";
+		@namespace local "*";
+		.letterTileStyle, .letterTileStyleMarked
+		{
+			color: #ffffff;
+			font-family: "verdana";
+			font-size: "24";
+		}
+		.letterTileStyleMarked
+		{
+			color: #ff0000;
+		}	
+	</fx:Style>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Label;
+			import mx.core.UIComponent;
+			
+			private static const tileStyle:TextFormat = new TextFormat;
+			private static const ROWS:int = 5;
+			private static const COLS:int = 5;
+
+			private var _letters:LetterTable = new LetterTable; //KAI: should be passed in as a data provider
+			protected override function createChildren():void
+			{
+				_letters.addEventListener(LetterTableEvent.PATH_CHANGED, onPathChanged, false, 0, true);
+				_letters.init(ROWS, COLS);
+
+				for (var i:int = 0; i < (ROWS*COLS); ++i)
+				{
+					var label:Label = new Label;
+					label.text = _letters.getLetterLinear(i);
+					label.styleName = "letterTileStyle";
+					
+					label.y = 50 * int(1 + i / COLS);
+					label.x = (i%COLS + 1) * 50;
+
+					addElement(label);
+				}
+			}
+			
+			public function get letters():LetterTable
+			{
+				return _letters;
+			}
+			
+			private function onPathChanged(e:Event):void
+			{
+				if (ROWS*COLS <= numElements)
+				{
+					for (var i:int = 0; i < (ROWS*COLS); ++i)
+					{
+						var label:UIComponent = UIComponent(getElementAt(i));
+						label.styleName = _letters.isMarked(i) ? "letterTileStyleMarked" : "letterTileStyle";
+					}
+				}
+			}
+		]]>
+	</fx:Script>
+</s:Border>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" >
+
+<mx:Script>
+<![CDATA[
+     
+    import mx.controls.Button;
+
+    private function addStuff(): void
+    { 
+        var newButton:Button = new Button();
+        newButton.label = "new button";
+        tw.addChild(newButton);
+    }
+    private function submit():void
+    {
+		tw.setActualSize(tw.width, tw.height - 10);
+    }  
+    
+]]>
+</mx:Script>
+
+<mx:Style>
+   TitleWindow {
+        border-skin: Embed("hearts_skin.png",
+           scaleGridLeft="44", 
+           scaleGridRight="360", 
+           scaleGridTop="54", 
+           scaleGridBottom="219");
+
+        paddingTop: 55;
+        paddingLeft: 45;
+        paddingRight: 45;
+        paddingBottom: 40;
+}
+
+</mx:Style>
+    
+<mx:TitleWindow id="tw" title="Happy Valentine's Day" showCloseButton="true">
+    <mx:TextInput id="ta" />
+    <mx:Button label="submit" click="submit()"/>
+</mx:TitleWindow>
+
+<mx:Button label="add child to TitleWindow" click="addStuff()" />
+
+</mx:Application>

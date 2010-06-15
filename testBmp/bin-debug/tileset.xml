@@ -1,0 +1,53 @@
+<tileset defaultWidth="32" defaultHeight="32" defaultFrameLength="5">
+	<tile name="brick">
+		<frame x="0" y="0"/>
+	</tile>
+	<tile name="pengoWait">
+		<frame x="32" y="0"/>
+	</tile>
+	<tile name="pengoWalkDown">
+		<frame x="64" y="0"/>
+		<frame x="128" y="0"/>
+	</tile>
+	<tile name="pengoWalkUp">
+		<frame x="96" y="0"/>
+		<frame x="160" y="0"/>
+	</tile>
+	<tile name="pengoWalkRight">
+		<frame x="192" y="0"/>
+		<frame x="224" y="0"/>
+	</tile>
+	<tile name="pengoWalkLeft" copy="pengoWalkRight" flip="horz"/>
+	<tile name="enemySmashDown">
+		<frame name="frame1" x="0" y="32"/>
+		<frame name="frame2" copy="frame1" flip="horz"/>
+	</tile>
+	<tile name="enemySmashUp">
+		<frame name="frame1" x="96" y="64"/>
+		<frame name="frame2" copy="frame1" flip="horz"/>
+	</tile>
+	<tile name="enemySmashLeft">
+		<frame x="32" y="32"/>
+		<frame x="64" y="32"/>
+	</tile>
+	<tile name="enemySmashRight" copy="enemySmashLeft" flip="horz"/>
+	<tile name="enemyWalkLeft" frameLength="3">
+		<frame x="96" y="32"/>
+		<frame x="128" y="32"/>
+		<frame x="160" y="32"/>
+		<frame x="128" y="32"/>
+	</tile>
+	<tile name="enemyWalkRight" copy="enemyWalkLeft" flip="horz"/>
+	<tile name="enemyWalkUp">
+		<frame x="192" y="32"/>
+		<frame x="224" y="32"/>
+	</tile>
+	<tile name="enemyWalkDown">
+		<frame x="0" y="64"/>
+		<frame x="32" y="64"/>
+	</tile>
+	<tile name="enemyCrush">
+		<frame name="frame1" x="64" y="64"/>
+		<frame name="frame2" copy="frame1" flip="horz"/>
+	</tile>
+</tileset>

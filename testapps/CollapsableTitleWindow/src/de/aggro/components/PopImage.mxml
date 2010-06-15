@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Image 
+	mouseOver="blow(event)"
+	mouseOut="shrink(event)"
+	mouseDown="mouseDownHandler(event)"
+	buttonMode="true" 
+	useHandCursor="true" 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	>
+	
+	<mx:Script>
+	
+		<![CDATA[
+			import mx.effects.Effect;
+		
+			import mx.effects.Parallel;
+			import mx.effects.Resize;
+			import mx.effects.Move;
+			
+			
+			//This is the array holding the image effects
+			private var effectsArray:Array = new Array();
+			
+			private function mouseDownHandler(event:MouseEvent):void{
+				var curEffect:Parallel = effectsArray[this.id] as Parallel;
+				
+				if(curEffect && curEffect.isPlaying){
+					event.stopImmediatePropagation();
+					event.stopPropagation();
+				}
+			}
+		
+			private function blow(event:MouseEvent):void{
+								
+				trace("blow");
+				var trg:Image = this;
+				
+				var curEffect:Parallel = effectsArray[trg.id] as Parallel;
+				
+				if(curEffect && curEffect.isPlaying){
+					curEffect.reverse();
+					return;
+				}else{
+					delete effectsArray[trg.id];
+				}
+								
+				//Bring to Front
+				parent.setChildIndex(trg, parent.numChildren-1);
+				
+				//Create effects
+				var p:Parallel = new Parallel(trg);
+				p.suspendBackgroundProcessing = true;
+				
+				var m:Move = new Move();
+				m.xFrom = trg.x;
+				m.xTo   = trg.x - 32;
+				m.yFrom = trg.y;
+				m.yTo   = trg.y - 64;				
+				
+				var r:Resize = new Resize();
+				r.heightFrom = 64;
+				r.heightTo   = 128;
+
+				r.widthFrom  = 64;
+				r.widthTo    = 128;
+				
+				p.addChild(m);
+				p.addChild(r);
+				
+				//Add to EffectArray
+				effectsArray[trg.id] = p;
+				
+				//Play Effect
+				p.play();
+			}
+			
+			private function shrink(event:MouseEvent):void{
+				trace("shrink");
+				var trg:Image = this;
+				
+				var curEffect:Parallel = effectsArray[trg.id] as Parallel;
+				
+				if(curEffect && curEffect.isPlaying){
+					curEffect.reverse();
+					return;
+				}else{
+					delete effectsArray[trg.id];
+				}
+						
+				//Create effects
+				var p:Parallel = new Parallel(trg);
+				p.suspendBackgroundProcessing = true;
+				
+				var m:Move = new Move();
+				m.xFrom = trg.x;
+				m.xTo   = trg.x + 32;
+				m.yFrom = trg.y;
+				m.yTo   = trg.y + 64;	
+				
+				var r:Resize = new Resize();
+				r.heightFrom = 128;
+				r.heightTo   = 64;
+
+				r.widthFrom  = 128;
+				r.widthTo    = 64;
+				
+				p.addChild(m);
+				p.addChild(r);
+				
+				//Add to EffectArray
+				effectsArray[trg.id] = p;
+								
+				//Play Effect
+				p.play();
+			}
+			
+		]]>
+	</mx:Script>
+</mx:Image>

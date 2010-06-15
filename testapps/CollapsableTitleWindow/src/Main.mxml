@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" xmlns:components="de.aggro.components.*" viewSourceURL="srcview/index.html">
+	<mx:Script>
+		<![CDATA[
+		
+			import de.aggro.components.*;
+		
+			private function createWindow():void{
+				var w:CollapsableTitleWindow = new CollapsableTitleWindow();
+				w.width = 250;
+				w.height = 250;
+				w.x = container.numChildren * 20;
+				w.y = container.numChildren * 20;
+				w.title = "Window " + container.numChildren;
+				container.addChild(w);
+			}
+		]]>
+	</mx:Script>
+	<components:CollapsableTitleWindowContainer id="container" width="100%" height="100%" />
+	<mx:Button buttonDown="createWindow()" label="Create Window" />
+</mx:Application>

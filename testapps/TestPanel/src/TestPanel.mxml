@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundColor="#0f0f0f">
+	<mx:Style>
+	Panel
+	{
+		border-skin:Embed(source='bgskin2.png', scaleGridLeft='61', scaleGridTop='24', scaleGridRight='197', scaleGridBottom='29');  
+
+		title-style-name:"panelTitle";
+		/* title-background-skin:Embed(source='titleBarBg.png', scaleGridLeft='4', scaleGridTop='3', scaleGridRight='213', scaleGridBottom='21'); */ 
+		header-height:23;
+		
+		drop-shadow-enabled:false;
+
+		/* border-thickness-left:1;
+		border-thickness-right:1;
+		border-thickness-bottom:30;
+		border-color:#aeaeae; */
+	}
+	.panelTitle
+	{
+		font-family:"Arial";
+		font-size:12;
+		font-weight:bold;
+		color:#ffffff;
+	}
+	.panelControlBar
+	{
+		border-skin:Embed(source='controlBarSkin.png', scaleGridLeft='4', scaleGridRight='5', scaleGridTop='1', scaleGridBottom='17');
+		/* background-skin:Embed(source='titleBarBg.png', scaleGridLeft='4', scaleGridTop='3', scaleGridRight='213', scaleGridBottom='21'); */
+	}
+	</mx:Style>
+	<mx:Panel 
+		x="291" y="147" 
+		width="250" height="200" 
+		layout="absolute"
+		title="Panel Title"
+		controlBarStyleName="panelControlBar"
+	>
+		<mx:ControlBar>
+			<mx:Button label="test"/>
+		</mx:ControlBar>
+	</mx:Panel>
+	<mx:Panel 
+		x="640" y="147" 
+		width="250" height="200" 
+		layout="absolute"
+		title="Panel Title2"
+	>
+		<mx:ControlBar>
+			<mx:Button label="test"/>
+		</mx:ControlBar>
+	</mx:Panel>
+</mx:Application>

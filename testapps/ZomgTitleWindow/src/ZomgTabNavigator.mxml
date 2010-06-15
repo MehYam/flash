@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TabNavigator xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="onCreationComplete()">
+	
+	<mx:Script>
+		<![CDATA[
+			private function onCreationComplete():void
+			{
+				addEventListener(MouseEvent.MOUSE_DOWN, onTabMouseDown, false, 0, true);
+			}
+			private function onTabMouseDown(e:MouseEvent):void
+			{
+				dispatchEvent(WindowManager.toSnapEvent(this, e, WindowManagerEvent.DRAG_START));
+			}
+		]]>
+	</mx:Script>
+</mx:TabNavigator>

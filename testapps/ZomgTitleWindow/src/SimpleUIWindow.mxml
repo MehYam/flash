@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="onMouseDown(event)"
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			private function onMouseDown(e:MouseEvent):void
+			{
+				const resize:Boolean = (e.localX > (width * .95)) && (e.localY > (height * 0.95));
+
+				dispatchEvent(WindowManager.toSnapEvent(this, e, resize ? WindowManagerEvent.RESIZE_START : WindowManagerEvent.DRAG_START));
+
+//				dispatchEvent(WindowManager.toSnapEvent(this, e, WindowManagerEvent.RESIZE_START));
+			}
+		]]>
+	</mx:Script>
+</mx:Canvas>

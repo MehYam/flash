@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" click="click(event)">
+	
+	<mx:Script>
+		<![CDATA[
+			private var _test:Array = 
+			[
+				new Point(1, 1),
+				new Point(2, 2),
+				new Object,
+				new Point(3, 3)
+			];
+			private function click(e:MouseEvent):void {
+				
+//				for each (var p:Point in _test)
+//				{
+//					trace(p.x);
+//				}
+			}
+		]]>
+	</mx:Script>
+</mx:Application>

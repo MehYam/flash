@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="absolute">
+	<mx:Style>
+		
+		Alert {
+			color: #666666;
+			background-color: #FFFFFF;
+			border-bottom-color: #FF0000;
+			border-color: #FFFFFF;
+			drop-shadow-enabled: false;
+			corner-radius: 8;
+			border-skin: ClassReference("assets.skins.containers.panels.GenericAlert");
+		}
+
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+
+			private function handleClick(event:Event):void
+			{
+				Alert.show("This is a test of my custom alert. This is a test of my custom alert. This is a test of my custom alert. ", "Testing custom alert.");
+			}
+		]]>
+	</mx:Script>
+	<mx:Button x="10"
+		y="10"
+		label="Throw Alert"
+		click="handleClick(event)"/>
+</mx:Application>

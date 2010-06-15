@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+	addedToStage="onInit()"
+	>
+	<mx:Label bottom="10" top="20" right="10" left="10" id="output" />
+	<mx:LinkButton x="10" y="0" label="Clear" click="output.text = '';"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.core.ScrollPolicy;
+ 
+			private function onInit():void
+			{
+				this.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+				this.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+				this.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				this.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+				this.stage.focus = output;
+
+				var foo:int = 0;
+				
+				foo = 0x7;
+				
+				foo &= ~0x5;
+				
+				
+				var testHash:Object =
+				{
+					"one": 1,
+					"two": 2,
+					"three": 3,
+					"four": 4
+				};
+				
+				for (var key:String in testHash)
+				{
+					trace(key);
+					delete testHash[key];
+				}
+				
+				var fooTimer:Timer = new Timer(0);
+				trace(typeof(fooTimer));
+			}
+			
+			private var _keys:Array = [];
+			private function say(text:String):void
+			{
+				output.text += text + "\n";
+			}
+			private function onKeyDown(e:KeyboardEvent):void
+			{
+				_keys[e.charCode] = true;
+				say(e.charCode + ", " + e.keyCode + " down");
+			}
+
+			private function onKeyUp(e:KeyboardEvent):void
+			{
+				_keys[e.charCode] = false;
+				say(e.charCode + ", " + e.keyCode + " up");
+			}
+			private var _mms:int = 0;
+			private function onMouseMove(e:MouseEvent):void
+			{
+				++_mms;	
+			}
+			private function onEnterFrame(e:Event):void
+			{
+				if (_mms > 2)
+				{
+					trace("mms:", _mms);
+				}
+				_mms = 0;
+			}
+			private function test():void
+			{
+				textInput.text = "/";
+				textInput.selectionBeginIndex = 1;
+				textInput.selectionEndIndex = 1;
+				textInput.setFocus();
+			}
+		]]>
+	</mx:Script>
+	<mx:TextInput id="textInput" x="961" y="0"/>
+	<mx:LinkButton x="871" y="0" label="test" click="test()"/>
+</mx:Application>

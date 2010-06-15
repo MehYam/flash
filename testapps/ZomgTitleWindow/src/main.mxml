@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:ns1="*"
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off"
+	creationComplete="onCreationComplete()">
+
+<mx:Style>
+ZomgTabBar {
+   tabHeight: 17;
+   cornerRadius: 4;
+   backgroundColor: #000000;
+   borderColor: #666666;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+ZomgTabNavigator {
+   tabHeight: 17;
+   cornerRadius: 4;
+   backgroundColor: #000000;
+   borderColor: #666666;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+   cornerRadius: 5;
+   fillColors: #666666, #000000;
+   fillAlphas: 1, 1;
+   borderColor: #666666;
+   color: #cccccc;
+   textRollOverColor: #ffffff;
+   themeColor: #000000;
+   fontWeight: normal;
+}
+
+.mySelectedTabs {
+   fontWeight: bold;
+}
+
+ZomgUIWindow
+{
+	headerHeight: 22;
+	titleStyleName: "ZomgUIWindowTitle";
+	control-bar-style-name: "panelControlBar";
+	color: #ffffff;
+}
+.ZomgUIWindowTitle
+{
+	fontFamily: Arial;
+	fontSize: 12;
+	fontWeight: bold;
+}
+.panelControlBar
+{
+	border-skin:Embed(source='../assets/controlBarSkin.png', scaleGridLeft='4', scaleGridRight='5', scaleGridTop='1', scaleGridBottom='17');
+	padding-bottom:0;
+	padding-top:0;
+	padding-left:1;
+	padding-right:1;
+}
+Button
+{
+	padding-left:1;
+	padding-right:1;
+}
+.chromeButton
+{
+	skin:Embed(source='../assets/chromeButton.png', scaleGridLeft='11', scaleGridRight='22', scaleGridTop='11', scaleGridBottom='22');
+}
+</mx:Style>
+
+<!--
+	<ns1:SimpleUIWindow x="100" y="100" width="779" height="524">
+		<mx:Image width="100%" height="100%" maintainAspectRatio="false" source="{Assets.samplePlayArea}"/>
+	</ns1:SimpleUIWindow>	
+-->
+<!--	<mx:Panel id="testPanel" title="testpanel" width="218" x="100" y="21" mouseDown="test(event)">
+		<mx:Image source="{Assets.sampleMap}"/>
+		<mx:ControlBar><mx:Button label="foo"/></mx:ControlBar>
+	</mx:Panel>
+-->
+
+	<ns1:ZomgUIWindow id="testWindow" title="test" name="kaione" width="200" height="150" resizable="true" x="200" y="100">
+		<mx:Container name="kaitwo" width="90%" height="90%" backgroundColor="0x00ff00"/>
+		<mx:ControlBar paddingTop="5" paddingBottom="5">
+			<mx:Container name="kaitwo" width="50" height="50" paddingTop="10" paddingBottom="10" backgroundColor="0x0000ff"/>
+		</mx:ControlBar>
+	</ns1:ZomgUIWindow>
+	<mx:Panel title="test" width="200" height="150" x="200" y="400">
+		<mx:Container name="kaitwo" width="90%" height="90%" backgroundColor="0x00ff00"/>
+		<mx:ControlBar>
+			<mx:Container name="kaitwo" width="50" height="50" paddingTop="10" paddingBottom="10" backgroundColor="0x0000ff"/>
+		</mx:ControlBar>
+	</mx:Panel>
+
+	<ns1:ZomgUIWindow title="Map" id="sampleMap" width="218" height="167" resizable="true" x="0" y="21" paddingTop="25">
+		<mx:Image source="{Assets.sampleMap}"/>
+		<mx:ControlBar height="23"/>
+	</ns1:ZomgUIWindow>
+	<ns1:ZomgUIWindow id="sampleTarget" title="TARGET" width="218" resizable="false" y="377">
+		<mx:Image source="{Assets.sampleTarget}"/>
+	</ns1:ZomgUIWindow>
+	<ns1:ZomgUIWindow id="sampleChat" title="CHAT" resizable="true" y="196">
+		<mx:Image source="{Assets.sampleChat}"/>
+		<mx:ControlBar/>
+	</ns1:ZomgUIWindow>
+	<ns1:ZomgUIWindow id="sampleCrew" title="CREW" width="218" resizable="true" x="698" y="42">
+		<mx:Image id="sampleCrewImg" source="{Assets.sampleCrew}"/>
+		<mx:ControlBar/>
+	</ns1:ZomgUIWindow>
+
+	<ns1:TestChrome id="testChrome" x="390" y="238"/>
+	<ns1:TestChrome2 id="testChrome2"/>
+
+	<ns1:SimpleUIWindow y="482">
+		<mx:Image source="{Assets.sampleStatus}"/>
+	</ns1:SimpleUIWindow>	
+	<ns1:SimpleUIWindow y="545">
+		<mx:Image source="{Assets.sampleIcons}"/>
+	</ns1:SimpleUIWindow>	
+
+	<mx:Script>
+		<![CDATA[
+		import mx.controls.Button;
+ 		import mx.events.MoveEvent;
+		import mx.events.DragEvent;
+		import mx.core.UIComponent;
+		
+		private function onCreationComplete():void
+		{
+			WindowManager.instance.addEventListener(WindowManagerEvent.SNAP_DONE, onSnapDone, false, 0, true);
+			
+			testWindow.addStatusBarChrome(testChrome);
+			testChrome.parent.removeChild(testChrome);
+			
+			testWindow.addTitleBarChrome(testChrome2);
+			testChrome2.parent.removeChild(testChrome2);
+
+			for each (var obj:DisplayObject in this.getChildren())
+			{
+				obj.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown, false, 0, true);
+				
+				if (!(obj as ZomgTabNavigator))
+				{
+					WindowManager.instance.add(obj);
+				}
+			}
+		}
+		
+		private function onMouseDown(e:Event):void
+		{
+//			traceDisplayList(DisplayObject(e.currentTarget));
+		}
+		
+		private function onSnapDone(e:WindowManagerEvent):void
+		{
+			const overlapper:DisplayObject = WindowManager.instance.findOverlapped(e.object);
+			
+			if ((overlapper is ZomgUIWindow) && (e.object is ZomgUIWindow))
+			{
+				ZomgUIWindow(overlapper).mergeIntoTabs(ZomgUIWindow(e.object));
+			}
+		}
+			
+		private function test(e:Event):void
+		{
+			var btn:Button = new Button;
+			btn.label = "new";
+//			sampleChat.addChild(btn);
+//			testPanel.addChild(btn);
+		}
+
+		private static function trIndented(str:String, level:int):void {
+			
+			var out:String = "";
+			for (var i:int = 0; i < level; ++i)
+			{
+				out += " ";
+			}
+			trace(out + str);
+		}
+
+		public static function toPathString(dobj:DisplayObject):String
+		{
+			var history:Array = [];
+			
+			history.push(dobj);
+			
+			var parent:DisplayObject = dobj.parent;
+			while(parent != null)
+			{
+				history.push(parent);
+				parent = parent.parent;
+			}
+			
+			var path:String = "";
+			
+			for(var index:int = 0; index < history.length; ++index)
+			{
+				var historyObj:DisplayObject = history[index];
+
+				if(path.length > 0)
+				{
+					path += " -> ";
+				}
+				
+				var name:String = historyObj.name || "null";
+				
+				if(name.indexOf("instance") == 0)
+				{
+					// [bgh] remove the numbers from instance IDs
+					name = "instance";
+				}
+				
+				// [bgh] use getQualifiedClassName to get the fla name
+				path += name + " " + getQualifiedClassName(historyObj); 
+			}
+			
+			return path;
+		}
+
+		public static function traceDisplayList(obj:DisplayObject, level:int = 0, visibilityReport:Object = null):void
+		{
+			if (!obj)
+			{
+				trIndented("<null/>", level);				
+			}
+			const type:String = (String(obj)).replace("]", "").replace("[object ", "").replace(" ", "");
+			var tag:String = "<" + type;
+			
+			tag += " x='" + obj.x + "' y='" + obj.y + "'";
+			if (obj.name && obj.name.length && obj.name.search("instance") != 0)
+			{
+				tag += " name='" + obj.name + "'";
+			}
+
+			if (obj is InteractiveObject)
+			{
+				tag += " mouseEnabled='" + InteractiveObject(obj).mouseEnabled + "'";
+				
+				if (obj.hasEventListener(MouseEvent.CLICK) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_DOWN) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_MOVE) ||
+				    obj.hasEventListener(MouseEvent.ROLL_OVER) ||
+				    obj.hasEventListener(MouseEvent.ROLL_OUT) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_OVER) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_OUT))
+				{
+					tag += " hasMouseListener='true'";
+				}
+			}
+			
+			if (obj is TextField)
+			{
+				tag += " text='" + TextField(obj).text + "'";
+			}
+
+			if (visibilityReport)
+			{
+				++visibilityReport.visTotal;
+			}
+
+			if (!obj.visible)
+			{
+				tag += " visible='false'";
+				if (visibilityReport)
+				{
+					++visibilityReport.visDepth;
+				}
+				if (!visibilityReport)
+				{
+					visibilityReport =
+					{
+						visDepth: 1,
+						visTotal: 1
+					};
+				}
+			}
+
+			var objAsContainer:Object = obj as DisplayObjectContainer;
+			try { objAsContainer = obj["rawChildren"]; } catch (e:Error) {}  // hacky way to have objAsContainer be rawChildren if we're in Flex.
+			
+			const numChildren:int = objAsContainer ? objAsContainer.numChildren : 0;
+			if (numChildren)
+			{
+				tag += ">";
+				trIndented(tag, level);
+
+				for (var i:int; i < numChildren; ++i)
+				{
+					var child:DisplayObject = objAsContainer.getChildAt(i);
+					traceDisplayList(child, level+1, visibilityReport);
+				}
+				trIndented("</" + type + ">", level);
+			}
+			else
+			{
+				tag += "/>";
+				trIndented(tag, level);
+			}
+			if (!obj.visible)
+			{
+				if (!--visibilityReport.visDepth)
+				{
+					trIndented("<!-- vis report: " + visibilityReport.visTotal + " invisible objects -->", level);
+				}
+			}
+		}
+			
+		]]>
+	</mx:Script>
+</mx:Application>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="525" height="270"
+ 	viewSourceURL="src/DragAndDropDragDropTargetEvents/index.html"
+>
+	<mx:Script>
+		<![CDATA[
+			import mx.events.DragEvent;
+			import mx.containers.Box;
+			import mx.managers.DragManager;
+			import mx.core.DragSource;
+			
+			// Embed the various Euro coin images. Images originally 
+			// from Wikipedia (http://en.wikipedia.org/wiki/Euro_coins)
+			[Embed("../assets/1c.png")]
+			[Bindable]
+			public var OneCent:Class;
+			
+			[Embed("../assets/2c.png")]
+			[Bindable]
+			public var TwoCents:Class;
+			
+			[Embed("../assets/5c.png")]
+			[Bindable]
+			public var FiveCents:Class;
+			
+			[Embed("../assets/10c.png")]
+			[Bindable]
+			public var TenCents:Class;
+			
+			[Bindable]
+			private var totalValue:uint;
+
+			private function dragIt(event:MouseEvent, value:uint):void 
+			{
+	            // Get the drag initiator component from the event object.
+	            var dragInitiator:Image = event.currentTarget as Image;
+	
+	            // Create a DragSource object.
+	            var dragSource:DragSource = new DragSource();
+	
+	            // Add the data to the object.
+	            dragSource.addData(value, 'value');
+	
+	            // Create a copy of the coin image to use as a drag proxy.
+	            var dragProxy:Image = new Image();
+				dragProxy.source = event.currentTarget.source;
+	
+	            // Call the DragManager doDrag() method to start the drag. 
+	            // For information on this method, see 
+	            // the "Initiating the drag" section.
+	            DragManager.doDrag(dragInitiator, dragSource, event, dragProxy);
+	        }
+
+	        // Called if the user drags a drag proxy onto the drop target.
+	        private function dragEnterHandler(event:DragEvent):void 
+	        {
+	            // Get the drop target component from the event object.
+	            var dropTarget:Box=event.currentTarget as Box;
+	
+	            // Accept the drag only if the user is dragging data 
+	            // identified by the 'value' format value.
+	            if (event.dragSource.hasFormat('value')) 
+	            {
+	            	// Make the border of the Box thicker to 
+	            	// visually signal to the user that they can 
+	            	// drop the coin there.
+	            	dropTarget.setStyle("borderThickness", 5);
+	                
+	                // Accept the drop.
+	                DragManager.acceptDragDrop(dropTarget);
+	            }
+	        }
+	        
+	        // Called if the user drags the drag proxy away from the drop target.
+	        private function dragExitHandler(event:DragEvent):void
+	        {
+	            // Get the drop target component from the event object.
+	            var dropTarget:Box=event.currentTarget as Box;	        	
+	        	
+				// Set the border of the Box to its default value
+				// to visually indicate that the user is no longer 
+				// over the drop target.
+				revertBoxBorder();				
+	        }	                
+	        
+	        // Called if the target accepts the dragged object and the user 
+	        // releases the mouse button while over the drop target. 
+	        private function dragDropHandler(event:DragEvent):void 
+	        {
+	            // Get the data identified by the color format from the drag source.
+	            var value:uint = event.dragSource.dataForFormat('value') as uint;
+
+				// Add the value to the total 
+				totalValue += value;
+				
+				// Set the border of the Box to its default value
+				revertBoxBorder();				
+	        }
+	        
+	        // Helper method to revert the Box's border to a 1 pixel outline.
+	        private function revertBoxBorder():void
+	        {
+            	amountDisplay.setStyle("borderThickness", 1);	        	
+	        }
+		]]>
+	</mx:Script>
+	
+	<mx:HBox>
+		<mx:Image 
+			id="oneCent" source="{OneCent}"
+			mouseMove="dragIt(event, 1);"
+		/>
+		<mx:Image 
+			id="twoCents" source="{TwoCents}"
+			mouseMove="dragIt(event, 2);"
+		/>
+		<mx:Image 
+			id="fiveCents" source="{FiveCents}"
+			mouseMove="dragIt(event, 5);"
+		/>
+		<mx:Image 
+			id="tenCents" source="{TenCents}"
+			mouseMove="dragIt(event, 10);"
+		/>		
+	</mx:HBox>
+	
+	<mx:Box 
+		id="amountDisplay"
+		borderStyle="solid" borderColor="#000000" backgroundColor="#FFFFFF"
+		width="100%" height="100" horizontalAlign="center" verticalAlign="middle"
+
+		dragEnter="dragEnterHandler(event);"
+		dragExit="dragExitHandler(event);"
+		dragDrop="dragDropHandler(event);"
+
+	>
+		<mx:Label text="{totalValue + ' pence'}" fontSize="48"/>		
+	</mx:Box>
+	
+</mx:Application>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute"
+	addedToStage="init()"
+>
+
+	<mx:Script>
+		<![CDATA[
+	
+			private function tr(str:String):void
+			{
+				txtOutput.text += str + "\n";
+			}
+
+			private var _monitor:ApplicationInstanceMonitor = new ApplicationInstanceMonitor();
+			private function init():void
+			{
+				_monitor.addEventListener(ApplicationInstanceMonitorEvent.INSTANCE_STARTING, onNewInstance, false, 0, true);
+				_monitor.addEventListener(ApplicationInstanceMonitorEvent.SEND_ERROR, onMonitorError, false, 0, true);
+				_monitor.addEventListener(ApplicationInstanceMonitorEvent.INSTANCE_EXISTS, onFoundPreviousInstance, false, 0, true);
+
+				startMonitor();
+			}
+			private function startMonitor():void
+			{
+				tr("starting the monitor");
+				_monitor.start("zomg");
+			}
+
+			private function onNewInstance(e:Event):void
+			{
+				tr("a new instance has started, relinquishing the channel");
+				_monitor.stop();
+			}
+
+			private function onFoundPreviousInstance(e:Event):void
+			{
+				tr("found a previous instance, trying to reacquire the channel in 5 sec");
+				
+				setTimeout(startMonitor, 5000);
+			}
+			
+			private function onMonitorError(e:Event):void
+			{
+				tr("monitor received a send error");
+			}
+		]]>
+	</mx:Script>	
+	<mx:TextArea left="10" top="10" right="10" bottom="10" id="txtOutput" wordWrap="true"/>
+</mx:Application>

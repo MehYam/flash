@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" borderStyle="inset">
+	<mx:Button label="Display" height="17"/>
+	<mx:Label text="4:27 PM GST"/>
+	<mx:Button height="17" label="X" width="17" textIndent="0"/>
+	<mx:Button height="17" label="-" width="17" textAlign="center"/>
+</mx:HBox>

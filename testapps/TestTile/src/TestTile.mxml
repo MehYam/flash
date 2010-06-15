@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="onCreationComplete()">
+
+	<mx:Style>
+		Tile
+		{
+			horizontalGap:2;
+			verticalGap:2;
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Image;
+
+		private var highlight:Sprite = new Sprite;
+		private function onCreationComplete():void
+		{
+			FlashLib.eventDispatcher.addEventListener(Event.INIT, onAssetsReady, false, 0, true);
+		}
+		
+		private function onAssetsReady(e:Event):void
+		{
+			addImage("defib.png");
+			addImage("diagnose.png");
+			addImage("meat.png");
+			addImage("accuracy.png");
+		}
+		
+		private function addImage(name:String):void
+		{
+			var image:Image = new Image;
+			image.source = FlashLib.getBitmap(name);
+			image.addEventListener(MouseEvent.MOUSE_OVER, imageMouseOver, false, 0, true);
+			image.addEventListener(MouseEvent.MOUSE_OUT, imageMouseOut, false, 0, true);
+//			image.width = 12;
+//			image.height = 12;
+			
+			tile.addChild(image);
+		}
+		private function imageMouseOver(evt:MouseEvent):void
+		{
+			const image:Image = evt.target as Image;
+			if (image)
+			{
+				highlight.graphics.clear();
+				highlight.graphics.lineStyle(1, 0x909090);
+				highlight.graphics.drawRoundRect(0, 0, image.width, image.height, 5, 5);
+				image.addChild(highlight);
+			}
+		}
+		private function imageMouseOut(evt:MouseEvent):void
+		{
+			const image:Image = evt.target as Image;
+			if (image)
+			{
+				image.removeChild(highlight);
+			}
+		}
+		]]>
+	</mx:Script>
+    <mx:Panel title="Tile Container Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10" backgroundColor="#000000">
+
+        <mx:Label width="100%" color="blue"
+            text="A Tile container lays out its children in a grid of equal-sized cells."/>
+
+        <mx:Tile id="tile" direction="horizontal" borderStyle="inset"
+                height="92" width="203"
+                >
+        </mx:Tile>
+    </mx:Panel>
+    	
+</mx:Application>

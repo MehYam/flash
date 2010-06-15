@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" xmlns:ns1="net.goozo.mx.dockable.*" xmlns:ns2="*" paddingLeft="5" paddingRight="5" paddingTop="3" paddingBottom="7">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.MenuEvent;
+
+		private static function trIndented(str:String, level:int):void {
+			
+			var out:String = "";
+			for (var i:int = 0; i < level; ++i)
+			{
+				out += " ";
+			}
+			trace(out + str);
+		}
+
+		public static function toPathString(dobj:DisplayObject):String
+		{
+			var history:Array = [];
+			
+			history.push(dobj);
+			
+			var parent:DisplayObject = dobj.parent;
+			while(parent != null)
+			{
+				history.push(parent);
+				parent = parent.parent;
+			}
+			
+			var path:String = "";
+			
+			for(var index:int = 0; index < history.length; ++index)
+			{
+				var historyObj:DisplayObject = history[index];
+
+				if(path.length > 0)
+				{
+					path += " -> ";
+				}
+				
+				var name:String = historyObj.name || "null";
+				
+				if(name.indexOf("instance") == 0)
+				{
+					// [bgh] remove the numbers from instance IDs
+					name = "instance";
+				}
+				
+				// [bgh] use getQualifiedClassName to get the fla name
+				path += name + " " + getQualifiedClassName(historyObj); 
+			}
+			
+			return path;
+		}
+
+		public static function traceDisplayList(obj:DisplayObject, level:int = 0, visibilityReport:Object = null):void
+		{
+			if (!obj)
+			{
+				trIndented("<null/>", level);				
+			}
+			const type:String = (String(obj)).replace("]", "").replace("[object ", "").replace(" ", "");
+			var tag:String = "<" + type;
+			
+			if (obj.name && obj.name.length && obj.name.search("instance") != 0)
+			{
+				tag += " name='" + obj.name + "'";
+			}
+
+			if (obj is InteractiveObject)
+			{
+				tag += " mouseEnabled='" + InteractiveObject(obj).mouseEnabled + "'";
+				
+				if (obj.hasEventListener(MouseEvent.CLICK) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_DOWN) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_MOVE) ||
+				    obj.hasEventListener(MouseEvent.ROLL_OVER) ||
+				    obj.hasEventListener(MouseEvent.ROLL_OUT) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_OVER) ||
+				    obj.hasEventListener(MouseEvent.MOUSE_OUT))
+				{
+					tag += " hasMouseListener='true'";
+				}
+			}
+			
+			if (obj is TextField)
+			{
+				tag += " text='" + TextField(obj).text + "'";
+			}
+
+			if (visibilityReport)
+			{
+				++visibilityReport.visTotal;
+			}
+
+			if (!obj.visible)
+			{
+				tag += " visible='false'";
+				if (visibilityReport)
+				{
+					++visibilityReport.visDepth;
+				}
+				if (!visibilityReport)
+				{
+					visibilityReport =
+					{
+						visDepth: 1,
+						visTotal: 1
+					};
+				}
+			}
+
+			var objAsContainer:Object = obj as DisplayObjectContainer;
+			try { objAsContainer = obj["rawChildren"]; } catch (e:Error) {}  // hacky way to have objAsContainer be rawChildren if we're in Flex.
+			
+			const numChildren:int = objAsContainer ? objAsContainer.numChildren : 0;
+			if (numChildren)
+			{
+				tag += ">";
+				trIndented(tag, level);
+
+				for (var i:int; i < numChildren; ++i)
+				{
+					var child:DisplayObject = objAsContainer.getChildAt(i);
+					traceDisplayList(child, level+1, visibilityReport);
+				}
+				trIndented("</" + type + ">", level);
+			}
+			else
+			{
+				tag += "/>";
+				trIndented(tag, level);
+			}
+			if (!obj.visible)
+			{
+				if (!--visibilityReport.visDepth)
+				{
+					trIndented("<!-- vis report: " + visibilityReport.visTotal + " invisible objects -->", level);
+				}
+			}
+		}
+			
+			private var numNote:int=3;
+			private function menuItemClick(e:MenuEvent):void
+			{
+				switch(String(e.item.@label))
+				{
+					case "New Note":
+						numNote++;
+						
+						var newChild:ClosableTextBox = new ClosableTextBox();
+						newChild.label = "note " + (numNote);
+						newChild.text = "note " + (numNote) + "\nThis note is closable."
+						mainNav.addChild(newChild);
+						mainNav.selectedChild = newChild;
+						break;
+					case "Default":
+						traceDisplayList(stage);
+						StyleManager.unloadStyleDeclarations("OSX.swf");
+						break;
+					case "OSX":
+						StyleManager.loadStyleDeclarations("OSX.swf");
+						break;
+				}
+			}
+		]]>
+	</mx:Script>
+
+    <mx:XMLList id="menuData">
+        <node label="Notes">
+        	<node label="New Note" />
+        </node>
+        <node label="Theme">
+        	<node label="Default" />
+        	<node label="OSX" />
+        </node>
+    </mx:XMLList>
+    
+	<mx:ApplicationControlBar paddingTop="0" paddingBottom="0" width="100%" dock="false" paddingLeft="2" paddingRight="2">
+	    <mx:MenuBar labelField="@label" dataProvider="{menuData}" itemClick="menuItemClick(event)" width="100%" />
+	</mx:ApplicationControlBar>
+	
+	<mx:Canvas width="100%" height="100%">
+		<ns1:DockableHDividedBox width="100%" x="0" height="100%" y="0">
+			<ns1:DockableVDividedBox width="60%">
+				<ns1:DockablePanel height="80%" lockPanel="true">
+					<ns1:DockableTabNavigator id="mainNav">
+						<ns1:ClosableVBox label="note 1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2">
+							<mx:TextArea width="100%" height="100%">
+								<mx:htmlText>
+									<![CDATA[
+<P ALIGN='CENTER'><FONT SIZE="20">Welcome</FONT></P>
+dockableFlex is a dockable panel components library for Adobe Flex 3.
+
+You can find the latest version here:
+<FONT COLOR='#0066CC'><A HREF='http://www.goozo.net/dockableflex.php' TARGET='_blank'><B>http://www.goozo.net/dockableflex.php</B></A></FONT>
+You can also find it in Google Code
+<A HREF='http://code.google.com/p/dockableflex/' TARGET='_blank'>http://code.google.com/p/dockableflex/</A>
+
+If you have any question. Please post it in this Google Group:
+<FONT COLOR='#0066CC'><A HREF='http://groups.google.com/group/dockableflex' TARGET='_blank'><B>http://groups.google.com/group/dockableflex</B></A></FONT>
+									]]>
+								</mx:htmlText>
+							</mx:TextArea>
+						</ns1:ClosableVBox>
+						<ns2:ClosableTextBox label="note 2" text="&#xa;Children in the main panel can be closed.&#xa;But they can not be floated.&#xa;While all the other panel are floatable but not closable."/>
+						<ns2:ClosableTextBox label="note 3" text="This note is closable."/>
+					</ns1:DockableTabNavigator>
+				</ns1:DockablePanel>
+				<ns1:DockablePanel height="148">
+					<ns1:DockableTabNavigator dockId="group1">
+						<mx:VBox label="G child1" width="100%" height="100%">
+							<mx:Text text="These children are in an unique group.&#xa;They can't be docked into other tabNavigator." width="100%" height="100%"/>
+						</mx:VBox>
+						<mx:VBox label="G child2" width="100%" height="100%">
+							<mx:Text text="These children are in an unique group.&#xa;They can't be docked into other tabNavigator." width="100%" height="100%"/>
+						</mx:VBox>
+						<mx:VBox label="G child3" width="100%" height="100%">
+							<mx:Text text="These children are in an unique group.&#xa;They can't be docked into other tabNavigator." width="100%" height="100%"/>
+						</mx:VBox>
+					</ns1:DockableTabNavigator>
+				</ns1:DockablePanel>
+			</ns1:DockableVDividedBox>
+			<ns1:DockableVDividedBox width="40%">
+				<ns1:DockablePanel height="50%">
+					<ns1:DockableTabNavigator>
+						<mx:Canvas label="Hint Style" width="100%" height="100%">						
+							<mx:Label x="10" y="37" text="Hint Color 1"/>
+							<mx:Label x="10" y="67" text="Hint Color 2"/>
+							<mx:ColorPicker id="hintColor1" x="85" y="32" selectedColor="#FF0000" change="StyleManager.getStyleDeclaration('DockHint').setStyle('hintColorOut',hintColor1.value);"/>
+							<mx:ColorPicker id="hintColor2" x="85" y="64" selectedColor="#FFFF00" change="StyleManager.getStyleDeclaration('DockHint').setStyle('hintColorIn',hintColor2.value);"/>
+							<mx:Label x="10" y="97" text="Hint Radius"/>
+							<mx:NumericStepper id="hintRadius"  x="86" y="96" minimum="0" maximum="20" value="4" change="StyleManager.getStyleDeclaration('DockHint').setStyle('hintRadius',hintRadius.value);"/>
+							<mx:Label x="10" y="127" text="Hint Alpha"/>
+							<mx:HSlider id="hintAlpha"  x="80" y="129" width="109" minimum="0" maximum="1" value="0.3" change="StyleManager.getStyleDeclaration('DockHint').setStyle('hintAlpha',hintAlpha.value);"/>
+							<mx:Label x="7" y="6" text="change the style of the dock hint"/>	
+						</mx:Canvas>
+						<mx:VBox id="sizeControl" label="Size" width="100%" height="100%" verticalScrollPolicy="off" horizontalScrollPolicy="off">						
+							<mx:Text x="0" y="0" text="you can adjust the minimun size of this Container" width="100%"/>
+							<mx:HBox width="100%">
+								<mx:Label text="Min Width"/>
+								<mx:HSlider id="sizeMinWidth" width="142" minimum="0" maximum="400" change="sizeControl.minWidth=sizeMinWidth.value"/>
+							</mx:HBox>
+							<mx:HBox width="100%">
+								<mx:Label text="Min Height"/>
+								<mx:HSlider id="sizeMinHeight" width="142" minimum="0" maximum="300" change="sizeControl.minHeight=sizeMinHeight.value"/>
+							</mx:HBox>
+						</mx:VBox>		
+					</ns1:DockableTabNavigator>
+				</ns1:DockablePanel>
+				<ns1:DockablePanel height="50%">
+					<ns1:DockableTabNavigator>
+						<mx:Box label="Accordion">
+							<mx:Accordion width="100%" height="100%">
+								<mx:Box label="Option 1" />
+								<mx:Box label="Option 2" />
+								<mx:Box label="Option 3" />
+							</mx:Accordion>
+						</mx:Box>
+						<mx:Box label="DataGrid">
+							<mx:DataGrid id="myGrid" width="100%" height="100%" >
+								<mx:columns>
+					                <mx:DataGridColumn dataField="name" headerText="Name"/>
+					                <mx:DataGridColumn dataField="post" headerText="Post"/>
+					                <mx:DataGridColumn dataField="score" headerText="Score"/>
+					                <mx:DataGridColumn dataField="from" headerText="From"/>
+            					</mx:columns>
+								 <mx:dataProvider>
+					                 <mx:Array id="arr">
+									 	<mx:Object name="sandmark" post="4969" score="1928" from="Shanghai" />
+									 	<mx:Object name="Rinick" post="4083" score="1197" from="Shanghai" />
+									 	<mx:Object name="Reinhard" post="3771" score="1077" from="Shanghai" />
+									 	<mx:Object name="Valencia" post="9192" score="1646" from="Wuhan" />
+									</mx:Array>
+				    	        </mx:dataProvider>
+			    	        </mx:DataGrid>
+						</mx:Box>
+						<mx:Box label="List">
+							<mx:List width="100%" height="100%" >
+						        <mx:dataProvider>
+			           		    	<mx:Array>
+						                <mx:Object label="DockableFlex" />
+			       			            <mx:Object label="MD5 Battle" selected="true" />
+			                			<mx:Object label="WiWi Jump" />
+			                			<mx:Object label="Goozo Go" />
+			                			<mx:Object label="CGfan slot" />
+			                			<mx:Object label="Apophysis Tutorial" />
+			                 			<mx:Object label="JPEG Tools" />
+			            			</mx:Array>
+			            		</mx:dataProvider>
+						    </mx:List>
+						</mx:Box>
+						<mx:Box label="DateChooser">
+							<mx:DateChooser />
+						</mx:Box>
+					</ns1:DockableTabNavigator>
+				</ns1:DockablePanel>
+			</ns1:DockableVDividedBox>
+		</ns1:DockableHDividedBox>
+
+	</mx:Canvas>		
+
+</mx:Application>

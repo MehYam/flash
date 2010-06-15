@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/halo" xmlns:local="*"
+			   addedToStage="onComplete()"
+			   implements="IProtocolHandler"
+>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%">
+		<s:HGroup width="100%" height="100%">
+			<s:List id="playerList"/>
+			<local:LetterGrid id="letterGrid" minWidth="100" width="100%" height="100%"/>
+			<mx:DataGrid id="wordHistory" height="100%">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Player" dataField="player"/>
+					<mx:DataGridColumn headerText="Word" dataField="word"/>
+					<mx:DataGridColumn headerText="Score" dataField="score"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</s:HGroup>
+		<s:TextArea id="wordEntry" height="5%" width="100%"/>
+		<s:TextArea id="chatLog" height="40%" width="100%"/>
+	</s:VGroup>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import spark.events.TextOperationEvent;
+
+			private var _protocol:Protocol = new Protocol;
+			private function onComplete():void
+			{
+//				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKey, false, 0, true);
+//				stage.addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
+				
+//				stage.focus = wordEntry;
+				wordEntry.setFocus();
+				
+				wordEntry.addEventListener(KeyboardEvent.KEY_DOWN, onWordEntryKeydown, false, 0, true);
+				wordEntry.addEventListener(TextOperationEvent.CHANGE, onWordEntryChange, false, 0, true);
+				wordHistory.dataProvider = _wordHistoryData;
+				playerList.dataProvider = _playerListData;
+				
+				_protocol.handler = this;
+			}
+			private function onKey(e:Event):void
+			{
+				trace(e);
+			}
+			private function onClick(e:Event):void
+			{
+				trace(e);
+			}
+
+			private var _lastValidWord:String;
+			private static const ENTER_CODE:int = 10;
+			private function onWordEntryChange(e:Event):void
+			{
+//				trace(e);
+				// seems like a bug in flex = when hitting enter, the keydown event arrives after
+				if (!wordEntry.text.length || (wordEntry.text.length && wordEntry.text.charCodeAt(wordEntry.text.length - 1) != ENTER_CODE))
+				{
+					_lastValidWord = wordEntry.text.toUpperCase();
+					letterGrid.letters.path = _lastValidWord; 
+				}
+			}
+			private static const ESC_KEY:int = 27;
+			private static const ENTER_KEY:int = 13;
+			private function onWordEntryKeydown(e:KeyboardEvent):void
+			{
+//				trace(e);
+				switch(e.keyCode) {
+				case ESC_KEY:
+					wordEntry.text = "";
+					onWordEntryChange(null);
+					break;
+				case ENTER_KEY:
+					if (letterGrid.letters.containsCurrentPath)
+					{
+						_protocol.submitWord(_lastValidWord);
+					}
+					wordEntry.text = "";
+					letterGrid.letters.path = ""; 
+					break;
+				}
+			}
+
+			// IProtocolHandler
+			private var _wordHistoryData:ArrayList = new ArrayList;
+			public function scoreWord(player:String, word:String, points:int):void
+			{
+				//KAI: give that a type so that it can be profiled
+				_wordHistoryData.addItem(
+					{
+						player: player,
+						word: word,
+						score: points
+					}
+				);
+			}
+
+			private var _playerListData:ArrayList = new ArrayList;
+			public function addPlayer(player:String, points:int):void
+			{
+				_playerListData.addItem({ label: player });
+			}
+			public function removePlayer(player:String, points:int):void
+			{
+			}
+			
+		]]>
+	</fx:Script>
+</s:Application>

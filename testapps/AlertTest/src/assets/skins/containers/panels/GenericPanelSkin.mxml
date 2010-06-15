@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Surface xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:effects="com.darronschall.effects.*"
+	xmlns="http://www.degrafa.com/2007">
+
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Button;
+			[Bindable]
+			private var awidth:Number = 0;
+			[Bindable]
+			private var aheight:Number = 0;
+
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				awidth = unscaledWidth;
+				aheight = unscaledHeight;
+			}
+		]]>
+	</mx:Script>
+
+	<fills>
+		<SolidFill id="formFill"
+			alpha="1"
+			color="0xFFFFFF"/>
+	</fills>
+
+	<graphicsData>
+		<GeometryGroup>
+			<RoundedRectangleComplex x="0"
+				y="0"
+				id="formGeometry"
+				width="{awidth}"
+				height="{aheight}"
+				fill="{formFill}"
+				bottomLeftRadius="8"
+				bottomRightRadius="8"
+				topLeftRadius="8"
+				topRightRadius="8"/>
+		</GeometryGroup>
+	</graphicsData>
+
+</Surface>

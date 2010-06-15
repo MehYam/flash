@@ -1,0 +1,1303 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+The MIT License
+
+Copyright (c) 2008 Paul Whitelock
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="100%" height="100%" creationComplete="panelText.text = editableText; testPanel.setStyle('backgroundSize', '50%')"  viewSourceURL="srcview/index.html">
+
+	<mx:Style>
+		Application {
+			backgroundImage: Embed("/images/GrayCloth.jpg");
+			themeColor: #666666;
+		}
+	
+		.myFBPanelBgSkinStyle {
+			borderSkin: ClassReference("com.flexblocks.skins.FBPanelBgSkin");
+		}
+		
+		.sliderStyle {
+			padding-left: 5;
+		}
+		
+		ToolTip {
+			color: #FFFFFF;
+			backgroundColor: #666666;
+		}
+		
+		.lightTitle {
+			color: #E2E2E2;
+			fontWeight: bold;
+		}
+		
+		.darkTitle {
+			color: #0B333C;
+			fontWeight: bold;
+		}		
+	</mx:Style>
+
+	<mx:Script>
+		<![CDATA[
+		
+			import com.flexblocks.skins.FBPanelBgSkin;
+			
+			// Application Background Image
+			
+			[Embed("/images/GrayCloth.jpg")]
+			private var appBackground:Class;			
+			
+			// Background Images
+			
+			[Embed("images/Clouds.jpg")]
+			private var backgroundImage1:Class;
+									
+			[Embed("images/GhostDesert.jpg")]
+			private var backgroundImage2:Class;			
+			
+			[Embed("images/NiNLogo.png")]
+			private var backgroundImage3:Class;			
+			
+			// Border Tile Images
+			
+			[Embed("/images/MetalPlateDark.jpg")]
+			private var bTile1:Class;
+			
+			[Embed("/images/PittedSurface.jpg")]
+			private var bTile2:Class;
+			
+			[Embed("/images/MetalSwirl.jpg")]
+			private var bTile3:Class;						
+			
+			// Content Background Tile Images
+			
+			[Embed("/images/PatternPieces.jpg")]
+			private var tile1:Class;
+			
+			[Embed("/images/GraySwirl.jpg")]
+			private var tile2:Class;
+			
+			[Embed("/images/MetalPlate.jpg")]
+			private var tile3:Class;						
+			
+			// Shadow Types
+			
+			[ArrayElementType("uint")]
+			private const shadowTypeConstants:Array = [FBPanelBgSkin.SHADOW_NONE, FBPanelBgSkin.SHADOW_INNER, FBPanelBgSkin.SHADOW_DROP, FBPanelBgSkin.SHADOW_DROP_DELTA];					
+			
+			// Text variables for TextEdit component
+			
+			private var codeText:String;
+			private var editableText:String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus sodales, justo vel varius convallis, velit urna scelerisque tortor, sit amet bibendum nisl arcu at erat. Maecenas nec neque. Nulla posuere lacinia turpis. Cras congue leo. Sed imperdiet tincidunt lacus. Phasellus viverra.";			
+			
+			// Flag to determine if text in TextEdit component is editable sample text or the generated code			
+			
+			private var codeView:Boolean = false;
+			
+			// Used to set panel width when switching from generated code to editable text
+			
+			private var lastWidth:uint = 300;			
+
+			// Currently active shadow type for Panel
+			
+			private var activeShadowType:String = FBPanelBgSkin.SHADOW_DROP_DELTA;
+			
+			// Flag to indicate whether an image background is active for the application
+			
+			private var appImageBackground:Boolean = true;		
+
+			// --------------------------------------------------------------------------------------------------
+			// changeBorderColor - Called when a new color is selected for the Panel border
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeBorderColor():void {
+				
+				// Set border color and create new ToolTip text
+				
+				testPanel.setStyle('borderColor', panelBorderColor.selectedColor);
+				panelBorderColor.toolTip="borderColor: " + formatColorValue(panelBorderColor.selectedColor) + ";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+
+			// --------------------------------------------------------------------------------------------------
+			// changeShadowEnabled - Called when the "Shadow Enabled" checkbox is toggled
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeShadowEnabled():void {
+				
+				// Get selected enabled state for shadows and set the style for the Panel
+				
+				var shadowState:Boolean = shadowEnabled.selected;
+				testPanel.setStyle('dropShadowEnabled', shadowState);
+				
+				// Enable or disable controls based on the current enabled state for shadows
+				
+				shadowType.enabled = shadowState;
+				shadowTypeLabel.enabled = shadowState;
+				dropShadowColor.enabled = shadowState;
+				shadowColorLabel.enabled = shadowState;
+				shadowDistance.enabled = shadowState;
+				shadowDirectionLabel.enabled = shadowState;
+				shadowDirection.enabled = shadowState;
+				
+				// Enable or disable inner shadow controls if inner shadows are active 
+				
+				innerShadowStrength.enabled = activeShadowType == FBPanelBgSkin.SHADOW_INNER && shadowState;
+				innerShadowBlur.enabled = activeShadowType == FBPanelBgSkin.SHADOW_INNER && shadowState;
+				innerShadowDistance.enabled = activeShadowType == FBPanelBgSkin.SHADOW_INNER && shadowState;
+				
+				// Set the enabled state for the "Background Alpha" and "Content Area Background Alpha" controls
+				
+				enableAlphaControls();
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeShadowColor - Called when a new color is selected for drop/inner shadows
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeShadowColor():void {
+				
+				// Set shadow color and create new ToolTip text
+				
+				testPanel.setStyle('dropShadowColor', dropShadowColor.selectedColor); 	
+				dropShadowColor.toolTip="dropShadowColor: " + formatColorValue(dropShadowColor.selectedColor) + ";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeShadowDirection - Called when a new shadow direction is selected from the ComboBox
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeShadowDirection():void {
+				
+				// Set shadow direction and create new ToolTip text
+				
+				testPanel.setStyle('shadowDirection', shadowDirection.selectedLabel.toLowerCase());
+				shadowDirection.toolTip = "shadowDirection: \"" + shadowDirection.selectedLabel.toLowerCase() + "\";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeBackgroundColor - Called when a new color is selected for Panel's background
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeBackgroundColor():void {
+				
+				// Set Panel background color and create new ToolTip text
+				
+				testPanel.setStyle('backgroundColor', backgroundColor.selectedColor); 	
+				backgroundColor.toolTip="backgroundColor: " + formatColorValue(backgroundColor.selectedColor) + ";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}			
+
+			// --------------------------------------------------------------------------------------------------
+			// changeBackgroundImage - Called when the image selected for Panel's background is changed
+			// --------------------------------------------------------------------------------------------------
+			
+			private function changeBackgroundImage():void {
+								
+				// No background image
+				
+				if (backgroundImage.selectedIndex == 0) {
+					
+					// Remove the background image
+					
+					testPanel.setStyle("backgroundImage", "");
+					backgroundImage.toolTip = "backgroundImage: \"\";";
+					
+					// Change the alpha label from "Background IMAGE Alpha" to "Background Alpha"
+					
+					backgroundAlphaValue.labels = ["Background Alpha"];
+					
+					// Disable background image controls
+					
+					backgroundSizeLabel.enabled = false;
+					backgroundSizeAuto.enabled = false;
+					backgroundSize.enabled = false;
+				}
+				
+				// Else a background image was selected
+				
+				else if (backgroundImage.selectedIndex > 0) {
+					
+					// If an image (not the logo) was selected
+					
+					if (backgroundImage.selectedIndex < 3) {
+						
+						// Enable checkbox to allow "Auto" sizing for the image (full image size)
+						
+						backgroundSizeLabel.enabled = true;						
+						backgroundSizeAuto.enabled = true;
+						
+						// Manual image sizing only active if auto sizing is not active
+						
+						backgroundSize.enabled = !backgroundSizeAuto.selected;
+						
+						// If manual image sizing is active, set the backgroundSize property for the Panel and create ToolTip text for both sizing controls
+						
+						if (backgroundSize.enabled) {
+							testPanel.setStyle("backgroundSize", backgroundSize.value + "%");
+							backgroundSizeAuto.toolTip = "backgroundSize: \"" + backgroundSize.value + "%\";";
+							backgroundSize.toolTip = "backgroundSize: \"" + backgroundSize.value + "%\";";
+						}
+						
+						// Else auto sizing is active so set the backgroundSize property to use the full image size and create ToolTip text for both sizing controls
+						
+						else {
+							testPanel.setStyle("backgroundSize", "auto");
+							backgroundSizeAuto.toolTip = "backgroundSize: \"auto\";";
+							backgroundSize.toolTip = "backgroundSize: \"auto\";";
+						}
+					}
+					
+					// Else the logo was selected
+					
+					else {
+						
+						// Don't allow the logo size to be changed
+						
+						backgroundSizeLabel.enabled = false;
+						backgroundSizeAuto.enabled = false;
+						backgroundSizeAuto.selected = true;
+						backgroundSize.enabled = false;
+						
+						// Set the backgroundSize property to use the full logo image size and create ToolTip text for both sizing controls
+						
+						testPanel.setStyle("backgroundSize", "auto");
+						backgroundSizeAuto.toolTip = "backgroundSize: \"auto\";";
+						backgroundSize.toolTip = "backgroundSize: \"auto\";";					
+					}
+					
+					// Set the Panel's background image to the selected image and set the ToolTip text for the image selection ComboBox
+					
+					switch (backgroundImage.selectedIndex) {								
+						case 1:
+							testPanel.setStyle("backgroundImage", backgroundImage1);
+							backgroundImage.toolTip = "backgroundImage: Embed(\"/images/Clouds.jpg\");";
+							break;
+
+						case 2:					
+							testPanel.setStyle("backgroundImage", backgroundImage2);
+							backgroundImage.toolTip = "backgroundImage: Embed(\"/images/GhostDesert.jpg\");";
+							break;
+					
+						case 3:
+							testPanel.setStyle("backgroundImage", backgroundImage3);
+							backgroundImage.toolTip = "backgroundImage: Embed(\"/images/NiNLogo.jpg\");";
+							break;
+					}
+					
+					// Change the alpha label from "Background Alpha" to "Background IMAGE Alpha"
+										
+					backgroundAlphaValue.labels = ["Background IMAGE Alpha"];
+					
+					// If the background alpha is 1 (opaque), then set it to .5 so that the background image does not initially obscure and set FBPanelBgSkin styles
+					
+					if (backgroundAlphaValue.value == 1) {
+						backgroundAlphaValue.value = 0.5;
+						testPanel.setStyle('backgroundAlpha', backgroundAlphaValue.value);
+					}
+				}
+				
+				// Set the enabled state for the "Background Alpha" and "Content Area Background Alpha" controls
+				
+				enableAlphaControls();
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeBackgroundSizeAuto - Called when the "Auto" CheckBox for the image size is toggled
+			// --------------------------------------------------------------------------------------------------
+			
+			private function changeBackgroundSizeAuto():void {
+				
+				// If auto sizing of the background image is selected
+				
+				if (backgroundSizeAuto.selected) {
+					
+					// Disable manual sizing of image
+					
+					backgroundSize.enabled = false;
+					
+					// Set the backgroundSize Panel property to "auto" and create ToolTip text for both image sizing controls
+					
+					testPanel.setStyle("backgroundSize", "auto");
+					backgroundSizeAuto.toolTip = "backgroundSize: \"auto\";";
+					backgroundSize.toolTip = "backgroundSize: \"auto\";";
+				}
+				
+				// Else manual sizing of the background image is enabled so enable the slider, set the property to the selected
+				// percentage, and create ToolTip text for both image sizing controls
+				
+				else {
+					backgroundSize.enabled = true;
+					testPanel.setStyle("backgroundSize",  backgroundSize.value + "%");
+					backgroundSizeAuto.toolTip = "backgroundSize: \"" + backgroundSize.value + "%\";";
+					backgroundSize.toolTip = "backgroundSize: \"" + backgroundSize.value + "%\";";
+
+				}
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+					
+			// --------------------------------------------------------------------------------------------------
+			// changeBackgroundSize - Called when the background image size slider is draggged
+			// --------------------------------------------------------------------------------------------------
+			
+			private function changeBackgroundSize():void {
+				
+				// Set the Panel's backgroundSize property to the selected percentage and update the 
+				// ToolTip text for both image sizing controls
+				
+				testPanel.setStyle("backgroundSize", backgroundSize.value + "%");
+				backgroundSizeAuto.toolTip = "backgroundSize: \"" + backgroundSize.value + "%\";";
+				backgroundSize.toolTip = "backgroundSize: \"" + backgroundSize.value + "%\";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeBorderTile - Select an image tile for the Panel's border area
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeBorderTile():void {
+				
+				switch (borderImageTile.selectedIndex) {
+				
+					// None
+					
+					case 0:
+					
+						// Clear previously set tile image 
+
+						testPanel.setStyle("borderTile", "");
+						
+						// Update the ToolTip for the ComboBox
+						
+						borderImageTile.toolTip = "borderTile: \"\";";
+						
+						break;				
+	
+					// Tile: Pitted Surface
+	
+					case 1:
+						
+						// Set the tile image for the border and update the ToolTip for the ComboBox
+
+						testPanel.setStyle("borderTile", bTile2);
+						borderImageTile.toolTip = "borderTile: Embed(\"/images/PittedSurface.jpg\");";
+						
+						break;				
+
+					// Tile: Metalic Swirl
+					
+					case 2:
+						
+						// Set the tile image for the border and update the ToolTip for the ComboBox
+
+						testPanel.setStyle("borderTile", bTile3);
+						borderImageTile.toolTip = "borderTile: Embed(\"/images/MetalSwirl.jpg\");";
+						
+						break;					
+
+					// Tile: Dark Metal Plate
+					
+					case 3:
+						
+						// Set the tile image for the border and update the ToolTip for the ComboBox
+						
+						testPanel.setStyle("borderTile", bTile1);
+						borderImageTile.toolTip = "borderTile: Embed(\"/images/MetalPlateDark.jpg\");";						
+						
+						break;
+				}
+				
+				// If a tile image was selected for the border
+				
+				if (borderImageTile.selectedIndex > 0) {
+					
+					// Disable the border color control since the image tile will be used instead
+					
+					panelBorderColor.enabled = false;
+					panelBorderColorLabel.enabled = false;
+					
+					// Use light text for title
+						
+					testPanel.setStyle("titleStyleName", "lightTitle");
+				}
+				
+				// Else a solid color will be used for the border
+				
+				else {
+					
+					// Enable the border color control since the image tile will be used instead
+					
+					panelBorderColor.enabled = true;
+					panelBorderColorLabel.enabled = true;
+					
+					// Use light text for title
+						
+					testPanel.setStyle("titleStyleName", "darkTitle");					
+				}									
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+					
+			// --------------------------------------------------------------------------------------------------
+			// changeBackground - Select the type of background drawn by the FBPanelBgSkin component in the Panel's content area
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeBackground():void {
+				
+				switch (contentAreaBkgnd.selectedIndex) {
+				
+					// None
+					
+					case 0:
+					
+						// Clear previously set tile image or gradient colors
+
+						testPanel.setStyle("contentBackgroundTile", "");
+						testPanel.setStyle("contentGradientColors", "");
+						
+						// Disable controls for the gradient
+						
+						enableGradientControls(false);
+						
+						// Update the ToolTip for the ComboBox
+						
+						contentAreaBkgnd.toolTip = "contentBackgroundTile: \"\"; contentGradientColors:\"\";";
+						
+						break;				
+					
+					// Gradient
+	
+					case 1:
+					
+						// Clear previously set tile image
+						
+						testPanel.setStyle("contentBackgroundTile", "");
+						
+						// Enable controls for the gradient
+					
+						enableGradientControls(true);
+						
+						// Set styles for gradient properties 
+						
+						changeGradientColor();
+						changeGradientType();
+						changeGradientRatio();
+						changeGradientRotation();
+						
+						// Update the ToolTip for the ComboBox
+						
+						contentAreaBkgnd.toolTip = "contentBackgroundTile: \"\";";
+						
+						break;	
+	
+					// Tile: Pattern
+					
+					case 2:
+						
+						// Disable controls for the gradient
+						
+						enableGradientControls(false);
+						
+						// Set the tile image for the background and update the ToolTip for the ComboBox
+						
+						testPanel.setStyle("contentBackgroundTile", tile1);
+						contentAreaBkgnd.toolTip = "contentBackgroundTile: Embed(\"/images/PatternPieces.jpg\");";
+						
+						break;
+						
+					// Tile: Swirl
+	
+					case 3:
+						
+						// Disable controls for the gradient
+						
+						enableGradientControls(false);
+						
+						// Set the tile image for the background and update the ToolTip for the ComboBox
+
+						testPanel.setStyle("contentBackgroundTile", tile2);
+						contentAreaBkgnd.toolTip = "contentBackgroundTile: Embed(\"/images/GraySwirl.jpg\");";
+						
+						break;
+						
+					// Tile: Metal Plate
+					
+					case 4:
+					
+						// Disable controls for the gradient
+						
+						enableGradientControls(false);
+						
+						// Set the tile image for the background and update the ToolTip for the ComboBox
+
+						testPanel.setStyle("contentBackgroundTile", tile3);
+						contentAreaBkgnd.toolTip = "contentBackgroundTile: Embed(\"/images/MetalPlate.jpg\");";
+						
+						break;
+				}				
+
+				// Set the enabled state for the "Background Alpha" and "Content Area Background Alpha" controls
+				
+				enableAlphaControls();
+
+				// The background color can only be set if a background gradient or tiled image is not active
+				
+				backgroundColor.enabled = contentAreaBkgnd.selectedIndex == 0;
+				backgroundColorLabel.enabled = contentAreaBkgnd.selectedIndex == 0;
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeShadowType - Change the type of shadow displayed for the Panel's content area
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeShadowType():void {
+				
+				// Get the constant for the shadow type based on the ComboBox selection
+				
+				activeShadowType = shadowTypeConstants[shadowType.selectedIndex];
+				
+				// Set the shadow style
+				
+				testPanel.setStyle("shadowType", activeShadowType);
+				
+				// If an inner shadow is selected, enable the inner shadow controls
+				
+				innerShadowStrength.enabled = activeShadowType == FBPanelBgSkin.SHADOW_INNER;
+				innerShadowBlur.enabled = activeShadowType == FBPanelBgSkin.SHADOW_INNER;
+				innerShadowDistance.enabled = activeShadowType == FBPanelBgSkin.SHADOW_INNER;
+
+				// Set the enabled state for the "Background Alpha" and "Content Area Background Alpha" controls
+				
+				enableAlphaControls();
+
+				// Update the tool tip for the ComboBox
+				
+				shadowType.toolTip = "shadowType: \"" + shadowTypeConstants[shadowType.selectedIndex] + "\";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeGradientType - Ghange the type of gradient drawn 
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeGradientType():void {
+				
+				// Get the String constant for the selected gradient type
+				
+				var selectedGradType:String = gradientType.selectedIndex == 0 ? GradientType.LINEAR : GradientType.RADIAL;
+				
+				// The gradient rotation control is only active for linear gradients
+				
+				gradientRotation.enabled = selectedGradType == GradientType.LINEAR;
+				
+				// Set the gradient type property and update the tool tip for the ComboBx
+				
+				testPanel.setStyle("contentGradientType", selectedGradType);
+				gradientType.toolTip = "contentGradientType: \"" + selectedGradType + "\";";
+			
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+						
+			// --------------------------------------------------------------------------------------------------
+			// changeGradientColor - Change the gradient colors
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeGradientColor():void {
+				
+				// Set the property for the gradient colors using the selected colors in the four gradient ColorPicker controls
+				
+				testPanel.setStyle("contentGradientColors", [grad1.selectedColor, grad2.selectedColor, grad3.selectedColor, grad4.selectedColor]);
+				
+				// Create the tool tip text and assign to all four gradient ColorPicker controls 
+				
+				var tt:String = "contentGradientColors: " + formatColorValue(grad1.selectedColor) + ", " + formatColorValue(grad2.selectedColor) + ", " + formatColorValue(grad3.selectedColor) + ", " + formatColorValue(grad4.selectedColor) + ";";
+				grad1.toolTip = tt;
+				grad2.toolTip = tt;
+				grad3.toolTip = tt;
+				grad4.toolTip = tt;
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeGradientRatio - Change the ratios for the gradient colors
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeGradientRatio():void {
+
+				// Set the property for the gradient ratios using the values in the HSlider control
+				
+				testPanel.setStyle("contentGradientRatios", [gradientRatios.values[0], gradientRatios.values[1], gradientRatios.values[2], gradientRatios.values[3]]);
+				
+				// Create the tool tip text for the HSlider control
+				
+				gradientRatios.toolTip = "contentGradientRatios: " + gradientRatios.values[0] + ", " + gradientRatios.values[1] + ", " + gradientRatios.values[2] + ", " + gradientRatios.values[3] + ";";
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// changeGradientRotation - Change the rototion of the gradient
+			// --------------------------------------------------------------------------------------------------
+
+			private function changeGradientRotation():void {
+
+				// Set the value for the gradient rotation property (the tool tip text is set in the MXML)
+				
+				testPanel.setStyle("contentGradientRotation", gradientRotation.value);
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}						
+
+			// --------------------------------------------------------------------------------------------------
+			// enableGradientControls - Set the enabled state of the gradient controls
+			// --------------------------------------------------------------------------------------------------
+
+			private function enableGradientControls(doEnable:Boolean):void {
+				
+				// Enable or disable the gradient controls based on the value of doEnable
+				
+				gradientType.enabled = doEnable;
+				grad1.enabled = doEnable;
+				grad1Label.enabled = doEnable;
+				grad2.enabled = doEnable;
+				grad2Label.enabled = doEnable;
+				grad3.enabled = doEnable;
+				grad3Label.enabled = doEnable;
+				grad4.enabled = doEnable;
+				grad4Label.enabled = doEnable;
+				gradientRatios.enabled = doEnable;
+				
+				// The gradient rotation control can only be enabled for linear gradients
+				
+				gradientRotation.enabled = doEnable && gradientType.selectedIndex == 0;	
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+ 			// --------------------------------------------------------------------------------------------------
+			// enableAlphaControls - Set the enabled state of the Panel alpha slider and the FBPanelBgSkin alpha slider
+			// --------------------------------------------------------------------------------------------------
+
+			private function enableAlphaControls():void {
+				
+				// If a gradient or tiled image background is active or if an inner shadow is active then enable the FBPanelBgSkin alpha slider
+				// and enable the Panel's alpha slider if there is an active background image for the Panel
+				
+				if (contentAreaBkgnd.selectedIndex > 0 || (shadowEnabled.selected && activeShadowType == FBPanelBgSkin.SHADOW_INNER)) {
+					contentAlphaValue.enabled = true;
+					backgroundAlphaValue.enabled = backgroundImage.selectedIndex > 0;
+				}
+				
+				// Else enable the Panel's alpha slider and if there is an active background image for the Panel thena ble the FBPanelBgSkin alpha slider
+				
+				else {
+					backgroundAlphaValue.enabled = true;
+					contentAlphaValue.enabled = backgroundImage.selectedIndex > 0;
+				}
+				
+				// Generate text for code view (if active)
+				
+				generateCodeText();
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// generateCodeText - Generate the code for the Style block and the Panel tag if codeView is active in the Panel
+			// --------------------------------------------------------------------------------------------------
+
+			private function generateCodeText():void {
+				
+				if (codeView) {
+				
+					// Opening boilerplate text
+					
+					codeText = "<mx:Style>\n\t.myFBPanelBgSkinStyle {\n\t\tborderSkin: ClassReference(\"com.flexblocks.skins.FBPanelBgSkin\");";
+					
+					// Border Color
+					
+					if (panelBorderColor.selectedColor != 0xE2E2E2 && panelBorderAlpha.value > 0 && borderImageTile.selectedIndex == 0) codeText += "\n\t\tborderColor: " + formatColorValue(panelBorderColor.selectedColor) + ";";
+					
+					// Border Alpha
+					
+					if (panelBorderAlpha.value != 0.4) codeText += "\n\t\tborderAlpha: " + panelBorderAlpha.value + ";";
+					
+					// Border Corner Radius					
+					
+					if (panelCornerRadius.value != 4) codeText += "\n\t\tcornerRadius: " + panelCornerRadius.value + ";";
+					
+					// Border Rounded Bottom Corners
+					// If there is no control bar then the default is false, otherwise it is true. To be safe include this value in the sample code.
+					
+					codeText += "\n\t\troundedBottomCorners: " + panelRoundedBottomCorners.selected + ";";
+					
+					// If shadow is NOT enabled
+					
+					if (!shadowEnabled.selected) codeText += "\n\t\tdropShadowEnabled: false;";
+					
+					// Else shadow is enabled, so check other shadow style properties
+					
+					else {
+					
+						// Shadow Color
+						
+						if (dropShadowColor.selectedColor != 0) codeText += "\n\t\tdropShadowColor: " + formatColorValue(dropShadowColor.selectedColor) + ";";
+						
+						// Shadow Distance
+						
+						if (shadowDistance.value != 2) codeText += "\n\t\tshadowDistance: " + shadowDistance.value + ";";
+						
+						// Shadow Direction
+						
+						if (shadowDirection.selectedIndex != 1) codeText += "\n\t\tshadowDirection: \"" + shadowDirection.selectedLabel.toLowerCase() + "\";";
+					}
+					
+					// Background Color
+					
+					if (backgroundColor.selectedColor != 0xFFFFFF && contentAreaBkgnd.selectedIndex == 0) codeText += "\n\t\tbackgroundColor: " + formatColorValue(backgroundColor.selectedColor) + ";";						
+					
+					// Background Image
+					
+					if (backgroundImage.selectedIndex != 0 && backgroundAlphaValue.value > 0) codeText += "\n\t\tbackgroundImage: Embed(\"MY-BACKGROUND-IMAGE\");";
+					
+					// Background Size
+					
+					if (backgroundImage.selectedIndex > 0 && !backgroundSizeAuto.selected) codeText += "\n\t\tbackgroundSize: \"" + backgroundSize.value + "%\";";
+
+					// Background Alpha
+					
+					if (backgroundAlphaValue.value < 1 && (backgroundImage.selectedIndex > 0 || contentAreaBkgnd.selectedIndex == 0)) codeText += "\n\t\tbackgroundAlpha: " + backgroundAlphaValue.value + ";";
+					
+					// Border Tile Image
+					
+					if (borderImageTile.selectedIndex > 0)  codeText += "\n\t\tborderTile: Embed(\"MY-BORDER-TILE-IMAGE\");";
+					
+					// Gradient Background
+					
+					if (contentAreaBkgnd.selectedIndex == 1) {
+						
+						// Gradient Type
+						
+						if (gradientType.selectedIndex == 1) codeText += "\n\t\tcontentGradientType: \"radial\";";
+						
+						// Gradient Colors
+						
+						codeText += "\n\t\tcontentGradientColors: " + formatColorValue(grad1.selectedColor) + ", " + formatColorValue(grad2.selectedColor) + ", " + formatColorValue(grad3.selectedColor) + ", " + formatColorValue(grad4.selectedColor) + ";";						
+
+						// Gradient Ratios
+						
+						codeText += "\n\t\tcontentGradientRatios: " + gradientRatios.values[0] + ", " + gradientRatios.values[1] + ", " + gradientRatios.values[2] + ", " + gradientRatios.values[3] + ";";
+						
+						//  Gradient Rotation
+						
+						if (gradientRotation.value != 90 && gradientType.selectedIndex == 0) codeText += "\n\t\tcontentGradientRotation: " + gradientRotation.value + ";";
+					}
+					
+					// Image Tile Background
+					
+					else if (contentAreaBkgnd.selectedIndex > 1) codeText += "\n\t\tcontentBackgroundTile: Embed(\"MY-CONTENT-TILE-IMAGE\");";
+					
+					// Shadow Type
+					
+					if (shadowType.selectedIndex != 3) {
+						
+						// Content Shadow Type
+						
+						codeText += "\n\t\tshadowType: \"" + shadowTypeConstants[shadowType.selectedIndex] + "\";";
+						
+						// If inner shadow
+						
+						if (shadowType.selectedIndex == 1) {
+							
+							// Inner Shadow Distance
+							
+							if (innerShadowDistance.value != 3) codeText += "\n\t\tcontentInnerShadowDistance: " + innerShadowDistance.value + ";";
+							
+							// Inner Shadow Blur
+							
+							if (innerShadowBlur.value != 5) codeText += "\n\t\tcontentInnerShadowBlur: " + innerShadowBlur.value + ";";
+														
+							// Inner Shadow Strength
+							
+							if (innerShadowStrength.value != .6) codeText += "\n\t\tcontentInnerShadowStrength: " + innerShadowStrength.value + ";";
+						}						
+					}
+					
+					// Content Area Background Alpha
+					
+					if (contentAlphaValue.value < 1) codeText += "\n\t\tcontentBackgroundAlpha: " + contentAlphaValue.value + ";";
+					
+					// Closing style text and code for the Panel
+					
+					codeText += "\n\t}\n</mx:Style>\n\n<mx:Panel id=\"testPanel\" styleName=\"myFBPanelBgSkinStyle\" title=\"Test Panel\" width=\"" + panelWidth.value + "\" height=\"" + panelHeight.value + "\"/>";
+					
+					// Set panel TextArea
+					
+					panelText.text = codeText;
+				}
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// formatColorValue - When given a uint, returns a color value in the format "#RRGGBB" 
+			// --------------------------------------------------------------------------------------------------
+
+			private function formatColorValue(colorValue:uint):String {
+				var formattedColor:String = colorValue.toString(16).toUpperCase();
+				while (formattedColor.length < 6) formattedColor = "0" + formattedColor;
+				return "#" + formattedColor;		 
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// toggleViewBtn - Called when the Button in the Panel's ControlBar is clicked to toggle between code view and text edit view
+			// --------------------------------------------------------------------------------------------------
+
+			private function toggleViewBtn():void {
+				
+				// If in code view, switch the text edit view
+				
+				if (codeView) {
+					
+					// Clear code view flag and change the button label 
+					
+					codeView = false;
+					panelButton.label = "Show Code View";
+					
+					// Set the TextArea text to the saved text used for the text edit view and make the TextArea editable
+					
+					panelText.text = editableText;
+					panelText.editable = true;
+					
+					// If the view was toggled and the width was not changed, tehn restore the width of the Panel to the width that was 
+					// active before switching to code view
+					
+					testPanel.width = lastWidth;
+					panelWidth.value = lastWidth; 
+				}
+				
+				// Else in text edit view, so switch to code view
+				
+				else {
+					
+					// Set code view flag and change the button label 
+					
+					codeView = true;
+					panelButton.label = "Show Text Edit View";
+					
+					// Save the text edit view text, make the TextArea editable, generate the text for the code view and set the TextArea text to the generated code text
+					
+					editableText = panelText.text;	
+					panelText.editable = false;				
+					generateCodeText();					
+					panelText.text = codeText;
+					
+					// If the Panel width is less than 475 pixels, save the current width and increase the Panel width to 475
+					
+					if (testPanel.width < 475) {
+						lastWidth = testPanel.width;
+						testPanel.width = 475;
+						panelWidth.value = 475;
+					}
+				}
+			}
+			
+			// --------------------------------------------------------------------------------------------------
+			// toggleBgBtn - Called when the Background Button in the Panel's ControlBar is clicked to toggle between
+			//               an image background for the application and a solid background
+			// --------------------------------------------------------------------------------------------------
+
+			private function toggleBgBtn():void {
+				
+				// If image background is active, switch to solid color background
+				
+				if (appImageBackground) {
+					Application.application.setStyle("backgroundImage", "");
+					panelBgButton.label = "Image Background";
+				}
+				
+				// Else switch to an image application background
+				
+				else {
+					Application.application.setStyle("backgroundImage", appBackground);
+					panelBgButton.label = "Solid Background";
+				}
+				
+				// Update flag to current image background state
+				
+				appImageBackground = !appImageBackground;
+			}
+		]]>
+	</mx:Script>	
+	
+	<mx:HBox width="100%" height="100%" paddingTop="10" paddingLeft="10" >
+		
+		<!-- Standard Panel Styles Section -->
+		
+		<mx:VBox width="225" height="602" backgroundColor="#FFFFFF" backgroundAlpha="0.7" paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10" 
+			     borderColor="#000000" borderStyle="inset" horizontalScrollPolicy="off"  verticalGap="3">
+			
+			<mx:Label text="Standard Panel Styles" fontWeight="bold" fontSize="10" color="#000000"/>
+					
+			<!-- Panel Width-->
+			
+			<mx:HSlider id="panelWidth" labels="Panel Width (Property)" labelOffset="-5" labelStyleName="sliderStyle" width="200" 
+				        allowTrackClick="true" minimum="300" maximum="600" liveDragging="true" snapInterval="1" value="300" enabled="true" trackMargin="0"  
+				        change="testPanel.width = panelWidth.value; lastWidth = testPanel.width; generateCodeText();" toolTip="{'[Property] width=&quot;' + panelWidth.value + '&quot;'}" />			
+			
+			<!-- Panel Height -->
+			
+			<mx:HSlider id="panelHeight" labels="Panel Height (Property)" labelOffset="-5" labelStyleName="sliderStyle" width="200" 
+				        allowTrackClick="true" minimum="300" maximum="602" liveDragging="true" snapInterval="1" value="300" enabled="true" trackMargin="0" 
+				        change="testPanel.height = panelHeight.value; generateCodeText();" toolTip="{'[Property] height=&quot;' + panelHeight.value + '&quot;'}" />
+
+			<mx:Spacer height="4" />
+			
+			<!-- Border Styles Group -->
+			
+			<mx:VBox borderStyle="solid" borderColor="#FFFFFF" borderThickness="1" paddingTop="7" paddingRight="10" paddingBottom="5" paddingLeft="10" width="100%">
+			
+				<!-- Border Color -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="panelBorderColor" selectedColor="#E2E2E2" change="changeBorderColor()" toolTip="borderColor: #E2E2E2;" />
+					<mx:Label id="panelBorderColorLabel" text="Border Color" />
+				</mx:HBox>
+				
+				<!-- Border Alpha -->
+				
+				<mx:HSlider id="panelBorderAlpha" labels="Border Alpha" labelOffset="-5" labelStyleName="sliderStyle" width="174" allowTrackClick="true" minimum="0" maximum="1" trackMargin="0"
+					        liveDragging="true" snapInterval=".01" value=".4" enabled="true" change="testPanel.setStyle('borderAlpha', panelBorderAlpha.value); generateCodeText();"
+					        toolTip="{'borderAlpha: ' + panelBorderAlpha.value + ';'}" />					
+				
+				<!-- Border Corner Radius -->
+				
+				<mx:HSlider id="panelCornerRadius" labels="Border Corner Radius" labelOffset="-5" labelStyleName="sliderStyle" width="174" allowTrackClick="true" minimum="0" maximum="30" trackMargin="0" 
+					        liveDragging="true" snapInterval="1" value="4" enabled="true" change="testPanel.setStyle('cornerRadius', panelCornerRadius.value); generateCodeText();" 
+					        toolTip="{'cornerRadius: ' + panelCornerRadius.value + ';'}" />
+	
+				<!-- Border Rounded Bottom Corners -->
+				
+				<mx:CheckBox id="panelRoundedBottomCorners" label="Rounded Bottom Corners" selected="true" 
+					         change="testPanel.setStyle('roundedBottomCorners', panelRoundedBottomCorners.selected); generateCodeText();"
+					         toolTip="{'roundedBottomCorners: ' + panelRoundedBottomCorners.selected + ';'}" />
+
+			</mx:VBox>
+			
+			<mx:Spacer height="2" />
+			
+			<!-- Shadow Styles Group -->
+			
+			<mx:VBox borderStyle="solid" borderColor="#FFFFFF" borderThickness="1" paddingTop="7" paddingRight="10" paddingBottom="5" paddingLeft="10" width="100%">
+			
+				<!-- Shadow Enabled -->
+				
+				<mx:CheckBox id="shadowEnabled" selected="true" label="Shadow Enabled" change="changeShadowEnabled()" toolTip="{'dropShadowEnabled: ' + shadowEnabled.selected + ';'}" />
+				
+				<!-- Shadow Color -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="dropShadowColor" selectedColor="#000000" change="changeShadowColor()" toolTip="dropShadowColor: #000000;" />
+					<mx:Label id="shadowColorLabel" text="Shadow Color" />
+				</mx:HBox>
+				
+				<!-- Shadow Distance -->
+				
+				<mx:HSlider id="shadowDistance" minimum="0" maximum="20" liveDragging="true" snapInterval="1" labelOffset="-5" labelStyleName="sliderStyle" width="174" value="2" 
+					        allowTrackClick="true" labels="Shadow Distance" trackMargin="0" change="testPanel.setStyle('shadowDistance', shadowDistance.value); generateCodeText();" 
+					        toolTip="{'shadowDistance: ' + shadowDistance.value + ';'}" />				
+
+				<!-- Shadow Direction -->
+				
+				<mx:Label id="shadowDirectionLabel" text="Shadow Direction" />
+				<mx:ComboBox id="shadowDirection" width="174" selectedIndex="1" change="changeShadowDirection()" fontWeight="normal"
+					         toolTip="{'shadowDirection: &quot;center&quot;;'}" >
+					<mx:dataProvider>
+						<mx:Array>
+							<mx:Object label="Left" />
+							<mx:Object label="Center" />
+							<mx:Object label="Right" />
+						</mx:Array>
+					</mx:dataProvider>
+				</mx:ComboBox>
+				
+			</mx:VBox>
+			
+			<mx:Spacer height="2" />			
+
+			<!-- Background Styles Group -->
+
+			<mx:VBox borderStyle="solid" borderColor="#FFFFFF" borderThickness="1" paddingTop="5" paddingRight="10" paddingBottom="5" paddingLeft="10" width="100%">
+					
+				<!-- Background Color -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="backgroundColor" selectedColor="#FFFFFF" change="changeBackgroundColor()"  toolTip="backgroundColor: #FFFFFF" />					
+					<mx:Label id="backgroundColorLabel" text="Background Color" />				
+				</mx:HBox>
+	
+				<!-- Background Image Options -->
+				
+				<mx:Label text="Background Image" />
+				<mx:ComboBox id="backgroundImage" width="174" selectedIndex="0" change="changeBackgroundImage()" fontWeight="normal" toolTip="backgroundImage: &quot;&quot;" >
+					<mx:dataProvider>
+						<mx:Array>
+							<mx:Object label="None" />
+							<mx:Object label="Clouds" />
+							<mx:Object label="Desert" />
+							<mx:Object label="Logo" />
+						</mx:Array>
+					</mx:dataProvider>
+				</mx:ComboBox>
+	
+				<!-- Background Image Size -->
+				
+				<mx:Label id="backgroundSizeLabel" text="Background Image Size" enabled="false" />
+				<mx:HBox horizontalGap="0" width="178">
+					<mx:CheckBox id="backgroundSizeAuto" label="Auto" enabled="false" selected="true" change="changeBackgroundSizeAuto()"  toolTip="backgroundSize: &quot;auto&quot;;" />
+					<mx:HSlider id="backgroundSize" width="121" allowTrackClick="true" value="100" minimum="1" maximum="100" liveDragging="true" snapInterval="1" enabled="false" 
+						        change="changeBackgroundSize()" toolTip="backgroundSize: &quot;auto&quot;;" />								
+				</mx:HBox>
+				
+				<!-- Background Alpha -->
+				
+				<mx:HSlider id="backgroundAlphaValue" labels="Background Alpha" width="174" labelOffset="-5" labelStyleName="sliderStyle" allowTrackClick="true" minimum="0" maximum="1"  trackMargin="0"
+					        liveDragging="true" snapInterval=".01" value="1" enabled="true" change="testPanel.setStyle('backgroundAlpha', backgroundAlphaValue.value); generateCodeText();"
+					        toolTip="{'backgroundAlpha: ' + backgroundAlphaValue.value + ';'}" />			
+
+			</mx:VBox>
+		
+		</mx:VBox>
+		
+		<!-- FBPanelBgSkin Styles Section -->
+		
+		<mx:VBox width="225" height="602" backgroundColor="#FFFFFF" backgroundAlpha="0.7" paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10" 
+			     borderColor="#000000" borderStyle="inset" horizontalScrollPolicy="off"  verticalGap="3">
+			
+			<mx:Label text="FBPanelBgSkin Styles" fontWeight="bold" fontSize="10" color="#000000"/>
+			
+			<!-- Border Image Tile Options -->
+			
+			<mx:Label text="Border Tile Image" />
+			<mx:ComboBox id="borderImageTile" width="200" selectedIndex="0" change="changeBorderTile()" fontWeight="normal" toolTip = "borderTile: &quot;&quot;" >
+				<mx:dataProvider>
+					<mx:Array>   
+						<mx:Object label="None" />
+						<mx:Object label="Pitted Surface" />
+						<mx:Object label="Metal Swirl" />
+						<mx:Object label="Dark Metal Plate" />
+					</mx:Array>
+				</mx:dataProvider>
+			</mx:ComboBox>
+			
+			<mx:Spacer height="0" />
+
+			<!-- Content Background Options -->
+			
+			<mx:Label text="Content Area Background" />
+			<mx:ComboBox id="contentAreaBkgnd" width="200" selectedIndex="0" change="changeBackground()" fontWeight="normal" toolTip = "contentBackgroundTile: &quot;&quot;; contentGradientColors: &quot;&quot;;" >
+				<mx:dataProvider>
+					<mx:Array>   
+						<mx:Object label="Standard" />
+						<mx:Object label="Gradient" />
+						<mx:Object label="Tile: Pattern" />
+						<mx:Object label="Tile: Swirl" />
+						<mx:Object label="Tile: Metal Plate" />
+					</mx:Array>
+				</mx:dataProvider>
+			</mx:ComboBox>
+			
+			<mx:Spacer height="0" />
+			
+			<!-- Content Area Shadow Options -->
+			
+			<mx:Label id="shadowTypeLabel" text="Content Area Shadow Type" />
+			<mx:ComboBox id="shadowType" width="200" selectedIndex="3" change="changeShadowType()" fontWeight="normal" toolTip="shadowType: &quot;drop_delta&quot;" >
+				<mx:dataProvider>
+					<mx:Array>
+						<mx:Object label="None" />
+						<mx:Object label="Inner Shadow" />
+						<mx:Object label="Drop Shadow" />
+						<mx:Object label="Drop Shadow (Alpha Delta)" />
+					</mx:Array>
+				</mx:dataProvider>
+			</mx:ComboBox>			
+			
+			<mx:Spacer height="4" />
+			
+			<!-- Inner Shadow Options -->
+			
+			<mx:VBox borderStyle="solid" borderColor="#FFFFFF" borderThickness="1" paddingTop="5" paddingRight="10" paddingBottom="5" paddingLeft="10" width="100%">
+			
+				<!-- Inner Shadow Distance -->
+				
+				<mx:HSlider id="innerShadowDistance" enabled="false" minimum="0" maximum="20" liveDragging="true" snapInterval=".1" labelOffset="-5" labelStyleName="sliderStyle" width="174" value="3" 
+					        allowTrackClick="true" labels="Inner Shadow Distance" trackMargin="0" change="testPanel.setStyle('contentInnerShadowDistance', innerShadowDistance.value); generateCodeText();"
+					        toolTip="{'contentInnerShadowDistance: ' + innerShadowDistance.value + ';'}" />
+					        
+				<!-- Inner Shadow Blur -->
+				
+				<mx:HSlider id="innerShadowBlur" enabled="false" minimum="0" maximum="20" liveDragging="true" snapInterval=".1" labelOffset="-5" labelStyleName="sliderStyle" width="174" value="5" 
+					        allowTrackClick="true" labels="Inner Shadow Blur" trackMargin="0" change="testPanel.setStyle('contentInnerShadowBlur', innerShadowBlur.value); generateCodeText();"
+					        toolTip="{'contentInnerShadowBlur: ' + innerShadowBlur.value + ';'}" />
+					        
+				<!-- Inner Shadow Strength -->
+				
+				<mx:HSlider id="innerShadowStrength" enabled="false" minimum="0" maximum="2" liveDragging="true" snapInterval=".01" labelOffset="-5" labelStyleName="sliderStyle" width="174" value=".6" 
+					        allowTrackClick="true" labels="Inner Shadow Strength" trackMargin="0" change="testPanel.setStyle('contentInnerShadowStrength', innerShadowStrength.value); generateCodeText();"
+					        toolTip="{'contentInnerShadowStrength: ' + innerShadowStrength.value + ';'}"  />
+					        
+			</mx:VBox>
+						
+			<mx:Spacer height="2" />
+			
+			<!-- Gradient Background Options -->
+			
+			<mx:VBox borderStyle="solid" borderColor="#FFFFFF" borderThickness="1" paddingTop="7" paddingRight="10" paddingBottom="5" paddingLeft="10" width="100%">
+			
+				<!-- Gradient Type -->
+				
+				<mx:ComboBox id="gradientType" enabled="false" width="174" fontWeight="normal" selectedIndex="0" change="changeGradientType()" toolTip = "contentGradientType: &quot;linear&quot;;" >
+					<mx:dataProvider>
+						<mx:Array>
+							<mx:Object label="Linear Gradient" />
+							<mx:Object label="Radial Gradient" />
+						</mx:Array>
+					</mx:dataProvider>
+				</mx:ComboBox>
+				
+				<!-- Gradient Color 1 -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="grad1" enabled="false" change="changeGradientColor()" selectedColor="#888888" toolTip="contentGradientColors: #88888, #EEEEEE, #999999, #EEEEEE;" />
+					<mx:Label id="grad1Label" text="Gradient Color 1" enabled="false" />
+				</mx:HBox>
+				
+				<!-- Gradient Color 2 -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="grad2" enabled="false" color="#00FF00" change="changeGradientColor()" selectedColor="#EEEEEE" toolTip="contentGradientColors: #88888, #EEEEEE, #999999, #EEEEEE;" />
+					<mx:Label id="grad2Label" text="Gradient Color 2" enabled="false" />
+				</mx:HBox>
+				
+				<!-- Gradient Color 3 -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="grad3" enabled="false" color="#00FF00" change="changeGradientColor()" selectedColor="#999999" toolTip="contentGradientColors: #88888, #EEEEEE, #999999, #EEEEEE;" />
+					<mx:Label id="grad3Label" text="Gradient Color 3" enabled="false" />
+				</mx:HBox>
+				
+				<!-- Gradient Color 4 -->
+				
+				<mx:HBox width="100%">
+					<mx:ColorPicker id="grad4" enabled="false" color="#00FF00" change="changeGradientColor()" selectedColor="#EEEEEE" toolTip="contentGradientColors: #88888, #EEEEEE, #999999, #EEEEEE;" />
+					<mx:Label id="grad4Label" text="Gradient Color 4" enabled="false" />
+				</mx:HBox>
+				
+				<!-- Gradient Ratios -->
+				
+				<mx:HSlider id="gradientRatios" enabled="false" thumbCount="4" minimum="0" maximum="255" liveDragging="true" snapInterval="1" labelOffset="-5" labelStyleName="sliderStyle" 
+					        allowTrackClick="true" labels="Gradient Ratios" trackMargin="0" change="changeGradientRatio()" width="174" values="[0, 80, 180, 255]" toolTip="contentGradientRatios: 0, 80, 180, 255;" />
+				
+				<!-- Gradient Rotation -->
+				
+				<mx:HSlider id="gradientRotation" enabled="false" minimum="0" maximum="359" value="317" liveDragging="true" snapInterval="1" labelOffset="-5" labelStyleName="sliderStyle" 
+					        allowTrackClick="true" labels="Gradient Rotation" trackMargin="0" change="changeGradientRotation()" width="174" toolTip="{'contentGradientRotation: ' + gradientRotation.value + ';'}" />
+			</mx:VBox>
+			
+			<mx:Spacer height="2" />
+
+			<!-- Content Area Background Alpha -->
+			
+			<mx:HSlider id="contentAlphaValue" labels="Content Area Background Alpha" enabled="false" labelOffset="-5" labelStyleName="sliderStyle" width="200" 
+				        allowTrackClick="true" minimum="0" maximum="1" liveDragging="true" snapInterval=".01" value="1" trackMargin="0"  thumbOffset="0"
+				        change="testPanel.setStyle('contentBackgroundAlpha', contentAlphaValue.value); generateCodeText();" 
+				        toolTip="{'contentBackgroundAlpha: ' + contentAlphaValue.value + ';'}"/>									
+			
+		</mx:VBox>
+		
+		<!-- Panel -->
+		
+		<mx:Panel id="testPanel" title="Test Panel" width="300" height="300" styleName="myFBPanelBgSkinStyle" >
+		
+			<!-- Panel Text -->
+			
+			<mx:TextArea id="panelText" width="100%" height="100%" backgroundAlpha="0" borderStyle="none" focusAlpha="0" paddingTop="5" paddingLeft="5" paddingRight="5" />
+			
+			<!-- Control Bar -->
+			
+			<mx:ControlBar horizontalAlign="center" horizontalGap="5" >
+				<mx:Button id="panelButton" width="138" label="Show Code View" click="toggleViewBtn()" />
+				<mx:Button id="panelBgButton" width="136" label="Solid Background" click="toggleBgBtn()" />
+			</mx:ControlBar>
+			
+		</mx:Panel>	
+			
+	</mx:HBox>
+	
+</mx:Application>
