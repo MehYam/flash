@@ -12,14 +12,14 @@
 		<s:HGroup width="100%" height="100%">
 			<s:List id="playerList"/>
 			<local:LetterGrid id="letterGrid" minWidth="100" width="100%" height="100%"/>
-			<mx:DataGrid id="wordHistory" height="100%">
+<!--			<mx:DataGrid id="wordHistory" height="100%">
 				<mx:columns>
 					<mx:DataGridColumn headerText="Player" dataField="player"/>
 					<mx:DataGridColumn headerText="Word" dataField="word"/>
 					<mx:DataGridColumn headerText="Score" dataField="score"/>
 				</mx:columns>
 			</mx:DataGrid>
-		</s:HGroup>
+-->		</s:HGroup>
 		<s:TextArea id="wordEntry" height="5%" width="100%"/>
 		<s:TextArea id="chatLog" height="40%" width="100%"/>
 	</s:VGroup>
@@ -40,7 +40,7 @@
 				
 				wordEntry.addEventListener(KeyboardEvent.KEY_DOWN, onWordEntryKeydown, false, 0, true);
 				wordEntry.addEventListener(TextOperationEvent.CHANGE, onWordEntryChange, false, 0, true);
-				wordHistory.dataProvider = _wordHistoryData;
+//				wordHistory.dataProvider = _wordHistoryData;
 				playerList.dataProvider = _playerListData;
 				
 				_protocol.handler = this;
