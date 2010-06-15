@@ -24,7 +24,9 @@ package {
 
 //			testUniquenessOfBoundMethods();
 
-			testStringErrorThing();
+//			testStringErrorThing();
+			
+			testSomeShape();
 		}
 	
 		private function testTextField():void
@@ -160,6 +162,15 @@ package {
 //			trace(obj.error);
 
 			trace(obj.hasOwnProperty("error"));
+		}
+		
+		private function testSomeShape():void
+		{
+			addChild(new SomeShape);
+
+			// test comment
+			graphics.lineStyle(0, 0xff0000);
+			graphics.drawRect(x, y, width, height);
 		}
 	}
 }
