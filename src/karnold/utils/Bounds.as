@@ -6,7 +6,12 @@ package karnold.utils
 		public var top:int;
 		public var right:int;
 		public var bottom:int;
-		
+
+		public function toString():String
+		{
+//			return "(left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom + ")";
+			return "(" + left + ", " + top + ", " + right + ", " + bottom + ")";
+		}
 		public function setBounds(rhs:Bounds):void
 		{
 			left = rhs.left;

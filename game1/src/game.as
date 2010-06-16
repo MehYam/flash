@@ -12,7 +12,7 @@ package
 
 	public final class game extends Sprite
 	{
-		static private const CELL_SIZE:uint = 100;
+		static private const CELL_SIZE:uint = 50;
 
 		private var _map:Array2D = new Array2D(100, 200);
 		private var _keyboard:Keyboard;
@@ -20,20 +20,20 @@ package
 		public function game()
 		{
 			stage.align = StageAlign.TOP_LEFT;
-			stage.scaleMode = StageScaleMode.NO_SCALE;
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
 
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
 			stage.focus = stage;
 
 			_keyboard = new Keyboard(stage);
 			
-			_player = new WorldObject(0xff0000, 20, 20);
+			_player = WorldObject.createCircle(0xff0000, 20, 20);
 			addChild(_player);
 
 			initMap(_map, 0.2);
 		}
 
-		private static const SPEED:uint = 10;
+		private static const SPEED:uint = 5;
 		private var _worldPosition:Point = new Point(0, 0);
 		private var _lastWorldPosition:Point = new Point(-1, -1);
 		private function onEnterFrame(_unused:Event):void
@@ -112,6 +112,7 @@ trace("adding", row, col);
 			// loop through the objects of the last bounds, removing them if they're offscreen
 			if (!_currentBounds.equals(_lastBounds))
 			{
+trace("bounds change", _lastBounds, "to", _currentBounds);
 				const left:uint = Math.max(0, _lastBounds.left); 
 				for (row = Math.max(0, _lastBounds.top); row < _lastBounds.bottom; ++row)
 				{
@@ -122,8 +123,8 @@ trace("adding", row, col);
 						{
 							if (removee.parent && !_currentBounds.contains(row, col))
 							{
-							removee.parent.removeChild(removee);
-	trace("removing", row, col);
+								removee.parent.removeChild(removee);
+trace("removing", row, col);
 							}
 						}
 					}
@@ -135,9 +136,10 @@ trace("adding", row, col);
 		private static function initMap(map:Array2D, densityPct:Number):void
 		{
 
-map.put(new WorldObject(0xff00ff, 20, 20), 0, 0);
-map.put(new WorldObject(0x00ff00, 20, 20), 1, 1);
-map.put(new WorldObject(0x0000ff, 20, 20), 2, 2);
+map.put(WorldObject.createSpiro(0xff00ff, CELL_SIZE, CELL_SIZE), 0, 0);
+map.put(WorldObject.createSpiro(0x00ff00, CELL_SIZE, CELL_SIZE), 1, 1);
+map.put(WorldObject.createSpiro(0x0000ff, CELL_SIZE, CELL_SIZE), 2, 2);
+map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
 return;			
 			const count:uint = densityPct * (map.rows * map.cols);
 
@@ -150,7 +152,7 @@ return;
 				{
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
-					var wo:WorldObject = new WorldObject(Math.random() * 0xffffff, 10 + (Math.random() * 10), 10 + (Math.random() * 10));
+					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, 10 + (Math.random() * 10), 10 + (Math.random() * 10));
 					map.put(wo, loc.row, loc.col);
 				} 
 			} 
