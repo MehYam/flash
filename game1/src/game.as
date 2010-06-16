@@ -92,9 +92,9 @@ package
 			// them to the stage if they're not yet there
 			var row:uint;
 			var col:uint;
-			for (row = Math.max(0, _currentBounds.top); row < _currentBounds.bottom; ++row)
+			for (row = Math.max(0, _currentBounds.top); row <= _currentBounds.bottom; ++row)
 			{
-				for (col = Math.max(0, _currentBounds.left); col < _currentBounds.right; ++col)
+				for (col = Math.max(0, _currentBounds.left); col <= _currentBounds.right; ++col)
 				{
 					var wo:WorldObject = WorldObject(_map.lookup(row, col));
 					if (wo)
@@ -114,9 +114,9 @@ trace("adding", row, col);
 			{
 trace("bounds change", _lastBounds, "to", _currentBounds);
 				const left:uint = Math.max(0, _lastBounds.left); 
-				for (row = Math.max(0, _lastBounds.top); row < _lastBounds.bottom; ++row)
+				for (row = Math.max(0, _lastBounds.top); row <= _lastBounds.bottom; ++row)
 				{
-					for (col = left; col < _lastBounds.right; ++col)
+					for (col = left; col <= _lastBounds.right; ++col)
 					{
 						var removee:WorldObject = WorldObject(_map.lookup(row, col));
 						if (removee)
