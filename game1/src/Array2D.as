@@ -3,44 +3,44 @@ package
 	//KAI: consider moving to karnold path
 	public class Array2D
 	{
-		public function Array2D(rows:uint = 0, cols:uint = 0)
+		public function Array2D(width:uint = 0, height:uint = 0)
 		{
-			setSize(rows, cols);
+			setSize(width, height);
 		}
 
 		//KAI: for the game, you could use a byte array instead, each char being a key or bitfield into some sort of data.
 		private var _array:Array = [];
-		private var _rows:uint = 0;
-		private var _cols:uint = 0;
-		public function setSize(rows:uint, cols:uint):void
+		private var _width:uint = 0;
+		private var _height:uint = 0;
+		public function setSize(width:uint, height:uint):void
 		{
-			_array.length = rows * cols;
-			_rows = rows;
-			_cols = cols;
+			_array.length = width * height;
+			_width = width;
+			_height = height;
 		}
 		
-		public function put(obj:Object, row:uint, col:uint):void
+		public function put(obj:Object, x:uint, y:uint):void
 		{
-			_array[getIndex(row, col)] = obj;
+			_array[getIndex(x, y)] = obj;
 		}
 		
-		public function lookup(row:uint, col:uint):Object
+		public function lookup(x:uint, y:uint):Object
 		{
-			return (row < _rows && col < _cols) ? _array[getIndex(row, col)] : null;
+			return (x < width && y < height) ? _array[getIndex(x, y)] : null;
 		}
 		
-		public function get rows():uint
+		public function get width():uint
 		{
-			return _rows;
+			return _width;
 		}
-		public function get cols():uint
+		public function get height():uint
 		{
-			return _cols;
+			return _height;
 		}
 
-		private function getIndex(row:uint, col:uint):uint
+		private function getIndex(x:uint, y:uint):uint
 		{
-			return row * _cols + col;
+			return y * width + x;
 		}
 	}
 }

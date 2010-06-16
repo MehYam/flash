@@ -10,7 +10,7 @@ package karnold.utils
 		public function toString():String
 		{
 //			return "(left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom + ")";
-			return "(" + left + ", " + top + ", " + right + ", " + bottom + ")";
+			return "(x " + left + "=>" + right + ", y " + top + "=>" + bottom + ")";
 		}
 		public function setBounds(rhs:Bounds):void
 		{

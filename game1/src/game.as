@@ -1,6 +1,7 @@
 package 
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -83,34 +84,34 @@ package
 			_player.y = stage.stageHeight/2;
 
 			// determine the before/after of the world scene bounds
-			const stageRows:uint = stage.stageHeight/CELL_SIZE;
-			const stageCols:uint = stage.stageWidth/CELL_SIZE;
+			const stageHorzSlots:uint = stage.stageWidth/CELL_SIZE;
+			const stageVertSlots:uint = stage.stageHeight/CELL_SIZE;
 			_currentBounds.left = _worldPosition.x/CELL_SIZE;
-			_currentBounds.right =  _currentBounds.left + stageCols;
+			_currentBounds.right =  _currentBounds.left + stageHorzSlots;
 			
 			_currentBounds.top = _worldPosition.y/CELL_SIZE;
-			_currentBounds.bottom = _currentBounds.top + stageRows;
+			_currentBounds.bottom = _currentBounds.top + stageVertSlots;
 
 			_worldPositionCellOffset.x = _worldPosition.x%CELL_SIZE;
 			_worldPositionCellOffset.y = _worldPosition.y%CELL_SIZE;
 
 			// loop through the objects in current bounds, setting their position, and adding
 			// them to the stage if they're not yet there
-			var row:uint;
-			var col:uint;
-			for (row = Math.max(0, _currentBounds.top); row <= _currentBounds.bottom; ++row)
+			var slotX:uint;
+			var slotY:uint;
+			for (slotX = Math.max(0, _currentBounds.left); slotX <= _currentBounds.right; ++slotX)
 			{
-				for (col = Math.max(0, _currentBounds.left); col <= _currentBounds.right; ++col)
+				for (slotY = Math.max(0, _currentBounds.top); slotY <= _currentBounds.bottom; ++slotY)
 				{
-					var wo:WorldObject = WorldObject(_map.lookup(row, col));
+					var wo:WorldObject = WorldObject(_map.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (col - _currentBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
-						wo.y = (row - _currentBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
+						wo.x = (slotX - _currentBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
+						wo.y = (slotY - _currentBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
 						if (!wo.parent)
 						{
 							parent.addChild(wo);
-trace("adding", row, col);							
+trace("adding", slotX, slotY);							
 						}
 					}
 				}
@@ -120,17 +121,17 @@ trace("adding", row, col);
 			{
 trace("bounds change", _lastBounds, "to", _currentBounds);
 				const left:uint = Math.max(0, _lastBounds.left); 
-				for (row = Math.max(0, _lastBounds.top); row <= _lastBounds.bottom; ++row)
+				for (slotX = left; slotX <= _lastBounds.right; ++slotX)
 				{
-					for (col = left; col <= _lastBounds.right; ++col)
+					for (slotY = Math.max(0, _lastBounds.top); slotY <= _lastBounds.bottom; ++slotY)
 					{
-						var removee:DisplayObject = DisplayObject(_map.lookup(row, col));
+						var removee:DisplayObject = DisplayObject(_map.lookup(slotX, slotY));
 						if (removee)
 						{
-							if (removee.parent && !_currentBounds.contains(col, row))
+							if (removee.parent && !_currentBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
-trace("removing", row, col);
+trace("removing", slotX, slotY);
 							}
 						}
 					}
@@ -139,46 +140,54 @@ trace("removing", row, col);
 			_lastBounds.setBounds(_currentBounds);
 		}
 
+		private static function debugcreate(map:Array2D, color:uint, x:uint, y:uint):void
+		{
+			var obj:DisplayObjectContainer = WorldObject.createSquare(color, CELL_SIZE);
+			Utils.addText(obj, "(" + x + "," + y + ")", 0xff0000).background = true;
+			map.put(obj, x, y);
+		}
 		private static function initMap(map:Array2D, densityPct:Number):void
 		{
-
 //map.put(WorldObject.createSpiro(0xff00ff, CELL_SIZE, CELL_SIZE), 0, 0);
 //map.put(WorldObject.createSpiro(0x00ff00, CELL_SIZE, CELL_SIZE), 1, 1);
 //map.put(WorldObject.createSpiro(0x0000ff, CELL_SIZE, CELL_SIZE), 2, 2);
 //map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
-//return;			
-			const count:uint = densityPct * (map.rows * map.cols);
-
-			const ROWS:uint = map.rows;
-			const COLS:uint = map.cols;
+//return;
+const colors:Array = [0xff0000, 0x00ff00, 0x0000ff];
+for (var i:uint = 0; i < 12; ++i)
+{
+	debugcreate(map, colors[i % colors.length], 3, i);
+}
+return;			
+			const XSLOTS:uint = map.width;
+			const YSLOTS:uint = map.height;
+			const count:uint = densityPct * (XSLOTS * YSLOTS);
 			for (var i:uint = 0; i < count; ++i)
 			{
-				var loc:Location = findBlank(map, Math.random() * ROWS, Math.random() * COLS);
+				var loc:Location = findBlank(map, Math.random() * XSLOTS, Math.random() * YSLOTS);
 				if (loc)
 				{
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
 					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, CELL_SIZE, CELL_SIZE);
-					Utils.addText(wo, "(" + loc.row + "," + loc.col + ")", 0xff0000).background = true;
-					map.put(wo, loc.row, loc.col);
+					textMarkIt(wo);
+					map.put(wo, loc.x, loc.y);
 				} 
 			} 
 		}
 		
-		private static function findBlank(map:Array2D, startRow:uint, startCol:uint):Location
+		private static function findBlank(map:Array2D, startX:uint, startY:uint):Location
 		{
-			const ROWS:uint = map.rows;
-			const COLS:uint = map.cols;
-			while (startCol < COLS)
+			while (startY < map.height)
 			{
-				if (!map.lookup(startRow, startCol))
+				if (!map.lookup(startX, startY))
 				{
-					return new Location(startRow, startCol);
+					return new Location(startX, startY);
 				}
-				if (++startRow >= ROWS)
+				if (++startX >= map.width)
 				{
-					startRow = 0;
-					++startCol;
+					startX = 0;
+					++startY;
 				}
 			}
 			return null;
@@ -192,15 +201,15 @@ trace("removing", row, col);
 
 final class Location
 {
-	public var row:int;
-	public var col:int;
-	public function Location(row:uint = 0, col:uint = 0)
+	public var x:int;
+	public var y:int;
+	public function Location(x:uint = 0, y:uint = 0)
 	{
-		setRowCol(row, col);
+		setPos(x, y);
 	}
-	public function setRowCol(row:uint, col:uint):void
+	public function setPos(x:uint, y:uint):void
 	{
-		this.row = row;
-		this.col = col;
+		this.x = x;
+		this.y = y;
 	}
 }
