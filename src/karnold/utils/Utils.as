@@ -94,24 +94,6 @@ package karnold.utils
 			self.parent.removeChild(self);
 		}
 		
-		static public function serializePath(path:Array):Array
-		{
-			// need to create a plain-vanilla version of the card objects for the serialization to work
-			var retval:Array = [];
-			for each (var card:GameCard in path)
-			{
-				retval.push(
-					{
-						row: card.row,
-						col: card.col,
-						suit: card.suit,
-						type: card.type,
-						burning: card.burning
-					});
-			}
-			return retval;
-		}
-		
 		static public function drawOutline(target:Sprite, color:uint = 0xff00ff):void
 		{
 			target.graphics.lineStyle(1, color);
@@ -122,17 +104,22 @@ package karnold.utils
 			parent.graphics.lineStyle(1, color);
 			parent.graphics.drawRect(child.x, child.y, child.width, child.height);
 		}
-		static public function addFooterText(parent:DisplayObjectContainer, text:String):void
+		static public function addText(parent:DisplayObjectContainer, text:String):void
 		{
-			var footer:TextField = new TextField();
-			footer.autoSize = TextFieldAutoSize.RIGHT;
-			footer.text = text;
+			var tf:TextField = new TextField();
+			tf.autoSize = TextFieldAutoSize.RIGHT;
+			tf.text = text;
 			
-			footer.x = Consts.APP_AREA.width - footer.width;
-			footer.y = Consts.APP_AREA.height - footer.height;
+			tf.x = parent.width - tf.width;
+			tf.y = parent.height - tf.height;
 			
-			parent.addChild(footer);
+			parent.addChild(tf);
 		} 
+		static public function setPoint(dest:Point, src:Point):void
+		{
+			dest.x = src.x;
+			dest.y = src.y;
+		}
 		public function Utils(hide:CONSTRUCTOR_HIDER) {}
 	}
 }

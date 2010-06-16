@@ -8,6 +8,7 @@ package
 	
 	import karnold.utils.Bounds;
 	import karnold.utils.Keyboard;
+	import karnold.utils.Utils;
 
 	public final class game extends Sprite
 	{
@@ -22,7 +23,8 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
-			
+			stage.focus = stage;
+
 			_keyboard = new Keyboard(stage);
 			
 			_player = new WorldObject(0xff0000, 20, 20);
@@ -32,7 +34,8 @@ package
 		}
 
 		private static const SPEED:uint = 10;
-		private var _worldPosition:Point = new Point;
+		private var _worldPosition:Point = new Point(0, 0);
+		private var _lastWorldPosition:Point = new Point(-1, -1);
 		private function onEnterFrame(_unused:Event):void
 		{
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
@@ -52,11 +55,15 @@ package
 			{
 				_worldPosition.y -= SPEED;
 			}
-			
-			renderScene();
+
+			if (!_lastWorldPosition.equals(_worldPosition))
+			{
+				renderMap();
+				
+				Utils.setPoint(_lastWorldPosition, _worldPosition);
+			}
 		}
 
-		private var _lastWorldPosition:Point = new Point;
 		private var _lastBounds:Bounds = new Bounds;
 
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame 
@@ -64,7 +71,7 @@ package
 		//private var _intersection:Bounds = new Bounds;
 		//private var _union:Bounds = new Bounds;
 		private var _worldPositionCellOffset:Point = new Point;
-		private function renderScene():void
+		private function renderMap():void
 		{
 			_player.x = stage.stageWidth/2;
 			_player.y = stage.stageHeight/2;
