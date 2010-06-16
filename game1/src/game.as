@@ -1,5 +1,6 @@
 package 
 {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -14,7 +15,7 @@ package
 	{
 		static private const CELL_SIZE:uint = 50;
 
-		private var _map:Array2D = new Array2D(100, 200);
+		private var _map:Array2D = new Array2D(20, 20);
 		private var _keyboard:Keyboard;
 		private var _player:WorldObject;
 		public function game()
@@ -31,6 +32,10 @@ package
 			addChild(_player);
 
 			initMap(_map, 0.2);
+			trace("stage", stage.stageWidth, stage.stageHeight);
+			
+			graphics.lineStyle(0, 0xff0000);
+			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 		}
 
 		private static const SPEED:uint = 5;
@@ -38,6 +43,7 @@ package
 		private var _lastWorldPosition:Point = new Point(-1, -1);
 		private function onEnterFrame(_unused:Event):void
 		{
+//			trace("stage", stage.stageWidth, stage.stageHeight);
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
 			{
 				_worldPosition.x += SPEED;
@@ -99,8 +105,8 @@ package
 					var wo:WorldObject = WorldObject(_map.lookup(row, col));
 					if (wo)
 					{
-						wo.x = (row - _currentBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
-						wo.y = (col - _currentBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
+						wo.x = (col - _currentBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
+						wo.y = (row - _currentBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
 						if (!wo.parent)
 						{
 							parent.addChild(wo);
@@ -118,10 +124,10 @@ trace("bounds change", _lastBounds, "to", _currentBounds);
 				{
 					for (col = left; col <= _lastBounds.right; ++col)
 					{
-						var removee:WorldObject = WorldObject(_map.lookup(row, col));
+						var removee:DisplayObject = DisplayObject(_map.lookup(row, col));
 						if (removee)
 						{
-							if (removee.parent && !_currentBounds.contains(row, col))
+							if (removee.parent && !_currentBounds.contains(col, row))
 							{
 								removee.parent.removeChild(removee);
 trace("removing", row, col);
@@ -136,11 +142,11 @@ trace("removing", row, col);
 		private static function initMap(map:Array2D, densityPct:Number):void
 		{
 
-map.put(WorldObject.createSpiro(0xff00ff, CELL_SIZE, CELL_SIZE), 0, 0);
-map.put(WorldObject.createSpiro(0x00ff00, CELL_SIZE, CELL_SIZE), 1, 1);
-map.put(WorldObject.createSpiro(0x0000ff, CELL_SIZE, CELL_SIZE), 2, 2);
-map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
-return;			
+//map.put(WorldObject.createSpiro(0xff00ff, CELL_SIZE, CELL_SIZE), 0, 0);
+//map.put(WorldObject.createSpiro(0x00ff00, CELL_SIZE, CELL_SIZE), 1, 1);
+//map.put(WorldObject.createSpiro(0x0000ff, CELL_SIZE, CELL_SIZE), 2, 2);
+//map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
+//return;			
 			const count:uint = densityPct * (map.rows * map.cols);
 
 			const ROWS:uint = map.rows;
@@ -152,7 +158,8 @@ return;
 				{
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
-					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, 10 + (Math.random() * 10), 10 + (Math.random() * 10));
+					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, CELL_SIZE, CELL_SIZE);
+					Utils.addText(wo, "(" + loc.row + "," + loc.col + ")", 0xff0000).background = true;
 					map.put(wo, loc.row, loc.col);
 				} 
 			} 

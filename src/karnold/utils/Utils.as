@@ -104,16 +104,16 @@ package karnold.utils
 			parent.graphics.lineStyle(1, color);
 			parent.graphics.drawRect(child.x, child.y, child.width, child.height);
 		}
-		static public function addText(parent:DisplayObjectContainer, text:String):void
+		static public function addText(parent:DisplayObjectContainer, text:String, color:uint = 0):TextField
 		{
 			var tf:TextField = new TextField();
 			tf.autoSize = TextFieldAutoSize.RIGHT;
 			tf.text = text;
+			tf.textColor = color;
 			
-			tf.x = parent.width - tf.width;
-			tf.y = parent.height - tf.height;
-			
+			centerChild(tf, parent);			
 			parent.addChild(tf);
+			return tf;
 		} 
 		static public function setPoint(dest:Point, src:Point):void
 		{

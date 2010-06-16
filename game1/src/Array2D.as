@@ -26,7 +26,7 @@ package
 		
 		public function lookup(row:uint, col:uint):Object
 		{
-			return _array[getIndex(row, col)];
+			return (row < _rows && col < _cols) ? _array[getIndex(row, col)] : null;
 		}
 		
 		public function get rows():uint
