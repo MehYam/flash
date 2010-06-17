@@ -22,7 +22,7 @@ package
 		private var _player:WorldObject;
 		public function game()
 		{
-			stage.align = StageAlign.TOP_LEFT;
+//			stage.align = StageAlign.TOP_LEFT;
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
 
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
@@ -106,8 +106,6 @@ package
 			_currentMapBounds.top = mapWorldTop/CELL_SIZE;
 			_currentMapBounds.bottom = (mapWorldTop + stage.stageHeight)/CELL_SIZE;
 
-//trace("currentBounds top", _currentMapBounds.top, "world y", _worldPos.y, "stageHeight", stage.stageHeight);
-
 			_cellOffset.x = mapWorldLeft%CELL_SIZE;
 			_cellOffset.y = mapWorldTop%CELL_SIZE;
 
@@ -127,7 +125,7 @@ package
 						if (!wo.parent)
 						{
 							parent.addChild(wo);
-trace("adding", slotX, slotY);							
+							trace("adding", slotX, slotY);							
 						}
 					}
 				}
@@ -135,7 +133,7 @@ trace("adding", slotX, slotY);
 			// loop through the objects of the last bounds, removing them if they're offscreen
 			if (!_currentMapBounds.equals(_lastMapBounds))
 			{
-trace("bounds change", _lastMapBounds, "to", _currentMapBounds);
+				trace("bounds change", _lastMapBounds, "to", _currentMapBounds);
 				const left:uint = Math.max(0, _lastMapBounds.left); 
 				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
 				{
@@ -147,7 +145,7 @@ trace("bounds change", _lastMapBounds, "to", _currentMapBounds);
 							if (removee.parent && !_currentMapBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
-trace("removing", slotX, slotY);
+								trace("removing", slotX, slotY);
 							}
 						}
 					}

@@ -19,6 +19,7 @@ package
 			wo.graphics.drawEllipse(0, height/4, width, height/2);
 			wo.graphics.endFill();
 			
+			drawOrigin(wo);
 			return wo;
 		}
 		
@@ -31,6 +32,7 @@ package
 			wo.graphics.drawEllipse(0, 0, width, height);
 			wo.graphics.endFill();
 			
+			drawOrigin(wo);
 			return wo;
 		}
 		
@@ -41,7 +43,17 @@ package
 			wo.graphics.lineStyle(1, color);
 			wo.graphics.drawRect(0, 0, size, size);
 			
+			drawOrigin(wo);
 			return wo;
+		}
+		
+		private static function drawOrigin(obj:Sprite):void
+		{
+			obj.graphics.lineStyle(1, 0x777777, 0.5);
+			obj.graphics.moveTo(0, 0);
+			obj.graphics.lineTo(5, 0);
+			obj.graphics.moveTo(0, 0);
+			obj.graphics.lineTo(0, 5);
 		}
 	}
 }
