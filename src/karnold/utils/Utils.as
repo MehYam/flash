@@ -120,6 +120,11 @@ package karnold.utils
 			dest.x = src.x;
 			dest.y = src.y;
 		}
+		static public function setPointXY(dest:Point, x:Number, y:Number):void
+		{
+			dest.x = x;
+			dest.y = y;
+		}
 		public function Utils(hide:CONSTRUCTOR_HIDER) {}
 	}
 }

@@ -14,6 +14,7 @@ package
 
 	public final class game extends Sprite
 	{
+		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
 		static private const CELL_SIZE:uint = 50;
 
 		private var _map:Array2D = new Array2D(20, 20);
@@ -40,33 +41,54 @@ package
 		}
 
 		private static const SPEED:uint = 7;
-		private var _worldPosition:Point = new Point(0, 0);
-		private var _lastWorldPosition:Point = new Point(-1, -1);
+		private var _worldPos:Point = new Point(CELL_SIZE / 2, CELL_SIZE / 2);
+		private var _lastWorldPos:Point = new Point(-1, -1);
+		private const _maxWorldPos:Point = new Point(CELL_SIZE*_map.width, CELL_SIZE*_map.height);
 		private function onEnterFrame(_unused:Event):void
 		{
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
 			{
-				_worldPosition.x += SPEED;
+				_worldPos.x += SPEED;
 			}
 			else if (_keyboard.keys[Keyboard.KEY_LEFT])
 			{
-				_worldPosition.x -= SPEED;
+				_worldPos.x -= SPEED;
 			}
 			
 			if (_keyboard.keys[Keyboard.KEY_DOWN])
 			{
-				_worldPosition.y += SPEED;
+				_worldPos.y += SPEED;
 			}
 			else if (_keyboard.keys[Keyboard.KEY_UP])
 			{
-				_worldPosition.y -= SPEED;
+				_worldPos.y -= SPEED;
 			}
 
-			if (!_lastWorldPosition.equals(_worldPosition))
+			// contain world position
+			if (_worldPos.x < 0)
 			{
-				renderMap();
-				
-				Utils.setPoint(_lastWorldPosition, _worldPosition);
+				_worldPos.x = 0;
+			}
+			else if (_worldPos.x > _maxWorldPos.x)
+			{
+				_worldPos.x = _maxWorldPos.x;
+			}
+			if (_worldPos.y < 0)
+			{
+				_worldPos.y = 0;
+			}
+			else if (_worldPos.y > _maxWorldPos.y)
+			{
+				_worldPos.y = _maxWorldPos.y;
+			}
+
+			if (!_lastWorldPos.equals(_worldPos))
+			{
+				_player.x = stage.stageWidth/2;
+				_player.y = stage.stageHeight/2;
+								
+				renderMap(_worldPos.x - _player.x, _worldPos.y - _player.y);
+				Utils.setPoint(_lastWorldPos, _worldPos);
 			}
 		}
 
@@ -74,23 +96,20 @@ package
 
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame 
 		private var _currentMapBounds:Bounds = new Bounds;
-		private var _worldPositionCellOffset:Point = new Point;
-		private function renderMap():void
+		private var _cellOffset:Point = new Point;
+		private function renderMap(mapWorldLeft:Number, mapWorldTop:Number):void
 		{
-			_player.x = stage.stageWidth/2;
-			_player.y = stage.stageHeight/2;
-
 			// determine the before/after of the world scene bounds
-			_currentMapBounds.left = _worldPosition.x/CELL_SIZE;
-			_currentMapBounds.right =  (_worldPosition.x + stage.stageWidth)/CELL_SIZE;
+			_currentMapBounds.left = mapWorldLeft/CELL_SIZE;
+			_currentMapBounds.right =  (mapWorldLeft + stage.stageWidth)/CELL_SIZE;
 			
-			_currentMapBounds.top = _worldPosition.y/CELL_SIZE;
-			_currentMapBounds.bottom = (_worldPosition.y + stage.stageHeight)/CELL_SIZE;
+			_currentMapBounds.top = mapWorldTop/CELL_SIZE;
+			_currentMapBounds.bottom = (mapWorldTop + stage.stageHeight)/CELL_SIZE;
 
-//trace("currentBounds top", _currentMapBounds.top, "world y", _worldPosition.y, "stageHeight", stage.stageHeight);
+//trace("currentBounds top", _currentMapBounds.top, "world y", _worldPos.y, "stageHeight", stage.stageHeight);
 
-			_worldPositionCellOffset.x = _worldPosition.x%CELL_SIZE;
-			_worldPositionCellOffset.y = _worldPosition.y%CELL_SIZE;
+			_cellOffset.x = mapWorldLeft%CELL_SIZE;
+			_cellOffset.y = mapWorldTop%CELL_SIZE;
 
 			// loop through the objects in current bounds, setting their position, and adding
 			// them to the stage if they're not yet there
@@ -103,8 +122,8 @@ package
 					var wo:WorldObject = WorldObject(_map.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (slotX - _currentMapBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
-						wo.y = (slotY - _currentMapBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
+						wo.x = (slotX - _currentMapBounds.left) * CELL_SIZE - _cellOffset.x;
+						wo.y = (slotY - _currentMapBounds.top) * CELL_SIZE - _cellOffset.y;
 						if (!wo.parent)
 						{
 							parent.addChild(wo);
@@ -150,12 +169,12 @@ trace("removing", slotX, slotY);
 //map.put(WorldObject.createSpiro(0x0000ff, CELL_SIZE, CELL_SIZE), 2, 2);
 //map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
 //return;
-const colors:Array = [0xff0000, 0x00ff00, 0x0000ff];
-for (var n:uint = 0; n < 12; ++n)
-{
-	debugcreate(map, colors[n % colors.length], 3, n);
-}
-return;			
+//const colors:Array = [0xff0000, 0x00ff00, 0x0000ff];
+//for (var n:uint = 0; n < map.height; ++n)
+//{
+//	debugcreate(map, colors[n % colors.length], 3, n);
+//}
+//return;			
 			const XSLOTS:uint = map.width;
 			const YSLOTS:uint = map.height;
 			const count:uint = densityPct * (XSLOTS * YSLOTS);
@@ -167,7 +186,7 @@ return;
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
 					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, CELL_SIZE, CELL_SIZE);
-					textMarkIt(wo);
+					Utils.addText(wo, "(" + loc.x + "," + loc.y + ")", 0xff0000).background = true;
 					map.put(wo, loc.x, loc.y);
 				} 
 			} 
