@@ -32,7 +32,7 @@ package
 			_keyboard = new Keyboard(stage);
 			
 			_player = WorldObject.createCircle(0xff0000, 20, 20);
-			addChild(_player);
+			parent.addChild(_player);
 
 			initMap(_tiles, 0.2);
 			trace("stage", stage.stageWidth, stage.stageHeight);
@@ -68,28 +68,11 @@ package
 				_playerPos.y -= SPEED;
 			}
 
-			// contain world position
-			if (_playerPos.x < _worldBounds.left)
-			{
-				_playerPos.x = _worldBounds.left;
-			}
-			else if (_playerPos.x > _worldBounds.right)
-			{
-				_playerPos.x = _worldBounds.right;
-			}
-			if (_playerPos.y < _worldBounds.top)
-			{
-				_playerPos.y = _worldBounds.top;
-			}
-			else if (_playerPos.y > _worldBounds.bottom)
-			{
-				_playerPos.y = _worldBounds.bottom;
-			}
+			_worldBounds.constrainPoint(_playerPos, _player.width, _player.height);
 
 			if (!_lastPlayerPos.equals(_playerPos))
 			{
 				Utils.setPoint(_lastPlayerPos, _playerPos);
-
 				positionPlayerAndCamera();
 				if (!_cameraPos.equals(_lastCameraPos))
 				{
@@ -108,7 +91,7 @@ package
 			_cameraPos.y = _playerPos.y - stageMiddleVert;
 			
 			_player.x = stageMiddleHorz;
-			_player.y = stageMiddleHorz;
+			_player.y = stageMiddleVert;
 			if (_cameraPos.x < _worldBounds.left)
 			{
 				_player.x -= (_worldBounds.left - _cameraPos.x);
@@ -130,7 +113,7 @@ package
 			}
 			else
 			{
-				const cameraBottomBound:Number = _worldBounds.bottom - stage.stageWidth;
+				const cameraBottomBound:Number = _worldBounds.bottom - stage.stageHeight;
 				if (_cameraPos.y > cameraBottomBound)
 				{
 					_player.y += _cameraPos.y - cameraBottomBound;
@@ -171,7 +154,7 @@ package
 						wo.y = (slotY - po_currentMapBounds.top) * CELL_SIZE - po_cellOffset.y;
 						if (!wo.parent)
 						{
-							parent.addChild(wo);
+							addChild(wo);
 							trace("adding", slotX, slotY);							
 						}
 					}
