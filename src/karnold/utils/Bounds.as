@@ -1,5 +1,7 @@
 package karnold.utils
 {
+	import flash.geom.Point;
+
 	public class Bounds
 	{
 		public var left:int;
@@ -7,6 +9,13 @@ package karnold.utils
 		public var right:int;
 		public var bottom:int;
 
+		public function Bounds(left:int = 0, top:int = 0, right:int = 0, bottom:int = 0)
+		{
+			this.left = left;
+			this.top = top;
+			this.right = right;
+			this.bottom = bottom;
+		}
 		public function toString():String
 		{
 //			return "(left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom + ")";
@@ -44,6 +53,10 @@ package karnold.utils
 			bottom = Math.max(a.bottom, b.bottom);
 			left = Math.min(a.left, b.left);
 			right = Math.max(a.right, b.right);
+		}
+		public function get middle():Point
+		{
+			return new Point((right - left) / 2, (bottom - top) / 2);
 		}
 	}
 }

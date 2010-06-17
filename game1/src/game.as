@@ -7,6 +7,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	
 	import karnold.utils.Bounds;
 	import karnold.utils.Keyboard;
@@ -17,7 +18,7 @@ package
 		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
 		static private const CELL_SIZE:uint = 50;
 
-		private var _map:Array2D = new Array2D(24, 24);
+		private var _tiles:Array2D = new Array2D(18, 20);
 		private var _keyboard:Keyboard;
 		private var _player:WorldObject;
 		public function game()
@@ -33,7 +34,7 @@ package
 			_player = WorldObject.createCircle(0xff0000, 20, 20);
 			addChild(_player);
 
-			initMap(_map, 0.2);
+			initMap(_tiles, 0.2);
 			trace("stage", stage.stageWidth, stage.stageHeight);
 			
 			graphics.lineStyle(0, 0xff0000);
@@ -41,87 +42,133 @@ package
 		}
 
 		private static const SPEED:uint = 7;
-		private const _maxWorldPos:Point = new Point(CELL_SIZE*_map.width, CELL_SIZE*_map.height);
-		private var _worldPos:Point = new Point(_maxWorldPos.x / 2, _maxWorldPos.y / 2);
-		private var _lastWorldPos:Point = new Point(-1, -1);
+		private const _worldBounds:Bounds = new Bounds(0, 0, CELL_SIZE*_tiles.width, CELL_SIZE*_tiles.height);
+
+		private var _playerPos:Point = _worldBounds.middle;
+		private var _lastPlayerPos:Point = new Point;
+		private var _cameraPos:Point = new Point;
+		private var _lastCameraPos:Point = new Point;
 		private function onEnterFrame(_unused:Event):void
 		{
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
 			{
-				_worldPos.x += SPEED;
+				_playerPos.x += SPEED;
 			}
 			else if (_keyboard.keys[Keyboard.KEY_LEFT])
 			{
-				_worldPos.x -= SPEED;
+				_playerPos.x -= SPEED;
 			}
 			
 			if (_keyboard.keys[Keyboard.KEY_DOWN])
 			{
-				_worldPos.y += SPEED;
+				_playerPos.y += SPEED;
 			}
 			else if (_keyboard.keys[Keyboard.KEY_UP])
 			{
-				_worldPos.y -= SPEED;
+				_playerPos.y -= SPEED;
 			}
 
 			// contain world position
-			if (_worldPos.x < 0)
+			if (_playerPos.x < _worldBounds.left)
 			{
-				_worldPos.x = 0;
+				_playerPos.x = _worldBounds.left;
 			}
-			else if (_worldPos.x > _maxWorldPos.x)
+			else if (_playerPos.x > _worldBounds.right)
 			{
-				_worldPos.x = _maxWorldPos.x;
+				_playerPos.x = _worldBounds.right;
 			}
-			if (_worldPos.y < 0)
+			if (_playerPos.y < _worldBounds.top)
 			{
-				_worldPos.y = 0;
+				_playerPos.y = _worldBounds.top;
 			}
-			else if (_worldPos.y > _maxWorldPos.y)
+			else if (_playerPos.y > _worldBounds.bottom)
 			{
-				_worldPos.y = _maxWorldPos.y;
+				_playerPos.y = _worldBounds.bottom;
 			}
 
-			if (!_lastWorldPos.equals(_worldPos))
+			if (!_lastPlayerPos.equals(_playerPos))
 			{
-				_player.x = stage.stageWidth/2;
-				_player.y = stage.stageHeight/2;
-								
-				renderMap(_worldPos.x - _player.x, _worldPos.y - _player.y);
-				Utils.setPoint(_lastWorldPos, _worldPos);
+				Utils.setPoint(_lastPlayerPos, _playerPos);
+
+				positionPlayerAndCamera();
+				if (!_cameraPos.equals(_lastCameraPos))
+				{
+					Utils.setPoint(_lastCameraPos, _cameraPos);
+					renderMap(_cameraPos);
+				}
 			}
 		}
 
-		private var _lastMapBounds:Bounds = new Bounds;
+		private function positionPlayerAndCamera():void
+		{
+			const stageMiddleHorz:Number = stage.stageWidth/2;
+			const stageMiddleVert:Number = stage.stageHeight/2;
+			
+			_cameraPos.x = _playerPos.x - stageMiddleHorz;
+			_cameraPos.y = _playerPos.y - stageMiddleVert;
+			
+			_player.x = stageMiddleHorz;
+			_player.y = stageMiddleHorz;
+			if (_cameraPos.x < _worldBounds.left)
+			{
+				_player.x -= (_worldBounds.left - _cameraPos.x);
+				_cameraPos.x = _worldBounds.left;
+			}
+			else 
+			{
+				const cameraRightBound:Number = _worldBounds.right - stage.stageWidth; 
+				if (_cameraPos.x > cameraRightBound)
+				{
+					_player.x += _cameraPos.x - cameraRightBound;
+					_cameraPos.x = cameraRightBound;
+				}
+			}
+			if (_cameraPos.y < _worldBounds.top)
+			{
+				_player.y -= (_worldBounds.top - _cameraPos.y);
+				_cameraPos.y = _worldBounds.top; 
+			}
+			else
+			{
+				const cameraBottomBound:Number = _worldBounds.bottom - stage.stageWidth;
+				if (_cameraPos.y > cameraBottomBound)
+				{
+					_player.y += _cameraPos.y - cameraBottomBound;
+					_cameraPos.y = cameraBottomBound;
+				}
+			}
+		}
 
-		// [kja] premature optimization - these are kept around to avoid allocating them every frame 
-		private var _currentMapBounds:Bounds = new Bounds;
-		private var _cellOffset:Point = new Point;
-		private function renderMap(mapWorldLeft:Number, mapWorldTop:Number):void
+		// [kja] premature optimization - these are kept around to avoid allocating them every frame
+		// all premature optimization is marked as po_
+		private var po_currentMapBounds:Bounds = new Bounds;
+		private var po_cellOffset:Point = new Point;
+		private var _lastMapBounds:Bounds = new Bounds;
+		private function renderMap(cameraPos:Point):void
 		{
 			// determine the before/after of the world scene bounds
-			_currentMapBounds.left = mapWorldLeft/CELL_SIZE;
-			_currentMapBounds.right =  (mapWorldLeft + stage.stageWidth)/CELL_SIZE;
+			po_currentMapBounds.left = cameraPos.x/CELL_SIZE;
+			po_currentMapBounds.right = (cameraPos.x + stage.stageWidth)/CELL_SIZE;
 			
-			_currentMapBounds.top = mapWorldTop/CELL_SIZE;
-			_currentMapBounds.bottom = (mapWorldTop + stage.stageHeight)/CELL_SIZE;
+			po_currentMapBounds.top = cameraPos.y/CELL_SIZE;
+			po_currentMapBounds.bottom = (cameraPos.y + stage.stageHeight)/CELL_SIZE;
 
-			_cellOffset.x = mapWorldLeft%CELL_SIZE;
-			_cellOffset.y = mapWorldTop%CELL_SIZE;
+			po_cellOffset.x = cameraPos.x%CELL_SIZE;
+			po_cellOffset.y = cameraPos.y%CELL_SIZE;
 
 			// loop through the objects in current bounds, setting their position, and adding
 			// them to the stage if they're not yet there
 			var slotX:uint;
 			var slotY:uint;
-			for (slotX = Math.max(0, _currentMapBounds.left); slotX <= _currentMapBounds.right; ++slotX)
+			for (slotX = Math.max(0, po_currentMapBounds.left); slotX <= po_currentMapBounds.right; ++slotX)
 			{
-				for (slotY = Math.max(0, _currentMapBounds.top); slotY <= _currentMapBounds.bottom; ++slotY)
+				for (slotY = Math.max(0, po_currentMapBounds.top); slotY <= po_currentMapBounds.bottom; ++slotY)
 				{
-					var wo:WorldObject = WorldObject(_map.lookup(slotX, slotY));
+					var wo:WorldObject = WorldObject(_tiles.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (slotX - _currentMapBounds.left) * CELL_SIZE - _cellOffset.x;
-						wo.y = (slotY - _currentMapBounds.top) * CELL_SIZE - _cellOffset.y;
+						wo.x = (slotX - po_currentMapBounds.left) * CELL_SIZE - po_cellOffset.x;
+						wo.y = (slotY - po_currentMapBounds.top) * CELL_SIZE - po_cellOffset.y;
 						if (!wo.parent)
 						{
 							parent.addChild(wo);
@@ -131,18 +178,18 @@ package
 				}
 			} 
 			// loop through the objects of the last bounds, removing them if they're offscreen
-			if (!_currentMapBounds.equals(_lastMapBounds))
+			if (!po_currentMapBounds.equals(_lastMapBounds))
 			{
-				trace("bounds change", _lastMapBounds, "to", _currentMapBounds);
+				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
 				const left:uint = Math.max(0, _lastMapBounds.left); 
 				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
 				{
 					for (slotY = Math.max(0, _lastMapBounds.top); slotY <= _lastMapBounds.bottom; ++slotY)
 					{
-						var removee:DisplayObject = DisplayObject(_map.lookup(slotX, slotY));
+						var removee:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
 						if (removee)
 						{
-							if (removee.parent && !_currentMapBounds.contains(slotX, slotY))
+							if (removee.parent && !po_currentMapBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
 								trace("removing", slotX, slotY);
@@ -151,7 +198,7 @@ package
 					}
 				} 
 			}
-			_lastMapBounds.setBounds(_currentMapBounds);
+			_lastMapBounds.setBounds(po_currentMapBounds);
 		}
 
 		private static function debugcreate(map:Array2D, color:uint, x:uint, y:uint):void
