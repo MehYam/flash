@@ -17,7 +17,7 @@ package
 		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
 		static private const CELL_SIZE:uint = 50;
 
-		private var _map:Array2D = new Array2D(20, 20);
+		private var _map:Array2D = new Array2D(24, 24);
 		private var _keyboard:Keyboard;
 		private var _player:WorldObject;
 		public function game()
@@ -41,9 +41,9 @@ package
 		}
 
 		private static const SPEED:uint = 7;
-		private var _worldPos:Point = new Point(CELL_SIZE / 2, CELL_SIZE / 2);
-		private var _lastWorldPos:Point = new Point(-1, -1);
 		private const _maxWorldPos:Point = new Point(CELL_SIZE*_map.width, CELL_SIZE*_map.height);
+		private var _worldPos:Point = new Point(_maxWorldPos.x / 2, _maxWorldPos.y / 2);
+		private var _lastWorldPos:Point = new Point(-1, -1);
 		private function onEnterFrame(_unused:Event):void
 		{
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
