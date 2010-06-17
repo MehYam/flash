@@ -10,7 +10,8 @@ package
 	import flash.geom.Rectangle;
 	
 	import karnold.utils.Bounds;
-	import karnold.utils.Keyboard;
+	import karnold.utils.Input;
+	import karnold.utils.Physics;
 	import karnold.utils.Utils;
 
 	public final class game extends Sprite
@@ -18,8 +19,8 @@ package
 		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
 		static private const CELL_SIZE:uint = 50;
 
-		private var _tiles:Array2D = new Array2D(18, 20);
-		private var _keyboard:Keyboard;
+		private var _tiles:Array2D = new Array2D(15, 10);
+		private var _input:Input;
 		private var _player:WorldObject;
 		public function game()
 		{
@@ -29,7 +30,7 @@ package
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
 			stage.focus = stage;
 
-			_keyboard = new Keyboard(stage);
+			_input = new Input(stage);
 			
 			_player = WorldObject.createCircle(0xff0000, 20, 20);
 			parent.addChild(_player);
@@ -48,17 +49,19 @@ package
 
 		private const _worldBounds:Bounds = new Bounds(0, 0, CELL_SIZE*_tiles.width, CELL_SIZE*_tiles.height);
 
+		private var _actors:Array = [];
+
 		private var _playerPos:Point = _worldBounds.middle;
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
 		private function onEnterFrame(_unused:Event):void
 		{
-			if (_keyboard.keys[Keyboard.KEY_RIGHT])
+			if (_input.keys[Input.KEY_RIGHT])
 			{
 				_speed.x = Math.min(MAX_SPEED, _speed.x + ACCELERATION);
 			}
-			else if (_keyboard.keys[Keyboard.KEY_LEFT])
+			else if (_input.keys[Input.KEY_LEFT])
 			{
 				_speed.x = Math.max(-MAX_SPEED, _speed.x - ACCELERATION);
 			}
@@ -67,11 +70,11 @@ package
 				_speed.x = Physics.speedDecay(_speed.x, SPEED_DECAY);
 			}
 			
-			if (_keyboard.keys[Keyboard.KEY_DOWN])
+			if (_input.keys[Input.KEY_DOWN])
 			{
 				_speed.y = Math.min(MAX_SPEED, _speed.y + ACCELERATION);
 			}
-			else if (_keyboard.keys[Keyboard.KEY_UP])
+			else if (_input.keys[Input.KEY_UP])
 			{
 				_speed.y = Math.max(-MAX_SPEED, _speed.y - ACCELERATION);
 			}
@@ -83,7 +86,29 @@ package
 			_playerPos.offset(_speed.x, _speed.y);
 
 			Physics.constrain(_worldBounds, _playerPos, _player.width, _player.height, _speed);
+//TEST CODE
+			if (_input.keys[Input.MOUSE_BUTTON] || _input.keys[Input.KEY_SPACE])
+			{
+				var actor:Actor = new Actor(WorldObject.createCircle(0xff7777, 5, 5));
+				actor.speed = _speed.clone();
+				actor.worldPos = _playerPos.clone();
+				_actors.push(actor);
+				
+				addChild(actor.displayObject);
+			}
 
+			for each (var a:Actor in _actors)
+			{
+				a.worldPos.offset(a.speed.x, a.speed.y);
+				Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
+				a.speed.x = Physics.speedDecay(a.speed.x, 0.01);
+				a.speed.y = Physics.speedDecay(a.speed.y, 0.01);
+
+				a.displayObject.x = a.worldPos.x - _cameraPos.x;
+				a.displayObject.y = a.worldPos.y - _cameraPos.y;
+			}
+//TEST CODE END
+			
 			if (!_lastPlayerPos.equals(_playerPos))
 			{
 				Utils.setPoint(_lastPlayerPos, _playerPos);
@@ -134,6 +159,8 @@ package
 					_cameraPos.y = cameraBottomBound;
 				}
 			}
+			
+			_player.rotation = 45 + Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
 		}
 
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame
@@ -252,13 +279,8 @@ package
 		}
 	}
 }
-
-	import flash.display.DisplayObject;
-	import flash.events.KeyboardEvent;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	
-	import karnold.utils.Bounds;
+import flash.display.DisplayObject;
+import flash.geom.Point;
 
 final class Location
 {
@@ -275,44 +297,13 @@ final class Location
 	}
 }
 
-final class Physics
+final class Actor
 {
-	static private const SPEED_ALPHA:Number = 0.3;
-	static public function speedDecay(speed:Number, decay:Number):Number
+	public var displayObject:DisplayObject;
+	public var speed:Point = new Point();
+	public var worldPos:Point = new Point();
+	public function Actor(dobj:DisplayObject)
 	{
-		var retval:Number = speed * (1-decay);
-		return (Math.abs(retval) < SPEED_ALPHA) ? 0 : retval;
-	}
-	static public function constrain(bounds:Bounds, point:Point, width:Number, height:Number, speedForBounce:Point = null):void
-	{
-		// contain world position
-		if (point.x < bounds.left)
-		{
-			point.x = bounds.left;
-			speedForBounce.x = -speedForBounce.x;
-		}
-		else
-		{
-			const maxHorz:Number = bounds.right - width;
-			if (point.x > maxHorz)
-			{
-				point.x = maxHorz;
-				speedForBounce.x = -speedForBounce.x;
-			}
-		}
-		if (point.y < bounds.top)
-		{
-			point.y = bounds.top;
-			speedForBounce.y = -speedForBounce.y;
-		}
-		else 
-		{
-			const maxVert:Number = bounds.bottom - height;
-			if (point.y > maxVert)
-			{
-				point.y = maxVert;
-				speedForBounce.y = -speedForBounce.y;
-			}
-		}
+		displayObject = dobj;
 	}
 }
