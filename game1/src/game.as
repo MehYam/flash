@@ -41,7 +41,11 @@ package
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 		}
 
-		private static const SPEED:uint = 7;
+		private static const ACCELERATION:Number = 1;
+		private static const MAX_SPEED:Number = 10;
+		private static const SPEED_DECAY:Number = 0.1;  // percentage
+		private var _speed:Point = new Point(0, 0);
+
 		private const _worldBounds:Bounds = new Bounds(0, 0, CELL_SIZE*_tiles.width, CELL_SIZE*_tiles.height);
 
 		private var _playerPos:Point = _worldBounds.middle;
@@ -52,23 +56,33 @@ package
 		{
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
 			{
-				_playerPos.x += SPEED;
+				_speed.x = Math.min(MAX_SPEED, _speed.x + ACCELERATION);
 			}
 			else if (_keyboard.keys[Keyboard.KEY_LEFT])
 			{
-				_playerPos.x -= SPEED;
+				_speed.x = Math.max(-MAX_SPEED, _speed.x - ACCELERATION);
+			}
+			else if (_speed.x)
+			{
+				_speed.x = Physics.speedDecay(_speed.x, SPEED_DECAY);
 			}
 			
 			if (_keyboard.keys[Keyboard.KEY_DOWN])
 			{
-				_playerPos.y += SPEED;
+				_speed.y = Math.min(MAX_SPEED, _speed.y + ACCELERATION);
 			}
 			else if (_keyboard.keys[Keyboard.KEY_UP])
 			{
-				_playerPos.y -= SPEED;
+				_speed.y = Math.max(-MAX_SPEED, _speed.y - ACCELERATION);
+			}
+			else if (_speed.y)
+			{
+				_speed.y = Physics.speedDecay(_speed.y, SPEED_DECAY);
 			}
 
-			_worldBounds.constrainPoint(_playerPos, _player.width, _player.height);
+			_playerPos.offset(_speed.x, _speed.y);
+
+			Physics.constrain(_worldBounds, _playerPos, _player.width, _player.height, _speed);
 
 			if (!_lastPlayerPos.equals(_playerPos))
 			{
@@ -241,7 +255,10 @@ package
 
 	import flash.display.DisplayObject;
 	import flash.events.KeyboardEvent;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import karnold.utils.Bounds;
 
 final class Location
 {
@@ -255,5 +272,47 @@ final class Location
 	{
 		this.x = x;
 		this.y = y;
+	}
+}
+
+final class Physics
+{
+	static private const SPEED_ALPHA:Number = 0.3;
+	static public function speedDecay(speed:Number, decay:Number):Number
+	{
+		var retval:Number = speed * (1-decay);
+		return (Math.abs(retval) < SPEED_ALPHA) ? 0 : retval;
+	}
+	static public function constrain(bounds:Bounds, point:Point, width:Number, height:Number, speedForBounce:Point = null):void
+	{
+		// contain world position
+		if (point.x < bounds.left)
+		{
+			point.x = bounds.left;
+			speedForBounce.x = -speedForBounce.x;
+		}
+		else
+		{
+			const maxHorz:Number = bounds.right - width;
+			if (point.x > maxHorz)
+			{
+				point.x = maxHorz;
+				speedForBounce.x = -speedForBounce.x;
+			}
+		}
+		if (point.y < bounds.top)
+		{
+			point.y = bounds.top;
+			speedForBounce.y = -speedForBounce.y;
+		}
+		else 
+		{
+			const maxVert:Number = bounds.bottom - height;
+			if (point.y > maxVert)
+			{
+				point.y = maxVert;
+				speedForBounce.y = -speedForBounce.y;
+			}
+		}
 	}
 }

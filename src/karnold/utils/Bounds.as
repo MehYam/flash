@@ -59,33 +59,5 @@ package karnold.utils
 		{
 			return new Point((right - left) / 2, (bottom - top) / 2);
 		}
-		public function constrainPoint(point:Point, width:Number, height:Number):void
-		{
-			// contain world position
-			if (point.x < left)
-			{
-				point.x = left;
-			}
-			else
-			{
-				const maxHorz:Number = right - width;
-				if (point.x > maxHorz)
-				{
-					point.x = maxHorz;
-				}
-			}
-			if (point.y < top)
-			{
-				point.y = top;
-			}
-			else 
-			{
-				const maxVert:Number = bottom - height;
-				if (point.y > maxVert)
-				{
-					point.y = maxVert;
-				}
-			}
-		}
 	}
 }
