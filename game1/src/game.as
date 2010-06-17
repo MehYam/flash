@@ -39,12 +39,11 @@ package
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 		}
 
-		private static const SPEED:uint = 5;
+		private static const SPEED:uint = 7;
 		private var _worldPosition:Point = new Point(0, 0);
 		private var _lastWorldPosition:Point = new Point(-1, -1);
 		private function onEnterFrame(_unused:Event):void
 		{
-//			trace("stage", stage.stageWidth, stage.stageHeight);
 			if (_keyboard.keys[Keyboard.KEY_RIGHT])
 			{
 				_worldPosition.x += SPEED;
@@ -71,12 +70,10 @@ package
 			}
 		}
 
-		private var _lastBounds:Bounds = new Bounds;
+		private var _lastMapBounds:Bounds = new Bounds;
 
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame 
-		private var _currentBounds:Bounds = new Bounds;
-		//private var _intersection:Bounds = new Bounds;
-		//private var _union:Bounds = new Bounds;
+		private var _currentMapBounds:Bounds = new Bounds;
 		private var _worldPositionCellOffset:Point = new Point;
 		private function renderMap():void
 		{
@@ -84,13 +81,13 @@ package
 			_player.y = stage.stageHeight/2;
 
 			// determine the before/after of the world scene bounds
-			const stageHorzSlots:uint = stage.stageWidth/CELL_SIZE;
-			const stageVertSlots:uint = stage.stageHeight/CELL_SIZE;
-			_currentBounds.left = _worldPosition.x/CELL_SIZE;
-			_currentBounds.right =  _currentBounds.left + stageHorzSlots;
+			_currentMapBounds.left = _worldPosition.x/CELL_SIZE;
+			_currentMapBounds.right =  (_worldPosition.x + stage.stageWidth)/CELL_SIZE;
 			
-			_currentBounds.top = _worldPosition.y/CELL_SIZE;
-			_currentBounds.bottom = _currentBounds.top + stageVertSlots;
+			_currentMapBounds.top = _worldPosition.y/CELL_SIZE;
+			_currentMapBounds.bottom = (_worldPosition.y + stage.stageHeight)/CELL_SIZE;
+
+//trace("currentBounds top", _currentMapBounds.top, "world y", _worldPosition.y, "stageHeight", stage.stageHeight);
 
 			_worldPositionCellOffset.x = _worldPosition.x%CELL_SIZE;
 			_worldPositionCellOffset.y = _worldPosition.y%CELL_SIZE;
@@ -99,15 +96,15 @@ package
 			// them to the stage if they're not yet there
 			var slotX:uint;
 			var slotY:uint;
-			for (slotX = Math.max(0, _currentBounds.left); slotX <= _currentBounds.right; ++slotX)
+			for (slotX = Math.max(0, _currentMapBounds.left); slotX <= _currentMapBounds.right; ++slotX)
 			{
-				for (slotY = Math.max(0, _currentBounds.top); slotY <= _currentBounds.bottom; ++slotY)
+				for (slotY = Math.max(0, _currentMapBounds.top); slotY <= _currentMapBounds.bottom; ++slotY)
 				{
 					var wo:WorldObject = WorldObject(_map.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (slotX - _currentBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
-						wo.y = (slotY - _currentBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
+						wo.x = (slotX - _currentMapBounds.left) * CELL_SIZE - _worldPositionCellOffset.x;
+						wo.y = (slotY - _currentMapBounds.top) * CELL_SIZE - _worldPositionCellOffset.y;
 						if (!wo.parent)
 						{
 							parent.addChild(wo);
@@ -117,18 +114,18 @@ trace("adding", slotX, slotY);
 				}
 			} 
 			// loop through the objects of the last bounds, removing them if they're offscreen
-			if (!_currentBounds.equals(_lastBounds))
+			if (!_currentMapBounds.equals(_lastMapBounds))
 			{
-trace("bounds change", _lastBounds, "to", _currentBounds);
-				const left:uint = Math.max(0, _lastBounds.left); 
-				for (slotX = left; slotX <= _lastBounds.right; ++slotX)
+trace("bounds change", _lastMapBounds, "to", _currentMapBounds);
+				const left:uint = Math.max(0, _lastMapBounds.left); 
+				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
 				{
-					for (slotY = Math.max(0, _lastBounds.top); slotY <= _lastBounds.bottom; ++slotY)
+					for (slotY = Math.max(0, _lastMapBounds.top); slotY <= _lastMapBounds.bottom; ++slotY)
 					{
 						var removee:DisplayObject = DisplayObject(_map.lookup(slotX, slotY));
 						if (removee)
 						{
-							if (removee.parent && !_currentBounds.contains(slotX, slotY))
+							if (removee.parent && !_currentMapBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
 trace("removing", slotX, slotY);
@@ -137,7 +134,7 @@ trace("removing", slotX, slotY);
 					}
 				} 
 			}
-			_lastBounds.setBounds(_currentBounds);
+			_lastMapBounds.setBounds(_currentMapBounds);
 		}
 
 		private static function debugcreate(map:Array2D, color:uint, x:uint, y:uint):void
@@ -154,9 +151,9 @@ trace("removing", slotX, slotY);
 //map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
 //return;
 const colors:Array = [0xff0000, 0x00ff00, 0x0000ff];
-for (var i:uint = 0; i < 12; ++i)
+for (var n:uint = 0; n < 12; ++n)
 {
-	debugcreate(map, colors[i % colors.length], 3, i);
+	debugcreate(map, colors[n % colors.length], 3, n);
 }
 return;			
 			const XSLOTS:uint = map.width;
