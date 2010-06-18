@@ -48,6 +48,9 @@ package
 			
 			graphics.lineStyle(0, 0xff0000);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			
+			mouseChildren = false;
+			mouseEnabled = false;
 		}
 
 		private static const ACCELERATION:Number = 1;
@@ -197,7 +200,7 @@ package
 			{
 				for (slotY = Math.max(0, po_currentMapBounds.top); slotY <= po_currentMapBounds.bottom; ++slotY)
 				{
-					var wo:WorldObject = WorldObject(_tiles.lookup(slotX, slotY));
+					var wo:DisplayObject = WorldObject(_tiles.lookup(slotX, slotY));
 					if (wo)
 					{
 						wo.x = (slotX - po_currentMapBounds.left) * CELL_SIZE - po_cellOffset.x;
