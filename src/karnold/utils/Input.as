@@ -39,26 +39,32 @@ package karnold.utils
 			_keyMappings[char.toLowerCase().charCodeAt(0)] = key;
 			_keyMappings[char.toUpperCase().charCodeAt(0)] = key;
 		}
+		private function setKey(code:uint, val:Boolean):void
+		{
+			if (val)
+			{
+				if (!_keyState[code])
+				{
+					_keyHistory[code] = true;
+				}
+			}
+			_keyState[code] = val;				
+		}
 		private function onKeyDown(e:KeyboardEvent):void
 		{
-			const key:uint = _keyMappings[e.keyCode] || e.keyCode; 
-			if (!_keyState[key])
-			{
-				_keyState[key] = true;				
-				_keyHistory[key] = true;
-			}
+			setKey(_keyMappings[e.keyCode] || e.keyCode, true); 
 		}
 		private function onKeyUp(e:KeyboardEvent):void
 		{
-			_keyState[_keyMappings[e.keyCode] || e.keyCode] = false;
+			setKey(_keyMappings[e.keyCode] || e.keyCode, false);
 		}
 		private function onMouseDown(e:Event):void
 		{
-			_keyState[MOUSE_BUTTON] = true;
+			setKey(MOUSE_BUTTON, true);
 		}
 		private function onMouseUp(e:Event):void
 		{
-			_keyState[MOUSE_BUTTON] = false;
+			setKey(MOUSE_BUTTON, false);
 		}
 		
 		public function isKeyDown(key:uint):Boolean
