@@ -37,8 +37,6 @@ package
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 40;
 			stage.focus = stage;
-			stage.mouseChildren = false;
-			
 
 			_input = new Input(stage);
 			
@@ -179,15 +177,8 @@ package
 		private var po_currentMapBounds:Bounds = new Bounds;
 		private var po_cellOffset:Point = new Point;
 		private var _lastMapBounds:Bounds = new Bounds;
-private var _mapShim:Sprite = new Sprite;
 		private function renderMap(cameraPos:Point):void
 		{
-if (!_mapShim.parent)
-{
-	addChild(_mapShim);
-}
-_mapShim.x = -cameraPos.x;
-_mapShim.y = -cameraPos.y;
 			// determine the before/after of the world scene bounds
 			po_currentMapBounds.left = cameraPos.x/CELL_SIZE;
 			po_currentMapBounds.right = (cameraPos.x + stage.stageWidth)/CELL_SIZE;
@@ -209,13 +200,11 @@ _mapShim.y = -cameraPos.y;
 					var wo:WorldObject = WorldObject(_tiles.lookup(slotX, slotY));
 					if (wo)
 					{
-//						wo.x = (slotX - po_currentMapBounds.left) * CELL_SIZE - po_cellOffset.x;
-//						wo.y = (slotY - po_currentMapBounds.top) * CELL_SIZE - po_cellOffset.y;
+						wo.x = (slotX - po_currentMapBounds.left) * CELL_SIZE - po_cellOffset.x;
+						wo.y = (slotY - po_currentMapBounds.top) * CELL_SIZE - po_cellOffset.y;
 						if (!wo.parent)
 						{
-							wo.x = slotX * CELL_SIZE;
-							wo.y = slotY * CELL_SIZE;
-							_mapShim.addChild(wo);
+							addChild(wo);
 //							trace("adding", slotX, slotY);							
 						}
 					}
@@ -235,7 +224,7 @@ _mapShim.y = -cameraPos.y;
 						{
 							if (removee.parent && !po_currentMapBounds.contains(slotX, slotY))
 							{
-//								removee.parent.removeChild(removee);
+								removee.parent.removeChild(removee);
 //								trace("removing", slotX, slotY);
 							}
 						}

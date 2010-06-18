@@ -7,8 +7,6 @@ package
 		public function WorldObject()
 		{
 			super();
-			
-			mouseEnabled = false;
 		}
 
 		public static function createSpiro(color:uint, width:Number, height:Number):WorldObject
