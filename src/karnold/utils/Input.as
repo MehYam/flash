@@ -8,16 +8,18 @@ package karnold.utils
 
 	public class Input
 	{
-		public static const KEY_LEFT:uint = 37;
-		public static const KEY_RIGHT:uint = 39;
-		public static const KEY_UP:uint = 38;
-		public static const KEY_DOWN:uint = 40;
 		public static const KEY_SPACE:uint = 32;
+		public static const KEY_LEFT:uint = 37;
+		public static const KEY_UP:uint = 38;
+		public static const KEY_RIGHT:uint = 39;
+		public static const KEY_DOWN:uint = 40;
+		public static const KEY_TILDE:uint = 192;
 		
 		public static const MOUSE_BUTTON:uint = 666;
 		
-		public var keys:Array = [];
-		private var keyMappings:Dictionary = new Dictionary;
+		private var _keyState:Array = [];
+		private var _keyHistory:Array = [];
+		private var _keyMappings:Dictionary = new Dictionary;
 
 		public function Input(source:DisplayObject)
 		{
@@ -34,24 +36,42 @@ package karnold.utils
 		}
 		private function addMapping(char:String, key:uint):void
 		{
-			keyMappings[char.toLowerCase().charCodeAt(0)] = key;
-			keyMappings[char.toUpperCase().charCodeAt(0)] = key;
+			_keyMappings[char.toLowerCase().charCodeAt(0)] = key;
+			_keyMappings[char.toUpperCase().charCodeAt(0)] = key;
 		}
 		private function onKeyDown(e:KeyboardEvent):void
 		{
-			keys[keyMappings[e.keyCode] || e.keyCode] = true;
+			const key:uint = _keyMappings[e.keyCode] || e.keyCode; 
+			if (!_keyState[key])
+			{
+				_keyState[key] = true;				
+				_keyHistory[key] = true;
+			}
 		}
 		private function onKeyUp(e:KeyboardEvent):void
 		{
-			keys[keyMappings[e.keyCode] || e.keyCode] = false;
+			_keyState[_keyMappings[e.keyCode] || e.keyCode] = false;
 		}
 		private function onMouseDown(e:Event):void
 		{
-			keys[MOUSE_BUTTON] = true;
+			_keyState[MOUSE_BUTTON] = true;
 		}
 		private function onMouseUp(e:Event):void
 		{
-			keys[MOUSE_BUTTON] = false;
+			_keyState[MOUSE_BUTTON] = false;
+		}
+		
+		public function isKeyDown(key:uint):Boolean
+		{
+			return _keyState[key];
+		}
+		// this is akin to the old asynchronous key polling in the windows SDK.  Useful for frame-based stuff,
+		// prevents clients from having to queue things up for themselves
+		public function checkKeyHistoryAndClear(key:uint):Boolean
+		{
+			const retval:Boolean = _keyHistory[key];
+			_keyHistory[key] = false;
+			return retval;
 		}
 	}
 }

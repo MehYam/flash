@@ -1,8 +1,5 @@
 package karnold.utils
 {
-	import karnold.utils.NumericRasterTextField;
-	import karnold.utils.FrameTimer;
-	
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -13,6 +10,9 @@ package karnold.utils
 	import flash.text.TextFormat;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
+	
+	import karnold.utils.FrameTimer;
+	import karnold.utils.NumericRasterTextField;
 	
 	public class FrameRate extends Sprite
 	{
@@ -123,7 +123,6 @@ package karnold.utils
 			_txtClientVer.y = currentY;			
 			addChild(_txtClientVer);
 			
-			
 			var box:Sprite = new Sprite();
 			box.graphics.beginFill(0x00FFFF);
 			box.graphics.drawRect(0,0,30,18);
@@ -143,10 +142,19 @@ package karnold.utils
 			graphics.beginFill(0, 0.8);
 			graphics.drawRect(0, 0, width, height);
 			graphics.endFill();
-			
-			_frameTimer.startPerFrame();
 		}	
 
+		public function set enabled(b:Boolean):void
+		{
+			if (b)
+			{
+				_frameTimer.startPerFrame();
+			}
+			else
+			{
+				_frameTimer.stop();
+			}
+		}
 		private function onBtnClick(evt:MouseEvent):void{
 
 			if (evt.shiftKey) {

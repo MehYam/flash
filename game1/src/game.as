@@ -21,18 +21,17 @@ package
 	public final class game extends Sprite
 	{
 		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
-		static private const CELL_SIZE:uint = 10;
+		static private const CELL_SIZE:uint = 20;
 
-		private var _tiles:Array2D = new Array2D(65, 50);
+		private var _tiles:Array2D = new Array2D(60, 50);
 		private var _input:Input;
 		private var _player:WorldObject;
 		private var _frameTimer:FrameTimer = new FrameTimer(onEnterFrame);
+		private var _frameRate:FrameRate = new FrameRate;
 		public function game()
 		{
 			FrameTimer.init(stage);
 			_frameTimer.startPerFrame();
-
-			parent.addChild(new FrameRate);
 
 //			stage.align = StageAlign.TOP_LEFT;
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -55,7 +54,7 @@ package
 		}
 
 		private static const ACCELERATION:Number = 1;
-		private static const MAX_SPEED:Number = 10;
+		private static const MAX_SPEED:Number = 6;
 		private static const SPEED_DECAY:Number = 0.1;  // percentage
 		private var _speed:Point = new Point(0, 0);
 
@@ -69,11 +68,13 @@ package
 		private var _lastCameraPos:Point = new Point;
 		private function onEnterFrame():void
 		{
-			if (_input.keys[Input.KEY_RIGHT])
+			//
+			// Check input
+			if (_input.isKeyDown(Input.KEY_RIGHT))
 			{
 				_speed.x = Math.min(MAX_SPEED, _speed.x + ACCELERATION);
 			}
-			else if (_input.keys[Input.KEY_LEFT])
+			else if (_input.isKeyDown(Input.KEY_LEFT))
 			{
 				_speed.x = Math.max(-MAX_SPEED, _speed.x - ACCELERATION);
 			}
@@ -82,11 +83,11 @@ package
 				_speed.x = Physics.speedDecay(_speed.x, SPEED_DECAY);
 			}
 			
-			if (_input.keys[Input.KEY_DOWN])
+			if (_input.isKeyDown(Input.KEY_DOWN))
 			{
 				_speed.y = Math.min(MAX_SPEED, _speed.y + ACCELERATION);
 			}
-			else if (_input.keys[Input.KEY_UP])
+			else if (_input.isKeyDown(Input.KEY_UP))
 			{
 				_speed.y = Math.max(-MAX_SPEED, _speed.y - ACCELERATION);
 			}
@@ -95,6 +96,22 @@ package
 				_speed.y = Physics.speedDecay(_speed.y, SPEED_DECAY);
 			}
 
+			if (_input.checkKeyHistoryAndClear(Input.KEY_TILDE))
+			{
+				if (_frameRate.parent)
+				{
+					_frameRate.enabled = false;
+					_frameRate.parent.removeChild(_frameRate);
+				}
+				else
+				{
+					_frameRate.enabled = true;
+					parent.addChild(_frameRate);
+				}
+			}
+
+			//
+			// Render the world
 			_playerPos.offset(_speed.x, _speed.y);
 
 			Physics.constrain(_worldBounds, _playerPos, _player.width, _player.height, _speed);
@@ -111,7 +128,7 @@ package
 			}
 
 			//TEST CODE
-			if (_input.keys[Input.MOUSE_BUTTON] || _input.keys[Input.KEY_SPACE])
+			if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON) || _input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
 				var actor:Actor = new Actor(WorldObject.createCircle(0xff7777, 5, 5));
 				actor.speed = _speed.clone();
