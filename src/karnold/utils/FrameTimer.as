@@ -142,13 +142,12 @@ package karnold.utils
 	}
 }
 	import flash.display.Stage;
-	import flash.utils.Dictionary;
 	import flash.events.Event;
+	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-	import com.gaiaonline.utils.FrameTimer;
 	
-// [kja] this engine introduces NO strong references to anything.  So when running FrameTimers gc,
-// this simply loses track of them.
+	import karnold.utils.FrameTimer;
+
 final class FrameTimerEngine
 {
 	private var s_stage:Stage;

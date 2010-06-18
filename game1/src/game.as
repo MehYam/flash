@@ -8,8 +8,11 @@ package
 	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 	
 	import karnold.utils.Bounds;
+	import karnold.utils.FrameRate;
+	import karnold.utils.FrameTimer;
 	import karnold.utils.Input;
 	import karnold.utils.Physics;
 	import karnold.utils.Utils;
@@ -17,17 +20,22 @@ package
 	public final class game extends Sprite
 	{
 		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
-		static private const CELL_SIZE:uint = 50;
+		static private const CELL_SIZE:uint = 10;
 
-		private var _tiles:Array2D = new Array2D(15, 10);
+		private var _tiles:Array2D = new Array2D(65, 50);
 		private var _input:Input;
 		private var _player:WorldObject;
+		private var _frameTimer:FrameTimer = new FrameTimer(onEnterFrame);
 		public function game()
 		{
+			FrameTimer.init(stage);
+			_frameTimer.startPerFrame();
+
+			parent.addChild(new FrameRate);
+
 //			stage.align = StageAlign.TOP_LEFT;
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
-
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+			stage.frameRate = 40;
 			stage.focus = stage;
 
 			_input = new Input(stage);
@@ -55,7 +63,7 @@ package
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
-		private function onEnterFrame(_unused:Event):void
+		private function onEnterFrame():void
 		{
 			if (_input.keys[Input.KEY_RIGHT])
 			{
@@ -86,28 +94,6 @@ package
 			_playerPos.offset(_speed.x, _speed.y);
 
 			Physics.constrain(_worldBounds, _playerPos, _player.width, _player.height, _speed);
-//TEST CODE
-			if (_input.keys[Input.MOUSE_BUTTON] || _input.keys[Input.KEY_SPACE])
-			{
-				var actor:Actor = new Actor(WorldObject.createCircle(0xff7777, 5, 5));
-				actor.speed = _speed.clone();
-				actor.worldPos = _playerPos.clone();
-				_actors.push(actor);
-				
-				addChild(actor.displayObject);
-			}
-
-			for each (var a:Actor in _actors)
-			{
-				a.worldPos.offset(a.speed.x, a.speed.y);
-				Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
-				a.speed.x = Physics.speedDecay(a.speed.x, 0.01);
-				a.speed.y = Physics.speedDecay(a.speed.y, 0.01);
-
-				a.displayObject.x = a.worldPos.x - _cameraPos.x;
-				a.displayObject.y = a.worldPos.y - _cameraPos.y;
-			}
-//TEST CODE END
 			
 			if (!_lastPlayerPos.equals(_playerPos))
 			{
@@ -119,6 +105,29 @@ package
 					renderMap(_cameraPos);
 				}
 			}
+
+			//TEST CODE
+			if (_input.keys[Input.MOUSE_BUTTON] || _input.keys[Input.KEY_SPACE])
+			{
+				var actor:Actor = new Actor(WorldObject.createCircle(0xff7777, 5, 5));
+				actor.speed = _speed.clone();
+				actor.worldPos = _playerPos.clone();
+				_actors.push(actor);
+				
+				addChild(actor.displayObject);
+			}
+			
+			for each (var a:Actor in _actors)
+			{
+				a.worldPos.offset(a.speed.x, a.speed.y);
+				Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
+				a.speed.x = Physics.speedDecay(a.speed.x, 0.01);
+				a.speed.y = Physics.speedDecay(a.speed.y, 0.01);
+				
+				a.displayObject.x = a.worldPos.x - _cameraPos.x;
+				a.displayObject.y = a.worldPos.y - _cameraPos.y;
+			}
+			//TEST CODE END
 		}
 
 		private function positionPlayerAndCamera():void
@@ -196,7 +205,7 @@ package
 						if (!wo.parent)
 						{
 							addChild(wo);
-							trace("adding", slotX, slotY);							
+//							trace("adding", slotX, slotY);							
 						}
 					}
 				}
@@ -204,7 +213,7 @@ package
 			// loop through the objects of the last bounds, removing them if they're offscreen
 			if (!po_currentMapBounds.equals(_lastMapBounds))
 			{
-				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
+//				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
 				const left:uint = Math.max(0, _lastMapBounds.left); 
 				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
 				{
@@ -216,7 +225,7 @@ package
 							if (removee.parent && !po_currentMapBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
-								trace("removing", slotX, slotY);
+//								trace("removing", slotX, slotY);
 							}
 						}
 					}
@@ -255,7 +264,7 @@ package
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
 					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, CELL_SIZE, CELL_SIZE);
-					Utils.addText(wo, "(" + loc.x + "," + loc.y + ")", 0xff0000).background = true;
+//					Utils.addText(wo, "(" + loc.x + "," + loc.y + ")", 0xff0000).background = true;
 					map.put(wo, loc.x, loc.y);
 				} 
 			} 

@@ -2,13 +2,16 @@ package karnold.utils
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.ByteArray;
+	import flash.utils.getQualifiedClassName;
 	
 	public class Utils
 	{
@@ -125,6 +128,161 @@ package karnold.utils
 			dest.x = x;
 			dest.y = y;
 		}
+
+		private static function trIndented(str:String, level:int):void {
+			
+			var out:String = "";
+			for (var i:int = 0; i < level; ++i)
+			{
+				out += " ";
+			}
+			trace(out + str);
+		}
+		
+		public static function toPathString(dobj:DisplayObject):String
+		{
+			var history:Array = [];
+			
+			history.push(dobj);
+			
+			var parent:DisplayObject = dobj.parent;
+			while(parent != null)
+			{
+				history.push(parent);
+				parent = parent.parent;
+			}
+			
+			var path:String = "";
+			
+			for(var index:int = 0; index < history.length; ++index)
+			{
+				var historyObj:DisplayObject = history[index];
+				
+				if(path.length > 0)
+				{
+					path += " -> ";
+				}
+				
+				var name:String = historyObj.name || "null";
+				
+				if(name.indexOf("instance") == 0)
+				{
+					name = "instance";
+				}
+				
+				path += name + " " + getQualifiedClassName(historyObj); 
+			}
+			
+			return path;
+		}
+		
+		public static function traceDisplayList(obj:DisplayObject, level:int = 0, visibilityReport:Object = null):void
+		{
+			if (!obj)
+			{
+				trIndented("<null/>", level);				
+			}
+			var type:String = (String(obj)).replace("]", "").replace("[object ", "").replace(" ", "");
+			if (type.indexOf(".") >= 0)
+			{
+				type = type.split(".").pop();
+			}
+			var tag:String = "<" + type;
+			
+			if (obj.name && obj.name.length && obj.name.search("instance") != 0)
+			{
+				tag += " name='" + obj.name + "'";
+			}
+			
+			if (obj is InteractiveObject)
+			{
+				tag += " mouseEnabled='" + InteractiveObject(obj).mouseEnabled + "'";
+				
+				if (obj.hasEventListener(MouseEvent.CLICK) ||
+					obj.hasEventListener(MouseEvent.MOUSE_DOWN) ||
+					obj.hasEventListener(MouseEvent.MOUSE_MOVE) ||
+					obj.hasEventListener(MouseEvent.ROLL_OVER) ||
+					obj.hasEventListener(MouseEvent.ROLL_OUT) ||
+					obj.hasEventListener(MouseEvent.MOUSE_OVER) ||
+					obj.hasEventListener(MouseEvent.MOUSE_OUT))
+				{
+					tag += " hasMouseListener='true'";
+				}
+			}
+			
+			if (obj is TextField)
+			{
+				tag += " text='" + TextField(obj).text + "'";
+			}
+			
+			if (visibilityReport)
+			{
+				++visibilityReport.visTotal;
+			}
+			
+			if (!obj.visible)
+			{
+				tag += " visible='false'";
+				if (visibilityReport)
+				{
+					++visibilityReport.visDepth;
+				}
+				if (!visibilityReport)
+				{
+					visibilityReport =
+						{
+							visDepth: 1,
+							visTotal: 1
+						};
+				}
+			}
+			
+			var objAsContainer:Object = obj as DisplayObjectContainer;
+			if (objAsContainer)
+			{
+				var flexContainer:Object;
+				try { flexContainer = obj["rawChildren"]; } catch (e:Error) {}				
+				if (flexContainer)
+				{
+					objAsContainer = flexContainer;
+				}
+			}
+			
+			const numChildren:int = objAsContainer ? objAsContainer.numChildren : 0;
+			if (numChildren)
+			{
+				tag += ">";
+				trIndented(tag, level);
+				
+				for (var i:int; i < numChildren; ++i)
+				{
+					var child:DisplayObject = objAsContainer.getChildAt(i);
+					traceDisplayList(child, level+1, visibilityReport);
+				}
+				trIndented("</" + type + ">", level);
+			}
+			else
+			{
+				tag += "/>";
+				trIndented(tag, level);
+			}
+			if (!obj.visible)
+			{
+				if (!--visibilityReport.visDepth)
+				{
+					trIndented("<!-- vis report: " + visibilityReport.visTotal + " invisible objects -->", level);
+				}
+			}
+		}
+		
+		public static function bringToFront(dobj:DisplayObject):void
+		{
+			if (dobj.parent)
+			{
+				dobj.parent.setChildIndex(dobj, dobj.parent.numChildren-1);
+			}
+		}
+		
 		public function Utils(hide:CONSTRUCTOR_HIDER) {}
 	}
 }
