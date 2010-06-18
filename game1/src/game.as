@@ -17,6 +17,7 @@ package
 	import karnold.utils.Physics;
 	import karnold.utils.Utils;
 
+	// efficiency with the bitmaps was pretty goddamned sweet
 	public final class game extends Sprite
 	{
 		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
