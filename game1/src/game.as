@@ -16,6 +16,7 @@ package
 	import karnold.utils.Input;
 	import karnold.utils.Physics;
 	import karnold.utils.Utils;
+	import karnold.utils.Array2D;
 
 	// efficiency with the bitmaps was pretty goddamned sweet
 	public final class game extends Sprite
