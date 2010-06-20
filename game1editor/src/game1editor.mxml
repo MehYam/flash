@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:local="*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:HGroup width="100%" height="100%">
+		<s:List itemRenderer="spark.skins.spark.DefaultComplexItemRenderer" height="100%">
+			<s:layout><s:TileLayout verticalGap="0" horizontalGap="0" requestedColumnCount="2"/></s:layout>
+			<s:dataProvider>
+				<s:ArrayList>
+					<s:BitmapImage source="@Embed('../game1/assets/ground0.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground1.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground2.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground3.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground4.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground5.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground6.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground7.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground8.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground9.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground10.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground11.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground12.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground13.png')" />
+				</s:ArrayList>
+			</s:dataProvider>
+			
+		</s:List>
+		<local:LevelArea id="level" height="100%" width="100%"/>
+<!--		<s:List id="level"
+				itemRenderer="GameTileItemRenderer"
+				scaleX="1.5"
+				scaleY="1.5"
+		>
+			<s:layout>
+				<s:TileLayout requestedColumnCount="8"
+							  horizontalGap="0"
+							  verticalGap="0" />
+			</s:layout>
+			<s:dataProvider>
+				<s:ArrayList>
+					<s:BitmapImage source="@Embed('../game1/assets/ground0.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground1.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground2.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground3.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground4.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground5.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground6.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground7.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground0.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground1.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground2.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground3.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground4.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground5.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground6.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground7.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground0.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground1.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground2.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground3.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground4.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground5.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground6.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground7.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground0.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground1.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground2.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground3.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground4.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground5.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground6.png')" />
+					<s:BitmapImage source="@Embed('../game1/assets/ground7.png')" />
+				</s:ArrayList>
+			</s:dataProvider>
+		</s:List>
+-->
+	</s:HGroup>
+</s:Application>

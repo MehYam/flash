@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+>
+
+	<s:Group id="contentGroup" verticalCenter="0" left="1" right="1" top="1" bottom="1" />
+
+	<fx:Script>
+		<![CDATA[
+			import mx.core.IVisualElement;
+			/**
+			 * @private
+			 */
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				contentGroup.addElement(IVisualElement(value));
+			}
+		]]>
+	</fx:Script>
+</s:ItemRenderer>
