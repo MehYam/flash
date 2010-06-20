@@ -29,48 +29,60 @@ package karnold.tile
 			_tiles.put(_factory.getTile(tileID), x, y);
 		}
 		
+		public function clearTile(x:uint, y:uint):void
+		{
+			_tiles.put(null, x, y);
+		}
+		
 		public function get tilesArray():Array2D
 		{
 			return _tiles;
 		}
 
-		public function pointToLocation(cameraPos:Point, relativePoint:Point, tileLocOut:Location):void
+		private function getCurrentMapBounds(cameraPos:Point, boundsOut:Bounds):void
 		{
 			
 		}
+		public function pointToLocation(point:Point, tileLocOut:Location):void
+		{
+			const TILE_SIZE:Number = _factory.tileSize;
+			tileLocOut.x = (point.x + _lastCellOffset.x) / TILE_SIZE;
+			tileLocOut.y = (point.y + _lastCellOffset.y) / TILE_SIZE;
+		}
 			
 		private var _lastMapBounds:Bounds = new Bounds;
+		private var _lastCellOffset:Point = new Point;
+
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame
 		// all premature optimization is marked as po_
-		private var po_currentMapBounds:Bounds = new Bounds;
-		private var po_cellOffset:Point = new Point;
+		private var po_tempBounds:Bounds = new Bounds;
 		public function setCamera(cameraPos:Point):void
 		{
-			const CELL_SIZE:Number = _factory.tileSize;
+			const TILE_SIZE:Number = _factory.tileSize;
 
 			// determine the before/after of the world scene bounds
-			po_currentMapBounds.left = cameraPos.x/CELL_SIZE;
-			po_currentMapBounds.right = (cameraPos.x + _displaySize.x)/CELL_SIZE;
+			po_tempBounds.left = cameraPos.x/TILE_SIZE;
+			po_tempBounds.right = (cameraPos.x + _displaySize.x)/TILE_SIZE;
 			
-			po_currentMapBounds.top = cameraPos.y/CELL_SIZE;
-			po_currentMapBounds.bottom = (cameraPos.y + _displaySize.y)/CELL_SIZE;
+			po_tempBounds.top = cameraPos.y/TILE_SIZE;
+			po_tempBounds.bottom = (cameraPos.y + _displaySize.y)/TILE_SIZE;
 			
-			po_cellOffset.x = cameraPos.x%CELL_SIZE;
-			po_cellOffset.y = cameraPos.y%CELL_SIZE;
+			_lastCellOffset.x = cameraPos.x%TILE_SIZE;
+			_lastCellOffset.y = cameraPos.y%TILE_SIZE;
 			
 			// loop through the objects in current bounds, setting their position, and adding
 			// them to the stage if they're not yet there
 			var slotX:uint;
 			var slotY:uint;
-			for (slotX = Math.max(0, po_currentMapBounds.left); slotX <= po_currentMapBounds.right; ++slotX)
+			for (slotX = Math.max(0, po_tempBounds.left); slotX <= po_tempBounds.right; ++slotX)
 			{
-				for (slotY = Math.max(0, po_currentMapBounds.top); slotY <= po_currentMapBounds.bottom; ++slotY)
+				for (slotY = Math.max(0, po_tempBounds.top); slotY <= po_tempBounds.bottom; ++slotY)
 				{
 					var wo:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (slotX - po_currentMapBounds.left) * CELL_SIZE - po_cellOffset.x;
-						wo.y = (slotY - po_currentMapBounds.top) * CELL_SIZE - po_cellOffset.y;
+						wo.x = (slotX - po_tempBounds.left) * TILE_SIZE - _lastCellOffset.x;
+						wo.y = (slotY - po_tempBounds.top) * TILE_SIZE - _lastCellOffset.y;
 						if (!wo.parent)
 						{
 							_parent.addChild(wo);
@@ -80,9 +92,9 @@ package karnold.tile
 				}
 			} 
 			// loop through the objects of the last bounds, removing them if they're offscreen
-			if (!po_currentMapBounds.equals(_lastMapBounds))
+			if (!po_tempBounds.equals(_lastMapBounds))
 			{
-				//				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
+//				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
 				const left:uint = Math.max(0, _lastMapBounds.left); 
 				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
 				{
@@ -91,7 +103,7 @@ package karnold.tile
 						var removee:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
 						if (removee)
 						{
-							if (removee.parent && !po_currentMapBounds.contains(slotX, slotY))
+							if (removee.parent && !po_tempBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
 //								trace("removing", slotX, slotY);
@@ -100,7 +112,7 @@ package karnold.tile
 					}
 				} 
 			}
-			_lastMapBounds.setBounds(po_currentMapBounds);
+			_lastMapBounds.setBounds(po_tempBounds);
 		}
 	}
 }

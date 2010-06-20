@@ -12,12 +12,18 @@ package
 		
 		public function getTile(tileID:uint):DisplayObject
 		{
-			return AssetManager.instance.getBitmap(tileID);
+			var retval:DisplayObject = AssetManager.instance.getBitmap(tileID);
+			retval.name = String(tileID);
+			return retval;
 		}
-		
 		public function get tileSize():Number
 		{
 			return AssetManager.TILES_SIZE;
+		}
+		
+		public function tileToID(tile:DisplayObject):uint
+		{
+			return parseInt(tile.name);
 		}
 	}
 }
