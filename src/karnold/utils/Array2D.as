@@ -1,6 +1,5 @@
-package
+package karnold.utils
 {
-	//KAI: consider moving to karnold path
 	public class Array2D
 	{
 		public function Array2D(width:uint = 0, height:uint = 0)

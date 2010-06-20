@@ -25,8 +25,8 @@ package karnold.utils
 		private var _txtReads:NumericRasterTextField;
 		private var _txtBytesRead:NumericRasterTextField;
 
-		private var _txtMX:NumericRasterTextField;
-		private var _txtMY:NumericRasterTextField;
+		private var _txt1:NumericRasterTextField;
+		private var _txt2:NumericRasterTextField;
 		private var _txtRoom:TextField;
 		private var _txtServerVer:TextField;
 		private var _txtClientVer:TextField;		
@@ -81,17 +81,15 @@ package karnold.utils
 
 			currentY += FIELD_HEIGHT;
 
-			_txtMX = new NumericRasterTextField();		
-			_txtMX.x = FIELD_LEFT;
-			_txtMX.y = currentY;
-			_txtMX.suffix = "x";	
-			addChild(_txtMX);	
+			_txt1 = new NumericRasterTextField();		
+			_txt1.x = FIELD_LEFT;
+			_txt1.y = currentY;
+			addChild(_txt1);	
 			
-			_txtMY = new NumericRasterTextField();		
-			_txtMY.x = 55;
-			_txtMY.y = currentY;
-			_txtMY.suffix = "y";
-			addChild(_txtMY);	
+			_txt2 = new NumericRasterTextField();		
+			_txt2.x = 55;
+			_txt2.y = currentY;
+			addChild(_txt2);	
 			
 			currentY += FIELD_HEIGHT;
 
@@ -144,6 +142,14 @@ package karnold.utils
 			graphics.endFill();
 		}	
 
+		public function set txt1(i:int):void
+		{
+			_txt1.integer = i;
+		}
+		public function set txt2(i:int):void
+		{
+			_txt2.integer = i;
+		}
 		public function set enabled(b:Boolean):void
 		{
 			if (b)
@@ -195,8 +201,8 @@ package karnold.utils
 
 			const totalMemoryKB:int = System.totalMemory/1024;
 			_txtTotalMemory.integer = totalMemoryKB; 
-			_txtMX.integer = _mx;			
-			_txtMY.integer = _my;
+			_txt1.integer = _mx;			
+			_txt2.integer = _my;
 
 			const time:int = getTimer();
 			const periodRender:Boolean = (time - _lastRender) > 2000;

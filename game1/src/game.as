@@ -10,6 +10,9 @@ package
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	
+	import karnold.tile.ITileFactory;
+	import karnold.tile.TiledBackground;
+	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
 	import karnold.utils.FrameRate;
 	import karnold.utils.FrameTimer;
@@ -20,16 +23,21 @@ package
 	// efficiency with the bitmaps was pretty goddamned sweet
 	public final class game extends Sprite
 	{
-		// CELL_SIZE is in world coordinates, and currently world coordinates are pixels
-		static private const CELL_SIZE:uint = 20;
+		private var _bg:TiledBackground;
+		private var _worldBounds:Bounds;
 
-		private var _tiles:Array2D = new Array2D(60, 50);
 		private var _input:Input;
-		private var _player:WorldObject;
+		private var _player:DisplayObject;
+		private var _playerPos:Point;
 		private var _frameTimer:FrameTimer = new FrameTimer(onEnterFrame);
 		private var _frameRate:FrameRate = new FrameRate;
 		public function game()
 		{
+			var factory:ITileFactory = new DebugVectorTileFactory; 
+			_bg = new TiledBackground(this, factory, 60, 50, stage.stageWidth, stage.stageHeight);
+			_worldBounds =  new Bounds(0, 0, factory.tileSize * _bg.tilesArray.width, factory.tileSize*_bg.tilesArray.height);
+			_playerPos = _worldBounds.middle;
+
 			FrameTimer.init(stage);
 			_frameTimer.startPerFrame();
 
@@ -40,10 +48,10 @@ package
 
 			_input = new Input(stage);
 			
-			_player = WorldObject.createCircle(0xff0000, 20, 20);
+			_player = DebugVectorObject.createCircle(0xff0000, 20, 20);
 			parent.addChild(_player);
 
-			initMap(_tiles, 0.2);
+			initMap(_bg, 0.2);
 			trace("stage", stage.stageWidth, stage.stageHeight);
 			
 			graphics.lineStyle(0, 0xff0000);
@@ -57,12 +65,7 @@ package
 		private static const MAX_SPEED:Number = 6;
 		private static const SPEED_DECAY:Number = 0.1;  // percentage
 		private var _speed:Point = new Point(0, 0);
-
-		private const _worldBounds:Bounds = new Bounds(0, 0, CELL_SIZE*_tiles.width, CELL_SIZE*_tiles.height);
-
 		private var _actors:Array = [];
-
-		private var _playerPos:Point = _worldBounds.middle;
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
@@ -123,14 +126,14 @@ package
 				if (!_cameraPos.equals(_lastCameraPos))
 				{
 					Utils.setPoint(_lastCameraPos, _cameraPos);
-					renderMap(_cameraPos);
+					_bg.setCamera(_cameraPos);
 				}
 			}
 
 			//TEST CODE
 			if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON) || _input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				var actor:Actor = new Actor(WorldObject.createCircle(0xff7777, 5, 5));
+				var actor:Actor = new Actor(DebugVectorObject.createCircle(0xff7777, 5, 5));
 				actor.speed = _speed.clone();
 				actor.worldPos = _playerPos.clone();
 				_actors.push(actor);
@@ -149,6 +152,9 @@ package
 				a.displayObject.y = a.worldPos.y - _cameraPos.y;
 			}
 			//TEST CODE END
+			
+			_frameRate.txt1 = stage.numChildren;
+			_frameRate.txt2 = this.numChildren;
 		}
 
 		private function positionPlayerAndCamera():void
@@ -193,100 +199,45 @@ package
 			_player.rotation = 45 + Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
 		}
 
-		// [kja] premature optimization - these are kept around to avoid allocating them every frame
-		// all premature optimization is marked as po_
-		private var po_currentMapBounds:Bounds = new Bounds;
-		private var po_cellOffset:Point = new Point;
-		private var _lastMapBounds:Bounds = new Bounds;
-		private function renderMap(cameraPos:Point):void
+/*
+NEXT TASK:
+	- put the scrolling 2D tiled background in a class
+		- new tiled class will use/contain the map
+		- it should act like an item renderer, NOT a diplayobject and able to render on your own surface
+	- share it with the level editor
+	- define level editor data (some custom xml format)
+		<level>
+			<tileset>ground</tileset>
+			<tiles>0-0-0,0-1-2,0-2-0....</tiles>
+		    <objects>234-212-0,....</objects>
+		    <timeline>...</timeline>
+		    ideally you'd have a script you could run... hmmm
+				- script itself could be compiled actionscript
+		</level>
+		
+*/
+		
+		private static function initMap(bg:TiledBackground, densityPct:Number):void
 		{
-			// determine the before/after of the world scene bounds
-			po_currentMapBounds.left = cameraPos.x/CELL_SIZE;
-			po_currentMapBounds.right = (cameraPos.x + stage.stageWidth)/CELL_SIZE;
-			
-			po_currentMapBounds.top = cameraPos.y/CELL_SIZE;
-			po_currentMapBounds.bottom = (cameraPos.y + stage.stageHeight)/CELL_SIZE;
-
-			po_cellOffset.x = cameraPos.x%CELL_SIZE;
-			po_cellOffset.y = cameraPos.y%CELL_SIZE;
-
-			// loop through the objects in current bounds, setting their position, and adding
-			// them to the stage if they're not yet there
-			var slotX:uint;
-			var slotY:uint;
-			for (slotX = Math.max(0, po_currentMapBounds.left); slotX <= po_currentMapBounds.right; ++slotX)
-			{
-				for (slotY = Math.max(0, po_currentMapBounds.top); slotY <= po_currentMapBounds.bottom; ++slotY)
-				{
-					var wo:DisplayObject = WorldObject(_tiles.lookup(slotX, slotY));
-					if (wo)
-					{
-						wo.x = (slotX - po_currentMapBounds.left) * CELL_SIZE - po_cellOffset.x;
-						wo.y = (slotY - po_currentMapBounds.top) * CELL_SIZE - po_cellOffset.y;
-						if (!wo.parent)
-						{
-							addChild(wo);
-//							trace("adding", slotX, slotY);							
-						}
-					}
-				}
-			} 
-			// loop through the objects of the last bounds, removing them if they're offscreen
-			if (!po_currentMapBounds.equals(_lastMapBounds))
-			{
-//				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
-				const left:uint = Math.max(0, _lastMapBounds.left); 
-				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
-				{
-					for (slotY = Math.max(0, _lastMapBounds.top); slotY <= _lastMapBounds.bottom; ++slotY)
-					{
-						var removee:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
-						if (removee)
-						{
-							if (removee.parent && !po_currentMapBounds.contains(slotX, slotY))
-							{
-								removee.parent.removeChild(removee);
-//								trace("removing", slotX, slotY);
-							}
-						}
-					}
-				} 
-			}
-			_lastMapBounds.setBounds(po_currentMapBounds);
-		}
-
-		private static function debugcreate(map:Array2D, color:uint, x:uint, y:uint):void
-		{
-			var obj:DisplayObjectContainer = WorldObject.createSquare(color, CELL_SIZE);
-			Utils.addText(obj, "(" + x + "," + y + ")", 0xff0000).background = true;
-			map.put(obj, x, y);
-		}
-		private static function initMap(map:Array2D, densityPct:Number):void
-		{
-//map.put(WorldObject.createSpiro(0xff00ff, CELL_SIZE, CELL_SIZE), 0, 0);
-//map.put(WorldObject.createSpiro(0x00ff00, CELL_SIZE, CELL_SIZE), 1, 1);
-//map.put(WorldObject.createSpiro(0x0000ff, CELL_SIZE, CELL_SIZE), 2, 2);
-//map.put(WorldObject.createSquare(0x0000ff, CELL_SIZE), 3, 3);
-//return;
-//const colors:Array = [0xff0000, 0x00ff00, 0x0000ff];
 //for (var n:uint = 0; n < map.height; ++n)
 //{
-//	debugcreate(map, colors[n % colors.length], 3, n);
+//		var obj:DisplayObjectContainer = DebugVectorObject.createSquare(color, 20);
+//		Utils.addText(obj, "(" + x + "," + y + ")", 0xff0000).background = true;
+//		map.put(obj, x, y);
 //}
 //return;			
-			const XSLOTS:uint = map.width;
-			const YSLOTS:uint = map.height;
+			const XSLOTS:uint = bg.tilesArray.width;
+			const YSLOTS:uint = bg.tilesArray.height;
 			const count:uint = densityPct * (XSLOTS * YSLOTS);
 			for (var i:uint = 0; i < count; ++i)
 			{
-				var loc:Location = findBlank(map, Math.random() * XSLOTS, Math.random() * YSLOTS);
+				var loc:Location = findBlank(bg.tilesArray, Math.random() * XSLOTS, Math.random() * YSLOTS);
 				if (loc)
 				{
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
-					var wo:WorldObject = WorldObject.createSpiro(Math.random() * 0xffffff, CELL_SIZE, CELL_SIZE);
+					bg.putTile(DebugVectorTileFactory.TILE_SPIRO, loc.x, loc.y);
 //					Utils.addText(wo, "(" + loc.x + "," + loc.y + ")", 0xff0000).background = true;
-					map.put(wo, loc.x, loc.y);
 				} 
 			} 
 		}

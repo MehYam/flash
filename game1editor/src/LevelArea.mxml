@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 click="onClick(event)"
+ >
+	<s:layout>
+		<s:TileLayout/>
+	</s:layout>
+	<s:Label text="foo"/>
+	<s:Label text="bar"/>
+	<s:BitmapImage source="@Embed('../game1/assets/ground13.png')"/>
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			protected function onClick(event:MouseEvent):void
+			{
+				trace(event);
+			}
+		]]>
+	</fx:Script>
+</s:Group>

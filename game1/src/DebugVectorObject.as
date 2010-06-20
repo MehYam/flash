@@ -2,17 +2,17 @@ package
 {
 	import flash.display.Sprite;
 
-	public final class WorldObject extends Sprite
+	public final class DebugVectorObject extends Sprite
 	{
-		public function WorldObject()
+		public function DebugVectorObject()
 		{
 			super();
 			mouseEnabled = false;
 		}
 
-		public static function createSpiro(color:uint, width:Number, height:Number):WorldObject
+		public static function createSpiro(color:uint, width:Number, height:Number):DebugVectorObject
 		{
-			var wo:WorldObject = new WorldObject;
+			var wo:DebugVectorObject = new DebugVectorObject;
 			
 			wo.graphics.lineStyle(1, 0);
 			wo.graphics.beginFill(color);
@@ -24,9 +24,9 @@ package
 			return wo;
 		}
 		
-		public static function createCircle(color:uint, width:Number, height:Number):WorldObject
+		public static function createCircle(color:uint, width:Number, height:Number):DebugVectorObject
 		{
-			var wo:WorldObject = new WorldObject;
+			var wo:DebugVectorObject = new DebugVectorObject;
 			
 			wo.graphics.lineStyle(1, 0);
 			wo.graphics.beginFill(color);
@@ -37,9 +37,9 @@ package
 			return wo;
 		}
 		
-		public static function createSquare(color:uint, size:Number):WorldObject
+		public static function createSquare(color:uint, size:Number):DebugVectorObject
 		{
-			var wo:WorldObject = new WorldObject;
+			var wo:DebugVectorObject = new DebugVectorObject;
 			
 			wo.graphics.lineStyle(1, color);
 			wo.graphics.drawRect(0, 0, size, size);
