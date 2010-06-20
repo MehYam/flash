@@ -17,6 +17,7 @@ package
 	import karnold.utils.FrameRate;
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Input;
+	import karnold.utils.Location;
 	import karnold.utils.Physics;
 	import karnold.utils.Utils;
 
@@ -262,21 +263,6 @@ NEXT TASK:
 }
 import flash.display.DisplayObject;
 import flash.geom.Point;
-
-final class Location
-{
-	public var x:int;
-	public var y:int;
-	public function Location(x:uint = 0, y:uint = 0)
-	{
-		setPos(x, y);
-	}
-	public function setPos(x:uint, y:uint):void
-	{
-		this.x = x;
-		this.y = y;
-	}
-}
 
 final class Actor
 {

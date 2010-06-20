@@ -6,6 +6,7 @@ package karnold.tile
 	
 	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
+	import karnold.utils.Location;
 
 	public class TiledBackground
 	{
@@ -33,11 +34,16 @@ package karnold.tile
 			return _tiles;
 		}
 
+		public function pointToLocation(cameraPos:Point, relativePoint:Point, tileLocOut:Location):void
+		{
+			
+		}
+			
+		private var _lastMapBounds:Bounds = new Bounds;
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame
 		// all premature optimization is marked as po_
 		private var po_currentMapBounds:Bounds = new Bounds;
 		private var po_cellOffset:Point = new Point;
-		private var _lastMapBounds:Bounds = new Bounds;
 		public function setCamera(cameraPos:Point):void
 		{
 			const CELL_SIZE:Number = _factory.tileSize;
