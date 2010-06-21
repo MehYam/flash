@@ -144,11 +144,14 @@ package karnold.tile
 		}
 		public function fromString(str:String):void
 		{
-			var tiles:Array = str.split(",");
-			for each (var tile:String in tiles)
+			if (str.length)
 			{
-				var parts:Array = tile.split("-");
-				putTile(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
+				var tiles:Array = str.split(",");
+				for each (var tile:String in tiles)
+				{
+					var parts:Array = tile.split("-");
+					putTile(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
+				}
 			}
 		}
 	}

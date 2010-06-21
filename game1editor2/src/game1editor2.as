@@ -10,6 +10,7 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
@@ -44,6 +45,7 @@ package
 			_playArea.graphics.lineStyle(0, 0x0000ff);
 			_playArea.graphics.drawRect(0, 0, 800, 600);
 			_playArea.graphics.endFill();
+			_playArea.scrollRect = new Rectangle(0, 0, _playArea.width, _playArea.height);
 
 			_playArea.x = _imageSelect.x + _imageSelect.width + 5;
 			_playArea.y = _imageSelect.y;
@@ -53,12 +55,12 @@ package
 			
 			_map = new TiledBackground(_playArea, new BitmapTileFactory, 200, 200, _playArea.width, _playArea.height);
 			
-			var button:DisplayObject = createButton("Save", onSerialize);
+			var button:DisplayObject = createButton("Read", onDeserialize);
 			button.x = _playArea.x + _playArea.width;
 			button.y = _playArea.y;
 			addChild(button);
 			
-			var button2:DisplayObject = createButton("Load", onDeserialize);
+			var button2:DisplayObject = createButton("Write", onSerialize);
 			button2.x = button.x + button.width;
 			button2.y = button.y;
 			addChild(button2);
