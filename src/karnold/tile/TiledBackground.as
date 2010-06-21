@@ -53,12 +53,12 @@ package karnold.tile
 		public function pointToLocation(point:Point, tileLocOut:Location):void
 		{
 			const TILE_SIZE:Number = _factory.tileSize;
-			tileLocOut.x = (point.x + _lastCellOffset.x) / TILE_SIZE;
-			tileLocOut.y = (point.y + _lastCellOffset.y) / TILE_SIZE;
+			tileLocOut.x = (point.x + _tileOffset.x) / TILE_SIZE + _bounds.left;
+			tileLocOut.y = (point.y + _tileOffset.y) / TILE_SIZE + _bounds.top;
 		}
 			
-		private var _lastMapBounds:Bounds = new Bounds;
-		private var _lastCellOffset:Point = new Point;
+		private var _bounds:Bounds = new Bounds;
+		private var _tileOffset:Point = new Point;
 
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame
 		// all premature optimization is marked as po_
@@ -74,8 +74,8 @@ package karnold.tile
 			po_tempBounds.top = cameraPos.y/TILE_SIZE;
 			po_tempBounds.bottom = (cameraPos.y + _displaySize.y)/TILE_SIZE;
 			
-			_lastCellOffset.x = cameraPos.x%TILE_SIZE;
-			_lastCellOffset.y = cameraPos.y%TILE_SIZE;
+			_tileOffset.x = cameraPos.x%TILE_SIZE;
+			_tileOffset.y = cameraPos.y%TILE_SIZE;
 			
 			// loop through the objects in current bounds, setting their position, and adding
 			// them to the stage if they're not yet there
@@ -88,8 +88,8 @@ package karnold.tile
 					var wo:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (slotX - po_tempBounds.left) * TILE_SIZE - _lastCellOffset.x;
-						wo.y = (slotY - po_tempBounds.top) * TILE_SIZE - _lastCellOffset.y;
+						wo.x = (slotX - po_tempBounds.left) * TILE_SIZE - _tileOffset.x;
+						wo.y = (slotY - po_tempBounds.top) * TILE_SIZE - _tileOffset.y;
 						if (!wo.parent)
 						{
 							_parent.addChild(wo);
@@ -99,13 +99,13 @@ package karnold.tile
 				}
 			} 
 			// loop through the objects of the last bounds, removing them if they're offscreen
-			if (!po_tempBounds.equals(_lastMapBounds))
+			if (!po_tempBounds.equals(_bounds))
 			{
 //				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
-				const left:uint = Math.max(0, _lastMapBounds.left); 
-				for (slotX = left; slotX <= _lastMapBounds.right; ++slotX)
+				const left:uint = Math.max(0, _bounds.left); 
+				for (slotX = left; slotX <= _bounds.right; ++slotX)
 				{
-					for (slotY = Math.max(0, _lastMapBounds.top); slotY <= _lastMapBounds.bottom; ++slotY)
+					for (slotY = Math.max(0, _bounds.top); slotY <= _bounds.bottom; ++slotY)
 					{
 						var removee:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
 						if (removee)
@@ -119,7 +119,7 @@ package karnold.tile
 					}
 				} 
 			}
-			_lastMapBounds.setBounds(po_tempBounds);
+			_bounds.setBounds(po_tempBounds);
 		}
 	}
 }

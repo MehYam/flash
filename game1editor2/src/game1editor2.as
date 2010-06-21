@@ -6,10 +6,12 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
 	import karnold.tile.TiledBackground;
+	import karnold.utils.Input;
 	import karnold.utils.Location;
 	import karnold.utils.Utils;
 	
@@ -18,10 +20,13 @@ package
 		private var _map:TiledBackground;
 		private var _imageSelect:ImageSelect;
 		private var _playArea:Sprite;
+		private var _input:Input;
+		private var _camera:Point = new Point(0, 0);
 		public function game1editor2()
 		{
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+			Utils.listen(stage, KeyboardEvent.KEY_DOWN, onKeyDown);
 
 			_imageSelect = new ImageSelect;
 			_imageSelect.scaleX = 1.5;
@@ -31,7 +36,7 @@ package
 			_playArea = new Sprite;
 			_playArea.graphics.beginFill(0xaaaaaa);
 			_playArea.graphics.lineStyle(0, 0x0000ff);
-			_playArea.graphics.drawRect(0, 0, 400, 400);
+			_playArea.graphics.drawRect(0, 0, 800, 800);
 			_playArea.graphics.endFill();
 
 			_playArea.x = _imageSelect.x + _imageSelect.width + 5;
@@ -40,7 +45,7 @@ package
 
 			Utils.listen(_playArea, MouseEvent.MOUSE_DOWN, onSetTile);
 			
-			_map = new TiledBackground(_playArea, new BitmapTileFactory, 40, 40, _playArea.width, _playArea.height);
+			_map = new TiledBackground(_playArea, new BitmapTileFactory, 200, 200, _playArea.width, _playArea.height);
 		}
 		
 		private function onSetTile(e:MouseEvent):void
@@ -63,13 +68,36 @@ package
 				_map.putTile(_imageSelect.selection, loc.x, loc.y);
 			}
 			
-			_map.setCamera(new Point(0, 0));
+			_map.setCamera(_camera);
 		}
 		private function onStopDragging(e:Event):void
 		{
 			_playArea.removeEventListener(MouseEvent.MOUSE_MOVE, onSetTile);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onStopDragging);
 			stage.removeEventListener(Event.MOUSE_LEAVE, onStopDragging);
+		}
+		
+		static private const DELTA:uint = 10;
+		private function onKeyDown(e:KeyboardEvent):void
+		{
+			var diffX:int;
+			var diffY:int;
+			switch(e.keyCode){
+			case Input.KEY_DOWN:
+				diffY = DELTA;
+				break;
+			case Input.KEY_LEFT:
+				diffX = -DELTA;
+				break;
+			case Input.KEY_UP:
+				diffY = -DELTA;
+				break;
+			case Input.KEY_RIGHT:
+				diffX = DELTA;
+				break;
+			}
+			_camera.offset(diffX, diffY);
+			_map.setCamera(_camera);
 		}
 	}
 }
