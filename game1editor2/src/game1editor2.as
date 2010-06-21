@@ -57,7 +57,7 @@ package
 			Utils.listen(_playArea, MouseEvent.MOUSE_DOWN, onSetTile);
 			Utils.listen(_playArea, MouseEvent.MOUSE_MOVE, onPlayAreaMouseMove);
 			
-			_map = new TiledBackground(_playArea, new BitmapTileFactory(AssetManager.instance), 200, 200, _playArea.width, _playArea.height);
+			_map = new TiledBackground(_playArea, new BitmapTileFactory(AssetManager.instance), 40, 40, _playArea.width, _playArea.height);
 			
 			var button:DisplayObject = createButton("Apply", onApply);
 			button.x = _playArea.x + _playArea.width;
@@ -74,11 +74,16 @@ package
 			button3.y = button.y;
 			addChild(button3);
 
+			var button4:DisplayObject = createButton("Fill", onFill);
+			button4.x = button.x;
+			button4.y = button.y + button.height;
+			addChild(button4);
+
 			_coords = new TextField;
 			_coords.autoSize = TextFieldAutoSize.LEFT;
 			_coords.text = "0, 0";
-			_coords.x = button.x;
-			_coords.y = button.y + button.height;
+			_coords.x = button4.x;
+			_coords.y = button4.y + button4.height;
 			addChild(_coords);
 
 			_text = new TextField;
@@ -170,6 +175,24 @@ package
 			{
 				_text.text = so.data.level;
 			}
+		}
+		private function onFill(e:Event):void
+		{
+			const currentID:int = _imageSelect.selection;
+			if (currentID >= 0)
+			{
+				for (var xPos:uint = 0; xPos < _map.tilesArray.width; ++xPos)
+				{
+					for (var yPos:uint = 0; yPos < _map.tilesArray.height; ++yPos)
+					{
+						if (!_map.tilesArray.lookup(xPos, yPos))
+						{
+							_map.putTile(currentID, xPos, yPos);
+						}
+					}
+				}
+			}
+			_map.setCamera(_camera);
 		}
 		private var po_mm:Point = new Point;
 		private var po_loc:Location = new Location;

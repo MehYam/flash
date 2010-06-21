@@ -10,6 +10,7 @@ package
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	
+	import karnold.tile.BitmapTileFactory;
 	import karnold.tile.ITileFactory;
 	import karnold.tile.TiledBackground;
 	import karnold.utils.Array2D;
@@ -32,10 +33,15 @@ package
 		private var _playerPos:Point;
 		private var _frameTimer:FrameTimer = new FrameTimer(onEnterFrame);
 		private var _frameRate:FrameRate = new FrameRate;
+		
+		static private const VECTOR:Boolean = false;
 		public function game()
 		{
-			var factory:ITileFactory = new DebugVectorTileFactory; 
-			_bg = new TiledBackground(this, factory, 60, 50, stage.stageWidth, stage.stageHeight);
+			var factory:ITileFactory = VECTOR ? new DebugVectorTileFactory : new BitmapTileFactory(AssetManager.instance);
+
+			_bg = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
+			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _bg.tilesArray.width, factory.tileSize*_bg.tilesArray.height);
 			_playerPos = _worldBounds.middle;
 
@@ -52,7 +58,14 @@ package
 			_player = DebugVectorObject.createCircle(0xff0000, 20, 20);
 			parent.addChild(_player);
 
-			initMap(_bg, 0.2);
+			if (VECTOR)
+			{
+				initVectorMap(_bg, 0.2);
+			}
+			else
+			{
+				initRasterMap(_bg);
+			}
 			trace("stage", stage.stageWidth, stage.stageHeight);
 			
 			graphics.lineStyle(0, 0xff0000);
@@ -151,6 +164,8 @@ package
 				
 				a.displayObject.x = a.worldPos.x - _cameraPos.x;
 				a.displayObject.y = a.worldPos.y - _cameraPos.y;
+				
+				a.displayObject.parent.setChildIndex(a.displayObject, a.displayObject.parent.numChildren-1);
 			}
 			//TEST CODE END
 			
@@ -218,7 +233,11 @@ NEXT TASK:
 		
 */
 		
-		private static function initMap(bg:TiledBackground, densityPct:Number):void
+		private static function initRasterMap(bg:TiledBackground):void
+		{
+			bg.fromString(SampleData.level1);
+		}
+		private static function initVectorMap(bg:TiledBackground, densityPct:Number):void
 		{
 //for (var n:uint = 0; n < map.height; ++n)
 //{
@@ -272,5 +291,16 @@ final class Actor
 	public function Actor(dobj:DisplayObject)
 	{
 		displayObject = dobj;
+	}
+}
+
+final class SampleData
+{
+	[Embed(source="assets/level1.txt", mimeType="application/octet-stream")]
+	static private const Level1Data:Class;
+
+	static public function get level1():String
+	{
+		return (new Level1Data).toString();
 	}
 }
