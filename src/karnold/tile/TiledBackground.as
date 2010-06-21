@@ -121,5 +121,35 @@ package karnold.tile
 			}
 			_bounds.setBounds(po_tempBounds);
 		}
+		
+		public function toString():String
+		{
+			var retval:String = "";
+			for (var x:uint = 0; x < _tiles.width; ++x)
+			{
+				for (var y:uint = 0; y < _tiles.height; ++y)
+				{
+					var obj:DisplayObject = _tiles.lookup(x, y) as DisplayObject;
+					if (obj)
+					{
+						if (retval.length)
+						{
+							retval += ",";
+						}
+						retval += _factory.idFromTile(obj) + "-" + x + "-" + y;
+					}
+				}
+			}
+			return retval;
+		}
+		public function fromString(str:String):void
+		{
+			var tiles:Array = str.split(",");
+			for each (var tile:String in tiles)
+			{
+				var parts:Array = tile.split("-");
+				putTile(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
+			}
+		}
 	}
 }

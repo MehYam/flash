@@ -25,7 +25,10 @@ package
 			}
 			return null;
 		}
-		
+		public function idFromTile(tile:DisplayObject):uint
+		{
+			return 0;  // we don't know
+		}
 		public function get tileSize():Number
 		{
 			return 20;
