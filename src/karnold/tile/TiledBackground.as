@@ -26,28 +26,30 @@ package karnold.tile
 		
 		public function putTile(tileID:uint, x:uint, y:uint):void
 		{
+			removeChildAt(x, y);
 			_tiles.put(_factory.getTile(tileID), x, y);
 		}
 		
 		public function clearTile(x:uint, y:uint):void
+		{
+			removeChildAt(x, y);
+			_tiles.put(null, x, y);
+		}
+
+		private function removeChildAt(x:uint, y:uint):void
 		{
 			var tile:DisplayObject = DisplayObject(_tiles.lookup(x, y));
 			if (tile && tile.parent)
 			{
 				tile.parent.removeChild(tile);
 			}
-			_tiles.put(null, x, y);
 		}
-		
+
 		public function get tilesArray():Array2D
 		{
 			return _tiles;
 		}
 
-		private function getCurrentMapBounds(cameraPos:Point, boundsOut:Bounds):void
-		{
-			
-		}
 		public function pointToLocation(point:Point, tileLocOut:Location):void
 		{
 			const TILE_SIZE:Number = _factory.tileSize;
