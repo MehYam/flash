@@ -122,13 +122,13 @@ package karnold.utils
 			addChild(_txtClientVer);
 			
 			var box:Sprite = new Sprite();
-			box.graphics.beginFill(0x00FFFF);
-			box.graphics.drawRect(0,0,30,18);
+			box.graphics.beginFill(0xff0000);
+			box.graphics.drawRect(0,0,20,20);
 			box.graphics.endFill();
 			
 			var box2:Sprite = new Sprite();
-			box2.graphics.beginFill(0xFF0000);
-			box2.graphics.drawRect(0,0,30,18);
+			box2.graphics.beginFill(0xffff00);
+			box2.graphics.drawRect(0,0,20,20);
 			box2.graphics.endFill();
 			
 			_btn = new SimpleButton(box,box,box2,box2);
