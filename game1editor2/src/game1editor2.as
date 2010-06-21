@@ -11,6 +11,7 @@ package
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.net.SharedObject;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
@@ -58,15 +59,20 @@ package
 			
 			_map = new TiledBackground(_playArea, new BitmapTileFactory(AssetManager.instance), 200, 200, _playArea.width, _playArea.height);
 			
-			var button:DisplayObject = createButton("Read", onDeserialize);
+			var button:DisplayObject = createButton("Apply", onApply);
 			button.x = _playArea.x + _playArea.width;
 			button.y = _playArea.y;
 			addChild(button);
 			
-			var button2:DisplayObject = createButton("Write", onSerialize);
+			var button2:DisplayObject = createButton("Save", onSave);
 			button2.x = button.x + button.width;
 			button2.y = button.y;
 			addChild(button2);
+
+			var button3:DisplayObject = createButton("Load", onLoad);
+			button3.x = button2.x + button.width;
+			button3.y = button.y;
+			addChild(button3);
 
 			_coords = new TextField;
 			_coords.autoSize = TextFieldAutoSize.LEFT;
@@ -85,6 +91,8 @@ package
 			_text.width = 150;
 			_text.height = (_playArea.height + _playArea.y) - _text.y;
 			addChild(_text);
+			
+			onLoad(null);
 		}
 		
 		private function onSetTile(e:MouseEvent):void
@@ -142,14 +150,26 @@ package
 			}
 		}
 
-		private function onSerialize(e:Event):void
-		{
-			_text.text = _map.toString();
-		}
-		private function onDeserialize(e:Event):void
+		private function onApply(e:Event):void
 		{
 			_map.fromString(_text.text);
 			_map.setCamera(_camera);
+		}
+		static private const KEY:String = "kaileveleditor";
+		private function onSave(e:Event):void
+		{
+			_text.text = _map.toString();
+
+			var so:SharedObject = SharedObject.getLocal(KEY);
+			so.data.level = _text.text;
+		}
+		private function onLoad(e:Event):void
+		{
+			var so:SharedObject = SharedObject.getLocal(KEY);
+			if (so.data.level)
+			{
+				_text.text = so.data.level;
+			}
 		}
 		private var po_mm:Point = new Point;
 		private var po_loc:Location = new Location;
