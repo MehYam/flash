@@ -84,6 +84,7 @@ package karnold.utils
 			_txt1 = new NumericRasterTextField();		
 			_txt1.x = FIELD_LEFT;
 			_txt1.y = currentY;
+			_txt1.suffix = "a";
 			addChild(_txt1);	
 			
 			_txt2 = new NumericRasterTextField();		

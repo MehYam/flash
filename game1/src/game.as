@@ -37,25 +37,24 @@ package
 		static private const VECTOR:Boolean = false;
 		public function game()
 		{
+//			stage.align = StageAlign.TOP_LEFT;
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.frameRate = 40;
+			stage.focus = stage;
+			FrameTimer.init(stage);
+			_frameTimer.startPerFrame();
+
+			_input = new Input(stage);
+
 			var factory:ITileFactory = VECTOR ? new DebugVectorTileFactory : new BitmapTileFactory(AssetManager.instance);
 
 			_bg = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _bg.tilesArray.width, factory.tileSize*_bg.tilesArray.height);
+
 			_playerPos = _worldBounds.middle;
-
-			FrameTimer.init(stage);
-			_frameTimer.startPerFrame();
-
-//			stage.align = StageAlign.TOP_LEFT;
-//			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.frameRate = 40;
-			stage.focus = stage;
-
-			_input = new Input(stage);
-			
-			_player = DebugVectorObject.createCircle(0xff0000, 20, 20);
+			_player = DebugVectorObject.createSpaceship();//DebugVectorObject.createCircle(0xff0000, 20, 20);
 			parent.addChild(_player);
 
 			if (VECTOR)
@@ -128,7 +127,7 @@ package
 			}
 
 			//
-			// Render the world
+			// Render the background
 			_playerPos.offset(_speed.x, _speed.y);
 
 			Physics.constrain(_worldBounds, _playerPos, _player.width, _player.height, _speed);
@@ -169,8 +168,8 @@ package
 			}
 			//TEST CODE END
 			
-			_frameRate.txt1 = stage.numChildren;
-			_frameRate.txt2 = this.numChildren;
+			_frameRate.txt1 = 3;stage.numChildren;
+			_frameRate.txt2 = 3;this.numChildren;
 		}
 
 		private function positionPlayerAndCamera():void
@@ -212,7 +211,7 @@ package
 				}
 			}
 			
-			_player.rotation = 45 + Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
+			_player.rotation = Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
 		}
 
 /*

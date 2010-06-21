@@ -1,5 +1,6 @@
 package
 {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 
 	public final class DebugVectorObject extends Sprite
@@ -10,6 +11,18 @@ package
 			mouseEnabled = false;
 		}
 
+		[Embed(source="assets/spaceship1.svg")]
+		static private const SPACESHIP:Class;
+		static public function createSpaceship():DisplayObject
+		{
+			var sprite:Sprite = new SPACESHIP;
+			
+			var fudge:Sprite = new Sprite;
+			sprite.x = -sprite.width/2;
+			sprite.y = -sprite.height/2;
+			fudge.addChild(sprite);
+			return fudge;
+		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DebugVectorObject
 		{
 			var wo:DebugVectorObject = new DebugVectorObject;
