@@ -16,6 +16,7 @@ package
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
 	
+	import karnold.tile.BitmapTileFactory;
 	import karnold.tile.TiledBackground;
 	import karnold.utils.Input;
 	import karnold.utils.Location;
@@ -28,6 +29,7 @@ package
 		private var _playArea:Sprite;
 		private var _input:Input;
 		private var _camera:Point = new Point(0, 0);
+		private var _coords:TextField;
 		private var _text:TextField;
 		public function game1editor2()
 		{
@@ -52,8 +54,9 @@ package
 			addChild(_playArea);
 
 			Utils.listen(_playArea, MouseEvent.MOUSE_DOWN, onSetTile);
+			Utils.listen(_playArea, MouseEvent.MOUSE_MOVE, onPlayAreaMouseMove);
 			
-			_map = new TiledBackground(_playArea, new BitmapTileFactory, 200, 200, _playArea.width, _playArea.height);
+			_map = new TiledBackground(_playArea, new BitmapTileFactory(AssetManager.instance), 200, 200, _playArea.width, _playArea.height);
 			
 			var button:DisplayObject = createButton("Read", onDeserialize);
 			button.x = _playArea.x + _playArea.width;
@@ -65,15 +68,22 @@ package
 			button2.y = button.y;
 			addChild(button2);
 
+			_coords = new TextField;
+			_coords.autoSize = TextFieldAutoSize.LEFT;
+			_coords.text = "0, 0";
+			_coords.x = button.x;
+			_coords.y = button.y + button.height;
+			addChild(_coords);
+
 			_text = new TextField;
 			_text.border = true;
 			_text.type = TextFieldType.INPUT;
 			_text.multiline = true;
 			_text.wordWrap = true;
-			_text.height = _playArea.height;
-			_text.x = button.x;
-			_text.y = button.y + button.height;
+			_text.x = _coords.x;
+			_text.y = _coords.y + _coords.height;
 			_text.width = 150;
+			_text.height = (_playArea.height + _playArea.y) - _text.y;
 			addChild(_text);
 		}
 		
@@ -140,6 +150,16 @@ package
 		{
 			_map.fromString(_text.text);
 			_map.setCamera(_camera);
+		}
+		private var po_mm:Point = new Point;
+		private var po_loc:Location = new Location;
+		private function onPlayAreaMouseMove(e:MouseEvent):void
+		{
+			po_mm.x = e.localX;
+			po_mm.y = e.localY;
+
+			_map.pointToLocation(po_mm, po_loc);
+			_coords.text = po_loc.x + ", " + po_loc.y;
 		}
 
 		static private var _fmt:TextFormat;

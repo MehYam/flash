@@ -4,8 +4,10 @@ package
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import karnold.tile.IBitmapFactory;
 
-	public class AssetManager
+	public class AssetManager implements IBitmapFactory
 	{
 		public function AssetManager()
 		{

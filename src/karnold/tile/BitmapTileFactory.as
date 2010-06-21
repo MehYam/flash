@@ -1,13 +1,14 @@
-package
+package karnold.tile
 {
 	import flash.display.DisplayObject;
 	
-	import karnold.tile.ITileFactory;
 	
 	public class BitmapTileFactory implements ITileFactory
 	{
-		public function BitmapTileFactory()
+		private var _bitmapFactory:IBitmapFactory;
+		public function BitmapTileFactory(bitmapFactory:IBitmapFactory)
 		{
+			_bitmapFactory = bitmapFactory;
 		}
 		
 		public function getTile(tileID:uint):DisplayObject
