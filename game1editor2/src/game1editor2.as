@@ -4,6 +4,8 @@ package
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
@@ -14,43 +16,60 @@ package
 	public class game1editor2 extends Sprite
 	{
 		private var _map:TiledBackground;
+		private var _imageSelect:ImageSelect;
+		private var _playArea:Sprite;
 		public function game1editor2()
 		{
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 
-			var imageSelect:DisplayObject = new ImageSelect;
-			imageSelect.scaleX = 1.5;
-			imageSelect.scaleY = 1.5;
-			addChild(imageSelect);
+			_imageSelect = new ImageSelect;
+			_imageSelect.scaleX = 1.5;
+			_imageSelect.scaleY = 1.5;
+			addChild(_imageSelect);
 			
-			var playArea:Sprite = new Sprite;
-			playArea.graphics.beginFill(0xaaaaaa);
-			playArea.graphics.lineStyle(0, 0x0000ff);
-			playArea.graphics.drawRect(0, 0, 400, 400);
-			playArea.graphics.endFill();
+			_playArea = new Sprite;
+			_playArea.graphics.beginFill(0xaaaaaa);
+			_playArea.graphics.lineStyle(0, 0x0000ff);
+			_playArea.graphics.drawRect(0, 0, 400, 400);
+			_playArea.graphics.endFill();
 
-			playArea.x = imageSelect.x + imageSelect.width + 5;
-			playArea.y = imageSelect.y;
-			addChild(playArea);
-			Utils.listen(playArea, MouseEvent.CLICK, onPlayClick);
+			_playArea.x = _imageSelect.x + _imageSelect.width + 5;
+			_playArea.y = _imageSelect.y;
+			addChild(_playArea);
+
+			Utils.listen(_playArea, MouseEvent.MOUSE_DOWN, onSetTile);
 			
-			_map = new TiledBackground(playArea, new BitmapTileFactory, 40, 40, playArea.width, playArea.height);
-//			_map.putTile(0, 0, 0);
-//			_map.putTile(1, 1, 1);
-//			_map.putTile(2, 1, 2);
-			_map.setCamera(new Point(0, 0));
+			_map = new TiledBackground(_playArea, new BitmapTileFactory, 40, 40, _playArea.width, _playArea.height);
 		}
 		
-		public function onPlayClick(e:MouseEvent):void
+		private function onSetTile(e:MouseEvent):void
 		{
-			trace(e);
-			
+			Utils.listen(_playArea, MouseEvent.MOUSE_MOVE, onSetTile);
+			Utils.listen(stage, MouseEvent.MOUSE_UP, onStopDragging);
+			Utils.listen(stage, Event.MOUSE_LEAVE, onStopDragging);
+
 			var loc:Location = new Location;
 			_map.pointToLocation(new Point(e.localX, e.localY), loc);
-			_map.putTile(0, loc.x, loc.y);
+
+			const obj:DisplayObject = DisplayObject(_map.tilesArray.lookup(loc.x, loc.y));
+
+			if (_imageSelect.selection == ImageSelect.NULL_SELECTION)
+			{
+				_map.clearTile(loc.x, loc.y);
+			}
+			else if (!obj || BitmapTileFactory.tileToID(obj) != _imageSelect.selection)
+			{
+				_map.putTile(_imageSelect.selection, loc.x, loc.y);
+			}
 			
 			_map.setCamera(new Point(0, 0));
+		}
+		private function onStopDragging(e:Event):void
+		{
+			_playArea.removeEventListener(MouseEvent.MOUSE_MOVE, onSetTile);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onStopDragging);
+			stage.removeEventListener(Event.MOUSE_LEAVE, onStopDragging);
 		}
 	}
 }

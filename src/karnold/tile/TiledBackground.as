@@ -31,6 +31,11 @@ package karnold.tile
 		
 		public function clearTile(x:uint, y:uint):void
 		{
+			var tile:DisplayObject = DisplayObject(_tiles.lookup(x, y));
+			if (tile && tile.parent)
+			{
+				tile.parent.removeChild(tile);
+			}
 			_tiles.put(null, x, y);
 		}
 		

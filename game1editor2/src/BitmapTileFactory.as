@@ -21,7 +21,7 @@ package
 			return AssetManager.TILES_SIZE;
 		}
 		
-		public function tileToID(tile:DisplayObject):uint
+		static public function tileToID(tile:DisplayObject):uint
 		{
 			return parseInt(tile.name);
 		}

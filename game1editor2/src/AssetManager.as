@@ -44,7 +44,7 @@ package
 				for (var i:uint = 0; i < TILES; ++i)
 				{
 					var tileBMD:BitmapData = new BitmapData(TILES_SIZE, TILES_SIZE, false);
-					var srcRect:Rectangle = new Rectangle((i % TILE_COLUMNS) * TILES_SIZE, i / TILE_COLUMNS, TILES_SIZE, TILES_SIZE);
+					var srcRect:Rectangle = new Rectangle((i % TILE_COLUMNS) * TILES_SIZE, int(i / TILE_COLUMNS) * TILES_SIZE, TILES_SIZE, TILES_SIZE);
 
 					tileBMD.copyPixels(bitmap.bitmapData, srcRect, origin);
 					
