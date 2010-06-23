@@ -10,6 +10,7 @@ package
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
+	import flash.utils.getTimer;
 	
 	import karnold.tile.BitmapTileFactory;
 	import karnold.tile.ITileFactory;
@@ -105,6 +106,7 @@ _actorLayer.addChild(testenemy.displayObject);
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
+		private var _lastPurge:int;
 		private function onEnterFrame():void
 		{
 			//
@@ -171,7 +173,7 @@ _actorLayer.addChild(testenemy.displayObject);
 			if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON) || _input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
 				var actor:Actor = new Actor(DebugVectorObject.createCircle(0xff7777, 5, 5));
-				actor.behavior = SpeedDecayBehavior.instance;
+				actor.behavior = new CompositeBehavior(SpeedDecayBehavior.instance, new ExpireBehavior(2000));
 				actor.speed = speed.clone();
 				actor.worldPos = _player.worldPos.clone();
 				_cast.push(actor);
@@ -182,13 +184,29 @@ _actorLayer.addChild(testenemy.displayObject);
 			for each (var a:Actor in _cast)
 			{
 				a.onFrame(_player);
-				a.worldPos.offset(a.speed.x, a.speed.y);
-				Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
-
-				a.displayObject.x = a.worldPos.x - _cameraPos.x;
-				a.displayObject.y = a.worldPos.y - _cameraPos.y;
-				
-//				a.displayObject.parent.setChildIndex(a.displayObject, a.displayObject.parent.numChildren-1);
+				if (a.alive)
+				{
+					a.worldPos.offset(a.speed.x, a.speed.y);
+					Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
+	
+					a.displayObject.x = a.worldPos.x - _cameraPos.x;
+					a.displayObject.y = a.worldPos.y - _cameraPos.y;
+				}
+				else
+				{
+					if (a.displayObject.parent)
+					{
+						a.displayObject.parent.removeChild(a.displayObject);
+					}
+				}
+			}
+			const now:int = getTimer();
+			if ((now - _lastPurge) > 5000)
+			{
+trace("pre filter", _cast.length);
+				_cast = _cast.filter(removeDead);
+trace("post filter", _cast.length);
+				_lastPurge = now;
 			}
 			//TEST CODE END
 			
@@ -196,6 +214,10 @@ _actorLayer.addChild(testenemy.displayObject);
 			_frameRate.txt2 = 3;this.numChildren;
 		}
 
+		static private function removeDead(element:*, index:int, arr:Array):Boolean
+		{
+			return Actor(element).alive;
+		}
 		private function positionPlayerAndCamera():void
 		{
 			const stageMiddleHorz:Number = stage.stageWidth/2;
@@ -311,6 +333,7 @@ final class Actor
 	public var displayObject:DisplayObject;
 	public var speed:Point = new Point();
 	public var worldPos:Point = new Point();
+	public var alive:Boolean = true;
 	public function Actor(dobj:DisplayObject)
 	{
 		displayObject = dobj;
@@ -540,7 +563,22 @@ class AlternatingBehavior implements IBehavior
 		}
 	}
 }
-
+class ExpireBehavior implements IBehavior
+{
+	private var start:int = getTimer();
+	private var lifetime:int;
+	public function ExpireBehavior(msLifeTime:int):void
+	{
+		lifetime = msLifeTime;
+	}
+	public function onFrame(player:Actor, other:Actor):void
+	{
+		if ((getTimer() - start) > lifetime)
+		{
+			other.alive = false;
+		}
+	}
+}
 final class SampleData
 {
 	[Embed(source="assets/level1.txt", mimeType="application/octet-stream")]
