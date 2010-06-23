@@ -68,6 +68,13 @@ testenemy.behavior =
 		new AlternatingBehavior(BehaviorFactory.avoid, BehaviorFactory.follow, BehaviorFactory.strafe), 
 		BehaviorFactory.faceMyDirection
 	);
+testenemy.behavior = BehaviorFactory.follow; 
+testenemy.behavior = new AlternatingBehavior
+	(
+		new CompositeBehavior(BehaviorFactory.avoid, BehaviorFactory.faceMyDirection),
+		new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.faceMyDirection),
+		BehaviorFactory.strafe
+	);
 
 _cast.push(testenemy);
 _actorLayer.addChild(testenemy.displayObject);
@@ -375,6 +382,7 @@ class FaceMyDirectionBehavior implements IBehavior
 		other.displayObject.rotation = Physics.getDegreesRotation(other.speed.x, other.speed.y);
 	}
 }
+
 class AvoidBehavior implements IBehavior
 {
 	static private var _instance:IBehavior;
@@ -456,6 +464,8 @@ class StrafeBehavior implements IBehavior
 		
 		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
 		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+		
+		other.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
 	}
 };
 
