@@ -497,9 +497,13 @@ class CompositeBehavior implements IBehavior
 			behavior.onFrame(hero, other);
 		}
 	}
-	public function shift():void
+	public function onFrameAt(hero:Actor, other:Actor, index:uint):void
 	{
-		_behaviors.push(_behaviors.shift());
+		IBehavior(_behaviors[index]).onFrame(hero, other);
+	}
+	public function get numBehaviors():uint
+	{
+		return _behaviors.length;
 	}
 };
 class AlternatingBehavior implements IBehavior
@@ -513,14 +517,15 @@ class AlternatingBehavior implements IBehavior
 			_behaviors.push(behavior);
 		}
 	}
+	private var _count:uint;
 	public function onFrame(hero:Actor, other:Actor):void
 	{
-		_behaviors.onFrame(hero, other);
+		_behaviors.onFrameAt(hero, other, _count % _behaviors.numBehaviors);
 
 		const now:int = getTimer();
 		if ((now - _lastChange) > 5000)
 		{
-			_behaviors.shift();
+			++_count;
 			_lastChange = now;
 		}
 	}
