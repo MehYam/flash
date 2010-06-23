@@ -6,6 +6,7 @@ package
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
@@ -22,21 +23,24 @@ package
 	import karnold.utils.Physics;
 	import karnold.utils.Utils;
 
-	// efficiency with the bitmaps was pretty goddamned sweet
 	public final class game extends Sprite
 	{
 		private var _bg:TiledBackground;
 		private var _worldBounds:Bounds;
 
 		private var _input:Input;
-		private var _player:DisplayObject;
-		private var _playerPos:Point;
+		private var _player:Actor;
 		private var _frameTimer:FrameTimer = new FrameTimer(onEnterFrame);
 		private var _frameRate:FrameRate = new FrameRate;
+		
+		private var _actorLayer:DisplayObjectContainer = new Sprite;
 		
 		static private const VECTOR:Boolean = false;
 		public function game()
 		{
+//			_actorLayer = parent;
+			parent.addChild(_actorLayer);
+
 //			stage.align = StageAlign.TOP_LEFT;
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 40;
@@ -50,12 +54,13 @@ package
 
 			_bg = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+			_actorLayer.scrollRect = this.scrollRect;
 
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _bg.tilesArray.width, factory.tileSize*_bg.tilesArray.height);
 
-			_playerPos = _worldBounds.middle;
-			_player = DebugVectorObject.createSpaceship();//DebugVectorObject.createCircle(0xff0000, 20, 20);
-			parent.addChild(_player);
+			_player = new Actor(DebugVectorObject.createBlueShip());//createSpaceship();
+			_player.worldPos = _worldBounds.middle;
+			_actorLayer.addChild(_player.displayObject);
 
 			if (VECTOR)
 			{
@@ -122,19 +127,19 @@ package
 				else
 				{
 					_frameRate.enabled = true;
-					parent.addChild(_frameRate);
+					_actorLayer.addChild(_frameRate);
 				}
 			}
 
 			//
 			// Render the background
-			_playerPos.offset(_speed.x, _speed.y);
+			_player.worldPos.offset(_speed.x, _speed.y);
 
-			Physics.constrain(_worldBounds, _playerPos, _player.width, _player.height, _speed);
+			Physics.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, _speed);
 			
-			if (!_lastPlayerPos.equals(_playerPos))
+			if (!_lastPlayerPos.equals(_player.worldPos))
 			{
-				Utils.setPoint(_lastPlayerPos, _playerPos);
+				Utils.setPoint(_lastPlayerPos, _player.worldPos);
 				positionPlayerAndCamera();
 				if (!_cameraPos.equals(_lastCameraPos))
 				{
@@ -148,10 +153,10 @@ package
 			{
 				var actor:Actor = new Actor(DebugVectorObject.createCircle(0xff7777, 5, 5));
 				actor.speed = _speed.clone();
-				actor.worldPos = _playerPos.clone();
+				actor.worldPos = _player.worldPos.clone();
 				_actors.push(actor);
 				
-				addChild(actor.displayObject);
+				_actorLayer.addChild(actor.displayObject);
 			}
 			
 			for each (var a:Actor in _actors)
@@ -177,14 +182,14 @@ package
 			const stageMiddleHorz:Number = stage.stageWidth/2;
 			const stageMiddleVert:Number = stage.stageHeight/2;
 			
-			_cameraPos.x = _playerPos.x - stageMiddleHorz;
-			_cameraPos.y = _playerPos.y - stageMiddleVert;
+			_cameraPos.x = _player.worldPos.x - stageMiddleHorz;
+			_cameraPos.y = _player.worldPos.y - stageMiddleVert;
 			
-			_player.x = stageMiddleHorz;
-			_player.y = stageMiddleVert;
+			_player.displayObject.x = stageMiddleHorz;
+			_player.displayObject.y = stageMiddleVert;
 			if (_cameraPos.x < _worldBounds.left)
 			{
-				_player.x -= (_worldBounds.left - _cameraPos.x);
+				_player.displayObject.x -= (_worldBounds.left - _cameraPos.x);
 				_cameraPos.x = _worldBounds.left;
 			}
 			else 
@@ -192,13 +197,13 @@ package
 				const cameraRightBound:Number = _worldBounds.right - stage.stageWidth; 
 				if (_cameraPos.x > cameraRightBound)
 				{
-					_player.x += _cameraPos.x - cameraRightBound;
+					_player.displayObject.x += _cameraPos.x - cameraRightBound;
 					_cameraPos.x = cameraRightBound;
 				}
 			}
 			if (_cameraPos.y < _worldBounds.top)
 			{
-				_player.y -= (_worldBounds.top - _cameraPos.y);
+				_player.displayObject.y -= (_worldBounds.top - _cameraPos.y);
 				_cameraPos.y = _worldBounds.top; 
 			}
 			else
@@ -206,12 +211,12 @@ package
 				const cameraBottomBound:Number = _worldBounds.bottom - stage.stageHeight;
 				if (_cameraPos.y > cameraBottomBound)
 				{
-					_player.y += _cameraPos.y - cameraBottomBound;
+					_player.displayObject.y += _cameraPos.y - cameraBottomBound;
 					_cameraPos.y = cameraBottomBound;
 				}
 			}
 			
-			_player.rotation = Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
+			_player.displayObject.rotation = Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
 		}
 
 /*
@@ -238,13 +243,6 @@ NEXT TASK:
 		}
 		private static function initVectorMap(bg:TiledBackground, densityPct:Number):void
 		{
-//for (var n:uint = 0; n < map.height; ++n)
-//{
-//		var obj:DisplayObjectContainer = DebugVectorObject.createSquare(color, 20);
-//		Utils.addText(obj, "(" + x + "," + y + ")", 0xff0000).background = true;
-//		map.put(obj, x, y);
-//}
-//return;			
 			const XSLOTS:uint = bg.tilesArray.width;
 			const YSLOTS:uint = bg.tilesArray.height;
 			const count:uint = densityPct * (XSLOTS * YSLOTS);
@@ -256,7 +254,6 @@ NEXT TASK:
 					// [kja] we're using DisplayObjects in our actual map - the map instead should just be data,
 					// and we instead simply pool DisplayObjects, reusing them as necessary.
 					bg.putTile(DebugVectorTileFactory.TILE_SPIRO, loc.x, loc.y);
-//					Utils.addText(wo, "(" + loc.x + "," + loc.y + ")", 0xff0000).background = true;
 				} 
 			} 
 		}
@@ -291,6 +288,39 @@ final class Actor
 	{
 		displayObject = dobj;
 	}
+	
+	public function onFrame():void
+	{
+		
+	}
+}
+
+final class BadActor
+{
+	public var displayObject:DisplayObject;
+	public var speed:Point = new Point();
+	public var worldPos:Point = new Point();
+	public function BadActor(dobj:DisplayObject)
+	{
+		displayObject = dobj;
+	}
+	
+	public function onFrame(hero:Actor):void
+	{
+		
+	}
+}
+
+class FollowBehavior
+{
+	public function onFrame(us:Actor, them:Actor):void
+	{
+		
+	}
+}
+
+class StrafeBehavior
+{
 }
 
 final class SampleData

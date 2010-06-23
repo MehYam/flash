@@ -3,6 +3,7 @@ package karnold.utils
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
@@ -176,7 +177,8 @@ package karnold.utils
 			return path;
 		}
 		
-		public static function traceDisplayList(obj:DisplayObject, level:int = 0, visibilityReport:Object = null):void
+		// Recursive.  Returns number of objects.
+		public static function traceDisplayList(obj:DisplayObject, level:int = 0, visibilityReport:Object = null):uint
 		{
 			if (!obj)
 			{
@@ -247,7 +249,8 @@ package karnold.utils
 					objAsContainer = flexContainer;
 				}
 			}
-			
+
+			var count:int = 1;
 			const numChildren:int = objAsContainer ? objAsContainer.numChildren : 0;
 			if (numChildren)
 			{
@@ -257,7 +260,12 @@ package karnold.utils
 				for (var i:int; i < numChildren; ++i)
 				{
 					var child:DisplayObject = objAsContainer.getChildAt(i);
-					traceDisplayList(child, level+1, visibilityReport);
+					// It's actually possible, depending on where we are in a frame, to have numChildren be larger
+					// than the number of children we actually have access to, hence the check:
+					if (child)
+					{
+						count += traceDisplayList(child, level+1, visibilityReport);
+					}
 				}
 				trIndented("</" + type + ">", level);
 			}
@@ -273,6 +281,7 @@ package karnold.utils
 					trIndented("<!-- vis report: " + visibilityReport.visTotal + " invisible objects -->", level);
 				}
 			}
+			return count;
 		}
 		
 		public static function bringToFront(dobj:DisplayObject):void
@@ -282,7 +291,66 @@ package karnold.utils
 				dobj.parent.setChildIndex(dobj, dobj.parent.numChildren-1);
 			}
 		}
-		
+
+		//
+		// Does a depth-first traversal of the display hierarchy, calling the onObject method of the
+		// functor you pass in.  We're using a functor instead of Function to avoid closures.  Sample
+		// usage:
+		//
+		// var functor:Object = { onObject: myCallback, foo:  "whatever" }
+		// ...
+		// private static var myCallback(functor:Object, parent:DisplayObject, child:DisplayObject):Boolean 
+		// { 
+		//   ...
+		//     return true;  // or return false if you want to halt the recursion
+		// }
+		//
+		public static function recurse(functor:Object, obj:DisplayObject):void
+		{
+			recurseImpl(functor, obj ? obj.parent : null, obj);
+		}
+		private static function recurseImpl(functor:Object, parent:DisplayObject, child:DisplayObject):void
+		{
+			if (functor.excludes && functor.excludes[child])
+			{
+				return; // this child's excluded
+			}
+			// prevent both parent and child from being null
+			if ((parent || child) && functor.onObject(functor, parent, child))  // call the functor.  It can halt recursion by returning false
+			{
+				var container:DisplayObjectContainer = child as DisplayObjectContainer;
+				if (container)
+				{
+					var rawChildren:Object;
+					try { rawChildren = container["rawChildren"]; } catch (e:Error) {}
+					
+					recurseImplLooper(rawChildren || container, functor, child);
+				}				
+			}
+		}
+		private static function recurseImplLooper(container:Object, functor:Object, child:DisplayObject):void
+		{
+			var childrenCount:Number = container.numChildren;
+			for (var i:int = 0;  i < childrenCount; ++i)
+			{
+				var grandChild:DisplayObject = container.getChildAt(i);
+				recurseImpl(functor, child, grandChild);
+			}			
+		}
+		public static function stopAllMovieClips(mc:DisplayObject) : void
+		{
+			var functor:Object = {onObject: stopMovieClipsFn};
+			recurse(functor, mc);
+		}
+		private static function stopMovieClipsFn(functor:Object, parent:DisplayObject, child:DisplayObject):Boolean
+		{
+			if (child is MovieClip)
+			{
+				MovieClip(child).gotoAndStop(0);
+			}
+			return true;
+		}
+
 		public function Utils(hide:CONSTRUCTOR_HIDER) {}
 	}
 }

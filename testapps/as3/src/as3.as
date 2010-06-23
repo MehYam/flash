@@ -1,5 +1,9 @@
 package {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
@@ -26,7 +30,9 @@ package {
 
 //			testStringErrorThing();
 			
-			testSomeShape();
+//			testSomeShape();
+			
+			testBitmapDataTransform();
 		}
 	
 		private function testTextField():void
@@ -171,6 +177,37 @@ package {
 			// test comment
 			graphics.lineStyle(0, 0xff0000);
 			graphics.drawRect(x, y, width, height);
+		}
+		
+		private function testBitmapDataTransform():void
+		{
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.TOP_LEFT;
+
+			const whole:Number = 300;
+			const half:Number = whole/2;
+
+			var sprite:Sprite = new Sprite;
+			sprite.graphics.lineStyle(3, 0xff0000);
+			sprite.graphics.beginFill(0x00ff00);
+			sprite.graphics.drawEllipse(-half, -half, whole, whole);
+			sprite.graphics.moveTo(0, 0);
+			sprite.graphics.lineTo(0, -half);
+			sprite.graphics.endFill();
+			
+			sprite.x = stage.stageWidth/2;
+			sprite.y = stage.stageHeight/2;
+
+//			addChild(sprite);
+			
+			var bitmapData:BitmapData = new BitmapData(sprite.width, sprite.height);
+			bitmapData.draw(sprite);
+			
+			var bitmap:Bitmap = new Bitmap(bitmapData);
+			bitmap.x = stage.stageWidth/2;
+			bitmap.y = stage.stageHeight/2;
+			
+			addChild(bitmap);
 		}
 	}
 }
