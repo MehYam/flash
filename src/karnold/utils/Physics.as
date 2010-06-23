@@ -4,6 +4,15 @@ package karnold.utils
 
 	public class Physics
 	{
+		static private const DEGREES_FACTOR:Number = 180/Math.PI;
+		static public function getDegreesRotation(deltaX:Number, deltaY:Number):Number
+		{
+			return Math.atan2(deltaX, -deltaY) * DEGREES_FACTOR;
+		}
+		static public function getRadiansRotation(deltaX:Number, deltaY:Number):Number
+		{
+			return Math.atan2(deltaX, -deltaY);
+		}
 		static private const SPEED_ALPHA:Number = 0.3;
 		static public function speedDecay(speed:Number, decay:Number):Number
 		{
@@ -41,6 +50,18 @@ package karnold.utils
 					speedForBounce.y = -speedForBounce.y;
 				}
 			}
+		}
+		static public function constrainAbsoluteValue(value:Number, limit:Number):Number
+		{
+			if (value < (-limit))
+			{
+				return -limit;
+			}
+			if (value > limit)
+			{
+				return limit;
+			}
+			return value;
 		}
 	}
 }

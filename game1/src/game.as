@@ -43,7 +43,7 @@ package
 
 //			stage.align = StageAlign.TOP_LEFT;
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.frameRate = 40;
+			stage.frameRate = Consts.FRAMERATE;
 			stage.focus = stage;
 			FrameTimer.init(stage);
 			_frameTimer.startPerFrame();
@@ -60,6 +60,18 @@ package
 
 			_player = new Actor(DebugVectorObject.createBlueShip());//createSpaceship();
 			_player.worldPos = _worldBounds.middle;
+			
+var testenemy:Actor = new Actor(DebugVectorObject.createRedShip());
+testenemy.worldPos = _worldBounds.middle;
+testenemy.behavior = 
+	new CompositeBehavior(
+		new AlternatingBehavior(BehaviorFactory.avoid, BehaviorFactory.follow, BehaviorFactory.strafe), 
+		BehaviorFactory.faceMyDirection
+	);
+
+_cast.push(testenemy);
+_actorLayer.addChild(testenemy.displayObject);
+
 			_actorLayer.addChild(_player.displayObject);
 
 			if (VECTOR)
@@ -82,8 +94,7 @@ package
 		private static const ACCELERATION:Number = 1;
 		private static const MAX_SPEED:Number = 6;
 		private static const SPEED_DECAY:Number = 0.1;  // percentage
-		private var _speed:Point = new Point(0, 0);
-		private var _actors:Array = [];
+		private var _cast:Array = [];
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
@@ -91,30 +102,31 @@ package
 		{
 			//
 			// Check input
+			var speed:Point = _player.speed;
 			if (_input.isKeyDown(Input.KEY_RIGHT))
 			{
-				_speed.x = Math.min(MAX_SPEED, _speed.x + ACCELERATION);
+				speed.x = Math.min(MAX_SPEED, speed.x + ACCELERATION);
 			}
 			else if (_input.isKeyDown(Input.KEY_LEFT))
 			{
-				_speed.x = Math.max(-MAX_SPEED, _speed.x - ACCELERATION);
+				speed.x = Math.max(-MAX_SPEED, speed.x - ACCELERATION);
 			}
-			else if (_speed.x)
+			else if (speed.x)
 			{
-				_speed.x = Physics.speedDecay(_speed.x, SPEED_DECAY);
+				speed.x = Physics.speedDecay(speed.x, SPEED_DECAY);
 			}
 			
 			if (_input.isKeyDown(Input.KEY_DOWN))
 			{
-				_speed.y = Math.min(MAX_SPEED, _speed.y + ACCELERATION);
+				speed.y = Math.min(MAX_SPEED, speed.y + ACCELERATION);
 			}
 			else if (_input.isKeyDown(Input.KEY_UP))
 			{
-				_speed.y = Math.max(-MAX_SPEED, _speed.y - ACCELERATION);
+				speed.y = Math.max(-MAX_SPEED, speed.y - ACCELERATION);
 			}
-			else if (_speed.y)
+			else if (speed.y)
 			{
-				_speed.y = Physics.speedDecay(_speed.y, SPEED_DECAY);
+				speed.y = Physics.speedDecay(speed.y, SPEED_DECAY);
 			}
 
 			if (_input.checkKeyHistoryAndClear(Input.KEY_TILDE))
@@ -133,9 +145,9 @@ package
 
 			//
 			// Render the background
-			_player.worldPos.offset(_speed.x, _speed.y);
+			_player.worldPos.offset(speed.x, speed.y);
 
-			Physics.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, _speed);
+			Physics.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, speed);
 			
 			if (!_lastPlayerPos.equals(_player.worldPos))
 			{
@@ -152,24 +164,24 @@ package
 			if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON) || _input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
 				var actor:Actor = new Actor(DebugVectorObject.createCircle(0xff7777, 5, 5));
-				actor.speed = _speed.clone();
+				actor.behavior = SpeedDecayBehavior.instance;
+				actor.speed = speed.clone();
 				actor.worldPos = _player.worldPos.clone();
-				_actors.push(actor);
+				_cast.push(actor);
 				
 				_actorLayer.addChild(actor.displayObject);
 			}
 			
-			for each (var a:Actor in _actors)
+			for each (var a:Actor in _cast)
 			{
+				a.onFrame(_player);
 				a.worldPos.offset(a.speed.x, a.speed.y);
 				Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
-				a.speed.x = Physics.speedDecay(a.speed.x, 0.01);
-				a.speed.y = Physics.speedDecay(a.speed.y, 0.01);
-				
+
 				a.displayObject.x = a.worldPos.x - _cameraPos.x;
 				a.displayObject.y = a.worldPos.y - _cameraPos.y;
 				
-				a.displayObject.parent.setChildIndex(a.displayObject, a.displayObject.parent.numChildren-1);
+//				a.displayObject.parent.setChildIndex(a.displayObject, a.displayObject.parent.numChildren-1);
 			}
 			//TEST CODE END
 			
@@ -216,7 +228,7 @@ package
 				}
 			}
 			
-			_player.displayObject.rotation = Math.atan2(_speed.x, -_speed.y)/Math.PI * 180;
+			BehaviorFactory.faceMyDirection.onFrame(null, _player);
 		}
 
 /*
@@ -278,7 +290,15 @@ NEXT TASK:
 }
 import flash.display.DisplayObject;
 import flash.geom.Point;
+import flash.utils.getTimer;
 
+import karnold.utils.Physics;
+import karnold.utils.Utils;
+
+interface IBehavior
+{
+	function onFrame(player:Actor, other:Actor):void;
+}
 final class Actor
 {
 	public var displayObject:DisplayObject;
@@ -289,38 +309,221 @@ final class Actor
 		displayObject = dobj;
 	}
 	
-	public function onFrame():void
+	private var _behavior:IBehavior;
+	public function set behavior(b:IBehavior):void
 	{
-		
+		_behavior = b;
 	}
-}
-
-final class BadActor
-{
-	public var displayObject:DisplayObject;
-	public var speed:Point = new Point();
-	public var worldPos:Point = new Point();
-	public function BadActor(dobj:DisplayObject)
-	{
-		displayObject = dobj;
-	}
-	
 	public function onFrame(hero:Actor):void
 	{
-		
+		if (_behavior)
+		{
+			_behavior.onFrame(hero, this);
+		}
 	}
 }
 
-class FollowBehavior
+class DumbConsts
 {
-	public function onFrame(us:Actor, them:Actor):void
+	static public const MAX_SPEED:Number = 3;
+	static public const ACCELERATION:Number = 0.1;
+};
+
+class BehaviorFactory
+{
+	static private var _fmd:IBehavior;
+	static public function get faceMyDirection():IBehavior
 	{
-		
+		if (!_fmd)
+		{
+			_fmd = new FaceMyDirectionBehavior;
+		}
+		return _fmd;
+	}
+	static private var _avoid:IBehavior;
+	static public function get avoid():IBehavior
+	{
+		if (!_avoid)
+		{
+			_avoid = new AvoidBehavior;
+		}
+		return _avoid;
+	}
+	static private var _follow:IBehavior;
+	static public function get follow():IBehavior
+	{
+		if (!_follow)
+		{
+			_follow = new FollowBehavior;
+		}
+		return _follow;
+	}
+	static private var _strafe:IBehavior;
+	static public function get strafe():IBehavior
+	{
+		if (!_strafe)
+		{
+			_strafe = new StrafeBehavior;
+		}
+		return _strafe;
 	}
 }
-
-class StrafeBehavior
+class FaceMyDirectionBehavior implements IBehavior
 {
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		other.displayObject.rotation = Physics.getDegreesRotation(other.speed.x, other.speed.y);
+	}
+}
+class AvoidBehavior implements IBehavior
+{
+	static private var _instance:IBehavior;
+	static public function get instance():IBehavior
+	{
+		if (!_instance)
+		{
+			_instance = new AvoidBehavior;
+		}
+		return _instance;
+	}
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		const deltaX:Number = other.worldPos.x - hero.worldPos.x;
+		const deltaY:Number = other.worldPos.y - hero.worldPos.y;
+		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		
+		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
+		
+		other.speed.x += accelX;
+		other.speed.y += accelY;
+		
+		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
+		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+	}
+};
+
+class FollowBehavior implements IBehavior
+{
+	static private var _instance:IBehavior;
+	static public function get instance():IBehavior
+	{
+		if (!_instance)
+		{
+			_instance = new FollowBehavior;
+		}
+		return _instance;
+	}
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		const deltaX:Number = other.worldPos.x - hero.worldPos.x;
+		const deltaY:Number = other.worldPos.y - hero.worldPos.y;
+		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		
+		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
+		
+		other.speed.x -= accelX;
+		other.speed.y -= accelY;
+		
+		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
+		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+	}
+};
+
+class StrafeBehavior implements IBehavior
+{
+	static private var _instance:IBehavior;
+	static public function get instance():IBehavior
+	{
+		if (!_instance)
+		{
+			_instance = new StrafeBehavior;
+		}
+		return _instance;
+	}
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		const deltaX:Number = other.worldPos.x - hero.worldPos.x;
+		const deltaY:Number = other.worldPos.y - hero.worldPos.y;
+		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		
+		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
+		
+		other.speed.x -= accelX;
+		other.speed.y -= accelY;
+		
+		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
+		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+	}
+};
+
+class SpeedDecayBehavior implements IBehavior
+{
+	static private var _instance:SpeedDecayBehavior;
+	static public function get instance():SpeedDecayBehavior
+	{
+		if (!_instance)
+		{
+			_instance = new SpeedDecayBehavior;
+		}
+		return _instance;
+	}
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		other.speed.x = Physics.speedDecay(other.speed.x, 0.01);
+		other.speed.y = Physics.speedDecay(other.speed.y, 0.01);
+	}
+}
+class CompositeBehavior implements IBehavior
+{
+	private var _behaviors:Array = [];
+	public function CompositeBehavior(...args)
+	{
+		for each (var behavior:IBehavior in args)
+		{
+			_behaviors.push(behavior);
+		}
+	}
+	public function push(b:IBehavior):void
+	{
+		_behaviors.push(b);
+	}
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		for each (var behavior:IBehavior in _behaviors)
+		{
+			behavior.onFrame(hero, other);
+		}
+	}
+	public function shift():void
+	{
+		_behaviors.push(_behaviors.shift());
+	}
+};
+class AlternatingBehavior implements IBehavior
+{
+	private var _behaviors:CompositeBehavior = new CompositeBehavior;
+	private var _lastChange:int;
+	public function AlternatingBehavior(...args)
+	{
+		for each (var behavior:IBehavior in args)
+		{
+			_behaviors.push(behavior);
+		}
+	}
+	public function onFrame(hero:Actor, other:Actor):void
+	{
+		_behaviors.onFrame(hero, other);
+
+		const now:int = getTimer();
+		if ((now - _lastChange) > 5000)
+		{
+			_behaviors.shift();
+			_lastChange = now;
+		}
+	}
 }
 
 final class SampleData
