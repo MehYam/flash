@@ -8,10 +8,12 @@ package
 
 		public var MAX_SPEED:Number;
 		public var ACCELERATION:Number;
-		public function BehaviorConsts(speed:Number, accel:Number)
+		public var SPEED_DECAY:Number;
+		public function BehaviorConsts(speed:Number, accel:Number, decay:Number = 0)
 		{
 			MAX_SPEED = speed;
 			ACCELERATION = accel;
+			SPEED_DECAY = decay;
 		}
 	};
 }

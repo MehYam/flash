@@ -24,6 +24,7 @@ package karnold.utils
 		private var _txt2:NumericRasterTextField;
 		private var _txt3:NumericRasterTextField;
 		
+		private var _debugText:NumericRasterTextField;
 		private var _btn:SimpleButton;
 		
 		private static const FIELD_LEFT:Number = 10;
@@ -91,6 +92,14 @@ package karnold.utils
 			
 			currentY += FIELD_HEIGHT;
 
+			_debugText = new NumericRasterTextField;
+			_debugText.x = FIELD_LEFT;
+			_debugText.y = currentY;
+			debug = "ready";
+			addChild(_debugText);
+
+			currentY += FIELD_HEIGHT;
+
 			var box:Sprite = new Sprite();
 			box.graphics.beginFill(0xff0000);
 			box.graphics.drawRect(0,0,20,20);
@@ -119,6 +128,10 @@ package karnold.utils
 		public function set txt3(i:int):void
 		{
 			_txt3.integer = i;
+		}
+		public function set debug(str:String):void
+		{
+			_debugText.suffix = str;
 		}
 		public function set enabled(b:Boolean):void
 		{

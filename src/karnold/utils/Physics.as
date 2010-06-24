@@ -18,6 +18,16 @@ package karnold.utils
 		{
 			return degrees * DEGREES_TO_RADIANS;
 		}
+		static public function distanceBetweenPoints(a:Point, b:Point):Number
+		{
+			var x:Number = a.x - b.x;
+			x *= x;
+			
+			var y:Number = a.y - b.y;
+			y *= y;
+			
+			return Math.sqrt(x + y);
+		}
 		static private const SPEED_ALPHA:Number = 0.3;
 		static public function speedDecay(speed:Number, decay:Number):Number
 		{

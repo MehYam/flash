@@ -26,7 +26,7 @@ package
 
 	public final class game extends Sprite implements IGameState
 	{
-		private var _bg:TiledBackground;
+		private var _tiles:TiledBackground;
 		private var _worldBounds:Bounds;
 
 		private var _input:Input;
@@ -53,38 +53,24 @@ package
 
 			var factory:ITileFactory = VECTOR ? new DebugVectorTileFactory : new BitmapTileFactory(AssetManager.instance);
 
-			_bg = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
+			_tiles = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			_actorLayer.scrollRect = this.scrollRect;
 
-			_worldBounds =  new Bounds(0, 0, factory.tileSize * _bg.tilesArray.width, factory.tileSize*_bg.tilesArray.height);
+			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
 
 			_player = new Actor(DebugVectorObject.createBlueShip());//createSpaceship();
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
 			
-var testenemy:Actor = new Actor(DebugVectorObject.createRedShip(), BehaviorConsts.RED_SHIP);
-testenemy.worldPos = _worldBounds.middle;
-testenemy.worldPos.offset(20, 20);
-testenemy.behavior = new AlternatingBehavior
-	(
-		new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward),
-		new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward),
-		new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
-	);
-addEnemy(testenemy);
-
-testenemy = new Actor(DebugVectorObject.createGreenShip(), BehaviorConsts.GREEN_SHIP);
-testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-addEnemy(testenemy);
-
+addTestActors();
 			if (VECTOR)
 			{
-				initVectorMap(_bg, 0.2);
+				initVectorMap(_tiles, 0.2);
 			}
 			else
 			{
-				initRasterMap(_bg);
+				initRasterMap(_tiles);
 			}
 			trace("stage", stage.stageWidth, stage.stageHeight);
 			
@@ -95,9 +81,25 @@ addEnemy(testenemy);
 			mouseEnabled = false;
 		}
 
-		private static const ACCELERATION:Number = 1;
-		private static const MAX_SPEED:Number = 6;
-		private static const SPEED_DECAY:Number = 0.1;  // percentage
+		private function addTestActors():void
+		{
+			var testenemy:Actor = new Actor(DebugVectorObject.createRedShip(), BehaviorConsts.RED_SHIP);
+			testenemy.worldPos = _worldBounds.middle;
+			testenemy.worldPos.offset(20, 20);
+			testenemy.behavior = new AlternatingBehavior
+				(
+					new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward),
+					new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward),
+					new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
+				);
+			addEnemy(testenemy);
+			
+			testenemy = new Actor(DebugVectorObject.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+			testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
+			addEnemy(testenemy);
+		}
+
+		private static const PLAYER_CONSTS:BehaviorConsts = new BehaviorConsts(6, 1, 0.1);
 		private var _cast:Cast = new Cast;
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
@@ -106,34 +108,7 @@ addEnemy(testenemy);
 		private function onEnterFrame():void
 		{
 			//
-			// Check input
-			var speed:Point = _player.speed;
-			if (_input.isKeyDown(Input.KEY_RIGHT))
-			{
-				speed.x = Math.min(MAX_SPEED, speed.x + ACCELERATION);
-			}
-			else if (_input.isKeyDown(Input.KEY_LEFT))
-			{
-				speed.x = Math.max(-MAX_SPEED, speed.x - ACCELERATION);
-			}
-			else if (speed.x)
-			{
-				speed.x = Physics.speedDecay(speed.x, SPEED_DECAY);
-			}
-			
-			if (_input.isKeyDown(Input.KEY_DOWN))
-			{
-				speed.y = Math.min(MAX_SPEED, speed.y + ACCELERATION);
-			}
-			else if (_input.isKeyDown(Input.KEY_UP))
-			{
-				speed.y = Math.max(-MAX_SPEED, speed.y - ACCELERATION);
-			}
-			else if (speed.y)
-			{
-				speed.y = Physics.speedDecay(speed.y, SPEED_DECAY);
-			}
-
+			// Toggle framerate panel
 			if (_input.checkKeyHistoryAndClear(Input.KEY_TILDE))
 			{
 				if (_frameRate.parent)
@@ -147,11 +122,39 @@ addEnemy(testenemy);
 					_actorLayer.addChild(_frameRate);
 				}
 			}
+			
+			//
+			// Apply user input to the player object
+			var speed:Point = _player.speed;
+			if (_input.isKeyDown(Input.KEY_RIGHT))
+			{
+				speed.x = Math.min(PLAYER_CONSTS.MAX_SPEED, speed.x + PLAYER_CONSTS.ACCELERATION);
+			}
+			else if (_input.isKeyDown(Input.KEY_LEFT))
+			{
+				speed.x = Math.max(-PLAYER_CONSTS.MAX_SPEED, speed.x - PLAYER_CONSTS.ACCELERATION);
+			}
+			else if (speed.x)
+			{
+				speed.x = Physics.speedDecay(speed.x, PLAYER_CONSTS.SPEED_DECAY);
+			}
+			
+			if (_input.isKeyDown(Input.KEY_DOWN))
+			{
+				speed.y = Math.min(PLAYER_CONSTS.MAX_SPEED, speed.y + PLAYER_CONSTS.ACCELERATION);
+			}
+			else if (_input.isKeyDown(Input.KEY_UP))
+			{
+				speed.y = Math.max(-PLAYER_CONSTS.MAX_SPEED, speed.y - PLAYER_CONSTS.ACCELERATION);
+			}
+			else if (speed.y)
+			{
+				speed.y = Physics.speedDecay(speed.y, PLAYER_CONSTS.SPEED_DECAY);
+			}
 
 			//
-			// Render the background
+			// Reposition the player and the background tiles as necessary
 			_player.worldPos.offset(speed.x, speed.y);
-
 			Physics.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, speed);
 			
 			if (!_lastPlayerPos.equals(_player.worldPos))
@@ -161,11 +164,10 @@ addEnemy(testenemy);
 				if (!_cameraPos.equals(_lastCameraPos))
 				{
 					Utils.setPoint(_lastCameraPos, _cameraPos);
-					_bg.setCamera(_cameraPos);
+					_tiles.setCamera(_cameraPos);
 				}
 			}
 
-			//TEST CODE
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
 				addPlayerAmmo(AutofireBehavior.createBulletAngle(_player.displayObject.rotation, _player.worldPos.clone()));
@@ -179,9 +181,10 @@ addEnemy(testenemy);
 			applyVelocityToCast(_cast.enemies);
 			applyVelocityToCast(_cast.enemyAmmo);
 			applyVelocityToCast(_cast.playerAmmo);
+			collisionCheck();
+
 			_cast.purgeDead();
 
-			//TEST CODE END
 			if (_frameRate.parent)
 			{
 				_frameRate.txt1 = this.numChildren;
@@ -190,6 +193,34 @@ addEnemy(testenemy);
 			}
 		}
 
+		static private const COLLISION_DIST:Number = 20;
+		private function collisionCheck():void
+		{
+			var ammo:Actor;
+
+			// player hits against enemies
+			
+			// player hits against enemy ammo
+			for each (ammo in _cast.enemyAmmo)
+			{
+				if (Physics.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
+				{
+					ammo.alive = false;
+				}
+			}
+			
+			// enemies hit against player ammo
+			for each (ammo in _cast.playerAmmo)
+			{
+				for each (var enemy:Actor in _cast.enemies)
+				{
+					if (Physics.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
+					{
+						ammo.alive = false;
+					}
+				}
+			}
+		}
 		private function applyVelocityToCast(cast:Array):void
 		{
 			for each (var a:Actor in cast)
@@ -341,6 +372,9 @@ import flash.utils.getTimer;
 import karnold.utils.Physics;
 import karnold.utils.Utils;
 
+// Splitting the cast into separate sub-casts makes collision detection potentially faster - instead
+// of having to do n^2 over the entire cast list, we divide n down into exclusive lists that can only
+// collide each other
 final class Cast
 {
 	public var enemies:Array = [];
