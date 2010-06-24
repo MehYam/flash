@@ -8,9 +8,9 @@ package
 	
 	import karnold.utils.Utils;
 
-	public final class DebugVectorObject extends Sprite
+	public final class SimpleActorAsset extends Sprite
 	{
-		public function DebugVectorObject()
+		public function SimpleActorAsset()
 		{
 			super();
 			mouseEnabled = false;
@@ -63,9 +63,9 @@ package
 				mc.removeEventListener(e.type, arguments.callee);
 			}
 		}
-		public static function createSpiro(color:uint, width:Number, height:Number):DebugVectorObject
+		public static function createSpiro(color:uint, width:Number, height:Number):SimpleActorAsset
 		{
-			var wo:DebugVectorObject = new DebugVectorObject;
+			var wo:SimpleActorAsset = new SimpleActorAsset;
 			
 			wo.graphics.lineStyle(1, 0);
 			wo.graphics.beginFill(color);
@@ -77,9 +77,9 @@ package
 			return wo;
 		}
 		
-		public static function createCircle(color:uint, width:Number, height:Number):DebugVectorObject
+		public static function createCircle(color:uint, width:Number, height:Number):SimpleActorAsset
 		{
-			var wo:DebugVectorObject = new DebugVectorObject;
+			var wo:SimpleActorAsset = new SimpleActorAsset;
 			
 			wo.graphics.lineStyle(1, 0);
 			wo.graphics.beginFill(color);
@@ -89,9 +89,9 @@ package
 			return wo;
 		}
 		
-		public static function createSquare(color:uint, size:Number):DebugVectorObject
+		public static function createSquare(color:uint, size:Number):SimpleActorAsset
 		{
-			var wo:DebugVectorObject = new DebugVectorObject;
+			var wo:SimpleActorAsset = new SimpleActorAsset;
 			
 			wo.graphics.lineStyle(1, color);
 			wo.graphics.drawRect(0, 0, size, size);

@@ -59,7 +59,7 @@ package
 
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
 
-			_player = new Actor(DebugVectorObject.createBlueShip());//createSpaceship();
+			_player = new Actor(SimpleActorAsset.createBlueShip());//createSpaceship();
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
 			
@@ -83,7 +83,7 @@ addTestActors();
 
 		private function addTestActors():void
 		{
-			var testenemy:Actor = new Actor(DebugVectorObject.createRedShip(), BehaviorConsts.RED_SHIP);
+			var testenemy:Actor = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
 			testenemy.worldPos = _worldBounds.middle;
 			testenemy.worldPos.offset(20, 20);
 			testenemy.behavior = new AlternatingBehavior
@@ -94,7 +94,7 @@ addTestActors();
 				);
 			addEnemy(testenemy);
 			
-			testenemy = new Actor(DebugVectorObject.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+			testenemy = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 			testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
 			addEnemy(testenemy);
 		}
@@ -587,7 +587,7 @@ final class AutofireBehavior implements IBehavior
 	}
 	static private function createBulletHelper(radians:Number, pos:Point):Actor
 	{
-		var bullet:Actor = new Actor(DebugVectorObject.createCircle(0xffaaaa, 5, 5));
+		var bullet:Actor = new Actor(SimpleActorAsset.createCircle(0xffaaaa, 5, 5));
 		bullet.behavior = new ExpireBehavior(2000);
 		
 		bullet.worldPos = pos;
