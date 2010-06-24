@@ -183,7 +183,7 @@ package karnold.utils
 
 				if (!_lastRender)
 				{
-					graphics.beginFill(0, 0.8);
+					graphics.beginFill(0xaaaa00, 0.8);
 					graphics.drawRect(0, 0, width + 10, height + 10);
 					graphics.endFill();
 				}

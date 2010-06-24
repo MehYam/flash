@@ -95,7 +95,7 @@ package
 			
 			wo.graphics.lineStyle(1, 0);
 			wo.graphics.beginFill(color);
-			wo.graphics.drawEllipse(0, 0, width, height);
+			wo.graphics.drawEllipse(-width/2, -height/2, width, height);
 			wo.graphics.endFill();
 			
 			return wo;
