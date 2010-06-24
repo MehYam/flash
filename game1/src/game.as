@@ -63,18 +63,18 @@ package
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
 			
-var testenemy:Actor = new Actor(DebugVectorObject.createRedShip());
+var testenemy:Actor = new Actor(DebugVectorObject.createRedShip(), BehaviorConsts.RED_SHIP);
 testenemy.worldPos = _worldBounds.middle;
 testenemy.worldPos.offset(20, 20);
 testenemy.behavior = new AlternatingBehavior
 	(
-		new CompositeBehavior(BehaviorFactory.avoid, BehaviorFactory.faceForward),
-		new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.faceForward),
+		new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward),
+		new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward),
 		new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
 	);
 addActor(testenemy);
 
-testenemy = new Actor(DebugVectorObject.createGreenShip());
+testenemy = new Actor(DebugVectorObject.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
 addActor(testenemy);
 
@@ -168,7 +168,7 @@ addActor(testenemy);
 			//TEST CODE
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				AutofireBehavior.createBullet(this, _player.speed.x, _player.speed.y, _player.worldPos.clone());
+				AutofireBehavior.createBulletAngle(this, _player.displayObject.rotation, _player.worldPos.clone());
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
 			{
@@ -331,26 +331,23 @@ import flash.utils.getTimer;
 
 import karnold.utils.Physics;
 import karnold.utils.Utils;
-
-class DumbConsts
+ 
+final class BehaviorFactory
 {
-	static public const MAX_SPEED:Number = 3;
-	static public const ACCELERATION:Number = 0.1;
-	static public const BULLET_SPEED:Number = 10;
-};
-
-class BehaviorFactory
-{
-	static private var _fmd:IBehavior;
+	static private var _faceForward:IBehavior;
+	static private var _facePlayer:IBehavior;
+	static private var _gravityPush:IBehavior;
+	static private var _gravityPull:IBehavior;
+	static private var _strafe:IBehavior;
+	static private var _follow:IBehavior;
 	static public function get faceForward():IBehavior
 	{
-		if (!_fmd)
+		if (!_faceForward)
 		{
-			_fmd = new FaceForwardBehavior;
+			_faceForward = new FaceForwardBehavior;
 		}
-		return _fmd;
+		return _faceForward;
 	}
-	static private var _facePlayer:IBehavior;
 	static public function get facePlayer():IBehavior
 	{
 		if (!_facePlayer)
@@ -359,25 +356,22 @@ class BehaviorFactory
 		}
 		return _facePlayer;
 	}
-	static private var _avoid:IBehavior;
-	static public function get avoid():IBehavior
+	static public function get gravityPush():IBehavior
 	{
-		if (!_avoid)
+		if (!_gravityPush)
 		{
-			_avoid = new AvoidBehavior;
+			_gravityPush = new GravityPush;
 		}
-		return _avoid;
+		return _gravityPush;
 	}
-	static private var _follow:IBehavior;
-	static public function get follow():IBehavior
+	static public function get gravityPull():IBehavior
 	{
-		if (!_follow)
+		if (!_gravityPull)
 		{
-			_follow = new FollowBehavior;
+			_gravityPull = new GravityPullBehavior;
 		}
-		return _follow;
+		return _gravityPull;
 	}
-	static private var _strafe:IBehavior;
 	static public function get strafe():IBehavior
 	{
 		if (!_strafe)
@@ -386,12 +380,20 @@ class BehaviorFactory
 		}
 		return _strafe;
 	}
+	static public function get follow():IBehavior
+	{
+		if (!_follow)
+		{
+			_follow = new FollowBehavior;
+		}
+		return _follow;
+	}
 	static public function get autofire():IBehavior
 	{
 		return new AutofireBehavior;
 	}
 }
-class FaceForwardBehavior implements IBehavior
+final class FaceForwardBehavior implements IBehavior
 {
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
@@ -399,7 +401,7 @@ class FaceForwardBehavior implements IBehavior
 	}
 }
 
-class FacePlayerBehavior implements IBehavior
+final class FacePlayerBehavior implements IBehavior
 {
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
@@ -409,14 +411,14 @@ class FacePlayerBehavior implements IBehavior
 	}
 }
 
-class AvoidBehavior implements IBehavior
+final class GravityPush implements IBehavior
 {
 	static private var _instance:IBehavior;
 	static public function get instance():IBehavior
 	{
 		if (!_instance)
 		{
-			_instance = new AvoidBehavior;
+			_instance = new GravityPush;
 		}
 		return _instance;
 	}
@@ -426,46 +428,50 @@ class AvoidBehavior implements IBehavior
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
-		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
-		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
+		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
 		
 		actor.speed.x += accelX;
 		actor.speed.y += accelY;
 		
-		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, DumbConsts.MAX_SPEED);
-		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, DumbConsts.MAX_SPEED);
+		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
+		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
 	}
 };
 
-class FollowBehavior implements IBehavior
+final class GravityPullBehavior implements IBehavior
 {
-	static private var _instance:IBehavior;
-	static public function get instance():IBehavior
-	{
-		if (!_instance)
-		{
-			_instance = new FollowBehavior;
-		}
-		return _instance;
-	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
-		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
-		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
+		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
 		
 		actor.speed.x -= accelX;
 		actor.speed.y -= accelY;
 		
-		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, DumbConsts.MAX_SPEED);
-		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, DumbConsts.MAX_SPEED);
+		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
+		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
 	}
 };
 
-class StrafeBehavior implements IBehavior
+final class FollowBehavior implements IBehavior
+{
+	public function onFrame(game:IGameState, actor:Actor):void
+	{
+		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
+		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
+		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+
+		actor.speed.x = actor.consts.MAX_SPEED * -Math.sin(radians);
+		actor.speed.y = actor.consts.MAX_SPEED * Math.cos(radians);
+	}
+}
+
+final class StrafeBehavior implements IBehavior
 {
 	static private var _instance:IBehavior;
 	static public function get instance():IBehavior
@@ -482,33 +488,39 @@ class StrafeBehavior implements IBehavior
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
-		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
-		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
+		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
 		
 		actor.speed.x -= accelX;
 		actor.speed.y -= accelY;
 		
-		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, DumbConsts.MAX_SPEED);
-		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, DumbConsts.MAX_SPEED);
+		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
+		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
 		
 		actor.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
 	}
 };
 //KAI: keep everything frame-based or time-based but not both
-class AutofireBehavior implements IBehavior
+final class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:int;
 
+	static public function createBulletAngle(game:IGameState, degrees:Number, pos:Point):void
+	{
+		createBulletHelper(game, Physics.degreesToRadians(degrees), pos);
+	}
 	static public function createBullet(game:IGameState, deltaX:Number, deltaY:Number, pos:Point):void
+	{
+		createBulletHelper(game, Physics.getRadiansRotation(deltaX, deltaY), pos);
+	}
+	static private function createBulletHelper(game:IGameState, radians:Number, pos:Point):void
 	{
 		var bullet:Actor = new Actor(DebugVectorObject.createCircle(0xffaaaa, 5, 5));
 		bullet.behavior = new ExpireBehavior(2000);
-
-		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
 		bullet.worldPos = pos;
-		bullet.speed.x = Math.sin(radians) * DumbConsts.BULLET_SPEED;
-		bullet.speed.y = -Math.cos(radians) * DumbConsts.BULLET_SPEED;
+		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
+		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		
 		game.addActor(bullet);
 	}
@@ -527,8 +539,7 @@ class AutofireBehavior implements IBehavior
 	}
 }
 
-
-class SpeedDecayBehavior implements IBehavior
+final class SpeedDecayBehavior implements IBehavior
 {
 	static private var _instance:SpeedDecayBehavior;
 	static public function get instance():SpeedDecayBehavior
@@ -545,7 +556,7 @@ class SpeedDecayBehavior implements IBehavior
 		actor.speed.y = Physics.speedDecay(actor.speed.y, 0.01);
 	}
 }
-class CompositeBehavior implements IBehavior
+final class CompositeBehavior implements IBehavior
 {
 	private var _behaviors:Array = [];
 	public function CompositeBehavior(...args)
@@ -575,7 +586,7 @@ class CompositeBehavior implements IBehavior
 		return _behaviors.length;
 	}
 };
-class AlternatingBehavior implements IBehavior
+final class AlternatingBehavior implements IBehavior
 {
 	private var _behaviors:CompositeBehavior = new CompositeBehavior;
 	private var _lastChange:int;
@@ -599,7 +610,7 @@ class AlternatingBehavior implements IBehavior
 		}
 	}
 }
-class ExpireBehavior implements IBehavior
+final class ExpireBehavior implements IBehavior
 {
 	private var start:int = getTimer();
 	private var lifetime:int;

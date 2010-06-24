@@ -350,6 +350,19 @@ package karnold.utils
 			}
 			return true;
 		}
+		public static function startAllMovieClips(mc:DisplayObject) : void
+		{
+			var functor:Object = {onObject: startMovieClipsFn};
+			recurse(functor, mc);
+		}
+		private static function startMovieClipsFn(functor:Object, parent:DisplayObject, child:DisplayObject):Boolean
+		{
+			if (child is MovieClip)
+			{
+				MovieClip(child).play();
+			}
+			return true;
+		}
 
 		public function Utils(hide:CONSTRUCTOR_HIDER) {}
 	}

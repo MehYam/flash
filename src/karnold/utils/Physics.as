@@ -4,14 +4,19 @@ package karnold.utils
 
 	public class Physics
 	{
-		static private const DEGREES_FACTOR:Number = 180/Math.PI;
+		static private const RADIANS_TO_DEGREES:Number = 180/Math.PI;
+		static private const DEGREES_TO_RADIANS:Number = Math.PI/180;
 		static public function getDegreesRotation(deltaX:Number, deltaY:Number):Number
 		{
-			return Math.atan2(deltaX, -deltaY) * DEGREES_FACTOR;
+			return Math.atan2(deltaX, -deltaY) * RADIANS_TO_DEGREES;
 		}
 		static public function getRadiansRotation(deltaX:Number, deltaY:Number):Number
 		{
 			return Math.atan2(deltaX, -deltaY);
+		}
+		static public function degreesToRadians(degrees:Number):Number
+		{
+			return degrees * DEGREES_TO_RADIANS;
 		}
 		static private const SPEED_ALPHA:Number = 0.3;
 		static public function speedDecay(speed:Number, decay:Number):Number

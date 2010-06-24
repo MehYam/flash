@@ -57,7 +57,6 @@ package
 		static public function createSmallExplosion():DisplayObject
 		{
 			var retval:MovieClip = new SMALLEXPLOSION;
-			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
 		[Embed(source="assets/mediumexplosion.swf")]
@@ -65,7 +64,6 @@ package
 		static public function createMediumExplosion():DisplayObject
 		{
 			var retval:MovieClip = new MEDIUMEXPLOSION;
-			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
 		static private function onFirstFrame(e:Event):void
