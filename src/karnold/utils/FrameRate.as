@@ -20,21 +20,10 @@ package karnold.utils
 		private var _txtTotalMemory:NumericRasterTextField;
 		private var _txtTotalMemoryDelta:NumericRasterTextField;
 
-		private var _txtWrites:NumericRasterTextField;
-		private var _txtBytesWritten:NumericRasterTextField;
-		private var _txtReads:NumericRasterTextField;
-		private var _txtBytesRead:NumericRasterTextField;
-
 		private var _txt1:NumericRasterTextField;
 		private var _txt2:NumericRasterTextField;
-		private var _txtRoom:TextField;
-		private var _txtServerVer:TextField;
-		private var _txtClientVer:TextField;		
 		
 		private var _btn:SimpleButton;
-		
-		public var _mx:Number = 0;
-		public var _my:Number = 0;		
 		
 		private static const FIELD_LEFT:Number = 10;
 		private static const FIELD_HEIGHT:Number = 15;
@@ -84,7 +73,6 @@ package karnold.utils
 			_txt1 = new NumericRasterTextField();		
 			_txt1.x = FIELD_LEFT;
 			_txt1.y = currentY;
-			_txt1.suffix = "a";
 			addChild(_txt1);	
 			
 			_txt2 = new NumericRasterTextField();		
@@ -93,34 +81,6 @@ package karnold.utils
 			addChild(_txt2);	
 			
 			currentY += FIELD_HEIGHT;
-
-			_txtRoom = new TextField();
-			_txtRoom.embedFonts = true;
-			_txtRoom.autoSize = TextFieldAutoSize.LEFT;
-			_txtRoom.defaultTextFormat = format;			
-			_txtRoom.x = FIELD_LEFT;
-			_txtRoom.y = currentY;	
-			addChild(_txtRoom);			
-			
-			currentY += FIELD_HEIGHT;
-			
-			_txtServerVer = new TextField();
-			_txtServerVer.embedFonts = true;
-			_txtServerVer.autoSize = TextFieldAutoSize.LEFT;
-			_txtServerVer.defaultTextFormat = format;
-			_txtServerVer.x = FIELD_LEFT;
-			_txtServerVer.y = currentY;			
-			addChild(_txtServerVer);
-
-			currentY += FIELD_HEIGHT;
-
-			_txtClientVer = new TextField();
-			_txtClientVer.embedFonts = true;
-			_txtClientVer.autoSize = TextFieldAutoSize.LEFT;
-			_txtClientVer.defaultTextFormat = format;
-			_txtClientVer.x = FIELD_LEFT;
-			_txtClientVer.y = currentY;			
-			addChild(_txtClientVer);
 			
 			var box:Sprite = new Sprite();
 			box.graphics.beginFill(0xff0000);
@@ -137,10 +97,6 @@ package karnold.utils
 			_btn.addEventListener(MouseEvent.CLICK, onBtnClick);	
 			_btn.y = 20;
 			_btn.x = 100;
-
-			graphics.beginFill(0, 0.8);
-			graphics.drawRect(0, 0, width, height);
-			graphics.endFill();
 		}	
 
 		public function set txt1(i:int):void
@@ -202,8 +158,6 @@ package karnold.utils
 
 			const totalMemoryKB:int = System.totalMemory/1024;
 			_txtTotalMemory.integer = totalMemoryKB; 
-			_txt1.integer = _mx;			
-			_txt2.integer = _my;
 
 			const time:int = getTimer();
 			const periodRender:Boolean = (time - _lastRender) > 2000;
@@ -214,6 +168,12 @@ package karnold.utils
 				
 				_txtFPS.integer = _frameCount * 1000 / (time - _lastRender);
 
+				if (!_lastRender)
+				{
+					graphics.beginFill(0, 0.8);
+					graphics.drawRect(0, 0, width + 10, height + 10);
+					graphics.endFill();
+				}
 				_lastRender = time;
 				_frameCount = 0;
 			}

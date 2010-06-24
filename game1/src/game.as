@@ -64,6 +64,7 @@ package
 			
 var testenemy:Actor = new Actor(DebugVectorObject.createRedShip());
 testenemy.worldPos = _worldBounds.middle;
+testenemy.worldPos.offset(20, 20);
 testenemy.behavior = 
 	new CompositeBehavior(
 		new AlternatingBehavior(BehaviorFactory.avoid, BehaviorFactory.follow, BehaviorFactory.strafe), 
@@ -77,7 +78,6 @@ testenemy.behavior = new AlternatingBehavior
 		new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.faceMyDirection),
 		new CompositeBehavior(BehaviorFactory.strafe, new AutofireBehavior)
 	);
-
 addActor(testenemy);
 
 			_actorLayer.addChild(_player.displayObject);
@@ -172,12 +172,7 @@ addActor(testenemy);
 			//TEST CODE
 			if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON) || _input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				var actor:Actor = new Actor(DebugVectorObject.createCircle(0xff7777, 5, 5));
-				actor.behavior = new CompositeBehavior(SpeedDecayBehavior.instance, new ExpireBehavior(2000));
-				actor.speed = speed.clone();
-				actor.worldPos = _player.worldPos.clone();
-				
-				addActor(actor);
+				AutofireBehavior.createBullet(this, _player.speed.x, _player.speed.y, _player.worldPos.clone());
 			}
 			
 			for each (var a:Actor in _cast)
@@ -209,8 +204,8 @@ trace("post filter", _cast.length);
 			}
 			//TEST CODE END
 			
-			_frameRate.txt1 = 3;stage.numChildren;
-			_frameRate.txt2 = 3;this.numChildren;
+			_frameRate.txt1 = this.numChildren;
+			_frameRate.txt2 = _actorLayer.numChildren;
 		}
 
 		// IGameState implementation
@@ -478,7 +473,20 @@ class StrafeBehavior implements IBehavior
 class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:int;
-	
+
+	static public function createBullet(game:IGameState, deltaX:Number, deltaY:Number, pos:Point):void
+	{
+		var bullet:Actor = new Actor(DebugVectorObject.createCircle(0xffaaaa, 5, 5));
+		bullet.behavior = new ExpireBehavior(2000);
+
+		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		
+		bullet.worldPos = pos;
+		bullet.speed.x = Math.sin(radians) * DumbConsts.BULLET_SPEED;
+		bullet.speed.y = -Math.cos(radians) * DumbConsts.BULLET_SPEED;
+		
+		game.addActor(bullet);
+	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		const now:int = getTimer();
@@ -486,18 +494,10 @@ class AutofireBehavior implements IBehavior
 		{
 			_lastShot = now;
 
-			var bullet:Actor = new Actor(DebugVectorObject.createCircle(0xffaaaa, 5, 5));
-			bullet.behavior = new CompositeBehavior(SpeedDecayBehavior.instance, new ExpireBehavior(2000));
-
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
-			const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
-
-			bullet.worldPos = actor.worldPos.clone();
-			bullet.speed.x = Math.sin(radians) * DumbConsts.BULLET_SPEED;
-			bullet.speed.y = -Math.cos(radians) * DumbConsts.BULLET_SPEED;
-
-			game.addActor(bullet);
+			
+			createBullet(game, deltaX, deltaY, actor.worldPos.clone());
 		}
 	}
 }

@@ -78,7 +78,6 @@ package
 			wo.graphics.drawEllipse(0, 0, width, height);
 			wo.graphics.endFill();
 			
-			drawOrigin(wo);
 			return wo;
 		}
 		
