@@ -24,7 +24,7 @@ package
 	import karnold.utils.Physics;
 	import karnold.utils.Utils;
 
-	public final class game extends Sprite
+	public final class game extends Sprite implements IGameState
 	{
 		private var _bg:TiledBackground;
 		private var _worldBounds:Bounds;
@@ -70,15 +70,15 @@ testenemy.behavior =
 		BehaviorFactory.faceMyDirection
 	);
 testenemy.behavior = BehaviorFactory.follow; 
+testenemy.behavior = new CompositeBehavior(BehaviorFactory.strafe, new AutofireBehavior); 
 testenemy.behavior = new AlternatingBehavior
 	(
 		new CompositeBehavior(BehaviorFactory.avoid, BehaviorFactory.faceMyDirection),
 		new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.faceMyDirection),
-		BehaviorFactory.strafe
+		new CompositeBehavior(BehaviorFactory.strafe, new AutofireBehavior)
 	);
 
-_cast.push(testenemy);
-_actorLayer.addChild(testenemy.displayObject);
+addActor(testenemy);
 
 			_actorLayer.addChild(_player.displayObject);
 
@@ -176,14 +176,13 @@ _actorLayer.addChild(testenemy.displayObject);
 				actor.behavior = new CompositeBehavior(SpeedDecayBehavior.instance, new ExpireBehavior(2000));
 				actor.speed = speed.clone();
 				actor.worldPos = _player.worldPos.clone();
-				_cast.push(actor);
 				
-				_actorLayer.addChild(actor.displayObject);
+				addActor(actor);
 			}
 			
 			for each (var a:Actor in _cast)
 			{
-				a.onFrame(_player);
+				a.onFrame(this);
 				if (a.alive)
 				{
 					a.worldPos.offset(a.speed.x, a.speed.y);
@@ -213,6 +212,18 @@ trace("post filter", _cast.length);
 			_frameRate.txt1 = 3;stage.numChildren;
 			_frameRate.txt2 = 3;this.numChildren;
 		}
+
+		// IGameState implementation
+		public function addActor(actor:Actor):void
+		{
+			_cast.push(actor);
+			_actorLayer.addChild(actor.displayObject);
+		}
+		public function get player():Actor
+		{
+			return _player;
+		}
+		// END IGameState implementation
 
 		static private function removeDead(element:*, index:int, arr:Array):Boolean
 		{
@@ -257,7 +268,7 @@ trace("post filter", _cast.length);
 				}
 			}
 			
-			BehaviorFactory.faceMyDirection.onFrame(null, _player);
+			BehaviorFactory.faceMyDirection.onFrame(this, _player);
 		}
 
 /*
@@ -324,39 +335,11 @@ import flash.utils.getTimer;
 import karnold.utils.Physics;
 import karnold.utils.Utils;
 
-interface IBehavior
-{
-	function onFrame(player:Actor, other:Actor):void;
-}
-final class Actor
-{
-	public var displayObject:DisplayObject;
-	public var speed:Point = new Point();
-	public var worldPos:Point = new Point();
-	public var alive:Boolean = true;
-	public function Actor(dobj:DisplayObject)
-	{
-		displayObject = dobj;
-	}
-	
-	private var _behavior:IBehavior;
-	public function set behavior(b:IBehavior):void
-	{
-		_behavior = b;
-	}
-	public function onFrame(hero:Actor):void
-	{
-		if (_behavior)
-		{
-			_behavior.onFrame(hero, this);
-		}
-	}
-}
-
 class DumbConsts
 {
 	static public const MAX_SPEED:Number = 3;
 	static public const ACCELERATION:Number = 0.1;
+	static public const BULLET_SPEED:Number = 10;
 };
 
 class BehaviorFactory
@@ -400,9 +383,9 @@ class BehaviorFactory
 }
 class FaceMyDirectionBehavior implements IBehavior
 {
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		other.displayObject.rotation = Physics.getDegreesRotation(other.speed.x, other.speed.y);
+		actor.displayObject.rotation = Physics.getDegreesRotation(actor.speed.x, actor.speed.y);
 	}
 }
 
@@ -417,20 +400,20 @@ class AvoidBehavior implements IBehavior
 		}
 		return _instance;
 	}
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		const deltaX:Number = other.worldPos.x - hero.worldPos.x;
-		const deltaY:Number = other.worldPos.y - hero.worldPos.y;
+		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
+		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
 		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
 		
-		other.speed.x += accelX;
-		other.speed.y += accelY;
+		actor.speed.x += accelX;
+		actor.speed.y += accelY;
 		
-		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
-		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, DumbConsts.MAX_SPEED);
+		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, DumbConsts.MAX_SPEED);
 	}
 };
 
@@ -445,20 +428,20 @@ class FollowBehavior implements IBehavior
 		}
 		return _instance;
 	}
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		const deltaX:Number = other.worldPos.x - hero.worldPos.x;
-		const deltaY:Number = other.worldPos.y - hero.worldPos.y;
+		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
+		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
 		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
 		
-		other.speed.x -= accelX;
-		other.speed.y -= accelY;
+		actor.speed.x -= accelX;
+		actor.speed.y -= accelY;
 		
-		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
-		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, DumbConsts.MAX_SPEED);
+		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, DumbConsts.MAX_SPEED);
 	}
 };
 
@@ -473,24 +456,52 @@ class StrafeBehavior implements IBehavior
 		}
 		return _instance;
 	}
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		const deltaX:Number = other.worldPos.x - hero.worldPos.x;
-		const deltaY:Number = other.worldPos.y - hero.worldPos.y;
+		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
+		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
 		
 		const accelX:Number = Math.sin(radians) * DumbConsts.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * DumbConsts.ACCELERATION;
 		
-		other.speed.x -= accelX;
-		other.speed.y -= accelY;
+		actor.speed.x -= accelX;
+		actor.speed.y -= accelY;
 		
-		other.speed.x = Physics.constrainAbsoluteValue(other.speed.x, DumbConsts.MAX_SPEED);
-		other.speed.y = Physics.constrainAbsoluteValue(other.speed.y, DumbConsts.MAX_SPEED);
+		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, DumbConsts.MAX_SPEED);
+		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, DumbConsts.MAX_SPEED);
 		
-		other.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
+		actor.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
 	}
 };
+//KAI: keep everything frame-based or time-based but not both
+class AutofireBehavior implements IBehavior
+{
+	private var _lastShot:int;
+	
+	public function onFrame(game:IGameState, actor:Actor):void
+	{
+		const now:int = getTimer();
+		if ((now - _lastShot) > 300)
+		{
+			_lastShot = now;
+
+			var bullet:Actor = new Actor(DebugVectorObject.createCircle(0xffaaaa, 5, 5));
+			bullet.behavior = new CompositeBehavior(SpeedDecayBehavior.instance, new ExpireBehavior(2000));
+
+			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
+			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
+			const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+
+			bullet.worldPos = actor.worldPos.clone();
+			bullet.speed.x = Math.sin(radians) * DumbConsts.BULLET_SPEED;
+			bullet.speed.y = -Math.cos(radians) * DumbConsts.BULLET_SPEED;
+
+			game.addActor(bullet);
+		}
+	}
+}
+
 
 class SpeedDecayBehavior implements IBehavior
 {
@@ -503,10 +514,10 @@ class SpeedDecayBehavior implements IBehavior
 		}
 		return _instance;
 	}
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		other.speed.x = Physics.speedDecay(other.speed.x, 0.01);
-		other.speed.y = Physics.speedDecay(other.speed.y, 0.01);
+		actor.speed.x = Physics.speedDecay(actor.speed.x, 0.01);
+		actor.speed.y = Physics.speedDecay(actor.speed.y, 0.01);
 	}
 }
 class CompositeBehavior implements IBehavior
@@ -523,16 +534,16 @@ class CompositeBehavior implements IBehavior
 	{
 		_behaviors.push(b);
 	}
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		for each (var behavior:IBehavior in _behaviors)
 		{
-			behavior.onFrame(hero, other);
+			behavior.onFrame(game, actor);
 		}
 	}
-	public function onFrameAt(hero:Actor, other:Actor, index:uint):void
+	public function onFrameAt(game:IGameState, actor:Actor, index:uint):void
 	{
-		IBehavior(_behaviors[index]).onFrame(hero, other);
+		IBehavior(_behaviors[index]).onFrame(game, actor);
 	}
 	public function get numBehaviors():uint
 	{
@@ -551,9 +562,9 @@ class AlternatingBehavior implements IBehavior
 		}
 	}
 	private var _count:uint;
-	public function onFrame(hero:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		_behaviors.onFrameAt(hero, other, _count % _behaviors.numBehaviors);
+		_behaviors.onFrameAt(game, actor, _count % _behaviors.numBehaviors);
 
 		const now:int = getTimer();
 		if ((now - _lastChange) > 5000)
@@ -571,11 +582,11 @@ class ExpireBehavior implements IBehavior
 	{
 		lifetime = msLifeTime;
 	}
-	public function onFrame(player:Actor, other:Actor):void
+	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		if ((getTimer() - start) > lifetime)
 		{
-			other.alive = false;
+			actor.alive = false;
 		}
 	}
 }
