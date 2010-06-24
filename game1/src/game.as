@@ -72,11 +72,11 @@ testenemy.behavior = new AlternatingBehavior
 		new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward),
 		new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
 	);
-addActor(testenemy);
+addEnemy(testenemy);
 
 testenemy = new Actor(DebugVectorObject.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-addActor(testenemy);
+addEnemy(testenemy);
 
 			if (VECTOR)
 			{
@@ -98,7 +98,7 @@ addActor(testenemy);
 		private static const ACCELERATION:Number = 1;
 		private static const MAX_SPEED:Number = 6;
 		private static const SPEED_DECAY:Number = 0.1;  // percentage
-		private var _cast:Array = [];
+		private var _cast:Cast = new Cast;
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
@@ -168,22 +168,38 @@ addActor(testenemy);
 			//TEST CODE
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				AutofireBehavior.createBulletAngle(this, _player.displayObject.rotation, _player.worldPos.clone());
+				addPlayerAmmo(AutofireBehavior.createBulletAngle(_player.displayObject.rotation, _player.worldPos.clone()));
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
 			{
 				const dest:Point = _input.lastMouseDownCoords;
-				AutofireBehavior.createBullet(this, dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos.clone());
+				addPlayerAmmo(AutofireBehavior.createBullet(dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos.clone()));
 			}
-			
-			for each (var a:Actor in _cast)
+
+			applyVelocityToCast(_cast.enemies);
+			applyVelocityToCast(_cast.enemyAmmo);
+			applyVelocityToCast(_cast.playerAmmo);
+			_cast.purgeDead();
+
+			//TEST CODE END
+			if (_frameRate.parent)
+			{
+				_frameRate.txt1 = this.numChildren;
+				_frameRate.txt2 = _actorLayer.numChildren;
+				_frameRate.txt3 = _cast.length;
+			}
+		}
+
+		private function applyVelocityToCast(cast:Array):void
+		{
+			for each (var a:Actor in cast)
 			{
 				a.onFrame(this);
 				if (a.alive)
 				{
 					a.worldPos.offset(a.speed.x, a.speed.y);
 					Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
-	
+					
 					a.displayObject.x = a.worldPos.x - _cameraPos.x;
 					a.displayObject.y = a.worldPos.y - _cameraPos.y;
 				}
@@ -195,25 +211,22 @@ addActor(testenemy);
 					}
 				}
 			}
-			const now:int = getTimer();
-			if ((now - _lastPurge) > 5000)
-			{
-				_cast = _cast.filter(removeDead);
-				_lastPurge = now;
-			}
-			//TEST CODE END
-			if (_frameRate.parent)
-			{
-				_frameRate.txt1 = this.numChildren;
-				_frameRate.txt2 = _actorLayer.numChildren;
-				_frameRate.txt3 = _cast.length;
-			}
 		}
 
 		// IGameState implementation
-		public function addActor(actor:Actor):void
+		public function addEnemy(actor:Actor):void
 		{
-			_cast.push(actor);
+			_cast.enemies.push(actor);
+			_actorLayer.addChild(actor.displayObject);
+		}
+		public function addEnemyAmmo(actor:Actor):void
+		{
+			_cast.enemyAmmo.push(actor);
+			_actorLayer.addChild(actor.displayObject);
+		}
+		public function addPlayerAmmo(actor:Actor):void
+		{
+			_cast.playerAmmo.push(actor);
 			_actorLayer.addChild(actor.displayObject);
 		}
 		public function get player():Actor
@@ -222,10 +235,6 @@ addActor(testenemy);
 		}
 		// END IGameState implementation
 
-		static private function removeDead(element:*, index:int, arr:Array):Boolean
-		{
-			return Actor(element).alive;
-		}
 		private function positionPlayerAndCamera():void
 		{
 			const stageMiddleHorz:Number = stage.stageWidth/2;
@@ -331,7 +340,36 @@ import flash.utils.getTimer;
 
 import karnold.utils.Physics;
 import karnold.utils.Utils;
- 
+
+final class Cast
+{
+	public var enemies:Array = [];
+	public var enemyAmmo:Array = [];
+	public var playerAmmo:Array = [];
+	
+	public function get length():uint
+	{
+		return enemies.length + enemyAmmo.length + playerAmmo.length;
+	}
+	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
+	{
+		return Actor(element).alive;
+	}
+	
+	private var _lastPurge:int;
+	public function purgeDead():void
+	{
+		const now:int = getTimer();
+		if ((now - _lastPurge) > 5000)
+		{
+			enemies = enemies.filter(actorIsAlive);
+			enemyAmmo = enemyAmmo.filter(actorIsAlive);
+			playerAmmo = playerAmmo.filter(actorIsAlive);
+			_lastPurge = now;
+		}
+	}
+}
+
 final class BehaviorFactory
 {
 	static private var _faceForward:IBehavior;
@@ -505,15 +543,15 @@ final class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:int;
 
-	static public function createBulletAngle(game:IGameState, degrees:Number, pos:Point):void
+	static public function createBulletAngle(degrees:Number, pos:Point):Actor
 	{
-		createBulletHelper(game, Physics.degreesToRadians(degrees), pos);
+		return createBulletHelper(Physics.degreesToRadians(degrees), pos);
 	}
-	static public function createBullet(game:IGameState, deltaX:Number, deltaY:Number, pos:Point):void
+	static public function createBullet(deltaX:Number, deltaY:Number, pos:Point):Actor
 	{
-		createBulletHelper(game, Physics.getRadiansRotation(deltaX, deltaY), pos);
+		return createBulletHelper(Physics.getRadiansRotation(deltaX, deltaY), pos);
 	}
-	static private function createBulletHelper(game:IGameState, radians:Number, pos:Point):void
+	static private function createBulletHelper(radians:Number, pos:Point):Actor
 	{
 		var bullet:Actor = new Actor(DebugVectorObject.createCircle(0xffaaaa, 5, 5));
 		bullet.behavior = new ExpireBehavior(2000);
@@ -521,8 +559,7 @@ final class AutofireBehavior implements IBehavior
 		bullet.worldPos = pos;
 		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
-		
-		game.addActor(bullet);
+		return bullet;
 	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
@@ -534,7 +571,7 @@ final class AutofireBehavior implements IBehavior
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
 			
-			createBullet(game, deltaX, deltaY, actor.worldPos.clone());
+			game.addEnemyAmmo(createBullet(deltaX, deltaY, actor.worldPos.clone()));
 		}
 	}
 }
