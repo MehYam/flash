@@ -4,6 +4,7 @@ package karnold.utils
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.utils.Dictionary;
 
 	public class Input
@@ -58,9 +59,17 @@ package karnold.utils
 		{
 			setKey(_keyMappings[e.keyCode] || e.keyCode, false);
 		}
-		private function onMouseDown(e:Event):void
+		
+		private var _lastMouseDownCoords:Point = new Point;
+		private function onMouseDown(e:MouseEvent):void
 		{
+			_lastMouseDownCoords.x = e.stageX;
+			_lastMouseDownCoords.y = e.stageY;
 			setKey(MOUSE_BUTTON, true);
+		}
+		public function get lastMouseDownCoords():Point
+		{
+			return _lastMouseDownCoords;
 		}
 		private function onMouseUp(e:Event):void
 		{

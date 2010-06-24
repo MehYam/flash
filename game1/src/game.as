@@ -170,9 +170,14 @@ addActor(testenemy);
 			}
 
 			//TEST CODE
-			if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON) || _input.checkKeyHistoryAndClear(Input.KEY_SPACE))
+			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
 				AutofireBehavior.createBullet(this, _player.speed.x, _player.speed.y, _player.worldPos.clone());
+			}
+			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
+			{
+				const dest:Point = _input.lastMouseDownCoords;
+				AutofireBehavior.createBullet(this, dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos.clone());
 			}
 			
 			for each (var a:Actor in _cast)
