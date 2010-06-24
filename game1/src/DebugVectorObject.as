@@ -16,18 +16,6 @@ package
 			mouseEnabled = false;
 		}
 
-//		[Embed(source="assets/spaceship1.svg")]
-//		static private const SPACESHIP:Class;
-//		static public function createSpaceship():DisplayObject
-//		{
-//			var sprite:Sprite = new SPACESHIP;
-//			
-//			var fudge:Sprite = new Sprite;
-//			sprite.x = -sprite.width/2;
-//			sprite.y = -sprite.height/2;
-//			fudge.addChild(sprite);
-//			return fudge;
-//		}
 		[Embed(source="assets/redship.swf")]
 		static private const REDSHIP:Class;
 		static public function createRedShip():DisplayObject
