@@ -61,26 +61,22 @@ package
 
 			_player = new Actor(DebugVectorObject.createBlueShip());//createSpaceship();
 			_player.worldPos = _worldBounds.middle;
+			_actorLayer.addChild(_player.displayObject);
 			
 var testenemy:Actor = new Actor(DebugVectorObject.createRedShip());
 testenemy.worldPos = _worldBounds.middle;
 testenemy.worldPos.offset(20, 20);
-testenemy.behavior = 
-	new CompositeBehavior(
-		new AlternatingBehavior(BehaviorFactory.avoid, BehaviorFactory.follow, BehaviorFactory.strafe), 
-		BehaviorFactory.faceMyDirection
-	);
-testenemy.behavior = BehaviorFactory.follow; 
-testenemy.behavior = new CompositeBehavior(BehaviorFactory.strafe, new AutofireBehavior); 
 testenemy.behavior = new AlternatingBehavior
 	(
-		new CompositeBehavior(BehaviorFactory.avoid, BehaviorFactory.faceMyDirection),
-		new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.faceMyDirection),
-		new CompositeBehavior(BehaviorFactory.strafe, new AutofireBehavior)
+		new CompositeBehavior(BehaviorFactory.avoid, BehaviorFactory.faceForward),
+		new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.faceForward),
+		new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
 	);
 addActor(testenemy);
 
-			_actorLayer.addChild(_player.displayObject);
+testenemy = new Actor(DebugVectorObject.createGreenShip());
+testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
+addActor(testenemy);
 
 			if (VECTOR)
 			{
@@ -202,15 +198,16 @@ addActor(testenemy);
 			const now:int = getTimer();
 			if ((now - _lastPurge) > 5000)
 			{
-trace("pre filter", _cast.length);
 				_cast = _cast.filter(removeDead);
-trace("post filter", _cast.length);
 				_lastPurge = now;
 			}
 			//TEST CODE END
-			
-			_frameRate.txt1 = this.numChildren;
-			_frameRate.txt2 = _actorLayer.numChildren;
+			if (_frameRate.parent)
+			{
+				_frameRate.txt1 = this.numChildren;
+				_frameRate.txt2 = _actorLayer.numChildren;
+				_frameRate.txt3 = _cast.length;
+			}
 		}
 
 		// IGameState implementation
@@ -268,7 +265,7 @@ trace("post filter", _cast.length);
 				}
 			}
 			
-			BehaviorFactory.faceMyDirection.onFrame(this, _player);
+			BehaviorFactory.faceForward.onFrame(this, _player);
 		}
 
 /*
@@ -345,13 +342,22 @@ class DumbConsts
 class BehaviorFactory
 {
 	static private var _fmd:IBehavior;
-	static public function get faceMyDirection():IBehavior
+	static public function get faceForward():IBehavior
 	{
 		if (!_fmd)
 		{
-			_fmd = new FaceMyDirectionBehavior;
+			_fmd = new FaceForwardBehavior;
 		}
 		return _fmd;
+	}
+	static private var _facePlayer:IBehavior;
+	static public function get facePlayer():IBehavior
+	{
+		if (!_facePlayer)
+		{
+			_facePlayer = new FacePlayerBehavior;
+		}
+		return _facePlayer;
 	}
 	static private var _avoid:IBehavior;
 	static public function get avoid():IBehavior
@@ -380,12 +386,26 @@ class BehaviorFactory
 		}
 		return _strafe;
 	}
+	static public function get autofire():IBehavior
+	{
+		return new AutofireBehavior;
+	}
 }
-class FaceMyDirectionBehavior implements IBehavior
+class FaceForwardBehavior implements IBehavior
 {
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		actor.displayObject.rotation = Physics.getDegreesRotation(actor.speed.x, actor.speed.y);
+	}
+}
+
+class FacePlayerBehavior implements IBehavior
+{
+	public function onFrame(game:IGameState, actor:Actor):void
+	{
+		const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
+		const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
+		actor.displayObject.rotation = Physics.getDegreesRotation(deltaX, deltaY);
 	}
 }
 

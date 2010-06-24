@@ -33,7 +33,6 @@ package
 		static public function createRedShip():DisplayObject
 		{
 			var retval:MovieClip = new REDSHIP;
-			Utils.traceDisplayList(retval);
 			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
@@ -42,7 +41,30 @@ package
 		static public function createBlueShip():DisplayObject
 		{
 			var retval:MovieClip = new BLUESHIP;
-			Utils.traceDisplayList(retval);
+			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			return retval;
+		}
+		[Embed(source="assets/greenship.swf")]
+		static private const GREENSHIP:Class;
+		static public function createGreenShip():DisplayObject
+		{
+			var retval:MovieClip = new GREENSHIP;
+			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			return retval;
+		}
+		[Embed(source="assets/smallexplosion.swf")]
+		static private const SMALLEXPLOSION:Class;
+		static public function createSmallExplosion():DisplayObject
+		{
+			var retval:MovieClip = new SMALLEXPLOSION;
+			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			return retval;
+		}
+		[Embed(source="assets/mediumexplosion.swf")]
+		static private const MEDIUMEXPLOSION:Class;
+		static public function createMediumExplosion():DisplayObject
+		{
+			var retval:MovieClip = new MEDIUMEXPLOSION;
 			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
