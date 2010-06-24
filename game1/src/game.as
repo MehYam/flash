@@ -181,6 +181,7 @@ addTestActors();
 			applyVelocityToCast(_cast.enemies);
 			applyVelocityToCast(_cast.enemyAmmo);
 			applyVelocityToCast(_cast.playerAmmo);
+			applyVelocityToCast(_cast.effects);
 			collisionCheck();
 
 			_cast.purgeDead();
@@ -196,27 +197,49 @@ addTestActors();
 		static private const COLLISION_DIST:Number = 20;
 		private function collisionCheck():void
 		{
-			var ammo:Actor;
-
-			// player hits against enemies
+			// enemy hits player
+			var enemy:Actor;
+//			for each (enemy in _cast.enemies)
+//			{
+//				if (enemy.alive && Physics.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
+//				{
+//					enemy.alive = false;
+//				}
+//			}
 			
-			// player hits against enemy ammo
+			// enemy ammo hits player
+			var ammo:Actor;
 			for each (ammo in _cast.enemyAmmo)
 			{
-				if (Physics.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
+				if (ammo.alive && Physics.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
 				{
+					var expl2:Actor = new Actor(SimpleActorAsset.createSmallExplosion(), BehaviorConsts.EXPLOSION);
+					expl2.worldPos = ammo.worldPos.clone();
+					expl2.speed = ammo.speed.clone();
+					expl2.behavior = new CompositeBehavior(new ExpireBehavior(1000), new SpeedDecayBehavior);
+					addEffect(expl2);
+
 					ammo.alive = false;
 				}
 			}
 			
-			// enemies hit against player ammo
+			// player ammo hits enemy
 			for each (ammo in _cast.playerAmmo)
 			{
-				for each (var enemy:Actor in _cast.enemies)
+				if (ammo.alive)
 				{
-					if (Physics.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
+					for each (enemy in _cast.enemies)
 					{
-						ammo.alive = false;
+						if (enemy.alive && Physics.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
+						{
+							var expl1:Actor = new Actor(SimpleActorAsset.createMediumExplosion(), BehaviorConsts.EXPLOSION);
+							expl1.worldPos = ammo.worldPos.clone();
+							expl1.speed = ammo.speed.clone();
+							expl1.behavior = new CompositeBehavior(new ExpireBehavior(1000), new SpeedDecayBehavior);
+							addEffect(expl1);
+
+							ammo.alive = false;
+						}
 					}
 				}
 			}
@@ -258,6 +281,11 @@ addTestActors();
 		public function addPlayerAmmo(actor:Actor):void
 		{
 			_cast.playerAmmo.push(actor);
+			_actorLayer.addChild(actor.displayObject);
+		}
+		public function addEffect(actor:Actor):void
+		{
+			_cast.effects.push(actor);
 			_actorLayer.addChild(actor.displayObject);
 		}
 		public function get player():Actor
@@ -380,10 +408,11 @@ final class Cast
 	public var enemies:Array = [];
 	public var enemyAmmo:Array = [];
 	public var playerAmmo:Array = [];
+	public var effects:Array = [];
 	
 	public function get length():uint
 	{
-		return enemies.length + enemyAmmo.length + playerAmmo.length;
+		return enemies.length + enemyAmmo.length + playerAmmo.length + effects.length;
 	}
 	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
 	{
@@ -399,6 +428,7 @@ final class Cast
 			enemies = enemies.filter(actorIsAlive);
 			enemyAmmo = enemyAmmo.filter(actorIsAlive);
 			playerAmmo = playerAmmo.filter(actorIsAlive);
+			effects = effects.filter(actorIsAlive);
 			_lastPurge = now;
 		}
 	}
@@ -623,8 +653,8 @@ final class SpeedDecayBehavior implements IBehavior
 	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		actor.speed.x = Physics.speedDecay(actor.speed.x, 0.01);
-		actor.speed.y = Physics.speedDecay(actor.speed.y, 0.01);
+		actor.speed.x = Physics.speedDecay(actor.speed.x, actor.consts.SPEED_DECAY);
+		actor.speed.y = Physics.speedDecay(actor.speed.y, actor.consts.SPEED_DECAY);
 	}
 }
 final class CompositeBehavior implements IBehavior
