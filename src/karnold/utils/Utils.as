@@ -322,7 +322,8 @@ package karnold.utils
 				if (container)
 				{
 					var rawChildren:Object;
-					try { rawChildren = container["rawChildren"]; } catch (e:Error) {}
+// Turns out this generates a lot of String objects!  Unnecessary if we're not in Flex
+//					try { rawChildren = container["rawChildren"]; } catch (e:Error) {}
 					
 					recurseImplLooper(rawChildren || container, functor, child);
 				}				
