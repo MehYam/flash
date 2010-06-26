@@ -380,6 +380,7 @@ NEXT TASK:
 import flash.display.DisplayObject;
 import flash.display.Shape;
 import flash.geom.Point;
+import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
 import karnold.utils.ObjectPool;
@@ -406,10 +407,10 @@ final class Cast
 			{
 				BulletActor.recycle(BulletActor(element));
 			}
-//			else if (actor is ExplosionActor)
-//			{
-//				
-//			}
+			else if (actor is ExplosionParticleActor)
+			{
+				ExplosionParticleActor.recycle(ExplosionParticleActor(element));
+			}
 		}
 		return actor.alive;
 	}
@@ -603,21 +604,30 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 	{
 		super(dobj, BehaviorConsts.EXPLOSION);
 	}
+	static private var s_pool:ObjectPool = new ObjectPool;
 	static private const SIZE:Number = 2;
 	static private const HALFSIZE:Number = SIZE/2;
 	static public function explosion(game:IGameState, worldPos:Point, numParticles:uint):void
 	{
 		for (var i:uint = 0; i < numParticles; ++i)
 		{
-			var particle:Shape = new Shape;
-			particle.graphics.lineStyle(0, 0xffff00);
-			particle.graphics.beginFill(0xffff00);
-			particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, SIZE, SIZE);
-			particle.graphics.endFill();
+			var actor:Actor = s_pool.get() as ExplosionParticleActor;
+			if (actor)
+			{
+				actor.reset();
+			}
+			else 
+			{
+				var particle:Shape = new Shape;
+				particle.graphics.lineStyle(0, 0xffff00);
+				particle.graphics.beginFill(0xffff00);
+				particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, SIZE, SIZE);
+				particle.graphics.endFill();
+	
+				actor = new ExplosionParticleActor(particle);
+			}
+			actor.displayObject.alpha = Math.random();
 
-			particle.alpha = Math.random();
-
-			var actor:Actor = new ExplosionParticleActor(particle);
 			Utils.setPoint(actor.worldPos, worldPos);
 			actor.speed.x = Utils.random(-10, 10);
 			actor.speed.y = Utils.random(-10, 10);
@@ -625,6 +635,11 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 			
 			game.addEffect(actor);
 		}
+	}
+	static public function recycle(actor:ExplosionParticleActor):void
+	{
+		Utils.assert(!actor.alive && !actor.displayObject.parent);
+		s_pool.put(actor);
 	}
 }
 
@@ -645,12 +660,12 @@ final class BulletActor extends Actor // this type exists only so that we know w
 	static public function recycle(actor:BulletActor):void
 	{
 		Utils.assert(!actor.alive && !actor.displayObject.parent);
-		s_bulletPool.put(actor);
+		s_pool.put(actor);
 	}
-	static private var s_bulletPool:ObjectPool = new ObjectPool;
+	static private var s_pool:ObjectPool = new ObjectPool;
 	static private function createBulletHelper(radians:Number, pos:Point):Actor
 	{
-		var bullet:Actor = s_bulletPool.get() as Actor;
+		var bullet:Actor = s_pool.get() as BulletActor;
 		if (bullet)
 		{
 			bullet.reset(); // should objectpool do this?
