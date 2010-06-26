@@ -11,12 +11,15 @@ package {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.utils.getTimer;
+	
+	import karnold.utils.FrameTimer;
 
 	public class as3 extends Sprite
 	{
 		private var _tf:TextField = new TextField();
 		public function as3()
 		{
+			FrameTimer.init(stage);
 
 //			testTextField();
 			
@@ -32,7 +35,7 @@ package {
 			
 //			testSomeShape();
 			
-			testBitmapDataTransform();
+//			testBitmapDataTransform();
 		}
 	
 		private function testTextField():void
@@ -208,6 +211,12 @@ package {
 			bitmap.y = stage.stageHeight/2;
 			
 			addChild(bitmap);
+		}
+
+		
+		private function testParticleExplosion():void
+		{
+			
 		}
 	}
 }
