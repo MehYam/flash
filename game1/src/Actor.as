@@ -33,6 +33,11 @@ package
 			if (_alive != b && !b)
 			{
 				Utils.stopAllMovieClips(displayObject);
+
+				if (displayObject.parent)
+				{
+					displayObject.parent.removeChild(displayObject);
+				}
 			}
 			_alive = b;
 		}

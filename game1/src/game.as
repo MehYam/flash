@@ -248,21 +248,15 @@ addTestActors();
 		{
 			for each (var a:Actor in cast)
 			{
-				a.onFrame(this);
 				if (a.alive)
 				{
+					a.onFrame(this);
+
 					a.worldPos.offset(a.speed.x, a.speed.y);
 					Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
 					
 					a.displayObject.x = a.worldPos.x - _cameraPos.x;
 					a.displayObject.y = a.worldPos.y - _cameraPos.y;
-				}
-				else
-				{
-					if (a.displayObject.parent)
-					{
-						a.displayObject.parent.removeChild(a.displayObject);
-					}
 				}
 			}
 		}
