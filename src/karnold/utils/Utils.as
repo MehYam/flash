@@ -27,9 +27,9 @@ package karnold.utils
 		{
 			return (red << 16) | (green << 8) | blue;
 		}
-		static public function random(min:uint, numValues:uint):uint
+		static public function random(min:Number, max:Number):Number
 		{
-			return Math.floor(Math.random()*numValues) + min;
+			return min + (Math.random() * (max - min));
 		}
 		static public function assert(b:Boolean, msg:String = ""):void
 		{

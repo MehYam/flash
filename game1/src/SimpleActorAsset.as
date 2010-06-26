@@ -2,9 +2,12 @@ package
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Graphics;
 	import flash.display.MovieClip;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.filters.DropShadowFilter;
 	
 	import karnold.utils.Utils;
 
@@ -21,6 +24,7 @@ package
 		static public function createRedShip():DisplayObject
 		{
 			var retval:MovieClip = new REDSHIP;
+			retval.filters = [new DropShadowFilter];
 			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
@@ -29,6 +33,7 @@ package
 		static public function createBlueShip():DisplayObject
 		{
 			var retval:MovieClip = new BLUESHIP;
+			retval.filters = [new DropShadowFilter];
 			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
@@ -37,23 +42,24 @@ package
 		static public function createGreenShip():DisplayObject
 		{
 			var retval:MovieClip = new GREENSHIP;
+			retval.filters = [new DropShadowFilter];
 			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
-		[Embed(source="assets/smallexplosion.swf")]
-		static private const SMALLEXPLOSION:Class;
-		static public function createSmallExplosion():DisplayObject
-		{
-			var retval:MovieClip = new SMALLEXPLOSION;
-			return retval;
-		}
-		[Embed(source="assets/mediumexplosion.swf")]
-		static private const MEDIUMEXPLOSION:Class;
-		static public function createMediumExplosion():DisplayObject
-		{
-			var retval:MovieClip = new MEDIUMEXPLOSION;
-			return retval;
-		}
+//		[Embed(source="assets/smallexplosion.swf")]
+//		static private const SMALLEXPLOSION:Class;
+//		static public function createSmallExplosion():DisplayObject
+//		{
+//			var retval:MovieClip = new SMALLEXPLOSION;
+//			return retval;
+//		}
+//		[Embed(source="assets/mediumexplosion.swf")]
+//		static private const MEDIUMEXPLOSION:Class;
+//		static public function createMediumExplosion():DisplayObject
+//		{
+//			var retval:MovieClip = new MEDIUMEXPLOSION;
+//			return retval;
+//		}
 		static private function onFirstFrame(e:Event):void
 		{
 			var mc:MovieClip = MovieClip(e.target);
@@ -63,9 +69,9 @@ package
 				mc.removeEventListener(e.type, arguments.callee);
 			}
 		}
-		public static function createSpiro(color:uint, width:Number, height:Number):SimpleActorAsset
+		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
-			var wo:SimpleActorAsset = new SimpleActorAsset;
+			var wo:Shape = new Shape;
 			
 			wo.graphics.lineStyle(1, 0);
 			wo.graphics.beginFill(color);
@@ -73,15 +79,15 @@ package
 			wo.graphics.drawEllipse(0, height/4, width, height/2);
 			wo.graphics.endFill();
 			
-			drawOrigin(wo);
+			drawOrigin(wo.graphics);
 			return wo;
 		}
 		
-		public static function createCircle(color:uint, width:Number, height:Number):SimpleActorAsset
+		public static function createCircle(color:uint, width:Number, height:Number):DisplayObject
 		{
-			var wo:SimpleActorAsset = new SimpleActorAsset;
+			var wo:Shape = new Shape;
 			
-			wo.graphics.lineStyle(1, 0);
+			wo.graphics.lineStyle(0, color);
 			wo.graphics.beginFill(color);
 			wo.graphics.drawEllipse(-width/2, -height/2, width, height);
 			wo.graphics.endFill();
@@ -89,24 +95,24 @@ package
 			return wo;
 		}
 		
-		public static function createSquare(color:uint, size:Number):SimpleActorAsset
+		public static function createSquare(color:uint, size:Number):DisplayObject
 		{
-			var wo:SimpleActorAsset = new SimpleActorAsset;
+			var wo:Shape = new Shape;
 			
 			wo.graphics.lineStyle(1, color);
 			wo.graphics.drawRect(0, 0, size, size);
 			
-			drawOrigin(wo);
+			drawOrigin(wo.graphics);
 			return wo;
 		}
 		
-		private static function drawOrigin(obj:Sprite):void
+		private static function drawOrigin(graphics:Graphics):void
 		{
-			obj.graphics.lineStyle(1, 0x777777, 0.5);
-			obj.graphics.moveTo(0, 0);
-			obj.graphics.lineTo(5, 0);
-			obj.graphics.moveTo(0, 0);
-			obj.graphics.lineTo(0, 5);
+			graphics.lineStyle(1, 0x777777, 0.5);
+			graphics.moveTo(0, 0);
+			graphics.lineTo(5, 0);
+			graphics.moveTo(0, 0);
+			graphics.lineTo(0, 5);
 		}
 	}
 }

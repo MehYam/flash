@@ -170,12 +170,12 @@ addTestActors();
 
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				addPlayerAmmo(BulletActor.createWithAngle(_player.displayObject.rotation, _player.worldPos.clone()));
+				addPlayerAmmo(BulletActor.createWithAngle(_player.displayObject.rotation, _player.worldPos));
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
 			{
 				const dest:Point = _input.lastMouseDownCoords;
-				addPlayerAmmo(BulletActor.create(dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos.clone()));
+				addPlayerAmmo(BulletActor.create(dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos));
 			}
 
 			applyVelocityToCast(_cast.enemies);
@@ -213,12 +213,7 @@ addTestActors();
 			{
 				if (ammo.alive && Physics.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
 				{
-					var expl2:Actor = new Actor(SimpleActorAsset.createSmallExplosion(), BehaviorConsts.EXPLOSION);
-					expl2.worldPos = ammo.worldPos.clone();
-					expl2.speed = ammo.speed.clone();
-					expl2.behavior = new CompositeBehavior(new ExpireBehavior(1000), new SpeedDecayBehavior);
-					addEffect(expl2);
-
+					ExplosionParticleActor.explosion(this, ammo.worldPos, 10);
 					ammo.alive = false;
 				}
 			}
@@ -232,12 +227,7 @@ addTestActors();
 					{
 						if (enemy.alive && Physics.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
 						{
-							var expl1:Actor = new Actor(SimpleActorAsset.createMediumExplosion(), BehaviorConsts.EXPLOSION);
-							expl1.worldPos = ammo.worldPos.clone();
-							expl1.speed = ammo.speed.clone();
-							expl1.behavior = new CompositeBehavior(new ExpireBehavior(1000), new SpeedDecayBehavior);
-							addEffect(expl1);
-
+							ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
 							ammo.alive = false;
 						}
 					}
@@ -388,6 +378,7 @@ NEXT TASK:
 	}
 }
 import flash.display.DisplayObject;
+import flash.display.Shape;
 import flash.geom.Point;
 import flash.utils.getTimer;
 
@@ -409,9 +400,16 @@ final class Cast
 	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
 	{
 		var actor:Actor = Actor(element);
-		if (!actor.alive && (actor is BulletActor))
+		if (!actor.alive )
 		{
-			BulletActor.recycle(BulletActor(element));
+			if (actor is BulletActor)
+			{
+				BulletActor.recycle(BulletActor(element));
+			}
+//			else if (actor is ExplosionActor)
+//			{
+//				
+//			}
 		}
 		return actor.alive;
 	}
@@ -439,6 +437,7 @@ final class BehaviorFactory
 	static private var _gravityPull:IBehavior;
 	static private var _strafe:IBehavior;
 	static private var _follow:IBehavior;
+	static private var _fade:IBehavior;
 	static public function get faceForward():IBehavior
 	{
 		if (!_faceForward)
@@ -491,6 +490,14 @@ final class BehaviorFactory
 	{
 		return new AutofireBehavior;
 	}
+	static public function get fade():IBehavior
+	{
+		if (!_fade)
+		{
+			_fade = new FadeBehavior;
+		}
+		return _fade;
+	}
 }
 final class FaceForwardBehavior implements IBehavior
 {
@@ -512,15 +519,6 @@ final class FacePlayerBehavior implements IBehavior
 
 final class GravityPush implements IBehavior
 {
-	static private var _instance:IBehavior;
-	static public function get instance():IBehavior
-	{
-		if (!_instance)
-		{
-			_instance = new GravityPush;
-		}
-		return _instance;
-	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
@@ -572,15 +570,6 @@ final class FollowBehavior implements IBehavior
 
 final class StrafeBehavior implements IBehavior
 {
-	static private var _instance:IBehavior;
-	static public function get instance():IBehavior
-	{
-		if (!_instance)
-		{
-			_instance = new StrafeBehavior;
-		}
-		return _instance;
-	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
@@ -598,15 +587,52 @@ final class StrafeBehavior implements IBehavior
 		
 		actor.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
 	}
-};
+}
+
+final class FadeBehavior implements IBehavior
+{
+	public function onFrame(game:IGameState, actor:Actor):void
+	{
+		actor.displayObject.alpha -= 0.01;
+	}
+}
+
+final class ExplosionParticleActor extends Actor // this type exists only so that we know we can pool it
+{
+	public function ExplosionParticleActor(dobj:DisplayObject):void
+	{
+		super(dobj, BehaviorConsts.EXPLOSION);
+	}
+	static private const SIZE:Number = 2;
+	static private const HALFSIZE:Number = SIZE/2;
+	static public function explosion(game:IGameState, worldPos:Point, numParticles:uint):void
+	{
+		for (var i:uint = 0; i < numParticles; ++i)
+		{
+			var particle:Shape = new Shape;
+			particle.graphics.lineStyle(0, 0xffff00);
+			particle.graphics.beginFill(0xffff00);
+			particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, SIZE, SIZE);
+			particle.graphics.endFill();
+
+			particle.alpha = Math.random();
+
+			var actor:Actor = new ExplosionParticleActor(particle);
+			Utils.setPoint(actor.worldPos, worldPos);
+			actor.speed.x = Utils.random(-10, 10);
+			actor.speed.y = Utils.random(-10, 10);
+			actor.behavior = new CompositeBehavior(new ExpireBehavior(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
+			
+			game.addEffect(actor);
+		}
+	}
+}
 
 final class BulletActor extends Actor // this type exists only so that we know we can pool it
 {
-static private var instances:int = 0;
 	public function BulletActor(dobj:DisplayObject)
 	{
 		super(dobj, BehaviorConsts.BULLET);
-		++instances;
 	}
 	static public function createWithAngle(degrees:Number, pos:Point):Actor
 	{
@@ -624,7 +650,6 @@ static private var instances:int = 0;
 	static private var s_bulletPool:ObjectPool = new ObjectPool;
 	static private function createBulletHelper(radians:Number, pos:Point):Actor
 	{
-trace("createBullet", instances, "instances", s_bulletPool.size, "in pool");
 		var bullet:Actor = s_bulletPool.get() as Actor;
 		if (bullet)
 		{
@@ -639,14 +664,15 @@ trace("createBullet", instances, "instances", s_bulletPool.size, "in pool");
 			// a memory manager, so that it recycles itself.  Then, when you want the instance of some
 			// object "type", you go to the right provider to get it.  IObjectPoolable, etc.
 			bullet = new BulletActor(SimpleActorAsset.createCircle(0xff0000, 5, 5));
-			bullet.behavior = new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME);
+			bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME));
 		}
-		bullet.worldPos = pos;
+		Utils.setPoint(bullet.worldPos, pos);
 		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
+		bullet.displayObject.alpha = 1;
 		return bullet;
 	}
-};
+}
 
 //KAI: keep everything frame-based or time-based but not both
 final class AutofireBehavior implements IBehavior
@@ -663,7 +689,7 @@ final class AutofireBehavior implements IBehavior
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
 			
-			game.addEnemyAmmo(BulletActor.create(deltaX, deltaY, actor.worldPos.clone()));
+			game.addEnemyAmmo(BulletActor.create(deltaX, deltaY, actor.worldPos));
 		}
 	}
 }
@@ -685,7 +711,7 @@ final class SpeedDecayBehavior implements IBehavior
 		actor.speed.y = Physics.speedDecay(actor.speed.y, actor.consts.SPEED_DECAY);
 	}
 }
-final class CompositeBehavior implements IBehavior
+final class CompositeBehavior implements IBehavior, IResettable
 {
 	private var _behaviors:Array = [];
 	public function CompositeBehavior(...args)
@@ -713,6 +739,17 @@ final class CompositeBehavior implements IBehavior
 	public function get numBehaviors():uint
 	{
 		return _behaviors.length;
+	}
+	public function reset():void
+	{
+		for each (var behavior:IBehavior in _behaviors)
+		{
+			var resettable:IResettable = behavior as IResettable;
+			if (resettable)
+			{
+				resettable.reset();
+			}
+		}
 	}
 };
 final class AlternatingBehavior implements IBehavior
