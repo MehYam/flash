@@ -5,7 +5,7 @@ package
 	
 	import karnold.utils.Utils;
 
-	public final class Actor
+	public class Actor implements IResettable
 	{
 		private var _alive:Boolean = true;
 
@@ -23,6 +23,15 @@ package
 		public function set behavior(b:IBehavior):void
 		{
 			_behavior = b;
+		}
+		public function reset():void  // IResettable
+		{
+			var resettableBehavior:IResettable = _behavior as IResettable;
+			if (resettableBehavior)
+			{
+				resettableBehavior.reset();
+			}
+			_alive = true;
 		}
 		public function get alive():Boolean
 		{

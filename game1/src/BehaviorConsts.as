@@ -7,6 +7,9 @@ package
 		static public const BULLET:BehaviorConsts = new BehaviorConsts(10, 10);
 		static public const EXPLOSION:BehaviorConsts = new BehaviorConsts(100, 0, 0.1);
 
+		static public const BULLET_LIFETIME:uint = 2000;
+		static public const EXPLOSION_LIFETIME:uint = 1000;
+
 		public var MAX_SPEED:Number;
 		public var ACCELERATION:Number;
 		public var SPEED_DECAY:Number;

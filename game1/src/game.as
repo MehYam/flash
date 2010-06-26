@@ -170,12 +170,12 @@ addTestActors();
 
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				addPlayerAmmo(AutofireBehavior.createBulletAngle(_player.displayObject.rotation, _player.worldPos.clone()));
+				addPlayerAmmo(BulletActor.createWithAngle(_player.displayObject.rotation, _player.worldPos.clone()));
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
 			{
 				const dest:Point = _input.lastMouseDownCoords;
-				addPlayerAmmo(AutofireBehavior.createBullet(dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos.clone()));
+				addPlayerAmmo(BulletActor.create(dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos.clone()));
 			}
 
 			applyVelocityToCast(_cast.enemies);
@@ -391,12 +391,10 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.utils.getTimer;
 
+import karnold.utils.ObjectPool;
 import karnold.utils.Physics;
 import karnold.utils.Utils;
 
-// Splitting the cast into separate sub-casts makes collision detection potentially faster - instead
-// of having to do n^2 over the entire cast list, we divide n down into exclusive lists that can only
-// collide each other
 final class Cast
 {
 	public var enemies:Array = [];
@@ -410,7 +408,12 @@ final class Cast
 	}
 	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
 	{
-		return Actor(element).alive;
+		var actor:Actor = Actor(element);
+		if (!actor.alive && (actor is BulletActor))
+		{
+			BulletActor.recycle(BulletActor(element));
+		}
+		return actor.alive;
 	}
 	
 	private var _lastPurge:int;
@@ -596,29 +599,60 @@ final class StrafeBehavior implements IBehavior
 		actor.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
 	}
 };
-//KAI: keep everything frame-based or time-based but not both
-final class AutofireBehavior implements IBehavior
-{
-	private var _lastShot:int;
 
-	static public function createBulletAngle(degrees:Number, pos:Point):Actor
+final class BulletActor extends Actor // this type exists only so that we know we can pool it
+{
+static private var instances:int = 0;
+	public function BulletActor(dobj:DisplayObject)
+	{
+		super(dobj, BehaviorConsts.BULLET);
+		++instances;
+	}
+	static public function createWithAngle(degrees:Number, pos:Point):Actor
 	{
 		return createBulletHelper(Physics.degreesToRadians(degrees), pos);
 	}
-	static public function createBullet(deltaX:Number, deltaY:Number, pos:Point):Actor
+	static public function create(deltaX:Number, deltaY:Number, pos:Point):Actor
 	{
 		return createBulletHelper(Physics.getRadiansRotation(deltaX, deltaY), pos);
 	}
+	static public function recycle(actor:BulletActor):void
+	{
+		Utils.assert(!actor.alive && !actor.displayObject.parent);
+		s_bulletPool.put(actor);
+	}
+	static private var s_bulletPool:ObjectPool = new ObjectPool;
 	static private function createBulletHelper(radians:Number, pos:Point):Actor
 	{
-		var bullet:Actor = new Actor(SimpleActorAsset.createCircle(0xffaaaa, 5, 5));
-		bullet.behavior = new ExpireBehavior(2000);
-		
+trace("createBullet", instances, "instances", s_bulletPool.size, "in pool");
+		var bullet:Actor = s_bulletPool.get() as Actor;
+		if (bullet)
+		{
+			bullet.reset(); // should objectpool do this?
+		}
+		else
+		{
+			//KAI: I really really don't like this.  There was something nice about making Actor final,
+			// see if there's an alternative to using type this way.  Think about object pooling some more,
+			// there are a variety of choices to be made about who does the pooling, who implements the
+			// interfaces, etc.  Instead of giving the class a type, it could be given a reference to
+			// a memory manager, so that it recycles itself.  Then, when you want the instance of some
+			// object "type", you go to the right provider to get it.  IObjectPoolable, etc.
+			bullet = new BulletActor(SimpleActorAsset.createCircle(0xff0000, 5, 5));
+			bullet.behavior = new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME);
+		}
 		bullet.worldPos = pos;
 		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		return bullet;
 	}
+};
+
+//KAI: keep everything frame-based or time-based but not both
+final class AutofireBehavior implements IBehavior
+{
+	private var _lastShot:int;
+
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
 		const now:int = getTimer();
@@ -629,7 +663,7 @@ final class AutofireBehavior implements IBehavior
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
 			
-			game.addEnemyAmmo(createBullet(deltaX, deltaY, actor.worldPos.clone()));
+			game.addEnemyAmmo(BulletActor.create(deltaX, deltaY, actor.worldPos.clone()));
 		}
 	}
 }
@@ -705,7 +739,7 @@ final class AlternatingBehavior implements IBehavior
 		}
 	}
 }
-final class ExpireBehavior implements IBehavior
+final class ExpireBehavior implements IBehavior, IResettable
 {
 	private var start:int = getTimer();
 	private var lifetime:int;
@@ -719,6 +753,10 @@ final class ExpireBehavior implements IBehavior
 		{
 			actor.alive = false;
 		}
+	}
+	public function reset():void
+	{
+		start = getTimer();
 	}
 }
 final class SampleData
