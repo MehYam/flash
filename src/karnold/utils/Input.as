@@ -24,11 +24,11 @@ package karnold.utils
 
 		public function Input(source:DisplayObject)
 		{
-			Utils.listen(source, KeyboardEvent.KEY_DOWN, onKeyDown);
-			Utils.listen(source, KeyboardEvent.KEY_UP, onKeyUp);
-			Utils.listen(source, MouseEvent.MOUSE_DOWN, onMouseDown);
-			Utils.listen(source, MouseEvent.MOUSE_UP, onMouseUp);
-			Utils.listen(source, Event.MOUSE_LEAVE, onMouseUp);
+			Util.listen(source, KeyboardEvent.KEY_DOWN, onKeyDown);
+			Util.listen(source, KeyboardEvent.KEY_UP, onKeyUp);
+			Util.listen(source, MouseEvent.MOUSE_DOWN, onMouseDown);
+			Util.listen(source, MouseEvent.MOUSE_UP, onMouseUp);
+			Util.listen(source, Event.MOUSE_LEAVE, onMouseUp);
 			
 			addMapping('w', KEY_UP);
 			addMapping('a', KEY_LEFT);

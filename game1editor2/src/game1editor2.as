@@ -21,7 +21,7 @@ package
 	import karnold.tile.TiledBackground;
 	import karnold.utils.Input;
 	import karnold.utils.Location;
-	import karnold.utils.Utils;
+	import karnold.utils.Util;
 	
 	public class game1editor2 extends Sprite
 	{
@@ -36,7 +36,7 @@ package
 		{
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			Utils.listen(stage, KeyboardEvent.KEY_DOWN, onKeyDown);
+			Util.listen(stage, KeyboardEvent.KEY_DOWN, onKeyDown);
 
 			_imageSelect = new ImageSelect;
 			_imageSelect.scaleX = 1.5;
@@ -54,8 +54,8 @@ package
 			_playArea.y = _imageSelect.y;
 			addChild(_playArea);
 
-			Utils.listen(_playArea, MouseEvent.MOUSE_DOWN, onSetTile);
-			Utils.listen(_playArea, MouseEvent.MOUSE_MOVE, onPlayAreaMouseMove);
+			Util.listen(_playArea, MouseEvent.MOUSE_DOWN, onSetTile);
+			Util.listen(_playArea, MouseEvent.MOUSE_MOVE, onPlayAreaMouseMove);
 			
 			_map = new TiledBackground(_playArea, new BitmapTileFactory(AssetManager.instance), 40, 40, _playArea.width, _playArea.height);
 			
@@ -102,9 +102,9 @@ package
 		
 		private function onSetTile(e:MouseEvent):void
 		{
-			Utils.listen(_playArea, MouseEvent.MOUSE_MOVE, onSetTile);
-			Utils.listen(stage, MouseEvent.MOUSE_UP, onStopDragging);
-			Utils.listen(stage, Event.MOUSE_LEAVE, onStopDragging);
+			Util.listen(_playArea, MouseEvent.MOUSE_MOVE, onSetTile);
+			Util.listen(stage, MouseEvent.MOUSE_UP, onStopDragging);
+			Util.listen(stage, Event.MOUSE_LEAVE, onStopDragging);
 
 			var loc:Location = new Location;
 			_map.pointToLocation(new Point(e.localX, e.localY), loc);

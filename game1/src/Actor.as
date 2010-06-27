@@ -3,7 +3,7 @@ package
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	
-	import karnold.utils.Utils;
+	import karnold.utils.Util;
 
 	public class Actor implements IResettable
 	{
@@ -41,7 +41,7 @@ package
 		{
 			if (_alive != b && !b)
 			{
-				Utils.stopAllMovieClips(displayObject);
+				Util.stopAllMovieClips(displayObject);
 
 				if (displayObject.parent)
 				{

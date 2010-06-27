@@ -8,7 +8,7 @@ package
 	import flash.events.MouseEvent;
 	import flash.geom.Utils3D;
 	
-	import karnold.utils.Utils;
+	import karnold.utils.Util;
 
 	public class ImageSelect extends Sprite
 	{
@@ -36,9 +36,9 @@ package
 			obj.x = (AssetManager.TILES_SIZE + 5) * row;
 			obj.y = (AssetManager.TILES_SIZE + 5) * col;
 
-			Utils.listen(obj, MouseEvent.CLICK, onClick);
-			Utils.listen(obj, MouseEvent.ROLL_OVER, onRollOver);
-			Utils.listen(obj, MouseEvent.ROLL_OUT, onRollOut);
+			Util.listen(obj, MouseEvent.CLICK, onClick);
+			Util.listen(obj, MouseEvent.ROLL_OVER, onRollOver);
+			Util.listen(obj, MouseEvent.ROLL_OUT, onRollOut);
 			
 			obj.name = String(i);
 			addChild(obj);

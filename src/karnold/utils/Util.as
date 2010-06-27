@@ -14,7 +14,7 @@ package karnold.utils
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
 	
-	public class Utils
+	public class Util
 	{
 		static public function tr(str:String):void
 		{
@@ -365,7 +365,7 @@ package karnold.utils
 			return true;
 		}
 
-		public function Utils(hide:CONSTRUCTOR_HIDER) {}
+		public function Util(hide:CONSTRUCTOR_HIDER) {}
 	}
 }
 internal class CONSTRUCTOR_HIDER {}

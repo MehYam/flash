@@ -21,8 +21,8 @@ package
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Input;
 	import karnold.utils.Location;
-	import karnold.utils.Physics;
-	import karnold.utils.Utils;
+	import karnold.utils.MathUtil;
+	import karnold.utils.Util;
 
 	public final class game extends Sprite implements IGameState
 	{
@@ -136,7 +136,7 @@ addTestActors();
 			}
 			else if (speed.x)
 			{
-				speed.x = Physics.speedDecay(speed.x, PLAYER_CONSTS.SPEED_DECAY);
+				speed.x = MathUtil.speedDecay(speed.x, PLAYER_CONSTS.SPEED_DECAY);
 			}
 			
 			if (_input.isKeyDown(Input.KEY_DOWN))
@@ -149,21 +149,21 @@ addTestActors();
 			}
 			else if (speed.y)
 			{
-				speed.y = Physics.speedDecay(speed.y, PLAYER_CONSTS.SPEED_DECAY);
+				speed.y = MathUtil.speedDecay(speed.y, PLAYER_CONSTS.SPEED_DECAY);
 			}
 
 			//
 			// Reposition the player and the background tiles as necessary
 			_player.worldPos.offset(speed.x, speed.y);
-			Physics.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, speed);
+			MathUtil.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, speed);
 			
 			if (!_lastPlayerPos.equals(_player.worldPos))
 			{
-				Utils.setPoint(_lastPlayerPos, _player.worldPos);
+				Util.setPoint(_lastPlayerPos, _player.worldPos);
 				positionPlayerAndCamera();
 				if (!_cameraPos.equals(_lastCameraPos))
 				{
-					Utils.setPoint(_lastCameraPos, _cameraPos);
+					Util.setPoint(_lastCameraPos, _cameraPos);
 					_tiles.setCamera(_cameraPos);
 				}
 			}
@@ -211,7 +211,7 @@ addTestActors();
 			var ammo:Actor;
 			for each (ammo in _cast.enemyAmmo)
 			{
-				if (ammo.alive && Physics.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
+				if (ammo.alive && MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
 				{
 					ExplosionParticleActor.explosion(this, ammo.worldPos, 10);
 					ammo.alive = false;
@@ -225,7 +225,7 @@ addTestActors();
 				{
 					for each (enemy in _cast.enemies)
 					{
-						if (enemy.alive && Physics.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
+						if (enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
 						{
 							ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
 							ammo.alive = false;
@@ -243,7 +243,7 @@ addTestActors();
 					a.onFrame(this);
 
 					a.worldPos.offset(a.speed.x, a.speed.y);
-					Physics.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
+					MathUtil.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
 					
 					a.displayObject.x = a.worldPos.x - _cameraPos.x;
 					a.displayObject.y = a.worldPos.y - _cameraPos.y;
@@ -384,8 +384,8 @@ import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
 import karnold.utils.ObjectPool;
-import karnold.utils.Physics;
-import karnold.utils.Utils;
+import karnold.utils.MathUtil;
+import karnold.utils.Util;
 
 final class Cast
 {
@@ -504,7 +504,7 @@ final class FaceForwardBehavior implements IBehavior
 {
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		actor.displayObject.rotation = Physics.getDegreesRotation(actor.speed.x, actor.speed.y);
+		actor.displayObject.rotation = MathUtil.getDegreesRotation(actor.speed.x, actor.speed.y);
 	}
 }
 
@@ -514,7 +514,7 @@ final class FacePlayerBehavior implements IBehavior
 	{
 		const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 		const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
-		actor.displayObject.rotation = Physics.getDegreesRotation(deltaX, deltaY);
+		actor.displayObject.rotation = MathUtil.getDegreesRotation(deltaX, deltaY);
 	}
 }
 
@@ -524,7 +524,7 @@ final class GravityPush implements IBehavior
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
 		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
@@ -532,8 +532,8 @@ final class GravityPush implements IBehavior
 		actor.speed.x += accelX;
 		actor.speed.y += accelY;
 		
-		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
-		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
+		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
+		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
 	}
 };
 
@@ -543,7 +543,7 @@ final class GravityPullBehavior implements IBehavior
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
 		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
@@ -551,8 +551,8 @@ final class GravityPullBehavior implements IBehavior
 		actor.speed.x -= accelX;
 		actor.speed.y -= accelY;
 		
-		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
-		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
+		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
+		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
 	}
 };
 
@@ -562,7 +562,7 @@ final class FollowBehavior implements IBehavior
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 
 		actor.speed.x = actor.consts.MAX_SPEED * -Math.sin(radians);
 		actor.speed.y = actor.consts.MAX_SPEED * Math.cos(radians);
@@ -575,7 +575,7 @@ final class StrafeBehavior implements IBehavior
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = Physics.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
 		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
@@ -583,10 +583,10 @@ final class StrafeBehavior implements IBehavior
 		actor.speed.x -= accelX;
 		actor.speed.y -= accelY;
 		
-		actor.speed.x = Physics.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
-		actor.speed.y = Physics.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
+		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
+		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
 		
-		actor.displayObject.rotation = Physics.getDegreesRotation(-accelX, -accelY);
+		actor.displayObject.rotation = MathUtil.getDegreesRotation(-accelX, -accelY);
 	}
 }
 
@@ -628,9 +628,9 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 			}
 			actor.displayObject.alpha = Math.random();
 
-			Utils.setPoint(actor.worldPos, worldPos);
-			actor.speed.x = Utils.random(-10, 10);
-			actor.speed.y = Utils.random(-10, 10);
+			Util.setPoint(actor.worldPos, worldPos);
+			actor.speed.x = Util.random(-10, 10);
+			actor.speed.y = Util.random(-10, 10);
 			actor.behavior = new CompositeBehavior(new ExpireBehavior(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
 			
 			game.addEffect(actor);
@@ -638,7 +638,7 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 	}
 	static public function recycle(actor:ExplosionParticleActor):void
 	{
-		Utils.assert(!actor.alive && !actor.displayObject.parent);
+		Util.assert(!actor.alive && !actor.displayObject.parent);
 		s_pool.put(actor);
 	}
 }
@@ -651,15 +651,15 @@ final class BulletActor extends Actor // this type exists only so that we know w
 	}
 	static public function createWithAngle(degrees:Number, pos:Point):Actor
 	{
-		return createBulletHelper(Physics.degreesToRadians(degrees), pos);
+		return createBulletHelper(MathUtil.degreesToRadians(degrees), pos);
 	}
 	static public function create(deltaX:Number, deltaY:Number, pos:Point):Actor
 	{
-		return createBulletHelper(Physics.getRadiansRotation(deltaX, deltaY), pos);
+		return createBulletHelper(MathUtil.getRadiansRotation(deltaX, deltaY), pos);
 	}
 	static public function recycle(actor:BulletActor):void
 	{
-		Utils.assert(!actor.alive && !actor.displayObject.parent);
+		Util.assert(!actor.alive && !actor.displayObject.parent);
 		s_pool.put(actor);
 	}
 	static private var s_pool:ObjectPool = new ObjectPool;
@@ -681,7 +681,7 @@ final class BulletActor extends Actor // this type exists only so that we know w
 			bullet = new BulletActor(SimpleActorAsset.createCircle(0xff0000, 5, 5));
 			bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME));
 		}
-		Utils.setPoint(bullet.worldPos, pos);
+		Util.setPoint(bullet.worldPos, pos);
 		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
 		bullet.displayObject.alpha = 1;
@@ -722,8 +722,8 @@ final class SpeedDecayBehavior implements IBehavior
 	}
 	public function onFrame(game:IGameState, actor:Actor):void
 	{
-		actor.speed.x = Physics.speedDecay(actor.speed.x, actor.consts.SPEED_DECAY);
-		actor.speed.y = Physics.speedDecay(actor.speed.y, actor.consts.SPEED_DECAY);
+		actor.speed.x = MathUtil.speedDecay(actor.speed.x, actor.consts.SPEED_DECAY);
+		actor.speed.y = MathUtil.speedDecay(actor.speed.y, actor.consts.SPEED_DECAY);
 	}
 }
 final class CompositeBehavior implements IBehavior, IResettable

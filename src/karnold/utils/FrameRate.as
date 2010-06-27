@@ -163,7 +163,7 @@ package karnold.utils
 //				DisplayObjectUtils.stopAllMovieClips(stage);
 			}
 			else if (evt.altKey) {
-				Utils.traceDisplayList(stage);
+				Util.traceDisplayList(stage);
 			}
 			else {
 				onFrame();

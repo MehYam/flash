@@ -2,7 +2,7 @@ package karnold.utils
 {
 	import flash.geom.Point;
 
-	public class Physics
+	public class MathUtil
 	{
 		static private const RADIANS_TO_DEGREES:Number = 180/Math.PI;
 		static private const DEGREES_TO_RADIANS:Number = Math.PI/180;

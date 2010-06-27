@@ -9,7 +9,7 @@ package
 	import flash.events.Event;
 	import flash.filters.DropShadowFilter;
 	
-	import karnold.utils.Utils;
+	import karnold.utils.Util;
 
 	public final class SimpleActorAsset extends Sprite
 	{
@@ -25,7 +25,7 @@ package
 		{
 			var retval:MovieClip = new REDSHIP;
 			retval.filters = [new DropShadowFilter];
-			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			Util.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
 		[Embed(source="assets/blueship.swf")]
@@ -34,7 +34,7 @@ package
 		{
 			var retval:MovieClip = new BLUESHIP;
 			retval.filters = [new DropShadowFilter];
-			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			Util.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
 		[Embed(source="assets/greenship.swf")]
@@ -43,7 +43,7 @@ package
 		{
 			var retval:MovieClip = new GREENSHIP;
 			retval.filters = [new DropShadowFilter];
-			Utils.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			Util.listen(retval, Event.ENTER_FRAME, onFirstFrame);
 			return retval;
 		}
 //		[Embed(source="assets/smallexplosion.swf")]
@@ -65,7 +65,7 @@ package
 			var mc:MovieClip = MovieClip(e.target);
 			if (mc.numChildren && mc.getChildAt(0) && DisplayObjectContainer(mc.getChildAt(0)).numChildren)
 			{
-				Utils.stopAllMovieClips(mc);
+				Util.stopAllMovieClips(mc);
 				mc.removeEventListener(e.type, arguments.callee);
 			}
 		}
