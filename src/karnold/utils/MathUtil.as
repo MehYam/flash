@@ -1,5 +1,6 @@
 package karnold.utils
 {
+	import flash.display.DisplayObject;
 	import flash.geom.Point;
 
 	public class MathUtil
@@ -88,6 +89,20 @@ package karnold.utils
 				return limit;
 			}
 			return value;
+		}
+		static public function objectIsContained(dobj:DisplayObject, left:Number, top:Number, width:Number, height:Number):Boolean
+		{
+			return	dobj.x >= left &&
+					dobj.y >= top &&
+					((dobj.x + dobj.width) <= (left + width)) &&
+					((dobj.y + dobj.height) <= (top + height));
+		}
+		static public function objectIntersects(dobj:DisplayObject, left:Number, top:Number, width:Number, height:Number):Boolean
+		{
+			return	dobj.x <= (left + width) &&
+					dobj.y <= (top + height) &&
+					left   <= (dobj.x + dobj.width) &&
+					top    <= (dobj.y + dobj.height);
 		}
 	}
 }

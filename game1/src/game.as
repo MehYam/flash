@@ -242,11 +242,29 @@ addTestActors();
 				{
 					a.onFrame(this);
 
-					a.worldPos.offset(a.speed.x, a.speed.y);
-					MathUtil.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
-					
-					a.displayObject.x = a.worldPos.x - _cameraPos.x;
-					a.displayObject.y = a.worldPos.y - _cameraPos.y;
+					if (a.alive)
+					{
+						a.worldPos.offset(a.speed.x, a.speed.y);
+						MathUtil.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
+						
+						a.displayObject.x = a.worldPos.x - _cameraPos.x;
+						a.displayObject.y = a.worldPos.y - _cameraPos.y;
+						
+						if (MathUtil.objectIntersects(a.displayObject, 0, 0, stage.stageWidth, stage.stageHeight))
+						{
+							if (!a.displayObject.parent)
+							{
+								_actorLayer.addChild(a.displayObject);
+							}
+						}
+						else
+						{
+							if (a.displayObject.parent)
+							{
+								a.displayObject.parent.removeChild(a.displayObject);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -255,22 +273,18 @@ addTestActors();
 		public function addEnemy(actor:Actor):void
 		{
 			_cast.enemies.push(actor);
-			_actorLayer.addChild(actor.displayObject);
 		}
 		public function addEnemyAmmo(actor:Actor):void
 		{
 			_cast.enemyAmmo.push(actor);
-			_actorLayer.addChild(actor.displayObject);
 		}
 		public function addPlayerAmmo(actor:Actor):void
 		{
 			_cast.playerAmmo.push(actor);
-			_actorLayer.addChild(actor.displayObject);
 		}
 		public function addEffect(actor:Actor):void
 		{
 			_cast.effects.push(actor);
-			_actorLayer.addChild(actor.displayObject);
 		}
 		public function get player():Actor
 		{
