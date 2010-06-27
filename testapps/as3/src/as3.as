@@ -1,6 +1,7 @@
 package {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -221,6 +222,9 @@ package {
 			sprite.graphics.moveTo(0, 0);
 			sprite.graphics.lineTo(0, -half);
 			sprite.graphics.endFill();
+			sprite.graphics.lineStyle(3, 0);
+			sprite.graphics.moveTo(0, 0);
+			sprite.graphics.lineTo(0, 20);
 
 			const filter:DropShadowFilter = new DropShadowFilter;
 			sprite.filters = [filter];
@@ -228,36 +232,47 @@ package {
 			const rect:Rectangle = sprite.getBounds(sprite);
 			trace(rect);
 
-			var bitmapData:BitmapData = new BitmapData(rect.width + filter.distance, rect.height + filter.distance);
+			sprite.x = stage.stageWidth/2 - whole;
+			sprite.y = stage.stageHeight/2;
+			sprite.rotation = 45;
+			addChild(sprite);
+
+			var bitmapData:BitmapData = new BitmapData(rect.width + filter.distance, rect.height + filter.distance, true, 0);
 			
 			var matrix:Matrix = new Matrix;
 			matrix.identity();
 			matrix.translate(-rect.left, -rect.top);
-			bitmapData.draw(sprite, matrix);
+			bitmapData.draw(sprite, matrix, null);
 			
 			var bitmap:Bitmap = new Bitmap(bitmapData);
 
 			matrix.identity();
 			matrix.translate(-bitmap.width/2, -bitmap.height/2);
 			matrix.rotate(MathUtil.degreesToRadians(45));
-//			matrix.translate(bitmap.width/2, bitmap.height/2);
-			matrix.translate(stage.stageWidth/2 + whole, stage.stageHeight/2);
+			matrix.translate(stage.stageWidth/2, stage.stageHeight/2);
 			bitmap.transform.matrix = matrix;
-
-//			bitmap.x = stage.stageWidth/2 + whole;
-//			bitmap.y = stage.stageHeight/2;
 
 			_bitmap = bitmap;
 			addChild(bitmap);
 
-			sprite.x = stage.stageWidth/2 - whole;
-			sprite.y = stage.stageHeight/2;
-			sprite.rotation = 45;
-			addChild(sprite);
+			var bitmapHolder:Sprite = new Sprite;
+			var bitmapHeld:Bitmap = new Bitmap(bitmapData);
+			bitmapHeld.x = -bitmapHeld.width/2;
+			bitmapHeld.y = -bitmapHeld.height/2;
+			bitmapHolder.addChild(bitmapHeld);
+			
+			bitmapHolder.x = stage.stageWidth/2 + whole;
+			bitmapHolder.y = stage.stageHeight/2;
+			addChild(bitmapHolder);
+
+			trace(bitmapHolder.width, bitmapHolder.height);
+			bitmapHolder.rotation = 45;
+			trace(bitmapHolder.width, bitmapHolder.height);
 
 			addMarker(0, 0);
 			addMarker(bitmap.x, bitmap.y);
 			addMarker(sprite.x, sprite.y);
+			addMarker(bitmapHolder.x, bitmapHolder.y);
 		}
 		private function testBitmapDataTransform_onClick(e:Event):void
 		{
