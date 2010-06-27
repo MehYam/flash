@@ -629,8 +629,8 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 			actor.displayObject.alpha = Math.random();
 
 			Util.setPoint(actor.worldPos, worldPos);
-			actor.speed.x = Util.random(-10, 10);
-			actor.speed.y = Util.random(-10, 10);
+			actor.speed.x = MathUtil.random(-10, 10);
+			actor.speed.y = MathUtil.random(-10, 10);
 			actor.behavior = new CompositeBehavior(new ExpireBehavior(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
 			
 			game.addEffect(actor);

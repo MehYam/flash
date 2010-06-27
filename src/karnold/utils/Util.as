@@ -21,16 +21,6 @@ package karnold.utils
 			trace("kai:", str);
 		}
 		
-		//
-		// Like the Windows RGB macro
-		static public function RGB(red:uint, green:uint, blue:uint):uint
-		{
-			return (red << 16) | (green << 8) | blue;
-		}
-		static public function random(min:Number, max:Number):Number
-		{
-			return min + (Math.random() * (max - min));
-		}
 		static public function assert(b:Boolean, msg:String = ""):void
 		{
 			if (!b)
@@ -60,6 +50,16 @@ package karnold.utils
 				parent.removeChildAt(parent.numChildren - 1);
 			}
 		}       
+		static public function setPoint(dest:Point, src:Point):void
+		{
+			dest.x = src.x;
+			dest.y = src.y;
+		}
+		static public function setPointXY(dest:Point, x:Number, y:Number):void
+		{
+			dest.x = x;
+			dest.y = y;
+		}
 		static public function centerChild(child:DisplayObject, parent:DisplayObject):void
 		{
 			child.x = parent.x + (parent.width - child.width) / 2;
@@ -119,16 +119,6 @@ package karnold.utils
 			parent.addChild(tf);
 			return tf;
 		} 
-		static public function setPoint(dest:Point, src:Point):void
-		{
-			dest.x = src.x;
-			dest.y = src.y;
-		}
-		static public function setPointXY(dest:Point, x:Number, y:Number):void
-		{
-			dest.x = x;
-			dest.y = y;
-		}
 
 		private static function trIndented(str:String, level:int):void {
 			

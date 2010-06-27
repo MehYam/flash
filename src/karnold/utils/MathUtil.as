@@ -4,6 +4,17 @@ package karnold.utils
 
 	public class MathUtil
 	{
+		//
+		// Like the Windows RGB macro
+		static public function RGB(red:uint, green:uint, blue:uint):uint
+		{
+			return (red << 16) | (green << 8) | blue;
+		}
+		static public function random(min:Number, max:Number):Number
+		{
+			return min + (Math.random() * (max - min));
+		}
+
 		static private const RADIANS_TO_DEGREES:Number = 180/Math.PI;
 		static private const DEGREES_TO_RADIANS:Number = Math.PI/180;
 		static public function getDegreesRotation(deltaX:Number, deltaY:Number):Number
