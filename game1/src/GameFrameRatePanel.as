@@ -1,7 +1,12 @@
 package
 {
+	import flash.display.DisplayObject;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	
 	import karnold.utils.FrameRatePanel;
 	import karnold.utils.NumericRasterTextField;
+	import karnold.utils.Util;
 	
 	public class GameFrameRatePanel extends FrameRatePanel
 	{
@@ -10,8 +15,10 @@ package
 		private var _txt3:NumericRasterTextField;
 		private var _pooled:NumericRasterTextField;
 		private var _debugText:NumericRasterTextField;
+		
+		private var _game:IGame;
 
-		public function GameFrameRatePanel()
+		public function GameFrameRatePanel(game:IGame)
 		{
 			super();
 
@@ -39,6 +46,15 @@ package
 			txt3 = 0;
 			_debugText.integer = 0;
 			debug = "ready";
+			
+			var pause:DisplayObject = addButton(100, 40, 0x007700);
+			Util.listen(pause, MouseEvent.CLICK, onPause);
+			
+			_game = game;
+		}
+		private function onPause(e:Event):void
+		{
+			_game.togglePause();
 		}
 		public function set txt1(i:int):void
 		{

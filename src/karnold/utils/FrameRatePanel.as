@@ -63,23 +63,28 @@ package karnold.utils
 			addFieldOnNextLine(_txtTotalMemoryDelta);	
 			_txtTotalMemoryDelta.x = 15;
 
+			_btn = addButton(100, 20, 0x777700);
+			_btn.addEventListener(MouseEvent.CLICK, onBtnClick);	
+		}	
+
+		protected function addButton(x:Number, y:Number, color:uint):SimpleButton
+		{
 			var box:Sprite = new Sprite();
-			box.graphics.beginFill(0xff0000);
+			box.graphics.beginFill(color);
 			box.graphics.drawRect(0,0,20,20);
 			box.graphics.endFill();
 			
 			var box2:Sprite = new Sprite();
-			box2.graphics.beginFill(0xffff00);
+			box2.graphics.beginFill(color * 2);
 			box2.graphics.drawRect(0,0,20,20);
 			box2.graphics.endFill();
-			
-			_btn = new SimpleButton(box,box,box2,box2);
-			addChild(_btn);
-			_btn.addEventListener(MouseEvent.CLICK, onBtnClick);	
-			_btn.y = 20;
-			_btn.x = 100;
-		}	
 
+			var btn:SimpleButton = new SimpleButton(box,box2,box,box2);
+			addChild(btn);
+			btn.x = x;
+			btn.y = y;
+			return btn;
+		}
 		public function set enabled(b:Boolean):void
 		{
 			if (b)

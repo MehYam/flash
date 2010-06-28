@@ -32,7 +32,7 @@ package
 		private var _input:Input;
 		private var _player:Actor;
 		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
-		private var _frameRate:GameFrameRatePanel = new GameFrameRatePanel;
+		private var _frameRate:GameFrameRatePanel;
 		
 		private var _actorLayer:DisplayObjectContainer = new Sprite;
 		
@@ -117,6 +117,10 @@ addTestActors();
 			// Toggle framerate panel
 			if (_input.checkKeyHistoryAndClear(Input.KEY_TILDE))
 			{
+				if (!_frameRate)
+				{
+					_frameRate = new GameFrameRatePanel(this);
+				}
 				if (_frameRate.parent)
 				{
 					_frameRate.enabled = false;
@@ -192,7 +196,7 @@ addTestActors();
 
 			_cast.purgeDead();
 
-			if (_frameRate.parent)
+			if (_frameRate && _frameRate.parent)
 			{
 				_frameRate.txt1 = this.numChildren;
 				_frameRate.txt2 = _actorLayer.numChildren;
@@ -303,7 +307,7 @@ addTestActors();
 			}
 		}
 
-		// IGameState implementation
+		// IGame implementation
 		public function addEnemy(actor:Actor):void
 		{
 			_cast.enemies.push(actor);
@@ -323,6 +327,17 @@ addTestActors();
 		public function get player():Actor
 		{
 			return _player;
+		}
+		public function togglePause():void
+		{
+			if (_frameTimer.running)
+			{
+				_frameTimer.stop();
+			}
+			else
+			{
+				_frameTimer.startPerFrame();
+			}
 		}
 		// END IGameState implementation
 
