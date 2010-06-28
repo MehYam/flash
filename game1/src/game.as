@@ -197,6 +197,7 @@ addTestActors();
 				_frameRate.txt1 = this.numChildren;
 				_frameRate.txt2 = _actorLayer.numChildren;
 				_frameRate.txt3 = _cast.length;
+				_frameRate.pooled = ActorPool.instance.size;
 			}
 		}
 
@@ -283,7 +284,7 @@ addTestActors();
 					}
 					else
 					{
-						Cast.recycleActor(a);
+						ActorPool.instance.recycle(a);
 						cast[index] = null;
 					}
 				}
@@ -418,53 +419,6 @@ import flash.utils.getTimer;
 import karnold.utils.MathUtil;
 import karnold.utils.ObjectPool;
 import karnold.utils.Util;
-
-final class Cast
-{
-	public var enemies:Array = [];
-	public var enemyAmmo:Array = [];
-	public var playerAmmo:Array = [];
-	public var effects:Array = [];
-	
-	public function get length():uint
-	{
-		return enemies.length + enemyAmmo.length + playerAmmo.length + effects.length;
-	}
-	static public function recycleActor(actor:Actor):void
-	{
-		if (actor is BulletActor)
-		{
-			BulletActor.recycle(BulletActor(actor));
-		}
-		else if (actor is ExplosionParticleActor)
-		{
-			ExplosionParticleActor.recycle(ExplosionParticleActor(actor));
-		}
-	}
-	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
-	{
-		var actor:Actor = element as Actor
-		if (actor && !actor.alive )
-		{
-			recycleActor(actor);
-		}
-		return actor && actor.alive;
-	}
-	
-	private var _lastPurge:int;
-	public function purgeDead():void
-	{
-		const now:int = getTimer();
-		if (length > 800 || (now - _lastPurge) > 5000)
-		{
-			enemies = enemies.filter(actorIsAlive);
-			enemyAmmo = enemyAmmo.filter(actorIsAlive);
-			playerAmmo = playerAmmo.filter(actorIsAlive);
-			effects = effects.filter(actorIsAlive);
-			_lastPurge = now;
-		}
-	}
-}
 
 final class BehaviorFactory
 {
@@ -634,90 +588,6 @@ final class FadeBehavior implements IBehavior
 	}
 }
 
-final class ExplosionParticleActor extends Actor // this type exists only so that we know we can pool it
-{
-	public function ExplosionParticleActor(dobj:DisplayObject):void
-	{
-		super(dobj, BehaviorConsts.EXPLOSION);
-	}
-	static private var s_pool:ObjectPool = new ObjectPool;
-	static public function explosion(game:IGameState, worldPos:Point, numParticles:uint):void
-	{
-		for (var i:uint = 0; i < numParticles; ++i)
-		{
-			var actor:Actor = s_pool.get() as ExplosionParticleActor;
-			if (actor)
-			{
-				actor.reset();
-			}
-			else 
-			{
-				actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle());
-			}
-			actor.displayObject.alpha = Math.random();
-
-			Util.setPoint(actor.worldPos, worldPos);
-			actor.speed.x = MathUtil.random(-10, 10);
-			actor.speed.y = MathUtil.random(-10, 10);
-			actor.behavior = new CompositeBehavior(new ExpireBehavior(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
-			
-			game.addEffect(actor);
-		}
-	}
-	static public function recycle(actor:ExplosionParticleActor):void
-	{
-		Util.assert(!actor.alive && !actor.displayObject.parent);
-		s_pool.put(actor);
-	}
-}
-
-final class BulletActor extends Actor // this type exists only so that we know we can pool it
-{
-	public function BulletActor(dobj:DisplayObject)
-	{
-		super(dobj, BehaviorConsts.BULLET);
-	}
-	static public function createWithAngle(degrees:Number, pos:Point):Actor
-	{
-		return createBulletHelper(MathUtil.degreesToRadians(degrees), pos);
-	}
-	static public function create(deltaX:Number, deltaY:Number, pos:Point):Actor
-	{
-		return createBulletHelper(MathUtil.getRadiansRotation(deltaX, deltaY), pos);
-	}
-	static public function recycle(actor:BulletActor):void
-	{
-		Util.assert(!actor.alive && !actor.displayObject.parent);
-		s_pool.put(actor);
-	}
-	static private var s_pool:ObjectPool = new ObjectPool;
-	static private function createBulletHelper(radians:Number, pos:Point):Actor
-	{
-		var bullet:Actor = s_pool.get() as BulletActor;
-		if (bullet)
-		{
-			bullet.reset(); // should objectpool do this?
-		}
-		else
-		{
-			//KAI: I really really don't like this.  There was something nice about making Actor final,
-			// see if there's an alternative to using type this way.  Think about object pooling some more,
-			// there are a variety of choices to be made about who does the pooling, who implements the
-			// interfaces, etc.  Instead of giving the class a type, it could be given a reference to
-			// a memory manager, so that it recycles itself.  Then, when you want the instance of some
-			// object "type", you go to the right provider to get it.  IObjectPoolable, etc.
-			bullet = new BulletActor(SimpleActorAsset.createBullet());
-			bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME));
-		}
-		Util.setPoint(bullet.worldPos, pos);
-		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
-		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
-		bullet.displayObject.alpha = 1;
-		return bullet;
-	}
-}
-
-//KAI: keep everything frame-based or time-based but not both
 final class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:int;
@@ -839,6 +709,154 @@ final class ExpireBehavior implements IBehavior, IResettable
 		start = getTimer();
 	}
 }
+
+final class ExplosionParticleActor extends Actor // this type exists only so that we know we can pool it
+{
+	public function ExplosionParticleActor(dobj:DisplayObject):void
+	{
+		super(dobj, BehaviorConsts.EXPLOSION);
+	}
+	static public function explosion(game:IGameState, worldPos:Point, numParticles:uint):void
+	{
+		for (var i:uint = 0; i < numParticles; ++i)
+		{
+			var actor:Actor = ActorPool.instance.get(ExplosionParticleActor) as ExplosionParticleActor;
+			if (!actor)
+			{
+				actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle());
+			}
+			actor.displayObject.alpha = Math.random();
+			
+			Util.setPoint(actor.worldPos, worldPos);
+			actor.speed.x = MathUtil.random(-10, 10);
+			actor.speed.y = MathUtil.random(-10, 10);
+			actor.behavior = new CompositeBehavior(new ExpireBehavior(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
+			
+			game.addEffect(actor);
+		}
+	}
+}
+
+final class BulletActor extends Actor // this type exists only so that we know we can pool it
+{
+	public function BulletActor(dobj:DisplayObject)
+	{
+		super(dobj, BehaviorConsts.BULLET);
+	}
+	static public function createWithAngle(degrees:Number, pos:Point):Actor
+	{
+		return createBulletHelper(MathUtil.degreesToRadians(degrees), pos);
+	}
+	static public function create(deltaX:Number, deltaY:Number, pos:Point):Actor
+	{
+		return createBulletHelper(MathUtil.getRadiansRotation(deltaX, deltaY), pos);
+	}
+	static private function createBulletHelper(radians:Number, pos:Point):Actor
+	{
+		var bullet:Actor = ActorPool.instance.get(BulletActor) as BulletActor;
+		if (!bullet)
+		{
+			//KAI: I really really don't like this.  There was something nice about making Actor final,
+			// see if there's an alternative to using type this way.  Think about object pooling some more,
+			// there are a variety of choices to be made about who does the pooling, who implements the
+			// interfaces, etc.  Instead of giving the class a type, it could be given a reference to
+			// a memory manager, so that it recycles itself.  Then, when you want the instance of some
+			// object "type", you go to the right provider to get it.  IObjectPoolable, etc.
+			bullet = new BulletActor(SimpleActorAsset.createBullet());
+			bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME));
+		}
+		Util.setPoint(bullet.worldPos, pos);
+		bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
+		bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
+		bullet.displayObject.alpha = 1;
+		return bullet;
+	}
+}
+
+final class ActorPool
+{
+	static private var _instance:ActorPool = new ActorPool;
+	static public function get instance():ActorPool
+	{
+		return _instance;
+	}
+	private var _pools:Dictionary = new Dictionary;
+	private var _pooled:uint = 0;
+	public function get(type:Object):Actor
+	{
+		var pool:ObjectPool = _pools[type] as ObjectPool;
+		if (pool)
+		{
+			var actor:Actor = pool.get() as Actor;
+			if (actor)
+			{
+				--_pooled;
+				actor.reset();
+				return actor;
+			}
+		}
+		return null;
+	}
+	public function recycle(actor:Actor):void
+	{
+		Util.assert(!actor.alive && !actor.displayObject.parent);
+
+		const type:Object = actor["constructor"];
+		if (type != Actor)
+		{
+			var pool:ObjectPool = _pools[type] as ObjectPool;
+			if (!pool)
+			{
+				pool = new ObjectPool;
+				_pools[type] = pool;
+			}
+			
+			pool.put(actor);
+			++_pooled;
+		}
+	}
+	public function get size():uint
+	{
+		return _pooled;
+	}
+}
+
+final class Cast
+{
+	public var enemies:Array = [];
+	public var enemyAmmo:Array = [];
+	public var playerAmmo:Array = [];
+	public var effects:Array = [];
+	
+	public function get length():uint
+	{
+		return enemies.length + enemyAmmo.length + playerAmmo.length + effects.length;
+	}
+	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
+	{
+		var actor:Actor = element as Actor
+		if (actor && !actor.alive )
+		{
+			ActorPool.instance.recycle(actor);
+		}
+		return actor && actor.alive;
+	}
+	
+	private var _lastPurge:int;
+	public function purgeDead():void
+	{
+		const now:int = getTimer();
+		if (length > 800 || (now - _lastPurge) > 5000)
+		{
+			enemies = enemies.filter(actorIsAlive);
+			enemyAmmo = enemyAmmo.filter(actorIsAlive);
+			playerAmmo = playerAmmo.filter(actorIsAlive);
+			effects = effects.filter(actorIsAlive);
+			_lastPurge = now;
+		}
+	}
+}
+
 final class SampleData
 {
 	[Embed(source="assets/level1.txt", mimeType="application/octet-stream")]
