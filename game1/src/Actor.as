@@ -13,10 +13,13 @@ package
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
 		public var consts:BehaviorConsts;
+		public var health:Number;
 		public function Actor(dobj:DisplayObject, consts:BehaviorConsts = null)
 		{
 			displayObject = dobj;
 			this.consts = consts;
+			
+			health = BehaviorConsts.PLAYER_HEALTH;
 		}
 		
 		private var _behavior:IBehavior;

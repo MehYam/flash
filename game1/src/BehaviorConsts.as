@@ -7,9 +7,15 @@ package
 		static public const BULLET:BehaviorConsts = new BehaviorConsts(10, 10);
 		static public const EXPLOSION:BehaviorConsts = new BehaviorConsts(100, 0, 0.1);
 
+		// these semi-belong here
 		static public const BULLET_LIFETIME:uint = 2000;
 		static public const EXPLOSION_LIFETIME:uint = 1000;
 
+		// these DON'T belong here
+		static public const PLAYER_HEALTH:Number = 100;
+		static public const PLAYER_ENERGY:Number = 100;
+		
+		
 		public var MAX_SPEED:Number;
 		public var ACCELERATION:Number;
 		public var SPEED_DECAY:Number;

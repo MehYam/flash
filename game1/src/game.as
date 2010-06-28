@@ -64,11 +64,11 @@ package
 			_actorLayer.addChild(_player.displayObject);
 			
 addTestActors();
-//addTestActors();
-//addTestActors();
-//addTestActors();
-//addTestActors();
-//addTestActors();
+addTestActors();
+addTestActors();
+addTestActors();
+addTestActors();
+addTestActors();
 			if (VECTOR)
 			{
 				initVectorMap(_tiles, 0.2);
@@ -201,18 +201,29 @@ addTestActors();
 			}
 		}
 
+		private function damageActor(actor:Actor, damage:Number):void
+		{
+			actor.health -= damage;
+			if (actor.health < 0)
+			{
+				ExplosionParticleActor.explosion(this, actor.worldPos, 20);
+				actor.alive = false;
+			}
+		}
+
 		static private const COLLISION_DIST:Number = 20;
 		private function collisionCheck():void
 		{
 			// enemy hits player
 			var enemy:Actor;
-//			for each (enemy in _cast.enemies)
-//			{
-//				if (enemy && enemy.alive && Physics.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
-//				{
-//					enemy.alive = false;
-//				}
-//			}
+			for each (enemy in _cast.enemies)
+			{
+				if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
+				{
+					ExplosionParticleActor.explosion(this, enemy.worldPos, 5);
+					damageActor(enemy, BehaviorConsts.PLAYER_HEALTH);
+				}
+			}
 			
 			// enemy ammo hits player
 			var ammo:Actor;
@@ -235,7 +246,7 @@ addTestActors();
 						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
 						{
 							ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
-							ammo.alive = false;
+							damageActor(enemy, 20);
 						}
 					}
 				}
