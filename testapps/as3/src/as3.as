@@ -240,7 +240,6 @@ package {
 			var bitmapData:BitmapData = new BitmapData(rect.width + filter.distance, rect.height + filter.distance, true, 0);
 			
 			var matrix:Matrix = new Matrix;
-			matrix.identity();
 			matrix.translate(-rect.left, -rect.top);
 			bitmapData.draw(sprite, matrix, null);
 			

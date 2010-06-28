@@ -65,6 +65,11 @@ package
 			_actorLayer.addChild(_player.displayObject);
 			
 addTestActors();
+addTestActors();
+addTestActors();
+addTestActors();
+addTestActors();
+addTestActors();
 			if (VECTOR)
 			{
 				initVectorMap(_tiles, 0.2);
@@ -86,7 +91,7 @@ addTestActors();
 		{
 			var testenemy:Actor = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
 			testenemy.worldPos = _worldBounds.middle;
-			testenemy.worldPos.offset(20, 20);
+			testenemy.worldPos.offset(MathUtil.random(-100, 100), MathUtil.random(-100, 100));
 			testenemy.behavior = new AlternatingBehavior
 				(
 					new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward),
@@ -97,6 +102,7 @@ addTestActors();
 			
 			testenemy = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 			testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
+			testenemy.worldPos.offset(MathUtil.random(0, 200), MathUtil.random(0, 200));
 			addEnemy(testenemy);
 		}
 
@@ -120,7 +126,7 @@ addTestActors();
 				else
 				{
 					_frameRate.enabled = true;
-					_actorLayer.addChild(_frameRate);
+					parent.addChild(_frameRate);
 				}
 			}
 			
@@ -253,8 +259,8 @@ addTestActors();
 						
 						// assume that if the displayobject is a bitmap, it's aligned to top left.  Else,
 						// it's centered
-						var bitmap:Boolean = a.displayObject is Bitmap;
-						if (bitmap)
+						var recenter:Boolean = a.displayObject is Bitmap;
+						if (recenter)
 						{
 							a.displayObject.x -= a.displayObject.width/2;
 							a.displayObject.y -= a.displayObject.height/2;

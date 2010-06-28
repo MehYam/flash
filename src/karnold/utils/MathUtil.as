@@ -40,7 +40,7 @@ package karnold.utils
 			
 			return Math.sqrt(x + y);
 		}
-		static private const SPEED_ALPHA:Number = 0.3;
+		static private const SPEED_ALPHA:Number = 0.01;
 		static public function speedDecay(speed:Number, decay:Number):Number
 		{
 			var retval:Number = speed * (1-decay);

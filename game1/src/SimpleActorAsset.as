@@ -1,5 +1,6 @@
 package
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -24,81 +25,128 @@ package
 			mouseEnabled = false;
 		}
 
-		static private var s_rasterizationStore:Dictionary = new Dictionary;
-		static private function getRasterization(key:Object):BitmapData
-		{
-			return s_rasterizationStore[key] as BitmapData;
-		}
-		static private function rasterize(key:Object, target:DisplayObject):void
+		static private function rasterize(target:DisplayObject):BitmapData
 		{
 			const bounds:Rectangle = target.getBounds(target);
 			var bitmapData:BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
 
 			var matrix:Matrix = new Matrix;
-			matrix.identity();
 			matrix.translate(-bounds.left, -bounds.top);
-//			bitmapData.draw(sprite, matrix, null);
+			bitmapData.draw(target, matrix);
+			return bitmapData;
 		}
 
+		static private const RASTERIZING:Boolean = false;
+		static private var s_rasterizationStore:Dictionary = new Dictionary;
+
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];
-		static private function createShipHelper(clss:Class):DisplayObject
+		static private function createAssetRasterized(clss:Class, centered:Boolean = true):DisplayObject
 		{
-			var retval:DisplayObject = new clss();
-			retval.filters = s_dropShadowFilter;
-			return retval;
+			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;
+			if (!bmd)
+			{
+				var source:DisplayObject = new clss();
+				if (!RASTERIZING)
+				{
+					source.filters = s_dropShadowFilter;
+					return source;
+				}
+				bmd = rasterize(source);
+				s_rasterizationStore[clss] = bmd;
+			}
+			
+			var bmp:DisplayObject = new Bitmap(bmd);
+			bmp.x = -bmp.width/2;
+			bmp.y = -bmp.height/2;
+			
+			if (centered)
+			{
+				var retval:Sprite = new Sprite;
+				retval.filters = s_dropShadowFilter;
+				retval.addChild(bmp);
+	
+				return retval;
+			}
+			return bmp;
 		}
 		[Embed(source="assets/master.swf", symbol="ship0")]
 		static private const REDSHIP:Class;
 		static public function createRedShip():DisplayObject
 		{
-			return createShipHelper(REDSHIP);
+			return createAssetRasterized(REDSHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship1")]
 		static private const BLUESHIP:Class;
 		static public function createBlueShip():DisplayObject
 		{
-			return createShipHelper(BLUESHIP);
+			return createAssetRasterized(BLUESHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship2")]
 		static private const ORANGESHIP:Class;
 		static public function createOrangeShip():DisplayObject
 		{
-			return createShipHelper(ORANGESHIP);
+			return createAssetRasterized(ORANGESHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship3")]
 		static private const GREENSHIP:Class;
 		static public function createGreenShip():DisplayObject
 		{
-			return createShipHelper(GREENSHIP);
+			return createAssetRasterized(GREENSHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship4")]
 		static private const GRAYSHIP:Class;
 		static public function createGrayShip():DisplayObject
 		{
-			return createShipHelper(GRAYSHIP);
+			return createAssetRasterized(GRAYSHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship5")]
 		static private const FUNNELSHIP:Class;
 		static public function createFunnelShip():DisplayObject
 		{
-			return createShipHelper(FUNNELSHIP);
+			return createAssetRasterized(FUNNELSHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship6")]
 		static private const BLUEBOSS:Class;
 		static public function createBlueBossShip():DisplayObject
 		{
-			return createShipHelper(BLUEBOSS);
+			return createAssetRasterized(BLUEBOSS);
 		}
 		static private const EXPLOSION_SIZE:Number = 2;
 		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
 		static public function createExplosionParticle():DisplayObject
 		{
-			var particle:Shape = new Shape;
-			particle.graphics.lineStyle(0, 0xffff00);
-			particle.graphics.beginFill(0xffff00);
-			particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
-			particle.graphics.endFill();
-			return particle;
+			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
+			if (!bmd)
+			{
+				var particle:Shape = new Shape;
+				particle.graphics.lineStyle(0, 0xffff00);
+				particle.graphics.beginFill(0xffff00);
+				particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
+				particle.graphics.endFill();
+				if (!RASTERIZING)
+				{
+					return particle;
+				}
+				
+				bmd = rasterize(particle);
+				s_rasterizationStore[arguments.callee] = bmd;
+			}
+			return new Bitmap(bmd);
+		}
+		public static function createBullet():DisplayObject
+		{
+			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
+			if (!bmd)
+			{
+				var bullet:DisplayObject = createCircle(0xff0000, 5, 5);
+				if (!RASTERIZING)
+				{
+					return bullet;
+				}
+				bmd = rasterize(bullet);
+				s_rasterizationStore[arguments.callee] = bmd;
+			}
+			return new Bitmap(bmd);
 		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
@@ -114,10 +162,6 @@ package
 			return wo;
 		}
 		
-		public static function createBullet():DisplayObject
-		{
-			return createCircle(0xff0000, 5, 5);			
-		}
 		public static function createCircle(color:uint, width:Number, height:Number):DisplayObject
 		{
 			var wo:Shape = new Shape;
