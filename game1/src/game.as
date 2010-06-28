@@ -18,7 +18,6 @@ package
 	import karnold.tile.TiledBackground;
 	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
-	import karnold.utils.FrameRatePanel;
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Input;
 	import karnold.utils.Location;
@@ -33,7 +32,7 @@ package
 		private var _input:Input;
 		private var _player:Actor;
 		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
-		private var _frameRate:FrameRatePanel = new FrameRatePanel;
+		private var _frameRate:OurFrameRatePanel = new OurFrameRatePanel;
 		
 		private var _actorLayer:DisplayObjectContainer = new Sprite;
 		
@@ -65,11 +64,11 @@ package
 			_actorLayer.addChild(_player.displayObject);
 			
 addTestActors();
-addTestActors();
-addTestActors();
-addTestActors();
-addTestActors();
-addTestActors();
+//addTestActors();
+//addTestActors();
+//addTestActors();
+//addTestActors();
+//addTestActors();
 			if (VECTOR)
 			{
 				initVectorMap(_tiles, 0.2);

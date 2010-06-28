@@ -1,5 +1,6 @@
 package karnold.utils
 {
+	import flash.display.DisplayObject;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -20,85 +21,47 @@ package karnold.utils
 		private var _txtTotalMemory:NumericRasterTextField;
 		private var _txtTotalMemoryDelta:NumericRasterTextField;
 
-		private var _txt1:NumericRasterTextField;
-		private var _txt2:NumericRasterTextField;
-		private var _txt3:NumericRasterTextField;
-		
-		private var _debugText:NumericRasterTextField;
 		private var _btn:SimpleButton;
 		
 		private static const FIELD_LEFT:Number = 10;
 		private static const FIELD_HEIGHT:Number = 15;
 
 		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
-
-		//
-		// Pass in null for SocketStats to turn off its display
+		private var _lastAdded:DisplayObject;
+		protected function addField(field:DisplayObject, x:Number):void
+		{
+			field.x = x;
+			field.y = _lastAdded.y;
+			addChild(field);
+			_lastAdded = field;
+		}
+		protected function addFieldOnNextLine(field:DisplayObject):void
+		{
+			field.x = FIELD_LEFT;
+			field.y = _lastAdded ? (_lastAdded.y + FIELD_HEIGHT) : 5;
+			addChild(field);
+			_lastAdded = field;
+		}
 		public function FrameRatePanel()
 		{
 			tabEnabled = false;
 			tabChildren = false;
-			
-			var format:TextFormat = new TextFormat();
-		    format.font = "_myArial";
-		    format.size = 12;
-		    format.color = 0xFFFFFF;
-	
-			var currentY:Number = 5;
+		
 			_txtFPS = new NumericRasterTextField();		
-			_txtFPS.x = FIELD_LEFT;
-			_txtFPS.y = currentY;
 			_txtFPS.suffix = " fps";
-			addChild(_txtFPS);			
+			addFieldOnNextLine(_txtFPS);			
 			
-			currentY += FIELD_HEIGHT;
-
 			_txtTotalMemory = new NumericRasterTextField();		
-			_txtTotalMemory.x = FIELD_LEFT;
-			_txtTotalMemory.y = currentY;
 			_txtTotalMemory.suffix = " KB";	
 			_txtTotalMemory.showThousandsSeparator = true;
-			addChild(_txtTotalMemory);	
+			addFieldOnNextLine(_txtTotalMemory);	
 						
-			currentY += FIELD_HEIGHT;
-
 			_txtTotalMemoryDelta = new NumericRasterTextField();		
-			_txtTotalMemoryDelta.x = 15;
-			_txtTotalMemoryDelta.y = currentY;
 			_txtTotalMemoryDelta.suffix = " KB";
 			_txtTotalMemoryDelta.showSign = true;	
 			_txtTotalMemoryDelta.showThousandsSeparator = true;
-			addChild(_txtTotalMemoryDelta);	
-
-			currentY += FIELD_HEIGHT;
-
-			_txt1 = new NumericRasterTextField();		
-			_txt1.x = FIELD_LEFT;
-			_txt1.y = currentY;
-			addChild(_txt1);	
-			
-			_txt2 = new NumericRasterTextField();		
-			_txt2.x = 55;
-			_txt2.y = currentY;
-			addChild(_txt2);	
-			
-			currentY += FIELD_HEIGHT;
-
-			_txt3 = new NumericRasterTextField();
-			_txt3.x = FIELD_LEFT;
-			_txt3.y = currentY;
-			_txt3.suffix = " cast";
-			addChild(_txt3);
-			
-			currentY += FIELD_HEIGHT;
-
-			_debugText = new NumericRasterTextField;
-			_debugText.x = FIELD_LEFT;
-			_debugText.y = currentY;
-			debug = "ready";
-			addChild(_debugText);
-
-			currentY += FIELD_HEIGHT;
+			addFieldOnNextLine(_txtTotalMemoryDelta);	
+			_txtTotalMemoryDelta.x = 15;
 
 			var box:Sprite = new Sprite();
 			box.graphics.beginFill(0xff0000);
@@ -117,22 +80,6 @@ package karnold.utils
 			_btn.x = 100;
 		}	
 
-		public function set txt1(i:int):void
-		{
-			_txt1.integer = i;
-		}
-		public function set txt2(i:int):void
-		{
-			_txt2.integer = i;
-		}
-		public function set txt3(i:int):void
-		{
-			_txt3.integer = i;
-		}
-		public function set debug(str:String):void
-		{
-			_debugText.suffix = str;
-		}
 		public function set enabled(b:Boolean):void
 		{
 			if (b)
@@ -158,9 +105,9 @@ package karnold.utils
 				}
 			}
 			else if (evt.ctrlKey && evt.altKey) {
+				Util.stopAllMovieClips(stage);
 			}
 			else if (evt.ctrlKey) {
-//				DisplayObjectUtils.stopAllMovieClips(stage);
 			}
 			else if (evt.altKey) {
 				Util.traceDisplayList(stage);
