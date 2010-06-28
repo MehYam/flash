@@ -1,5 +1,6 @@
 package 
 {
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -31,7 +32,7 @@ package
 
 		private var _input:Input;
 		private var _player:Actor;
-		private var _frameTimer:FrameTimer = new FrameTimer(onEnterFrame);
+		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
 		private var _frameRate:FrameRate = new FrameRate;
 		
 		private var _actorLayer:DisplayObjectContainer = new Sprite;
@@ -63,7 +64,7 @@ package
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
 			
-addTestActors();
+//addTestActors();
 			if (VECTOR)
 			{
 				initVectorMap(_tiles, 0.2);
@@ -105,7 +106,7 @@ addTestActors();
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
 		private var _lastPurge:int;
-		private function onEnterFrame():void
+		private function onFrame():void
 		{
 			//
 			// Toggle framerate panel
@@ -155,7 +156,7 @@ addTestActors();
 			//
 			// Reposition the player and the background tiles as necessary
 			_player.worldPos.offset(speed.x, speed.y);
-			MathUtil.constrain(_worldBounds, _player.worldPos, _player.displayObject.width, _player.displayObject.height, speed);
+			MathUtil.constrain(_worldBounds, _player.worldPos, 0, 0, speed);
 			
 			if (!_lastPlayerPos.equals(_player.worldPos))
 			{
@@ -245,10 +246,19 @@ addTestActors();
 					if (a.alive)
 					{
 						a.worldPos.offset(a.speed.x, a.speed.y);
-						MathUtil.constrain(_worldBounds, a.worldPos, a.displayObject.width, a.displayObject.height, a.speed);
-						
+						MathUtil.constrain(_worldBounds, a.worldPos, 0, 0, a.speed);
+
 						a.displayObject.x = a.worldPos.x - _cameraPos.x;
 						a.displayObject.y = a.worldPos.y - _cameraPos.y;
+						
+						// assume that if the displayobject is a bitmap, it's aligned to top left.  Else,
+						// it's centered
+						var bitmap:Boolean = a.displayObject is Bitmap;
+						if (bitmap)
+						{
+							a.displayObject.x -= a.displayObject.width/2;
+							a.displayObject.y -= a.displayObject.height/2;
+						}
 						
 						if (MathUtil.objectIntersects(a.displayObject, 0, 0, stage.stageWidth, stage.stageHeight))
 						{
@@ -397,8 +407,8 @@ import flash.geom.Point;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
-import karnold.utils.ObjectPool;
 import karnold.utils.MathUtil;
+import karnold.utils.ObjectPool;
 import karnold.utils.Util;
 
 final class Cast
@@ -619,8 +629,6 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 		super(dobj, BehaviorConsts.EXPLOSION);
 	}
 	static private var s_pool:ObjectPool = new ObjectPool;
-	static private const SIZE:Number = 2;
-	static private const HALFSIZE:Number = SIZE/2;
 	static public function explosion(game:IGameState, worldPos:Point, numParticles:uint):void
 	{
 		for (var i:uint = 0; i < numParticles; ++i)
@@ -632,13 +640,7 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 			}
 			else 
 			{
-				var particle:Shape = new Shape;
-				particle.graphics.lineStyle(0, 0xffff00);
-				particle.graphics.beginFill(0xffff00);
-				particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, SIZE, SIZE);
-				particle.graphics.endFill();
-	
-				actor = new ExplosionParticleActor(particle);
+				actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle());
 			}
 			actor.displayObject.alpha = Math.random();
 
@@ -692,7 +694,7 @@ final class BulletActor extends Actor // this type exists only so that we know w
 			// interfaces, etc.  Instead of giving the class a type, it could be given a reference to
 			// a memory manager, so that it recycles itself.  Then, when you want the instance of some
 			// object "type", you go to the right provider to get it.  IObjectPoolable, etc.
-			bullet = new BulletActor(SimpleActorAsset.createCircle(0xff0000, 5, 5));
+			bullet = new BulletActor(SimpleActorAsset.createBullet());
 			bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, new ExpireBehavior(BehaviorConsts.BULLET_LIFETIME));
 		}
 		Util.setPoint(bullet.worldPos, pos);

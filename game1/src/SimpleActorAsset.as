@@ -1,5 +1,6 @@
 package
 {
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Graphics;
@@ -7,10 +8,14 @@ package
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.filters.BitmapFilter;
 	import flash.filters.DropShadowFilter;
+	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
+	import flash.utils.Dictionary;
 	
 	import karnold.utils.Util;
-
+	
 	public final class SimpleActorAsset extends Sprite
 	{
 		public function SimpleActorAsset()
@@ -19,52 +24,65 @@ package
 			mouseEnabled = false;
 		}
 
-		[Embed(source="assets/redship.swf")]
+		static private var s_rasterizationStore:Dictionary = new Dictionary;
+		static private function getRasterization(key:Object):BitmapData
+		{
+			return s_rasterizationStore[key] as BitmapData;
+		}
+		static private function rasterize(key:Object, target:DisplayObject):void
+		{
+			const bounds:Rectangle = target.getBounds(target);
+			var bitmapData:BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
+
+			var matrix:Matrix = new Matrix;
+			matrix.identity();
+			matrix.translate(-bounds.left, -bounds.top);
+//			bitmapData.draw(sprite, matrix, null);
+		}
+
+		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];
+
+		[Embed(source="assets/master.swf", symbol="ship2")]
 		static private const REDSHIP:Class;
 		static public function createRedShip():DisplayObject
 		{
-			var retval:MovieClip = new REDSHIP;
-			retval.filters = [new DropShadowFilter];
-			Util.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			var retval:DisplayObject = new REDSHIP;
+			retval.filters = s_dropShadowFilter;
 			return retval;
 		}
-		[Embed(source="assets/blueship.swf")]
+		[Embed(source="assets/master.swf", symbol="ship1")]
 		static private const BLUESHIP:Class;
 		static public function createBlueShip():DisplayObject
 		{
-			var retval:MovieClip = new BLUESHIP;
-			retval.filters = [new DropShadowFilter];
-			Util.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			var retval:DisplayObject = new BLUESHIP;
+			retval.filters = s_dropShadowFilter;
 			return retval;
 		}
-		[Embed(source="assets/greenship.swf")]
+		[Embed(source="assets/master.swf", symbol="ship3")]
 		static private const GREENSHIP:Class;
 		static public function createGreenShip():DisplayObject
 		{
-			var retval:MovieClip = new GREENSHIP;
-			retval.filters = [new DropShadowFilter];
-			Util.listen(retval, Event.ENTER_FRAME, onFirstFrame);
+			var retval:DisplayObject = new GREENSHIP;
+			retval.filters = s_dropShadowFilter;
 			return retval;
 		}
-//		[Embed(source="assets/smallexplosion.swf")]
-//		static private const SMALLEXPLOSION:Class;
-//		static public function createSmallExplosion():DisplayObject
-//		{
-//			var retval:MovieClip = new SMALLEXPLOSION;
-//			return retval;
-//		}
-//		[Embed(source="assets/mediumexplosion.swf")]
-//		static private const MEDIUMEXPLOSION:Class;
-//		static public function createMediumExplosion():DisplayObject
-//		{
-//			var retval:MovieClip = new MEDIUMEXPLOSION;
-//			return retval;
-//		}
-		static private function onFirstFrame(e:Event):void
+		static private const EXPLOSION_SIZE:Number = 2;
+		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
+		static public function createExplosionParticle():DisplayObject
+		{
+			var particle:Shape = new Shape;
+			particle.graphics.lineStyle(0, 0xffff00);
+			particle.graphics.beginFill(0xffff00);
+			particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
+			particle.graphics.endFill();
+			return particle;
+		}
+		static private function waitForMovieClipLoadedAndRasterize(e:Event):void
 		{
 			var mc:MovieClip = MovieClip(e.target);
 			if (mc.numChildren && mc.getChildAt(0) && DisplayObjectContainer(mc.getChildAt(0)).numChildren)
 			{
+				var obj:Class = mc["constructor"];
 				Util.stopAllMovieClips(mc);
 				mc.removeEventListener(e.type, arguments.callee);
 			}
@@ -83,6 +101,10 @@ package
 			return wo;
 		}
 		
+		public static function createBullet():DisplayObject
+		{
+			return createCircle(0xff0000, 5, 5);			
+		}
 		public static function createCircle(color:uint, width:Number, height:Number):DisplayObject
 		{
 			var wo:Shape = new Shape;
