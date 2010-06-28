@@ -14,7 +14,7 @@ package karnold.utils
 	import karnold.utils.FrameTimer;
 	import karnold.utils.NumericRasterTextField;
 	
-	public class FrameRate extends Sprite
+	public class FrameRatePanel extends Sprite
 	{
 		private var _txtFPS:NumericRasterTextField;
 		private var _txtTotalMemory:NumericRasterTextField;
@@ -34,7 +34,7 @@ package karnold.utils
 
 		//
 		// Pass in null for SocketStats to turn off its display
-		public function FrameRate()
+		public function FrameRatePanel()
 		{
 			tabEnabled = false;
 			tabChildren = false;
