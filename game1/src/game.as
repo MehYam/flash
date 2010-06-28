@@ -101,7 +101,7 @@ addTestActors();
 			
 			testenemy = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 			testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-			testenemy.worldPos.offset(MathUtil.random(0, 200), MathUtil.random(0, 200));
+			testenemy.worldPos.offset(MathUtil.random(_worldBounds.left, _worldBounds.right), MathUtil.random(_worldBounds.top, _worldBounds.bottom));
 			addEnemy(testenemy);
 		}
 
@@ -219,7 +219,7 @@ addTestActors();
 			{
 				if (ammo && ammo.alive && MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
 				{
-					ExplosionParticleActor.explosion(this, ammo.worldPos, 10);
+					ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
 					ammo.alive = false;
 				}
 			}
