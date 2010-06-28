@@ -53,7 +53,7 @@ package
 			}
 			_alive = b;
 		}
-		public function onFrame(gameState:IGameState):void
+		public function onFrame(gameState:IGame):void
 		{
 			if (_behavior)
 			{

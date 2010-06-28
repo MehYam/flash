@@ -3,7 +3,7 @@ package
 	import karnold.utils.FrameRatePanel;
 	import karnold.utils.NumericRasterTextField;
 	
-	public class OurFrameRatePanel extends FrameRatePanel
+	public class GameFrameRatePanel extends FrameRatePanel
 	{
 		private var _txt1:NumericRasterTextField;
 		private var _txt2:NumericRasterTextField;
@@ -11,7 +11,7 @@ package
 		private var _pooled:NumericRasterTextField;
 		private var _debugText:NumericRasterTextField;
 
-		public function OurFrameRatePanel()
+		public function GameFrameRatePanel()
 		{
 			super();
 

@@ -1,6 +1,6 @@
 package
 {
-	public interface IGameState
+	public interface IGame
 	{
 		function get player():Actor
 		function addEnemy(actor:Actor):void;

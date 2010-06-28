@@ -24,7 +24,7 @@ package
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
 
-	public final class game extends Sprite implements IGameState
+	public final class game extends Sprite implements IGame
 	{
 		private var _tiles:TiledBackground;
 		private var _worldBounds:Bounds;
@@ -32,7 +32,7 @@ package
 		private var _input:Input;
 		private var _player:Actor;
 		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
-		private var _frameRate:OurFrameRatePanel = new OurFrameRatePanel;
+		private var _frameRate:GameFrameRatePanel = new GameFrameRatePanel;
 		
 		private var _actorLayer:DisplayObjectContainer = new Sprite;
 		
@@ -503,7 +503,7 @@ final class BehaviorFactory
 }
 final class FaceForwardBehavior implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		actor.displayObject.rotation = MathUtil.getDegreesRotation(actor.speed.x, actor.speed.y);
 	}
@@ -511,7 +511,7 @@ final class FaceForwardBehavior implements IBehavior
 
 final class FacePlayerBehavior implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 		const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
@@ -521,7 +521,7 @@ final class FacePlayerBehavior implements IBehavior
 
 final class GravityPush implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
@@ -540,7 +540,7 @@ final class GravityPush implements IBehavior
 
 final class GravityPullBehavior implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
@@ -559,7 +559,7 @@ final class GravityPullBehavior implements IBehavior
 
 final class FollowBehavior implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
@@ -572,7 +572,7 @@ final class FollowBehavior implements IBehavior
 
 final class StrafeBehavior implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
@@ -593,7 +593,7 @@ final class StrafeBehavior implements IBehavior
 
 final class FadeBehavior implements IBehavior
 {
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		actor.displayObject.alpha -= 0.01;
 	}
@@ -603,7 +603,7 @@ final class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:int;
 
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const now:int = getTimer();
 		if ((now - _lastShot) > 300)
@@ -629,7 +629,7 @@ final class SpeedDecayBehavior implements IBehavior
 		}
 		return _instance;
 	}
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		actor.speed.x = MathUtil.speedDecay(actor.speed.x, actor.consts.SPEED_DECAY);
 		actor.speed.y = MathUtil.speedDecay(actor.speed.y, actor.consts.SPEED_DECAY);
@@ -649,14 +649,14 @@ final class CompositeBehavior implements IBehavior, IResettable
 	{
 		_behaviors.push(b);
 	}
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		for each (var behavior:IBehavior in _behaviors)
 		{
 			behavior.onFrame(game, actor);
 		}
 	}
-	public function onFrameAt(game:IGameState, actor:Actor, index:uint):void
+	public function onFrameAt(game:IGame, actor:Actor, index:uint):void
 	{
 		IBehavior(_behaviors[index]).onFrame(game, actor);
 	}
@@ -688,7 +688,7 @@ final class AlternatingBehavior implements IBehavior
 		}
 	}
 	private var _count:uint;
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		_behaviors.onFrameAt(game, actor, _count % _behaviors.numBehaviors);
 
@@ -708,7 +708,7 @@ final class ExpireBehavior implements IBehavior, IResettable
 	{
 		lifetime = msLifeTime;
 	}
-	public function onFrame(game:IGameState, actor:Actor):void
+	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if ((getTimer() - start) > lifetime)
 		{
@@ -727,7 +727,7 @@ final class ExplosionParticleActor extends Actor // this type exists only so tha
 	{
 		super(dobj, BehaviorConsts.EXPLOSION);
 	}
-	static public function explosion(game:IGameState, worldPos:Point, numParticles:uint):void
+	static public function explosion(game:IGame, worldPos:Point, numParticles:uint):void
 	{
 		for (var i:uint = 0; i < numParticles; ++i)
 		{
