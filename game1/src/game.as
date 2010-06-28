@@ -18,7 +18,7 @@ package
 	import karnold.tile.TiledBackground;
 	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
-	import karnold.utils.FrameRate;
+	import karnold.utils.FrameRatePanel;
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Input;
 	import karnold.utils.Location;
@@ -33,7 +33,7 @@ package
 		private var _input:Input;
 		private var _player:Actor;
 		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
-		private var _frameRate:FrameRate = new FrameRate;
+		private var _frameRate:FrameRatePanel = new FrameRatePanel;
 		
 		private var _actorLayer:DisplayObjectContainer = new Sprite;
 		
@@ -243,9 +243,10 @@ addTestActors();
 		}
 		private function applyVelocityToCast(cast:Array):void
 		{
+			var index:uint = 0;
 			for each (var a:Actor in cast)
 			{
-				if (a.alive)
+				if (a && a.alive)
 				{
 					a.onFrame(this);
 
@@ -281,7 +282,13 @@ addTestActors();
 							}
 						}
 					}
+					else
+					{
+						Cast.recycleActor(a);
+						cast[index] = null;
+					}
 				}
+				++index;
 			}
 		}
 
@@ -428,21 +435,25 @@ final class Cast
 	{
 		return enemies.length + enemyAmmo.length + playerAmmo.length + effects.length;
 	}
+	static public function recycleActor(actor:Actor):void
+	{
+		if (actor is BulletActor)
+		{
+			BulletActor.recycle(BulletActor(actor));
+		}
+		else if (actor is ExplosionParticleActor)
+		{
+			ExplosionParticleActor.recycle(ExplosionParticleActor(actor));
+		}
+	}
 	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
 	{
-		var actor:Actor = Actor(element);
-		if (!actor.alive )
+		var actor:Actor = element as Actor
+		if (actor && !actor.alive )
 		{
-			if (actor is BulletActor)
-			{
-				BulletActor.recycle(BulletActor(element));
-			}
-			else if (actor is ExplosionParticleActor)
-			{
-				ExplosionParticleActor.recycle(ExplosionParticleActor(element));
-			}
+			recycleActor(actor);
 		}
-		return actor.alive;
+		return actor && actor.alive;
 	}
 	
 	private var _lastPurge:int;
