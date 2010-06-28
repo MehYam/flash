@@ -64,7 +64,7 @@ package
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
 			
-//addTestActors();
+addTestActors();
 			if (VECTOR)
 			{
 				initVectorMap(_tiles, 0.2);

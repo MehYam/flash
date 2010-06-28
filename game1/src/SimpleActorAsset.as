@@ -41,30 +41,53 @@ package
 		}
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];
-
-		[Embed(source="assets/master.swf", symbol="ship2")]
+		static private function createShipHelper(clss:Class):DisplayObject
+		{
+			var retval:DisplayObject = new clss();
+			retval.filters = s_dropShadowFilter;
+			return retval;
+		}
+		[Embed(source="assets/master.swf", symbol="ship0")]
 		static private const REDSHIP:Class;
 		static public function createRedShip():DisplayObject
 		{
-			var retval:DisplayObject = new REDSHIP;
-			retval.filters = s_dropShadowFilter;
-			return retval;
+			return createShipHelper(REDSHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship1")]
 		static private const BLUESHIP:Class;
 		static public function createBlueShip():DisplayObject
 		{
-			var retval:DisplayObject = new BLUESHIP;
-			retval.filters = s_dropShadowFilter;
-			return retval;
+			return createShipHelper(BLUESHIP);
+		}
+		[Embed(source="assets/master.swf", symbol="ship2")]
+		static private const ORANGESHIP:Class;
+		static public function createOrangeShip():DisplayObject
+		{
+			return createShipHelper(ORANGESHIP);
 		}
 		[Embed(source="assets/master.swf", symbol="ship3")]
 		static private const GREENSHIP:Class;
 		static public function createGreenShip():DisplayObject
 		{
-			var retval:DisplayObject = new GREENSHIP;
-			retval.filters = s_dropShadowFilter;
-			return retval;
+			return createShipHelper(GREENSHIP);
+		}
+		[Embed(source="assets/master.swf", symbol="ship4")]
+		static private const GRAYSHIP:Class;
+		static public function createGrayShip():DisplayObject
+		{
+			return createShipHelper(GRAYSHIP);
+		}
+		[Embed(source="assets/master.swf", symbol="ship5")]
+		static private const FUNNELSHIP:Class;
+		static public function createFunnelShip():DisplayObject
+		{
+			return createShipHelper(FUNNELSHIP);
+		}
+		[Embed(source="assets/master.swf", symbol="ship6")]
+		static private const BLUEBOSS:Class;
+		static public function createBlueBossShip():DisplayObject
+		{
+			return createShipHelper(BLUEBOSS);
 		}
 		static private const EXPLOSION_SIZE:Number = 2;
 		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
@@ -76,16 +99,6 @@ package
 			particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
 			particle.graphics.endFill();
 			return particle;
-		}
-		static private function waitForMovieClipLoadedAndRasterize(e:Event):void
-		{
-			var mc:MovieClip = MovieClip(e.target);
-			if (mc.numChildren && mc.getChildAt(0) && DisplayObjectContainer(mc.getChildAt(0)).numChildren)
-			{
-				var obj:Class = mc["constructor"];
-				Util.stopAllMovieClips(mc);
-				mc.removeEventListener(e.type, arguments.callee);
-			}
 		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
