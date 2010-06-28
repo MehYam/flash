@@ -36,7 +36,7 @@ package
 			return bitmapData;
 		}
 
-		static private const RASTERIZING:Boolean = false;
+		static private const RASTERIZING:Boolean = true;
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];

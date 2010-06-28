@@ -76,7 +76,7 @@ addTestActors();
 			}
 			else
 			{
-				initRasterMap(_tiles);
+				_tiles.fromString(SampleData.level1);
 			}
 			trace("stage", stage.stageWidth, stage.stageHeight);
 			
@@ -208,7 +208,7 @@ addTestActors();
 			var enemy:Actor;
 //			for each (enemy in _cast.enemies)
 //			{
-//				if (enemy.alive && Physics.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
+//				if (enemy && enemy.alive && Physics.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
 //				{
 //					enemy.alive = false;
 //				}
@@ -218,7 +218,7 @@ addTestActors();
 			var ammo:Actor;
 			for each (ammo in _cast.enemyAmmo)
 			{
-				if (ammo.alive && MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
+				if (ammo && ammo.alive && MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
 				{
 					ExplosionParticleActor.explosion(this, ammo.worldPos, 10);
 					ammo.alive = false;
@@ -228,11 +228,11 @@ addTestActors();
 			// player ammo hits enemy
 			for each (ammo in _cast.playerAmmo)
 			{
-				if (ammo.alive)
+				if (ammo && ammo.alive)
 				{
 					for each (enemy in _cast.enemies)
 					{
-						if (enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
+						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
 						{
 							ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
 							ammo.alive = false;
@@ -375,10 +375,6 @@ NEXT TASK:
 		
 */
 		
-		private static function initRasterMap(bg:TiledBackground):void
-		{
-			bg.fromString(SampleData.level1);
-		}
 		private static function initVectorMap(bg:TiledBackground, densityPct:Number):void
 		{
 			const XSLOTS:uint = bg.tilesArray.width;
@@ -460,7 +456,7 @@ final class Cast
 	public function purgeDead():void
 	{
 		const now:int = getTimer();
-		if ((now - _lastPurge) > 5000)
+		if (length > 800 || (now - _lastPurge) > 5000)
 		{
 			enemies = enemies.filter(actorIsAlive);
 			enemyAmmo = enemyAmmo.filter(actorIsAlive);
