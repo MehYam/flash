@@ -15,10 +15,12 @@ package
 		{
 			super();
 
-			_txt1 = new NumericRasterTextField();		
+			_txt1 = new NumericRasterTextField();
+			_txt1.suffix = "t";
 			addFieldOnNextLine(_txt1);	
 			
-			_txt2 = new NumericRasterTextField();		
+			_txt2 = new NumericRasterTextField();
+			_txt2.suffix = "do";
 			addField(_txt2, 55);	
 
 			_txt3 = new NumericRasterTextField();
