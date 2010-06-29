@@ -67,9 +67,9 @@ package
 		}
 
 		// Non-singletons
-		static public function get autofire():IBehavior
+		static public function createAutofire(msRate:uint, type:uint):IBehavior
 		{
-			return new AutofireBehavior;
+			return new AutofireBehavior(msRate, type);
 		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
@@ -184,25 +184,36 @@ final class FadeBehavior implements IBehavior
 
 final class AutofireBehavior implements IBehavior
 {
-	private var _lastShot:int;
-	public function AutofireBehavior():void
+	private var _lastShot:uint;
+	private var _rate:uint;
+	private var _type:uint;
+	public function AutofireBehavior(msRate:uint, type:uint):void
 	{
-		
+		_rate = msRate;
+		_type = type;
 	}
 
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const now:int = getTimer();
-		if ((now - _lastShot) > 300)
+		if ((now - _lastShot) > _rate)
 		{
 			_lastShot = now;
 			
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
 
-			var bullet:Actor = BulletActor.create();
-			bullet.launch(actor.worldPos, deltaX, deltaY);
-			game.addEnemyAmmo(bullet);
+			var ammo:Actor;
+			switch(_type) {
+			case BehaviorConsts.TYPE_BULLET:
+				ammo = Actor.createBullet();
+				break;
+			case BehaviorConsts.TYPE_LASER:
+				ammo = Actor.createLaser();
+				break;
+			}
+			ammo.launch(actor.worldPos, deltaX, deltaY);
+			game.addEnemyAmmo(ammo);
 		}
 	}
 }

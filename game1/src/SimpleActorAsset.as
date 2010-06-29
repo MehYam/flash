@@ -148,6 +148,25 @@ package
 			}
 			return new Bitmap(bmd);
 		}
+		private static const LASER_LENGTH:Number = 10;
+		public static function createLaser():DisplayObject
+		{
+			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
+			if (!bmd)
+			{
+				var bullet:Shape = new Shape;
+				bullet.graphics.lineStyle(3, 0xff0000);
+				bullet.graphics.moveTo(0, -LASER_LENGTH/2);
+				bullet.graphics.lineTo(0, LASER_LENGTH/2);
+				if (!RASTERIZING)
+				{
+					return bullet;
+				}
+				bmd = rasterize(bullet);
+				s_rasterizationStore[arguments.callee] = bmd;
+			}
+			return new Bitmap(bmd);
+		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
 			var wo:Shape = new Shape;

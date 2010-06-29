@@ -1,5 +1,7 @@
 package
 {
+	import behaviors.CompositeBehavior;
+	
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	
@@ -77,5 +79,69 @@ package
 		{
 			launchHelper(start, MathUtil.getRadiansRotation(deltaX, deltaY));
 		}
+
+		static public function createBullet():Actor
+		{
+			var bullet:Actor = ActorPool.instance.get(BulletActor) as BulletActor;
+			if (!bullet)
+			{
+				bullet = new BulletActor(SimpleActorAsset.createBullet());
+				bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(BehaviorConsts.BULLET_LIFETIME));
+			}
+			return bullet;
+		}
+		static public function createLaser():Actor
+		{
+			var laser:Actor = ActorPool.instance.get(LaserActor) as LaserActor
+			if (!laser)
+			{
+				laser = new LaserActor(SimpleActorAsset.createLaser());
+				laser.behavior = new CompositeBehavior(BehaviorFactory.createExpire(BehaviorConsts.LASER_LIFETIME), BehaviorFactory.faceForward);
+			}
+			return laser;
+		}
+		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint):void
+		{
+			for (var i:uint = 0; i < numParticles; ++i)
+			{
+				var actor:Actor = ActorPool.instance.get(ExplosionParticleActor) as ExplosionParticleActor;
+				if (!actor)
+				{
+					actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle());
+				}
+				actor.displayObject.alpha = Math.random();
+				Util.setPoint(actor.worldPos, worldPos);
+				actor.speed.x = MathUtil.random(-10, 10);
+				actor.speed.y = MathUtil.random(-10, 10);
+				actor.behavior = new CompositeBehavior(BehaviorFactory.createExpire(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
+				
+				game.addEffect(actor);
+			}
+		}
+	}
+}
+import flash.display.DisplayObject;
+
+// These stupid types exist just so that they can be pooled.  Alternative might
+// be to create a factory and base the pooling off of that
+final class BulletActor extends Actor
+{
+	public function BulletActor(dobj:DisplayObject)
+	{
+		super(dobj, BehaviorConsts.BULLET);
+	}
+}
+final class ExplosionParticleActor extends Actor
+{
+	public function ExplosionParticleActor(dobj:DisplayObject):void
+	{
+		super(dobj, BehaviorConsts.EXPLOSION);
+	}
+}
+final class LaserActor extends Actor
+{
+	public function LaserActor(dobj:DisplayObject):void
+	{
+		super(dobj, BehaviorConsts.LASER);
 	}
 }

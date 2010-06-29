@@ -36,7 +36,7 @@ final class Utils
 		(
 			FLEE,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(666, BehaviorConsts.TYPE_BULLET))
 		);
 	}
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
@@ -96,7 +96,11 @@ final class Utils
 		var a:Actor = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GREY_SHIP);
 		a.name = NAME_GS;
 		a.behavior = new AlternatingBehavior( 
-			new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer, BehaviorFactory.autofire),
+			new CompositeBehavior(
+				BehaviorFactory.follow, 
+				BehaviorFactory.facePlayer, 
+				BehaviorFactory.createAutofire(2000, BehaviorConsts.TYPE_LASER)
+			),
 			HOME
 		);
 		placeAtRandomEdge(a, game.worldBounds);

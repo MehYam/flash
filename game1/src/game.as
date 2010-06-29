@@ -140,7 +140,7 @@ package
 			var bullet:Actor;
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				bullet = BulletActor.create();
+				bullet = Actor.createBullet();
 				bullet.launchDegrees(_player.worldPos, _player.displayObject.rotation);
 				addPlayerAmmo(bullet);
 			}
@@ -148,7 +148,7 @@ package
 			{
 				const dest:Point = _input.lastMouseDownCoords;
 
-				bullet = BulletActor.create();
+				bullet = Actor.createBullet();
 				bullet.launch(_player.worldPos, dest.x - _player.displayObject.x, dest.y - _player.displayObject.y);
 				addPlayerAmmo(bullet);
 			}
@@ -175,7 +175,7 @@ package
 			actor.health -= damage;
 			if (actor.health < 0)
 			{
-				ExplosionParticleActor.explosion(this, actor.worldPos, 20);
+				Actor.createExplosion(this, actor.worldPos, 20);
 				actor.alive = false;
 				
 				_currentScript.onActorDeath(actor);
@@ -191,7 +191,7 @@ package
 			{
 				if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
 				{
-					ExplosionParticleActor.explosion(this, enemy.worldPos, 5);
+					Actor.createExplosion(this, enemy.worldPos, 5);
 					damageActor(enemy, BehaviorConsts.PLAYER_HEALTH);
 				}
 			}
@@ -202,7 +202,7 @@ package
 			{
 				if (ammo && ammo.alive && MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
 				{
-					ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
+					Actor.createExplosion(this, ammo.worldPos, 5);
 					ammo.alive = false;
 				}
 			}
@@ -216,7 +216,7 @@ package
 					{
 						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
 						{
-							ExplosionParticleActor.explosion(this, ammo.worldPos, 5);
+							Actor.createExplosion(this, ammo.worldPos, 5);
 							damageActor(enemy, 20);
 						}
 					}
@@ -446,32 +446,3 @@ final class Cast
 		}
 	}
 }
-
-final class ExplosionParticleActor extends Actor // this type exists only so that we know we can pool it
-{
-	public function ExplosionParticleActor(dobj:DisplayObject):void
-	{
-		super(dobj, BehaviorConsts.EXPLOSION);
-	}
-	static public function explosion(game:IGame, worldPos:Point, numParticles:uint):void
-	{
-		for (var i:uint = 0; i < numParticles; ++i)
-		{
-			var actor:Actor = ActorPool.instance.get(ExplosionParticleActor) as ExplosionParticleActor;
-			if (!actor)
-			{
-				actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle());
-			}
-			actor.displayObject.alpha = Math.random();
-			
-			Util.setPoint(actor.worldPos, worldPos);
-			actor.speed.x = MathUtil.random(-10, 10);
-			actor.speed.y = MathUtil.random(-10, 10);
-			actor.behavior = new CompositeBehavior(BehaviorFactory.createExpire(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
-			
-			game.addEffect(actor);
-		}
-	}
-}
-
-
