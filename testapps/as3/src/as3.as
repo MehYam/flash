@@ -44,7 +44,9 @@ package {
 			
 //			testSomeShape();
 			
-			testBitmapDataTransform();
+//			testBitmapDataTransform();
+			
+			testArrayVarargs();
 		}
 	
 		private function testTextField():void
@@ -276,6 +278,26 @@ package {
 		private function testBitmapDataTransform_onClick(e:Event):void
 		{
 			_bitmap.x = 350;
+		}
+		
+		private function testArrayVarargs():void
+		{
+			varargs1("foo", 1, "bar", new Object, new Date);
+		}
+		private function varargs1(...args):void
+		{
+			for each (var obj:Object in args)
+			{
+//				trace(obj);
+			}
+			varargs2.apply(this, args);
+		}
+		private function varargs2(...args):void
+		{
+			for each (var obj:Object in args)
+			{
+				trace(obj);
+			}
 		}
 	}
 }

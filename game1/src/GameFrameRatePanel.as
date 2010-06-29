@@ -54,7 +54,14 @@ package
 		}
 		private function onPause(e:Event):void
 		{
-			_game.togglePause();
+			if (_game.running)
+			{
+				_game.stop();
+			}
+			else
+			{
+				_game.start();
+			}
 		}
 		public function set txt1(i:int):void
 		{
