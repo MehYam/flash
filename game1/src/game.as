@@ -69,7 +69,7 @@ package
 			mouseChildren = false;
 			mouseEnabled = false;
 			
-			_currentScript = GameScriptFactory.level1;
+			_currentScript = GameScriptFactory.testScript2;
 			_currentScript.begin(this);
 		}
 

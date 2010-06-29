@@ -5,10 +5,14 @@ package scripts
 		public function GameScriptFactory()
 		{
 		}
-		
-		static public function get level1():IGameScript
+
+		static public function get testScript1():IGameScript
 		{
-			return new Level1;
+			return new TestScript(1);
+		}
+		static public function get testScript2():IGameScript
+		{
+			return new TestScript(10);
 		}
 	}
 }
@@ -19,16 +23,25 @@ import karnold.utils.MathUtil;
 
 import scripts.IGameScript;
 
-final class Level1 implements IGameScript
+final class TestScript implements IGameScript
 {
+	private var _actors:int;
+	public function TestScript(actors:int)
+	{
+		_actors = actors;
+	}
+
 	public function begin(game:IGame):void
 	{
 		game.showPlayer();
-		game.tiles = SampleData.level1;
+		game.tiles = GrassTiles.data;
 		game.start();
 		game.centerPrint("Level 1");
 		
-		addTestActors(game);
+		for (var i:int = 0; i < _actors; ++i)
+		{
+			addTestActors(game);
+		}
 	}
 	
 	private function addTestActors(game:IGame):void
@@ -65,11 +78,11 @@ final class Level1 implements IGameScript
 	}
 }
 
-final class SampleData
+final class GrassTiles
 {
 	[Embed(source="assets/level1.txt", mimeType="application/octet-stream")]
 	static private const Level1Data:Class;
-	static public function get level1():String
+	static public function get data():String
 	{
 		return (new Level1Data).toString();
 	}
