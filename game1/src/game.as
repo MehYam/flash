@@ -59,7 +59,8 @@ package
 			_actorLayer.scrollRect = this.scrollRect;
 			parent.addChild(_actorLayer);
 
-			_currentScript = GameScriptFactory.testScript2;
+//			_currentScript = GameScriptFactory.testScript2;
+			_currentScript = GameScriptFactory.level1;
 			_currentScript.begin(this);
 		}
 
@@ -289,7 +290,7 @@ package
 		public function set tiles(str:String):void
 		{
 			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
-			_tiles = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
+			_tiles = TiledBackground.createFromString(this, factory, stage.stageWidth, stage.stageHeight, str);
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
 			
 			_tiles.fromString(str);

@@ -14,6 +14,29 @@ package karnold.tile
 		private var _displaySize:Point;
 		private var _factory:ITileFactory;
 		private var _tiles:Array2D;
+		
+		static public function createFromString(parent:DisplayObjectContainer, factory:ITileFactory, displayWidth:Number, displayHeight:Number, string:String):TiledBackground
+		{
+			var horz:uint = 0;
+			var vert:uint = 0;
+
+			var tiles:Array = string.split(",");
+			for each (var tile:String in tiles)
+			{
+				var parts:Array = tile.split("-");
+				if (parts[1] > horz)
+				{
+					horz = parts[1];
+				}
+				if (parts[2] > vert)
+				{
+					vert = parts[2];
+				}
+			}
+			var retval:TiledBackground = new TiledBackground(parent, factory, horz + 1, vert + 1, displayWidth, displayHeight);
+			retval.fromString(string);
+			return retval;
+		}
 		public function TiledBackground(parent:DisplayObjectContainer, factory:ITileFactory, 
 							 horzSlots:uint, vertSlots:uint,
 							 displayWidth:Number, displayHeight:Number)

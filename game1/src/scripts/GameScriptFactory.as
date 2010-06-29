@@ -14,6 +14,11 @@ package scripts
 		{
 			return new TestScript(10);
 		}
+		
+		static public function get level1():IGameScript
+		{
+			return new Level1Script();
+		}
 	}
 }
 import behaviors.AlternatingBehavior;
@@ -84,7 +89,7 @@ final class TestScript implements IGameScript
 
 	public function begin(game:IGame):void
 	{
-		game.tiles = GrassTiles.data;
+		game.tiles = GrassTiles.testLevel;
 		game.showPlayer();
 		game.start();
 		game.centerPrint("Level 1");
@@ -124,29 +129,19 @@ final class Level1Script implements IGameScript
 	
 	public function begin(game:IGame):void
 	{
+		game.tiles = GrassTiles.smallLevel;
 		game.showPlayer();
-		game.tiles = GrassTiles.data;
 		game.start();
 		game.centerPrint("Level 1");
+		
+		addTestActors(game);
+		addTestActors(game);
 	}
-	
+
 	private function addTestActors(game:IGame):void
 	{
-		var testenemy:Actor = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
-		testenemy.worldPos = game.worldBounds.middle;
-		testenemy.worldPos.offset(MathUtil.random(-100, 100), MathUtil.random(-100, 100));
-		testenemy.behavior = new AlternatingBehavior
-			(
-				new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward),
-				new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward),
-				new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
-			);
-		game.addEnemy(testenemy);
-		
-		testenemy = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
-		testenemy.behavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-		testenemy.worldPos.offset(MathUtil.random(game.worldBounds.left, game.worldBounds.right), MathUtil.random(game.worldBounds.top, game.worldBounds.bottom));
-		game.addEnemy(testenemy);
+		Utils.addRedRogue(game);
+		Utils.addGreenSuicider(game);
 	}
 	
 	// IGameEvents
@@ -166,10 +161,17 @@ final class Level1Script implements IGameScript
 
 final class GrassTiles
 {
-	[Embed(source="assets/level1.txt", mimeType="application/octet-stream")]
-	static private const Level1Data:Class;
-	static public function get data():String
+	[Embed(source="assets/level1_small.txt", mimeType="application/octet-stream")]
+	static private const SmallLevel:Class;
+	static public function get smallLevel():String
 	{
-		return (new Level1Data).toString();
+		return (new SmallLevel).toString();
+	}
+
+	[Embed(source="assets/level1.txt", mimeType="application/octet-stream")]
+	static private const TestLevel:Class;
+	static public function get testLevel():String
+	{
+		return (new TestLevel).toString();
 	}
 }
