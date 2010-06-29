@@ -85,7 +85,7 @@ final class Utils
 		var a:Actor = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 		a.name = NAME_GK;
 		a.behavior = HOME;
-		a.worldPos.offset(MathUtil.random(game.worldBounds.left, game.worldBounds.right), MathUtil.random(game.worldBounds.top, game.worldBounds.bottom));
+		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
 
 		s_enemyNamesThisSucks[a.name] = 1;
