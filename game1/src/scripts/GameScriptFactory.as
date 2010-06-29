@@ -2,10 +2,6 @@ package scripts
 {
 	public class GameScriptFactory
 	{
-		public function GameScriptFactory()
-		{
-		}
-
 		static public function get testScript1():IGameScript
 		{
 			return new TestScript(1);
@@ -14,7 +10,6 @@ package scripts
 		{
 			return new TestScript(10);
 		}
-		
 		static public function get level1():IGameScript
 		{
 			return new Level1Script();
@@ -63,19 +58,37 @@ final class Utils
 			break;
 		}
 	}
+	static public function getBluePlayer():Actor
+	{
+		return new Actor(SimpleActorAsset.createBlueShip());
+	}
+	static private const NAME_RR:String = "Red Rogue";
+	static private const NAME_GK:String = "Greenakazi";
+	static private var s_enemyNamesThisSucks:Object = {};
+	static public function isEnemy(actor:Actor):Boolean
+	{
+		//KAI: just... ug
+		return s_enemyNamesThisSucks[actor.name];
+	}
 	static public function addRedRogue(game:IGame):void
 	{
 		var a:Actor = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
+		a.name = NAME_RR;
 		attackAndFlee(a);
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
+		
+		s_enemyNamesThisSucks[a.name] = 1;
 	}
 	static public function addGreenSuicider(game:IGame):void
 	{
 		var a:Actor = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+		a.name = NAME_GK;
 		a.behavior = HOME;
 		a.worldPos.offset(MathUtil.random(game.worldBounds.left, game.worldBounds.right), MathUtil.random(game.worldBounds.top, game.worldBounds.bottom));
 		game.addEnemy(a);
+
+		s_enemyNamesThisSucks[a.name] = 1;
 	}
 }
 
@@ -90,7 +103,7 @@ final class TestScript implements IGameScript
 	public function begin(game:IGame):void
 	{
 		game.tiles = GrassTiles.testLevel;
-		game.showPlayer();
+		game.showPlayer(Utils.getBluePlayer());
 		game.start();
 		game.centerPrint("Level 1");
 		
@@ -107,55 +120,59 @@ final class TestScript implements IGameScript
 	}
 	
 	// IGameEvents
-	public function onCenterPrintDone(text:String):void
-	{
-		
-	}
-	public function onEnemyDeath(actor:Actor):void
-	{
-		
-	}
-	public function onPlayerDeath():void
-	{
-		
-	}
+	public function onCenterPrintDone(text:String):void	{}
+	public function onActorDeath(actor:Actor):void {}
 }
 
 final class Level1Script implements IGameScript
 {
-	public function Level1Script()
-	{
-	}
-	
+	private var _game:IGame;
 	public function begin(game:IGame):void
 	{
+		_game = game;
+
 		game.tiles = GrassTiles.smallLevel;
-		game.showPlayer();
+		game.showPlayer(Utils.getBluePlayer());
 		game.start();
 		game.centerPrint("Level 1");
 		
-		addTestActors(game);
-		addTestActors(game);
+		addNextWave();
 	}
 
-	private function addTestActors(game:IGame):void
+	private var _level:uint = 0;
+	private var _enemies:uint = 0;
+	private function addNextWave():void
 	{
-		Utils.addRedRogue(game);
-		Utils.addGreenSuicider(game);
+		const greens:uint = 5 + _level*2;
+
+		var i:uint;
+		for (i = 0; i < greens; ++i)
+		{
+			Utils.addGreenSuicider(_game);
+			++_enemies;
+		}
+
+		const reds:uint = (_level > 2) ? (_level - 2) : 0;
+		for (i = 0; i < reds; ++i)
+		{
+			Utils.addRedRogue(_game);
+			++_enemies;
+		}
+		
+		++_level;
 	}
 	
 	// IGameEvents
-	public function onCenterPrintDone(text:String):void
+	public function onCenterPrintDone(text:String):void	{}
+	public function onActorDeath(actor:Actor):void 
 	{
-		
-	}
-	public function onEnemyDeath(actor:Actor):void
-	{
-		
-	}
-	public function onPlayerDeath():void
-	{
-		
+		if (Utils.isEnemy(actor))
+		{
+			if (!--_enemies)
+			{
+				addNextWave();
+			}
+		}
 	}
 }
 

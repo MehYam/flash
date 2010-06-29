@@ -9,6 +9,7 @@ package
 	{
 		private var _alive:Boolean = true;
 
+		public var name:String;
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();

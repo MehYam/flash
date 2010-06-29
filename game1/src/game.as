@@ -171,6 +171,8 @@ package
 			{
 				ExplosionParticleActor.explosion(this, actor.worldPos, 20);
 				actor.alive = false;
+				
+				_currentScript.onActorDeath(actor);
 			}
 		}
 
@@ -300,9 +302,13 @@ package
 			trace("would centerprint", text);
 			_currentScript.onCenterPrintDone(text);
 		}
-		public function showPlayer():void
+		public function showPlayer(actor:Actor):void
 		{
-			_player = new Actor(SimpleActorAsset.createBlueShip());
+			if (_player && _player.displayObject && _player.displayObject.parent)
+			{
+				_player.displayObject.parent.removeChild(_player.displayObject);
+			}
+			_player = actor;
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
 		}
@@ -321,6 +327,10 @@ package
 		public function get worldBounds():Bounds
 		{
 			return _worldBounds;
+		}
+		public function get numEnemies():uint
+		{
+			return _cast.enemies.length;
 		}
 		// END IGameState implementation
 

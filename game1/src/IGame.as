@@ -6,12 +6,14 @@ package
 	{
 		function get player():Actor;
 		function set tiles(str:String):void;
+
 		function addEnemy(actor:Actor):void;
 		function addEnemyAmmo(actor:Actor):void;
 		function addPlayerAmmo(actor:Actor):void;
 		function addEffect(actor:Actor):void;
-		function showPlayer():void;
+		function showPlayer(actor:Actor):void;
 		function centerPrint(text:String):void;
+		function get numEnemies():uint;
 
 		function start():void;
 		function stop():void;
