@@ -19,9 +19,60 @@ package scripts
 import behaviors.AlternatingBehavior;
 import behaviors.CompositeBehavior;
 
+import karnold.utils.Bounds;
 import karnold.utils.MathUtil;
 
 import scripts.IGameScript;
+
+final class Utils
+{
+	//KAI: maybe move these to BehaviorFactory.  Doing this here leaks the creation policy knowledge out of the factory
+	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
+	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
+	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
+	static public function attackAndFlee(actor:Actor):void
+	{
+		actor.behavior = new AlternatingBehavior
+		(
+			FLEE,
+			CHASE,
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.autofire)
+		);
+	}
+	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
+	{
+		actor.worldPos.x = MathUtil.random(bounds.left, bounds.right);
+		actor.worldPos.y = MathUtil.random(bounds.top, bounds.bottom);
+		switch(int(Math.random() * 4)) {
+		case 0:
+			actor.worldPos.x = bounds.left;
+			break;
+		case 1:
+			actor.worldPos.x = bounds.right;
+			break;
+		case 2:
+			actor.worldPos.y = bounds.top;
+			break;
+		case 3:
+			actor.worldPos.y = bounds.bottom;
+			break;
+		}
+	}
+	static public function addRedRogue(game:IGame):void
+	{
+		var a:Actor = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
+		attackAndFlee(a);
+		placeAtRandomEdge(a, game.worldBounds);
+		game.addEnemy(a);
+	}
+	static public function addGreenSuicider(game:IGame):void
+	{
+		var a:Actor = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+		a.behavior = HOME;
+		a.worldPos.offset(MathUtil.random(game.worldBounds.left, game.worldBounds.right), MathUtil.random(game.worldBounds.top, game.worldBounds.bottom));
+		game.addEnemy(a);
+	}
+}
 
 final class TestScript implements IGameScript
 {
@@ -33,8 +84,8 @@ final class TestScript implements IGameScript
 
 	public function begin(game:IGame):void
 	{
-		game.showPlayer();
 		game.tiles = GrassTiles.data;
+		game.showPlayer();
 		game.start();
 		game.centerPrint("Level 1");
 		
@@ -42,6 +93,41 @@ final class TestScript implements IGameScript
 		{
 			addTestActors(game);
 		}
+	}
+	
+	private function addTestActors(game:IGame):void
+	{
+		Utils.addRedRogue(game);
+		Utils.addGreenSuicider(game);
+	}
+	
+	// IGameEvents
+	public function onCenterPrintDone(text:String):void
+	{
+		
+	}
+	public function onEnemyDeath(actor:Actor):void
+	{
+		
+	}
+	public function onPlayerDeath():void
+	{
+		
+	}
+}
+
+final class Level1Script implements IGameScript
+{
+	public function Level1Script()
+	{
+	}
+	
+	public function begin(game:IGame):void
+	{
+		game.showPlayer();
+		game.tiles = GrassTiles.data;
+		game.start();
+		game.centerPrint("Level 1");
 	}
 	
 	private function addTestActors(game:IGame):void

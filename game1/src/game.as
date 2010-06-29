@@ -55,16 +55,10 @@ package
 			_input = new Input(stage);
 
 			_actorLayer = new Sprite;
-			parent.addChild(_actorLayer);
-
-			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
-
-			_tiles = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			_actorLayer.scrollRect = this.scrollRect;
+			parent.addChild(_actorLayer);
 
-			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
-			
 			_currentScript = GameScriptFactory.testScript2;
 			_currentScript.begin(this);
 		}
@@ -294,11 +288,16 @@ package
 		}
 		public function set tiles(str:String):void
 		{
+			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
+			_tiles = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
+			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
+			
 			_tiles.fromString(str);
 		}
 		public function centerPrint(text:String):void
 		{
 			trace("would centerprint", text);
+			_currentScript.onCenterPrintDone(text);
 		}
 		public function showPlayer():void
 		{
