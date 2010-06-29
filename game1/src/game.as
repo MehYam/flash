@@ -34,40 +34,36 @@ package
 
 		private var _input:Input;
 		private var _player:Actor;
-		private var _frameTimer:FrameTimer = new FrameTimer(onFrame);
+		private var _frameTimer:FrameTimer;
 		private var _frameRate:GameFrameRatePanel;
 		
-		private var _actorLayer:DisplayObjectContainer = new Sprite;
+		private var _actorLayer:DisplayObjectContainer;
 		private var _currentScript:IGameScript;
 
 		public function game()
 		{
-			FrameTimer.init(stage);
-
+			trace("stage", stage.stageWidth, stage.stageHeight);
 //			stage.align = StageAlign.TOP_LEFT;
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = Consts.FRAMERATE;
 			stage.focus = stage;
+			mouseChildren = false;
+			mouseEnabled = false;
 
-			parent.addChild(_actorLayer);
-
+			FrameTimer.init(stage);
+			_frameTimer = new FrameTimer(onFrame);
 			_input = new Input(stage);
 
-			var factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
+			_actorLayer = new Sprite;
+			parent.addChild(_actorLayer);
+
+			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
 
 			_tiles = new TiledBackground(this, factory, 40, 40, stage.stageWidth, stage.stageHeight);
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			_actorLayer.scrollRect = this.scrollRect;
 
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
-			
-			trace("stage", stage.stageWidth, stage.stageHeight);
-			
-//			graphics.lineStyle(0, 0xff0000);
-//			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-			
-			mouseChildren = false;
-			mouseEnabled = false;
 			
 			_currentScript = GameScriptFactory.testScript2;
 			_currentScript.begin(this);
