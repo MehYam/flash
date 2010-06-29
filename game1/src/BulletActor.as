@@ -13,15 +13,7 @@ package
 		{
 			super(dobj, BehaviorConsts.BULLET);
 		}
-		static public function createWithAngle(degrees:Number, pos:Point):Actor
-		{
-			return createBulletHelper(MathUtil.degreesToRadians(degrees), pos);
-		}
-		static public function create(deltaX:Number, deltaY:Number, pos:Point):Actor
-		{
-			return createBulletHelper(MathUtil.getRadiansRotation(deltaX, deltaY), pos);
-		}
-		static private function createBulletHelper(radians:Number, pos:Point):Actor
+		static public function create():Actor
 		{
 			var bullet:Actor = ActorPool.instance.get(BulletActor) as BulletActor;
 			if (!bullet)
@@ -35,10 +27,6 @@ package
 				bullet = new BulletActor(SimpleActorAsset.createBullet());
 				bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(BehaviorConsts.BULLET_LIFETIME));
 			}
-			Util.setPoint(bullet.worldPos, pos);
-			bullet.speed.x = Math.sin(radians) * BehaviorConsts.BULLET.MAX_SPEED;
-			bullet.speed.y = -Math.cos(radians) * BehaviorConsts.BULLET.MAX_SPEED;
-			bullet.displayObject.alpha = 1;
 			return bullet;
 		}
 	}

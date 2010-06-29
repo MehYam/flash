@@ -185,7 +185,11 @@ final class FadeBehavior implements IBehavior
 final class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:int;
-	
+	public function AutofireBehavior():void
+	{
+		
+	}
+
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const now:int = getTimer();
@@ -195,8 +199,10 @@ final class AutofireBehavior implements IBehavior
 			
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
-			
-			game.addEnemyAmmo(BulletActor.create(deltaX, deltaY, actor.worldPos));
+
+			var bullet:Actor = BulletActor.create();
+			bullet.launch(actor.worldPos, deltaX, deltaY);
+			game.addEnemyAmmo(bullet);
 		}
 	}
 }

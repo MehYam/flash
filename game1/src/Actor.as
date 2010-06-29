@@ -3,6 +3,7 @@ package
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	
+	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
 
 	public class Actor implements IResettable
@@ -35,6 +36,7 @@ package
 			{
 				resettableBehavior.reset();
 			}
+			displayObject.alpha = 1;
 			_alive = true;
 		}
 		public function get alive():Boolean
@@ -60,6 +62,20 @@ package
 			{
 				_behavior.onFrame(gameState, this);
 			}
+		}
+		private function launchHelper(start:Point, radians:Number):void
+		{
+			Util.setPoint(worldPos, start);
+			speed.x = Math.sin(radians) * consts.MAX_SPEED;
+			speed.y = -Math.cos(radians) * consts.MAX_SPEED;
+		}
+		public function launchDegrees(start:Point, degrees:Number):void
+		{
+			launchHelper(start, MathUtil.degreesToRadians(degrees));
+		}
+		public function launch(start:Point, deltaX:Number, deltaY:Number):void
+		{
+			launchHelper(start, MathUtil.getRadiansRotation(deltaX, deltaY));
 		}
 	}
 }

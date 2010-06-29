@@ -4,6 +4,7 @@ package
 	{
 		static public const GREEN_SHIP:BehaviorConsts = new BehaviorConsts(1.5, 0.1);
 		static public const RED_SHIP:BehaviorConsts = new BehaviorConsts(3, 0.1);
+		static public const GREY_SHIP:BehaviorConsts = new BehaviorConsts(2, 0.15);
 		static public const BULLET:BehaviorConsts = new BehaviorConsts(10, 10);
 		static public const EXPLOSION:BehaviorConsts = new BehaviorConsts(100, 0, 0.1);
 

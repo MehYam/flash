@@ -60,7 +60,7 @@ package
 			parent.addChild(_actorLayer);
 
 //			_currentScript = GameScriptFactory.testScript2;
-			_currentScript = GameScriptFactory.level1;
+			_currentScript = GameScriptFactory.testScript1;
 			_currentScript.begin(this);
 		}
 
@@ -137,14 +137,20 @@ package
 				}
 			}
 
+			var bullet:Actor;
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				addPlayerAmmo(BulletActor.createWithAngle(_player.displayObject.rotation, _player.worldPos));
+				bullet = BulletActor.create();
+				bullet.launchDegrees(_player.worldPos, _player.displayObject.rotation);
+				addPlayerAmmo(bullet);
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
 			{
 				const dest:Point = _input.lastMouseDownCoords;
-				addPlayerAmmo(BulletActor.create(dest.x - _player.displayObject.x, dest.y - _player.displayObject.y, _player.worldPos));
+
+				bullet = BulletActor.create();
+				bullet.launch(_player.worldPos, dest.x - _player.displayObject.x, dest.y - _player.displayObject.y);
+				addPlayerAmmo(bullet);
 			}
 
 			applyVelocityToCast(_cast.enemies);

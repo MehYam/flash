@@ -64,6 +64,7 @@ final class Utils
 	}
 	static private const NAME_RR:String = "Red Rogue";
 	static private const NAME_GK:String = "Greenakazi";
+	static private const NAME_GS:String = "Gray Shooter";
 	static private var s_enemyNamesThisSucks:Object = {};
 	static public function isEnemy(actor:Actor):Boolean
 	{
@@ -88,6 +89,19 @@ final class Utils
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
 
+		s_enemyNamesThisSucks[a.name] = 1;
+	}
+	static public function addGrayShooter(game:IGame):void
+	{
+		var a:Actor = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GREY_SHIP);
+		a.name = NAME_GS;
+		a.behavior = new AlternatingBehavior( 
+			new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer, BehaviorFactory.autofire),
+			HOME
+		);
+		placeAtRandomEdge(a, game.worldBounds);
+		game.addEnemy(a);
+		
 		s_enemyNamesThisSucks[a.name] = 1;
 	}
 }
@@ -117,6 +131,7 @@ final class TestScript implements IGameScript
 	{
 		Utils.addRedRogue(game);
 		Utils.addGreenSuicider(game);
+		Utils.addGrayShooter(game);
 	}
 	
 	// IGameEvents
