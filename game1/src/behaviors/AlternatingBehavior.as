@@ -5,8 +5,9 @@ package behaviors
 	public final class AlternatingBehavior implements IBehavior
 	{
 		private var _behaviors:CompositeBehavior = new CompositeBehavior;
+		private var _rate:uint;
 		private var _lastChange:int;
-		public function AlternatingBehavior(...args)
+		public function AlternatingBehavior(msRate:uint, ...args)
 		{
 			for each (var behavior:IBehavior in args)
 			{

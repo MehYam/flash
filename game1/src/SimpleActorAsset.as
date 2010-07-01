@@ -111,6 +111,42 @@ package
 		{
 			return createAssetRasterized(BLUEBOSS);
 		}
+		[Embed(source="assets/master.swf", symbol="ship7")]
+		static private const FIGHTER:Class;
+		static public function createFighterShip():DisplayObject
+		{
+			return createAssetRasterized(FIGHTER);
+		}
+		[Embed(source="assets/master.swf", symbol="ship8")]
+		static private const SHIP8:Class;
+		static public function createShip8():DisplayObject
+		{
+			return createAssetRasterized(SHIP8);
+		}
+		[Embed(source="assets/master.swf", symbol="ship9")]
+		static private const SHIP9:Class;
+		static public function createShip9():DisplayObject
+		{
+			return createAssetRasterized(SHIP9);
+		}
+		[Embed(source="assets/master.swf", symbol="ship10")]
+		static private const SHIP10:Class;
+		static public function createShip10():DisplayObject
+		{
+			return createAssetRasterized(SHIP10);
+		}
+		[Embed(source="assets/master.swf", symbol="ship11")]
+		static private const SHIP11:Class;
+		static public function createShip11():DisplayObject
+		{
+			return createAssetRasterized(SHIP11);
+		}
+		[Embed(source="assets/master.swf", symbol="ship12")]
+		static private const SHIP12:Class;
+		static public function createShip12():DisplayObject
+		{
+			return createAssetRasterized(SHIP12);
+		}
 		static private const EXPLOSION_SIZE:Number = 2;
 		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
 		static public function createExplosionParticle():DisplayObject

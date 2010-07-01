@@ -30,13 +30,22 @@ final class Utils
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
 	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-	static public function attackAndFlee(actor:Actor):void
+	static public function attackAndFlee(msRate:uint):IBehavior
 	{
-		actor.behavior = new AlternatingBehavior
+		return new AlternatingBehavior
 		(
+			msRate,
 			FLEE,
 			CHASE,
 			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(666, BehaviorConsts.TYPE_BULLET))
+		);
+	}
+	static public function homeAndShoot(msShootRate:uint, ammoType:uint):IBehavior
+	{
+		return new CompositeBehavior
+		(
+			HOME,
+			BehaviorFactory.createAutofire(msShootRate, ammoType)
 		);
 	}
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
@@ -62,51 +71,108 @@ final class Utils
 	{
 		return new Actor(SimpleActorAsset.createBlueShip());
 	}
-	static private const NAME_RR:String = "Red Rogue";
-	static private const NAME_GK:String = "Greenakazi";
-	static private const NAME_GS:String = "Gray Shooter";
+	static public const ENEMY_REDROGUE:uint = 0;
+	static public const ENEMY_GREENK:uint = 1;
+	static public const ENEMY_GRAYSHOOTER:uint = 2;
+	static public const ENEMY_FUNNEL:uint = 3;
+	static public const ENEMY_BLUE:uint = 4;
+	static public const ENEMY_FIGHTER5:uint = 5;
+	static public const ENEMY_FIGHTER6:uint = 6;
+	static public const ENEMY_FIGHTER7:uint = 7;
+	static public const ENEMY_FIGHTER8:uint = 8;
+	static public const ENEMY_FIGHTER9:uint = 9;
+	static public const ENEMY_FIGHTER10:uint = 10;
+	static public const ENEMY_FIGHTER11:uint = 11;
+	static public const ENEMY_FIGHTER12:uint = 12;
+	
 	static private var s_enemyNamesThisSucks:Object = {};
 	static public function isEnemy(actor:Actor):Boolean
 	{
 		//KAI: just... ug
 		return s_enemyNamesThisSucks[actor.name];
 	}
-	static public function addRedRogue(game:IGame):void
+	static public function addEnemy(game:IGame, type:uint):Actor
 	{
-		var a:Actor = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
-		a.name = NAME_RR;
-		attackAndFlee(a);
+		var a:Actor;
+		switch (type) {
+		case ENEMY_REDROGUE:
+			a = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
+			a.name = "Red Rogue";
+			a.behavior = attackAndFlee(5000);
+			break;
+		case ENEMY_GREENK:
+			a = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+			a.name = "Greenakazi";
+			a.behavior = HOME;
+			break;
+		case ENEMY_GRAYSHOOTER:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "Gray Death";
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(2000, BehaviorConsts.TYPE_LASER),
+				new AlternatingBehavior( 
+					3000,
+					HOME,
+					BehaviorFactory.strafe
+				)
+			);
+			break;
+		case ENEMY_FUNNEL:
+			a = new Actor(SimpleActorAsset.createFunnelShip(), BehaviorConsts.RED_SHIP);
+			a.name = "Funnel";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_LASER);
+			break;
+		case ENEMY_BLUE:
+			a = new Actor(SimpleActorAsset.createBlueShip()(), BehaviorConsts.GRAY_SHIP);
+			a.name = "Blue Bird";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER5:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "5";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER6:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "6";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER7:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "7";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER8:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "8";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER9:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "9";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER10:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "10";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER11:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "11";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		case ENEMY_FIGHTER12:
+			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a.name = "12";
+			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			break;
+		}
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
+		s_enemyNamesThisSucks[a.name] = 1;
 		
-		s_enemyNamesThisSucks[a.name] = 1;
-	}
-	static public function addGreenSuicider(game:IGame):void
-	{
-		var a:Actor = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
-		a.name = NAME_GK;
-		a.behavior = HOME;
-		placeAtRandomEdge(a, game.worldBounds);
-		game.addEnemy(a);
-
-		s_enemyNamesThisSucks[a.name] = 1;
-	}
-	static public function addGrayShooter(game:IGame):void
-	{
-		var a:Actor = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GREY_SHIP);
-		a.name = NAME_GS;
-		a.behavior = new AlternatingBehavior( 
-			new CompositeBehavior(
-				BehaviorFactory.follow, 
-				BehaviorFactory.facePlayer, 
-				BehaviorFactory.createAutofire(2000, BehaviorConsts.TYPE_LASER)
-			),
-			HOME
-		);
-		placeAtRandomEdge(a, game.worldBounds);
-		game.addEnemy(a);
-		
-		s_enemyNamesThisSucks[a.name] = 1;
+		return a;
 	}
 }
 
@@ -133,9 +199,10 @@ final class TestScript implements IGameScript
 	
 	private function addTestActors(game:IGame):void
 	{
-		Utils.addRedRogue(game);
-		Utils.addGreenSuicider(game);
-		Utils.addGrayShooter(game);
+		Utils.addEnemy(game, Utils.ENEMY_REDROGUE);
+		Utils.addEnemy(game, Utils.ENEMY_GREENK);
+		Utils.addEnemy(game, Utils.ENEMY_GRAYSHOOTER);
+		Utils.addEnemy(game, Utils.ENEMY_FIGHTER5);
 	}
 	
 	// IGameEvents
@@ -143,6 +210,16 @@ final class TestScript implements IGameScript
 	public function onActorDeath(actor:Actor):void {}
 }
 
+final class Wave
+{
+	public var type:uint;
+	public var number:uint;
+	public function Wave(type:uint, number:uint)
+	{
+		this.type = type;
+		this.number = number;
+	}
+}
 final class Level1Script implements IGameScript
 {
 	private var _game:IGame;
@@ -154,35 +231,55 @@ final class Level1Script implements IGameScript
 		game.showPlayer(Utils.getBluePlayer());
 		game.start();
 		game.centerPrint("Level 1");
-		
-		addNextWave();
 	}
 
-	private var _level:uint = 0;
+	private var _waves:Array = 
+	[
+		new Wave(Utils.ENEMY_GREENK, 10),
+		new Wave(Utils.ENEMY_FIGHTER5, 10),
+		new Wave(Utils.ENEMY_GREENK, 15),
+		[new Wave(Utils.ENEMY_GREENK, 10), new Wave(Utils.ENEMY_REDROGUE, 2)],
+		[new Wave(Utils.ENEMY_FIGHTER5, 10), new Wave(Utils.ENEMY_REDROGUE, 3)],
+		new Wave(Utils.ENEMY_GREENK, 20),
+		[new Wave(Utils.ENEMY_REDROGUE, 5), new Wave(Utils.ENEMY_GRAYSHOOTER, 3)],
+		[new Wave(Utils.ENEMY_GREENK, 5), new Wave(Utils.ENEMY_REDROGUE, 5), new Wave(Utils.ENEMY_GRAYSHOOTER, 5)]
+	];
+
+	static private const _tmpArray:Array = [];
 	private var _enemies:uint = 0;
 	private function addNextWave():void
 	{
-		const greens:uint = 5 + _level*2;
-
-		var i:uint;
-		for (i = 0; i < greens; ++i)
+		if (_waves.length)
 		{
-			Utils.addGreenSuicider(_game);
-			++_enemies;
+			var next:Object = _waves.shift();
+			if (!(next is Array))
+			{
+				_tmpArray.length = 0;
+				_tmpArray.push(next);
+				next = _tmpArray;
+			}
+			for each (var wave:Wave in next)
+			{
+				for (var i:uint = 0; i < wave.number; ++i)
+				{
+					Utils.addEnemy(_game, wave.type);
+					++_enemies;
+				}
+			}
 		}
-
-		const reds:uint = (_level > 2) ? (_level - 2) : 0;
-		for (i = 0; i < reds; ++i)
+		else
 		{
-			Utils.addRedRogue(_game);
-			++_enemies;
+			_game.centerPrint("CONGRATS LEVEL DONE");
 		}
-		
-		++_level;
 	}
-	
 	// IGameEvents
-	public function onCenterPrintDone(text:String):void	{}
+	public function onCenterPrintDone(text:String):void	
+	{
+		if (_waves.length)
+		{
+			addNextWave();
+		}
+	}
 	public function onActorDeath(actor:Actor):void 
 	{
 		if (Utils.isEnemy(actor))
