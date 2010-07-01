@@ -178,7 +178,7 @@ final class FadeBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		actor.displayObject.alpha -= 0.01;
+		actor.displayObject.alpha -= 0.005;
 	}
 }
 
