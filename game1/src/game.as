@@ -43,8 +43,8 @@ package
 		public function game()
 		{
 			trace("stage", stage.stageWidth, stage.stageHeight);
-			stage.align = StageAlign.TOP_LEFT;
-			stage.scaleMode = StageScaleMode.NO_SCALE;
+//			stage.align = StageAlign.TOP_LEFT;
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = Consts.FRAMERATE;
 			stage.focus = stage;
 			mouseChildren = false;
