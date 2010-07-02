@@ -21,6 +21,7 @@ import behaviors.CompositeBehavior;
 
 import karnold.utils.Bounds;
 import karnold.utils.MathUtil;
+import karnold.utils.Util;
 
 import scripts.IGameScript;
 
@@ -70,6 +71,15 @@ final class Utils
 	static public function getBluePlayer():Actor
 	{
 		return new Actor(SimpleActorAsset.createBlueShip());
+	}
+	static public function createTestTank():Actor
+	{
+		return TankActor.createTankActor(	
+			SimpleActorAsset.createTrack(),
+			SimpleActorAsset.createTrack(),
+			SimpleActorAsset.createHull0(),
+			SimpleActorAsset.createTurret0()
+		);
 	}
 	static public const ENEMY_REDROGUE:uint = 0;
 	static public const ENEMY_GREENK:uint = 1;
@@ -187,7 +197,8 @@ final class TestScript implements IGameScript
 	public function begin(game:IGame):void
 	{
 		game.tiles = GrassTiles.testLevel;
-		game.showPlayer(Utils.getBluePlayer());
+//		game.showPlayer(Utils.getBluePlayer());
+		game.showPlayer(Utils.createTestTank());
 		game.start();
 		game.centerPrint("Level 1");
 		

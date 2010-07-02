@@ -40,113 +40,138 @@ package
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];
-		static private function createAssetRasterized(clss:Class, centered:Boolean = true):DisplayObject
+		static private function createAssetRasterized(clss:Class, centered:Boolean, dropShadow:Boolean):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;
+			var retval:DisplayObject;
 			if (!bmd)
 			{
-				var source:DisplayObject = new clss();
-				if (!RASTERIZING)
+				retval = new clss();
+				if (RASTERIZING)
 				{
-					source.filters = s_dropShadowFilter;
-					return source;
+					bmd = rasterize(retval);
+					s_rasterizationStore[clss] = bmd;
 				}
-				bmd = rasterize(source);
-				s_rasterizationStore[clss] = bmd;
 			}
-			
-			var bmp:DisplayObject = new Bitmap(bmd);
-			bmp.x = -bmp.width/2;
-			bmp.y = -bmp.height/2;
-			
-			if (centered)
+
+			if (bmd)
 			{
-				var retval:Sprite = new Sprite;
-				retval.filters = s_dropShadowFilter;
-				retval.addChild(bmp);
-	
-				return retval;
+				var bmp:DisplayObject = new Bitmap(bmd);
+				if (centered)
+				{
+					bmp.x = -bmp.width/2;
+					bmp.y = -bmp.height/2;
+				}
+				retval = new Sprite;
+				if (dropShadow)
+				{
+					retval.filters = s_dropShadowFilter;
+				}
+				DisplayObjectContainer(retval).addChild(bmp);
 			}
-			return bmp;
+			return retval; // this will be either a bitmap, a bitmap centered on a sprite, or the source vector object 
 		}
 		[Embed(source="assets/master.swf", symbol="ship0")]
 		static private const REDSHIP:Class;
 		static public function createRedShip():DisplayObject
 		{
-			return createAssetRasterized(REDSHIP);
+			return createAssetRasterized(REDSHIP, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship1")]
 		static private const BLUESHIP:Class;
 		static public function createBlueShip():DisplayObject
 		{
-			return createAssetRasterized(BLUESHIP);
+			return createAssetRasterized(BLUESHIP, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship2")]
 		static private const ORANGESHIP:Class;
 		static public function createOrangeShip():DisplayObject
 		{
-			return createAssetRasterized(ORANGESHIP);
+			return createAssetRasterized(ORANGESHIP, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship3")]
 		static private const GREENSHIP:Class;
 		static public function createGreenShip():DisplayObject
 		{
-			return createAssetRasterized(GREENSHIP);
+			return createAssetRasterized(GREENSHIP, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship4")]
 		static private const GRAYSHIP:Class;
 		static public function createGrayShip():DisplayObject
 		{
-			return createAssetRasterized(GRAYSHIP);
+			return createAssetRasterized(GRAYSHIP, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship5")]
 		static private const FUNNELSHIP:Class;
 		static public function createFunnelShip():DisplayObject
 		{
-			return createAssetRasterized(FUNNELSHIP);
+			return createAssetRasterized(FUNNELSHIP, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship6")]
 		static private const BLUEBOSS:Class;
 		static public function createBlueBossShip():DisplayObject
 		{
-			return createAssetRasterized(BLUEBOSS);
+			return createAssetRasterized(BLUEBOSS, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship7")]
 		static private const FIGHTER:Class;
 		static public function createFighterShip():DisplayObject
 		{
-			return createAssetRasterized(FIGHTER);
+			return createAssetRasterized(FIGHTER, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship8")]
 		static private const SHIP8:Class;
 		static public function createShip8():DisplayObject
 		{
-			return createAssetRasterized(SHIP8);
+			return createAssetRasterized(SHIP8, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship9")]
 		static private const SHIP9:Class;
 		static public function createShip9():DisplayObject
 		{
-			return createAssetRasterized(SHIP9);
+			return createAssetRasterized(SHIP9, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship10")]
 		static private const SHIP10:Class;
 		static public function createShip10():DisplayObject
 		{
-			return createAssetRasterized(SHIP10);
+			return createAssetRasterized(SHIP10, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship11")]
 		static private const SHIP11:Class;
 		static public function createShip11():DisplayObject
 		{
-			return createAssetRasterized(SHIP11);
+			return createAssetRasterized(SHIP11, true, true);
 		}
 		[Embed(source="assets/master.swf", symbol="ship12")]
 		static private const SHIP12:Class;
 		static public function createShip12():DisplayObject
 		{
-			return createAssetRasterized(SHIP12);
+			return createAssetRasterized(SHIP12, true, true);
 		}
+
+		[Embed(source="assets/master.swf", symbol="hull1")]
+		static private const HULL0:Class;
+		static public function createHull0():DisplayObject
+		{
+			return createAssetRasterized(HULL0, false, false);
+		}
+		[Embed(source="assets/master.swf", symbol="turret0")]
+		static private const TURRET0:Class;
+		static public function createTurret0():DisplayObject
+		{
+			return createAssetRasterized(TURRET0, false, false);
+		}
+
+		[Embed(source="assets/master.swf", symbol="trackNonAnimated")]
+		static private const TRACK:Class;
+		static public function createTrack():MovieClip
+		{
+			var dummy:MovieClip = new MovieClip;
+			dummy.addChild(new TRACK);
+			return dummy;
+		}
+
 		static private const EXPLOSION_SIZE:Number = 2;
 		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
 		static public function createExplosionParticle():DisplayObject

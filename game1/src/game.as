@@ -53,6 +53,7 @@ package
 			FrameTimer.init(stage);
 			_frameTimer = new FrameTimer(onFrame);
 			_input = new Input(stage);
+			_input.enableMouseMove(stage);
 
 			_actorLayer = new Sprite;
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
@@ -60,7 +61,7 @@ package
 			parent.addChild(_actorLayer);
 
 //			_currentScript = GameScriptFactory.testScript2;
-			_currentScript = GameScriptFactory.level1;
+			_currentScript = GameScriptFactory.testScript1;
 			_currentScript.begin(this);
 		}
 
@@ -123,6 +124,11 @@ package
 
 			//
 			// Reposition the player and the background tiles as necessary
+			if (_player is TankActor)
+			{
+				TankActor(_player).turretRotation = MathUtil.getDegreesRotation(_input.lastMousePos.x - _player.displayObject.x, _input.lastMousePos.y - _player.displayObject.y);
+			}
+			_player.onFrame(this);
 			_player.worldPos.offset(speed.x, speed.y);
 			MathUtil.constrain(_worldBounds, _player.worldPos, 0, 0, speed);
 			
@@ -153,10 +159,10 @@ package
 				addPlayerAmmo(bullet);
 			}
 
-			applyVelocityToCast(_cast.enemies);
-			applyVelocityToCast(_cast.enemyAmmo);
-			applyVelocityToCast(_cast.playerAmmo);
-			applyVelocityToCast(_cast.effects);
+			runFrameOnCast(_cast.enemies);
+			runFrameOnCast(_cast.enemyAmmo);
+			runFrameOnCast(_cast.playerAmmo);
+			runFrameOnCast(_cast.effects);
 			collisionCheck();
 
 			_cast.purgeDead();
@@ -228,7 +234,7 @@ package
 				}
 			}
 		}
-		private function applyVelocityToCast(cast:Array):void
+		private function runFrameOnCast(cast:Array):void
 		{
 			var index:uint = 0;
 			for each (var a:Actor in cast)

@@ -14,6 +14,7 @@ package karnold.utils
 		public static const KEY_UP:uint = 38;
 		public static const KEY_RIGHT:uint = 39;
 		public static const KEY_DOWN:uint = 40;
+		public static const KEY_PAUSE:uint = 80;  // p
 		public static const KEY_TILDE:uint = 192;
 		
 		public static const MOUSE_BUTTON:uint = 666;
@@ -75,7 +76,27 @@ package karnold.utils
 		{
 			setKey(MOUSE_BUTTON, false);
 		}
-		
+		public function enableMouseMove(source:DisplayObject):void
+		{
+			Util.listen(source, MouseEvent.MOUSE_MOVE, onMouseMove);
+		}
+		public function disableMouseMove(source:DisplayObject):void
+		{
+			if (source.hasEventListener(MouseEvent.MOUSE_MOVE))
+			{
+				source.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			}
+		}
+		private var _lastMousePos:Point = new Point;
+		private function onMouseMove(e:MouseEvent):void
+		{
+			_lastMousePos.x = e.stageX;
+			_lastMousePos.y = e.stageY;
+		}
+		public function get lastMousePos():Point
+		{
+			return _lastMousePos;
+		}
 		public function isKeyDown(key:uint):Boolean
 		{
 			return _keyState[key];
