@@ -25,10 +25,13 @@ package
 			_turret = turret;
 		}
 
-		private var _turretRotation:Number = 0;
 		public function set turretRotation(degrees:Number):void
 		{
-			_turretRotation = degrees;
+			const realTurretRotation:Number = degrees - displayObject.rotation
+			if (realTurretRotation != _turret.rotation)
+			{
+				_turret.rotation = realTurretRotation;
+			}
 		}
 
 		private var _trackRunning:Boolean = true;
@@ -50,15 +53,12 @@ package
 				_rightTrack.play();
 				_trackRunning = true;
 			}
-			if (_turret.rotation != _turretRotation)
-			{
-				_turret.rotation = _turretRotation - displayObject.rotation;
-			}
 		}
 		public static function createTankActor( leftTrack:MovieClip,
 												rightTrack:MovieClip,
 												hull:DisplayObject,
-												turret:DisplayObject):TankActor
+												turret:DisplayObject,
+												bc:BehaviorConsts):TankActor
 		{
 			var parent:Sprite = new Sprite;
 			
@@ -87,7 +87,7 @@ package
 			parent.addChild(hull);
 			parent.addChild(turretParent);
 
-			return new TankActor(MUSTUSEFACTORYFUNCTION.instance, parent, leftTrack, rightTrack, turretParent, null);
+			return new TankActor(MUSTUSEFACTORYFUNCTION.instance, parent, leftTrack, rightTrack, turretParent, bc);
 		}
 	}
 }

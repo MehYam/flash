@@ -70,15 +70,16 @@ final class Utils
 	}
 	static public function getBluePlayer():Actor
 	{
-		return new Actor(SimpleActorAsset.createBlueShip());
+		return new Actor(SimpleActorAsset.createBlueShip(), BehaviorConsts.BLUE_SHIP);
 	}
-	static public function createTestTank():Actor
+	static public function getTankPlayer():Actor
 	{
 		return TankActor.createTankActor(	
 			SimpleActorAsset.createTrack(),
 			SimpleActorAsset.createTrack(),
 			SimpleActorAsset.createHull0(),
-			SimpleActorAsset.createTurret0()
+			SimpleActorAsset.createTurret0(),
+			BehaviorConsts.TEST_TANK
 		);
 	}
 	static public const ENEMY_REDROGUE:uint = 0;
@@ -198,7 +199,7 @@ final class TestScript implements IGameScript
 	{
 		game.tiles = GrassTiles.testLevel;
 //		game.showPlayer(Utils.getBluePlayer());
-		game.showPlayer(Utils.createTestTank());
+		game.showPlayer(Utils.getTankPlayer());
 		game.start();
 		game.centerPrint("Level 1");
 		
@@ -239,7 +240,9 @@ final class Level1Script implements IGameScript
 		_game = game;
 
 		game.tiles = GrassTiles.smallLevel;
-		game.showPlayer(Utils.getBluePlayer());
+//		game.showPlayer(Utils.getBluePlayer());
+		game.showPlayer(Utils.getTankPlayer());
+		
 		game.start();
 		game.centerPrint("Level 1");
 	}

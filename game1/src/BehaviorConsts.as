@@ -2,9 +2,12 @@ package
 {
 	final public class BehaviorConsts
 	{
+		static public const BLUE_SHIP:BehaviorConsts = new BehaviorConsts(6, 1, 0.1);
 		static public const GREEN_SHIP:BehaviorConsts = new BehaviorConsts(1.5, 0.1);
 		static public const RED_SHIP:BehaviorConsts = new BehaviorConsts(3, 0.1);
 		static public const GRAY_SHIP:BehaviorConsts = new BehaviorConsts(2, 0.15);
+
+		static public const TEST_TANK:BehaviorConsts = new BehaviorConsts(1.5, 1, 1);
 		static public const BULLET:BehaviorConsts = new BehaviorConsts(10, 10);
 		static public const LASER:BehaviorConsts = new BehaviorConsts(7, 7);
 		static public const EXPLOSION:BehaviorConsts = new BehaviorConsts(100, 0, 0.1);

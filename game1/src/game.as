@@ -61,11 +61,11 @@ package
 			parent.addChild(_actorLayer);
 
 //			_currentScript = GameScriptFactory.testScript2;
-			_currentScript = GameScriptFactory.testScript1;
+//			_currentScript = GameScriptFactory.testScript1;
+			_currentScript = GameScriptFactory.level1;
 			_currentScript.begin(this);
 		}
 
-		private static const PLAYER_CONSTS:BehaviorConsts = new BehaviorConsts(6, 1, 0.1);
 		private var _cast:Cast = new Cast;
 		private var _lastPlayerPos:Point = new Point;
 		private var _cameraPos:Point = new Point;
@@ -98,40 +98,36 @@ package
 			var speed:Point = _player.speed;
 			if (_input.isKeyDown(Input.KEY_RIGHT))
 			{
-				speed.x = Math.min(PLAYER_CONSTS.MAX_SPEED, speed.x + PLAYER_CONSTS.ACCELERATION);
+				speed.x = Math.min(_player.consts.MAX_SPEED, speed.x + _player.consts.ACCELERATION);
 			}
 			else if (_input.isKeyDown(Input.KEY_LEFT))
 			{
-				speed.x = Math.max(-PLAYER_CONSTS.MAX_SPEED, speed.x - PLAYER_CONSTS.ACCELERATION);
+				speed.x = Math.max(-_player.consts.MAX_SPEED, speed.x - _player.consts.ACCELERATION);
 			}
 			else if (speed.x)
 			{
-				speed.x = MathUtil.speedDecay(speed.x, PLAYER_CONSTS.SPEED_DECAY);
+				speed.x = MathUtil.speedDecay(speed.x, _player.consts.SPEED_DECAY);
 			}
 			
 			if (_input.isKeyDown(Input.KEY_DOWN))
 			{
-				speed.y = Math.min(PLAYER_CONSTS.MAX_SPEED, speed.y + PLAYER_CONSTS.ACCELERATION);
+				speed.y = Math.min(_player.consts.MAX_SPEED, speed.y + _player.consts.ACCELERATION);
 			}
 			else if (_input.isKeyDown(Input.KEY_UP))
 			{
-				speed.y = Math.max(-PLAYER_CONSTS.MAX_SPEED, speed.y - PLAYER_CONSTS.ACCELERATION);
+				speed.y = Math.max(-_player.consts.MAX_SPEED, speed.y - _player.consts.ACCELERATION);
 			}
 			else if (speed.y)
 			{
-				speed.y = MathUtil.speedDecay(speed.y, PLAYER_CONSTS.SPEED_DECAY);
+				speed.y = MathUtil.speedDecay(speed.y, _player.consts.SPEED_DECAY);
 			}
 
 			//
 			// Reposition the player and the background tiles as necessary
-			if (_player is TankActor)
-			{
-				TankActor(_player).turretRotation = MathUtil.getDegreesRotation(_input.lastMousePos.x - _player.displayObject.x, _input.lastMousePos.y - _player.displayObject.y);
-			}
 			_player.onFrame(this);
 			_player.worldPos.offset(speed.x, speed.y);
 			MathUtil.constrain(_worldBounds, _player.worldPos, 0, 0, speed);
-			
+
 			if (!_lastPlayerPos.equals(_player.worldPos))
 			{
 				Util.setPoint(_lastPlayerPos, _player.worldPos);
@@ -143,11 +139,25 @@ package
 				}
 			}
 
+			var tankActorTurretRotation:Number;
+			if (_player is TankActor)
+			{
+				tankActorTurretRotation = MathUtil.getDegreesRotation(_input.lastMousePos.x - _player.displayObject.x, _input.lastMousePos.y - _player.displayObject.y);
+				TankActor(_player).turretRotation = tankActorTurretRotation;
+			}
+
 			var bullet:Actor;
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
 				bullet = Actor.createBullet();
-				bullet.launchDegrees(_player.worldPos, _player.displayObject.rotation);
+				if (_player is TankActor)
+				{
+					bullet.launchDegrees(_player.worldPos, tankActorTurretRotation);
+				}
+				else
+				{
+					bullet.launchDegrees(_player.worldPos, _player.displayObject.rotation);
+				}
 				addPlayerAmmo(bullet);
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
@@ -326,6 +336,15 @@ package
 			_player = actor;
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
+			
+			if (_player && (_player is TankActor))
+			{
+				_input.enableMouseMove(stage);
+			}
+			else
+			{
+				_input.disableMouseMove(stage);
+			}
 		}
 		public function start():void
 		{
