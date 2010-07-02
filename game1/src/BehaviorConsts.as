@@ -15,9 +15,9 @@ package
 		static public const TYPE_LASER:uint = 1;
 
 		// these semi-belong here
-		static public const LASER_LIFETIME:uint = 5000;
-		static public const BULLET_LIFETIME:uint = 2000;
-		static public const EXPLOSION_LIFETIME:uint = 1000;
+		static public const LASER_LIFETIME:uint = 3000;
+		static public const BULLET_LIFETIME:uint = 1200;
+		static public const EXPLOSION_LIFETIME:uint = 700;
 
 		// these DON'T belong here
 		static public const PLAYER_HEALTH:Number = 100;

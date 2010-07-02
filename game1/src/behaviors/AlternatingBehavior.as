@@ -13,6 +13,8 @@ package behaviors
 			{
 				_behaviors.push(behavior);
 			}
+			
+			_lastChange = getTimer() + Math.random() * msRate;
 		}
 		private var _count:uint;
 		public function onFrame(game:IGame, actor:Actor):void

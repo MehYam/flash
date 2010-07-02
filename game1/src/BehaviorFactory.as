@@ -191,6 +191,8 @@ final class AutofireBehavior implements IBehavior
 	{
 		_rate = msRate;
 		_type = type;
+		
+		_lastShot = getTimer() - (Math.random()*msRate);
 	}
 
 	public function onFrame(game:IGame, actor:Actor):void
@@ -198,7 +200,7 @@ final class AutofireBehavior implements IBehavior
 		const now:int = getTimer();
 		if ((now - _lastShot) > _rate)
 		{
-			_lastShot = now;
+			_lastShot = now + (Math.random()*(_rate/2));
 			
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;

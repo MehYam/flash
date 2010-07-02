@@ -174,7 +174,7 @@ package
 			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
 			if (!bmd)
 			{
-				var bullet:DisplayObject = createCircle(0xff0000, 5, 5);
+				var bullet:DisplayObject = createCircle(0xff7f00, 6, 6);
 				if (!RASTERIZING)
 				{
 					return bullet;

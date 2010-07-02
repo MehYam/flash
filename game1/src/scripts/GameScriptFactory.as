@@ -120,52 +120,52 @@ final class Utils
 		case ENEMY_FUNNEL:
 			a = new Actor(SimpleActorAsset.createFunnelShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Funnel";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_LASER);
+			a.behavior = Utils.homeAndShoot(4000, BehaviorConsts.TYPE_LASER);
 			break;
 		case ENEMY_BLUE:
 			a = new Actor(SimpleActorAsset.createBlueShip()(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Blue Bird";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(5000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER5:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "5";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER6:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "6";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER7:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "7";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER8:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "8";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER9:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "9";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER10:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "10";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER11:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "11";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		case ENEMY_FIGHTER12:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "12";
-			a.behavior = Utils.homeAndShoot(1000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
 			break;
 		}
 		placeAtRandomEdge(a, game.worldBounds);
