@@ -174,14 +174,14 @@ package
 
 		static private const EXPLOSION_SIZE:Number = 2;
 		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
-		static public function createExplosionParticle():DisplayObject
+		static public function createExplosionParticle(color:uint):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
 			if (!bmd)
 			{
 				var particle:Shape = new Shape;
-				particle.graphics.lineStyle(0, 0xffff00);
-				particle.graphics.beginFill(0xffff00);
+				particle.graphics.lineStyle(0, color);
+				particle.graphics.beginFill(color);
 				particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
 				particle.graphics.endFill();
 				if (!RASTERIZING)

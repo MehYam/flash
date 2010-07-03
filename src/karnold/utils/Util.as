@@ -21,7 +21,7 @@ package karnold.utils
 			trace("kai:", str);
 		}
 		
-		static public function assert(b:Boolean, msg:String = ""):void
+		static public function ASSERT(b:Boolean, msg:String = ""):void
 		{
 			if (!b)
 			{

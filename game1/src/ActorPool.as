@@ -31,7 +31,7 @@ package
 		}
 		public function recycle(actor:Actor):void
 		{
-			Util.assert(!actor.alive && !actor.displayObject.parent);
+			Util.ASSERT(!actor.alive && !actor.displayObject.parent);
 			
 			const type:Object = actor["constructor"];
 			if (type != Actor)

@@ -1,4 +1,4 @@
-package
+package behaviors
 {
 	final public class BehaviorConsts
 	{
@@ -36,4 +36,36 @@ package
 			SPEED_DECAY = decay;
 		}
 	};
+}
+import flash.geom.Point;
+
+final class BounceType {}
+final class FirePoint
+{
+	public var offset:Point;
+	public var angle:Number;
+}
+
+final class AmmoClassAttributes
+{
+	public var type:*;
+	public var duration:Number;
+	public var damage:Number;
+	public var pierce:Number; // pct chance, from 0-1.0, that ammo will pierce the opponent and continue travelling
+};
+
+final class ClassAttributes
+{
+	public var maxHealth:Number;
+	public var maxSpeed:Number;
+	public var acceleration:Number;
+	public var inertia:Number;
+	public var hitRadius:Number;
+	public var bounceType:BounceType;  // none, stop, die, fullbounce, halfbounce.....
+	public var rotationalFirePoints:Array;
+	public var bodyFirePoints:Array;
+
+	public var ammo:AmmoClassAttributes;
+
+	public var value:uint; // i.e. gold
 }

@@ -5,6 +5,7 @@ package
 	import flash.display.Sprite;
 	
 	import karnold.utils.Util;
+	import behaviors.BehaviorConsts;
 	
 	public class TankActor extends Actor
 	{

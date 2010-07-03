@@ -1,5 +1,6 @@
-package
+package behaviors
 {
+
 	final public class BehaviorFactory
 	{
 		static private var _faceForward:IBehavior;
@@ -83,6 +84,8 @@ import flash.utils.getTimer;
 
 import karnold.utils.MathUtil;
 import karnold.utils.Util;
+import behaviors.IBehavior;
+import behaviors.BehaviorConsts;
 
 final class FaceForwardBehavior implements IBehavior
 {

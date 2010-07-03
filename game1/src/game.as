@@ -1,5 +1,8 @@
 package 
 {
+	import behaviors.BehaviorConsts;
+	import behaviors.BehaviorFactory;
+	
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -12,6 +15,8 @@ package
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
+	
+	import flashx.textLayout.debug.assert;
 	
 	import karnold.tile.BitmapTileFactory;
 	import karnold.tile.ITileFactory;
@@ -176,6 +181,8 @@ package
 			collisionCheck();
 
 			_cast.purgeDead();
+			
+			Util.ASSERT(_cast.enemies.length >= _numEnemies);
 
 			if (_frameRate && _frameRate.parent)
 			{
@@ -191,9 +198,10 @@ package
 			actor.health -= damage;
 			if (actor.health < 0)
 			{
-				Actor.createExplosion(this, actor.worldPos, 20);
+				Actor.createExplosion(this, actor.worldPos, 15);
 				actor.alive = false;
-				
+
+				--_numEnemies;
 				_currentScript.onActorDeath(actor);
 			}
 		}
@@ -296,9 +304,12 @@ package
 		}
 
 		// IGame implementation
+		private var _numEnemies:uint = 0;
 		public function addEnemy(actor:Actor):void
 		{
+			// up to the caller to ensure enemies aren't added twice
 			_cast.enemies.push(actor);
+			++_numEnemies;
 		}
 		public function addEnemyAmmo(actor:Actor):void
 		{
@@ -364,7 +375,7 @@ package
 		}
 		public function get numEnemies():uint
 		{
-			return _cast.enemies.length;
+			return _numEnemies;
 		}
 		// END IGameState implementation
 

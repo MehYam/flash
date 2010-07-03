@@ -7,6 +7,9 @@ package
 	
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
+	import behaviors.IBehavior;
+	import behaviors.BehaviorConsts;
+	import behaviors.BehaviorFactory;
 
 	public class Actor implements IResettable
 	{
@@ -107,7 +110,7 @@ package
 				var actor:Actor = ActorPool.instance.get(ExplosionParticleActor) as ExplosionParticleActor;
 				if (!actor)
 				{
-					actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle());
+					actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle(0xffff00));
 				}
 				actor.displayObject.alpha = Math.random();
 				Util.setPoint(actor.worldPos, worldPos);
@@ -124,6 +127,8 @@ import flash.display.DisplayObject;
 
 // These stupid types exist just so that they can be pooled.  Alternative might
 // be to create a factory and base the pooling off of that
+import behaviors.BehaviorConsts;
+
 final class BulletActor extends Actor
 {
 	public function BulletActor(dobj:DisplayObject)

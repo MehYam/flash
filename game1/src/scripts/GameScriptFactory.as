@@ -17,9 +17,13 @@ package scripts
 	}
 }
 import behaviors.AlternatingBehavior;
+import behaviors.BehaviorConsts;
+import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
+import behaviors.IBehavior;
 
 import karnold.utils.Bounds;
+import karnold.utils.FrameTimer;
 import karnold.utils.MathUtil;
 import karnold.utils.Util;
 
@@ -96,12 +100,6 @@ final class Utils
 	static public const ENEMY_FIGHTER11:uint = 11;
 	static public const ENEMY_FIGHTER12:uint = 12;
 	
-	static private var s_enemyNamesThisSucks:Object = {};
-	static public function isEnemy(actor:Actor):Boolean
-	{
-		//KAI: just... ug
-		return s_enemyNamesThisSucks[actor.name];
-	}
 	static public function addEnemy(game:IGame, type:uint):Actor
 	{
 		var a:Actor;
@@ -181,8 +179,6 @@ final class Utils
 		}
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
-		s_enemyNamesThisSucks[a.name] = 1;
-		
 		return a;
 	}
 }
@@ -235,6 +231,7 @@ final class Wave
 final class Level1Script implements IGameScript
 {
 	private var _game:IGame;
+	private var _waveDelay:FrameTimer = new FrameTimer(addNextWave);
 	public function begin(game:IGame):void
 	{
 		_game = game;
@@ -281,26 +278,26 @@ final class Level1Script implements IGameScript
 				}
 			}
 		}
-		else
-		{
-			_game.centerPrint("CONGRATS LEVEL DONE");
-		}
 	}
 	// IGameEvents
 	public function onCenterPrintDone(text:String):void	
 	{
 		if (_waves.length)
 		{
-			addNextWave();
+			_waveDelay.start(3000, 1);
 		}
 	}
 	public function onActorDeath(actor:Actor):void 
 	{
-		if (Utils.isEnemy(actor))
+		if (!_game.numEnemies)
 		{
-			if (!--_enemies)
+			if (_waves.length)
 			{
-				addNextWave();
+				_game.centerPrint("INCOMING");	
+			}
+			else
+			{
+				_game.centerPrint("CONGRATS LEVEL DONE");
 			}
 		}
 	}

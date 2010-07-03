@@ -1,4 +1,4 @@
-package
+package behaviors
 {
 	public interface IBehavior
 	{
