@@ -198,7 +198,7 @@ package
 			actor.health -= damage;
 			if (actor.health < 0)
 			{
-				Actor.createExplosion(this, actor.worldPos, 15);
+				Actor.createExplosion(this, actor.worldPos, 15, actor == _player ? 0xff0000 : 0xffff00);
 				actor.alive = false;
 
 				--_numEnemies;

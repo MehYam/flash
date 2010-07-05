@@ -1,15 +1,15 @@
 package
 {
+	import behaviors.BehaviorConsts;
+	import behaviors.BehaviorFactory;
 	import behaviors.CompositeBehavior;
+	import behaviors.IBehavior;
 	
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
-	import behaviors.IBehavior;
-	import behaviors.BehaviorConsts;
-	import behaviors.BehaviorFactory;
 
 	public class Actor implements IResettable
 	{
@@ -103,14 +103,25 @@ package
 			}
 			return laser;
 		}
-		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint):void
+		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint, color:uint = 0xffff00):void
 		{
+			// yeah this sucks incredibly - it's because of how we pool particles
+			var colorClass:Class;
+			switch(color) {
+			case 0xff0000:
+				colorClass = CriticalExplosionParticleActor;
+				break;
+			case 0xffff00:
+			default:
+				colorClass = ExplosionParticleActor;
+				break;
+			}
 			for (var i:uint = 0; i < numParticles; ++i)
 			{
-				var actor:Actor = ActorPool.instance.get(ExplosionParticleActor) as ExplosionParticleActor;
+				var actor:Actor = ActorPool.instance.get(colorClass) as Actor;
 				if (!actor)
 				{
-					actor = new ExplosionParticleActor(SimpleActorAsset.createExplosionParticle(0xffff00));
+					actor = new colorClass(SimpleActorAsset.createExplosionParticle(color));
 				}
 				actor.displayObject.alpha = Math.random();
 				Util.setPoint(actor.worldPos, worldPos);
