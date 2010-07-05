@@ -68,7 +68,7 @@ package behaviors
 		}
 
 		// Non-singletons
-		static public function createAutofire(msRate:uint, type:uint):IBehavior
+		static public function createAutofire(msRate:uint, type:AmmoType):IBehavior
 		{
 			return new AutofireBehavior(msRate, type);
 		}
@@ -78,14 +78,16 @@ package behaviors
 		}
 	}
 }
+import behaviors.AmmoType;
+import behaviors.BehaviorConsts;
+import behaviors.IBehavior;
+
 import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.utils.getTimer;
 
 import karnold.utils.MathUtil;
 import karnold.utils.Util;
-import behaviors.IBehavior;
-import behaviors.BehaviorConsts;
 
 final class FaceForwardBehavior implements IBehavior
 {
@@ -189,8 +191,8 @@ final class AutofireBehavior implements IBehavior
 {
 	private var _lastShot:uint;
 	private var _rate:uint;
-	private var _type:uint;
-	public function AutofireBehavior(msRate:uint, type:uint):void
+	private var _type:AmmoType;
+	public function AutofireBehavior(msRate:uint, type:AmmoType):void
 	{
 		_rate = msRate;
 		_type = type;
@@ -210,10 +212,11 @@ final class AutofireBehavior implements IBehavior
 
 			var ammo:Actor;
 			switch(_type) {
-			case BehaviorConsts.TYPE_BULLET:
+			case AmmoType.BULLET:
 				ammo = Actor.createBullet();
 				break;
-			case BehaviorConsts.TYPE_LASER:
+			case AmmoType.LASER:
+			case AmmoType.HIGHLASER:
 				ammo = Actor.createLaser();
 				break;
 			}

@@ -123,11 +123,9 @@ package
 		}
 	}
 }
-import flash.display.DisplayObject;
-
-// These stupid types exist just so that they can be pooled.  Alternative might
-// be to create a factory and base the pooling off of that
 import behaviors.BehaviorConsts;
+
+import flash.display.DisplayObject;
 
 final class BulletActor extends Actor
 {
@@ -143,9 +141,23 @@ final class ExplosionParticleActor extends Actor
 		super(dobj, BehaviorConsts.EXPLOSION);
 	}
 }
+final class CriticalExplosionParticleActor extends Actor
+{
+	public function CriticalExplosionParticleActor(dobj:DisplayObject):void
+	{
+		super(dobj, BehaviorConsts.EXPLOSION);
+	}
+}
 final class LaserActor extends Actor
 {
 	public function LaserActor(dobj:DisplayObject):void
+	{
+		super(dobj, BehaviorConsts.LASER);
+	}
+}
+final class HighLaserActor extends Actor
+{
+	public function HighLaserActor(dobj:DisplayObject):void
 	{
 		super(dobj, BehaviorConsts.LASER);
 	}

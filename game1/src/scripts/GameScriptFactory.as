@@ -17,6 +17,7 @@ package scripts
 	}
 }
 import behaviors.AlternatingBehavior;
+import behaviors.AmmoType;
 import behaviors.BehaviorConsts;
 import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
@@ -29,9 +30,26 @@ import karnold.utils.Util;
 
 import scripts.IGameScript;
 
+final class Enemy
+{
+	static public const REDROGUE:Enemy = new Enemy;
+	static public const GREENK:Enemy = new Enemy;
+	static public const GRAYSHOOTER:Enemy = new Enemy;
+	static public const FUNNEL:Enemy = new Enemy;
+	static public const BLUE:Enemy = new Enemy;
+	static public const FIGHTER5:Enemy = new Enemy;
+	static public const FIGHTER6:Enemy = new Enemy;
+	static public const FIGHTER7:Enemy = new Enemy;
+	static public const FIGHTER8:Enemy = new Enemy;
+	static public const FIGHTER9:Enemy = new Enemy;
+	static public const FIGHTER10:Enemy = new Enemy;
+	static public const FIGHTER11:Enemy = new Enemy;
+	static public const FIGHTER12:Enemy = new Enemy;
+}
+
 final class Utils
 {
-	//KAI: maybe move these to BehaviorFactory.  Doing this here leaks the creation policy knowledge out of the factory
+	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
 	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
@@ -42,10 +60,10 @@ final class Utils
 			msRate,
 			FLEE,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(666, BehaviorConsts.TYPE_BULLET))
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(666, AmmoType.BULLET))
 		);
 	}
-	static public function homeAndShoot(msShootRate:uint, ammoType:uint):IBehavior
+	static public function homeAndShoot(msShootRate:uint, ammoType:AmmoType):IBehavior
 	{
 		return new CompositeBehavior
 		(
@@ -86,39 +104,26 @@ final class Utils
 			BehaviorConsts.TEST_TANK
 		);
 	}
-	static public const ENEMY_REDROGUE:uint = 0;
-	static public const ENEMY_GREENK:uint = 1;
-	static public const ENEMY_GRAYSHOOTER:uint = 2;
-	static public const ENEMY_FUNNEL:uint = 3;
-	static public const ENEMY_BLUE:uint = 4;
-	static public const ENEMY_FIGHTER5:uint = 5;
-	static public const ENEMY_FIGHTER6:uint = 6;
-	static public const ENEMY_FIGHTER7:uint = 7;
-	static public const ENEMY_FIGHTER8:uint = 8;
-	static public const ENEMY_FIGHTER9:uint = 9;
-	static public const ENEMY_FIGHTER10:uint = 10;
-	static public const ENEMY_FIGHTER11:uint = 11;
-	static public const ENEMY_FIGHTER12:uint = 12;
 	
-	static public function addEnemy(game:IGame, type:uint):Actor
+	static public function addEnemy(game:IGame, type:Enemy):Actor
 	{
 		var a:Actor;
 		switch (type) {
-		case ENEMY_REDROGUE:
+		case Enemy.REDROGUE:
 			a = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Red Rogue";
 			a.behavior = attackAndFlee(5000);
 			break;
-		case ENEMY_GREENK:
+		case Enemy.GREENK:
 			a = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
-		case ENEMY_GRAYSHOOTER:
+		case Enemy.GRAYSHOOTER:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(2000, BehaviorConsts.TYPE_LASER),
+				BehaviorFactory.createAutofire(2000, AmmoType.LASER),
 				new AlternatingBehavior( 
 					3000,
 					HOME,
@@ -126,55 +131,55 @@ final class Utils
 				)
 			);
 			break;
-		case ENEMY_FUNNEL:
+		case Enemy.FUNNEL:
 			a = new Actor(SimpleActorAsset.createFunnelShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Funnel";
-			a.behavior = Utils.homeAndShoot(4000, BehaviorConsts.TYPE_LASER);
+			a.behavior = Utils.homeAndShoot(4000, AmmoType.LASER);
 			break;
-		case ENEMY_BLUE:
+		case Enemy.BLUE:
 			a = new Actor(SimpleActorAsset.createBlueShip()(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Blue Bird";
-			a.behavior = Utils.homeAndShoot(5000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(5000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER5:
+		case Enemy.FIGHTER5:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "5";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER6:
+		case Enemy.FIGHTER6:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "6";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER7:
+		case Enemy.FIGHTER7:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "7";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER8:
+		case Enemy.FIGHTER8:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "8";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER9:
+		case Enemy.FIGHTER9:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "9";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER10:
+		case Enemy.FIGHTER10:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "10";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER11:
+		case Enemy.FIGHTER11:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "11";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
-		case ENEMY_FIGHTER12:
+		case Enemy.FIGHTER12:
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "12";
-			a.behavior = Utils.homeAndShoot(6000, BehaviorConsts.TYPE_BULLET);
+			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		}
 		placeAtRandomEdge(a, game.worldBounds);
@@ -207,10 +212,10 @@ final class TestScript implements IGameScript
 	
 	private function addTestActors(game:IGame):void
 	{
-		Utils.addEnemy(game, Utils.ENEMY_REDROGUE);
-		Utils.addEnemy(game, Utils.ENEMY_GREENK);
-		Utils.addEnemy(game, Utils.ENEMY_GRAYSHOOTER);
-		Utils.addEnemy(game, Utils.ENEMY_FIGHTER5);
+		Utils.addEnemy(game, Enemy.REDROGUE);
+		Utils.addEnemy(game, Enemy.GREENK);
+		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
+		Utils.addEnemy(game, Enemy.FIGHTER5);
 	}
 	
 	// IGameEvents
@@ -220,9 +225,9 @@ final class TestScript implements IGameScript
 
 final class Wave
 {
-	public var type:uint;
+	public var type:Enemy;
 	public var number:uint;
-	public function Wave(type:uint, number:uint)
+	public function Wave(type:Enemy, number:uint)
 	{
 		this.type = type;
 		this.number = number;
@@ -246,14 +251,14 @@ final class Level1Script implements IGameScript
 
 	private var _waves:Array = 
 	[
-		new Wave(Utils.ENEMY_GREENK, 10),
-		new Wave(Utils.ENEMY_FIGHTER5, 10),
-		new Wave(Utils.ENEMY_GREENK, 15),
-		[new Wave(Utils.ENEMY_GREENK, 10), new Wave(Utils.ENEMY_REDROGUE, 2)],
-		[new Wave(Utils.ENEMY_FIGHTER5, 10), new Wave(Utils.ENEMY_REDROGUE, 3)],
-		new Wave(Utils.ENEMY_GREENK, 20),
-		[new Wave(Utils.ENEMY_REDROGUE, 5), new Wave(Utils.ENEMY_GRAYSHOOTER, 3)],
-		[new Wave(Utils.ENEMY_GREENK, 5), new Wave(Utils.ENEMY_REDROGUE, 5), new Wave(Utils.ENEMY_GRAYSHOOTER, 5)]
+		new Wave(Enemy.GREENK, 10),
+		new Wave(Enemy.FIGHTER5, 10),
+		new Wave(Enemy.GREENK, 15),
+		[new Wave(Enemy.GREENK, 10), new Wave(Enemy.REDROGUE, 2)],
+		[new Wave(Enemy.FIGHTER5, 10), new Wave(Enemy.REDROGUE, 3)],
+		new Wave(Enemy.GREENK, 20),
+		[new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 3)],
+		[new Wave(Enemy.GREENK, 5), new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 5)]
 	];
 
 	static private const _tmpArray:Array = [];

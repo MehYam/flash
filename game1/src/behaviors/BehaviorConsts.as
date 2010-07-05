@@ -12,11 +12,6 @@ package behaviors
 		static public const LASER:BehaviorConsts = new BehaviorConsts(7, 7);
 		static public const EXPLOSION:BehaviorConsts = new BehaviorConsts(100, 0, 0.1);
 
-		//KAI: the real inflexibility problem starts here.  trace this all the way to SimpleActorAsset.  There's got to be a way
-		// to make this easier so that we can have different colored assets all pooled accordingly
-		static public const TYPE_BULLET:uint = 0;
-		static public const TYPE_LASER:uint = 1;
-
 		// these semi-belong here
 		static public const LASER_LIFETIME:uint = 3000;
 		static public const BULLET_LIFETIME:uint = 1200;
