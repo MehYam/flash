@@ -61,11 +61,14 @@ package
 			}
 			_alive = b;
 		}
-		public function onFrame(gameState:IGame):void
+		public function onFrame(game:IGame):void
 		{
+			worldPos.offset(speed.x, speed.y);
+			MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed);
+
 			if (_behavior)
 			{
-				_behavior.onFrame(gameState, this);
+				_behavior.onFrame(game, this);
 			}
 		}
 		private function launchHelper(start:Point, radians:Number):void
@@ -82,7 +85,6 @@ package
 		{
 			launchHelper(start, MathUtil.getRadiansRotation(deltaX, deltaY));
 		}
-
 		static public function createBullet():Actor
 		{
 			var bullet:Actor = ActorPool.instance.get(BulletActor) as BulletActor;

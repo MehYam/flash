@@ -109,7 +109,10 @@ final class FaceForwardBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		actor.displayObject.rotation = MathUtil.getDegreesRotation(actor.speed.x, actor.speed.y);
+		if (actor.speed.x != 0 || actor.speed.y != 0)
+		{
+			actor.displayObject.rotation = MathUtil.getDegreesRotation(actor.speed.x, actor.speed.y);
+		}
 	}
 }
 

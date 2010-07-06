@@ -4,7 +4,7 @@ package scripts
 	{
 		static public function get testScript1():IGameScript
 		{
-			return new TestScript(1);
+			return new TestScript(0);
 		}
 		static public function get testScript2():IGameScript
 		{
@@ -96,17 +96,21 @@ final class Utils
 	}
 	static public function getBluePlayer():Actor
 	{
-		return new Actor(SimpleActorAsset.createBlueShip(), BehaviorConsts.BLUE_SHIP);
+		var plane:Actor = new Actor(SimpleActorAsset.createBlueShip(), BehaviorConsts.BLUE_SHIP);
+		plane.behavior = BehaviorFactory.faceForward;
+		return plane;
 	}
 	static public function getTankPlayer():Actor
 	{
-		return TankActor.createTankActor(	
+		var tank:Actor = TankActor.createTankActor(	
 			SimpleActorAsset.createTrack(),
 			SimpleActorAsset.createTrack(),
 			SimpleActorAsset.createHull0(),
 			SimpleActorAsset.createTurret0(),
 			BehaviorConsts.TEST_TANK
 		);
+		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
+		return tank;
 	}
 	
 	static public function addEnemy(game:IGame, type:Enemy):Actor
@@ -286,7 +290,8 @@ final class WaveBasedGameScript extends BaseScript
 		_game = game;
 
 		game.tiles = GrassTiles.smallLevel;
-		game.showPlayer(Utils.getBluePlayer());
+//		game.showPlayer(Utils.getBluePlayer());
+		game.showPlayer(Utils.getTankPlayer());
 		
 		game.start();
 		game.centerPrint("Level 1");

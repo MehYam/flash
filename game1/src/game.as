@@ -65,9 +65,9 @@ package
 			_actorLayer.scrollRect = this.scrollRect;
 			parent.addChild(_actorLayer);
 
+			_currentScript = GameScriptFactory.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
-//			_currentScript = GameScriptFactory.testScript1;
-			_currentScript = GameScriptFactory.level1;
+//			_currentScript = GameScriptFactory.level1;
 			_currentScript.begin(this);
 		}
 
@@ -130,8 +130,6 @@ package
 			//
 			// Reposition the player and the background tiles as necessary
 			_player.onFrame(this);
-			_player.worldPos.offset(speed.x, speed.y);
-			MathUtil.constrain(_worldBounds, _player.worldPos, 0, 0, speed);
 
 			if (!_lastPlayerPos.equals(_player.worldPos))
 			{
@@ -225,9 +223,6 @@ package
 
 					if (a.alive)
 					{
-						a.worldPos.offset(a.speed.x, a.speed.y);
-						MathUtil.constrain(_worldBounds, a.worldPos, 0, 0, a.speed);
-
 						a.displayObject.x = a.worldPos.x - _cameraPos.x;
 						a.displayObject.y = a.worldPos.y - _cameraPos.y;
 						
@@ -379,8 +374,6 @@ package
 					_cameraPos.y = cameraBottomBound;
 				}
 			}
-			
-			BehaviorFactory.faceForward.onFrame(this, _player);
 		}
 
 		private static function findBlank(map:Array2D, startX:uint, startY:uint):Location

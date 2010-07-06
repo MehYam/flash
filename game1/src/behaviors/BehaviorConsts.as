@@ -7,7 +7,7 @@ package behaviors
 		static public const RED_SHIP:BehaviorConsts = new BehaviorConsts(3, 0.1, 0, 15, 15);
 		static public const GRAY_SHIP:BehaviorConsts = new BehaviorConsts(2, 0.15, 20);
 
-		static public const TEST_TANK:BehaviorConsts = new BehaviorConsts(1.5, 1, 1);
+		static public const TEST_TANK:BehaviorConsts = new BehaviorConsts(1.5, 1, 0.5);
 
 		static public const BULLET:BehaviorConsts = new BehaviorConsts(8, 10);
 		static public const LASER:BehaviorConsts = new BehaviorConsts(6, 7);
