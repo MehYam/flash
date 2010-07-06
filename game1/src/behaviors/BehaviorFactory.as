@@ -1,10 +1,12 @@
 package behaviors
 {
+	import flash.geom.Point;
 
 	final public class BehaviorFactory
 	{
 		static private var _faceForward:IBehavior;
 		static private var _facePlayer:IBehavior;
+		static private var _faceMouse:IBehavior;
 		static private var _gravityPush:IBehavior;
 		static private var _gravityPull:IBehavior;
 		static private var _strafe:IBehavior;
@@ -25,6 +27,14 @@ package behaviors
 				_facePlayer = new FacePlayerBehavior;
 			}
 			return _facePlayer;
+		}
+		static public function get faceMouse():IBehavior
+		{
+			if (!_faceMouse)
+			{
+				_faceMouse = new FaceMouseBehavior;
+			}
+			return _faceMouse;
 		}
 		static public function get gravityPush():IBehavior
 		{
@@ -68,9 +78,9 @@ package behaviors
 		}
 
 		// Non-singletons
-		static public function createAutofire(msRate:uint, type:AmmoType):IBehavior
+		static public function createAutofire(type:AmmoType, msRateMin:uint, msRateMax:uint, source:AmmoFireSource = null):IBehavior
 		{
-			return new AutofireBehavior(msRate, type);
+			return new AutofireBehavior(type, msRateMin, msRateMax, source);
 		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
@@ -78,6 +88,7 @@ package behaviors
 		}
 	}
 }
+import behaviors.AmmoFireSource;
 import behaviors.AmmoType;
 import behaviors.BehaviorConsts;
 import behaviors.IBehavior;
@@ -88,6 +99,8 @@ import flash.utils.getTimer;
 
 import karnold.utils.MathUtil;
 import karnold.utils.Util;
+
+import scripts.TankActor;
 
 final class FaceForwardBehavior implements IBehavior
 {
@@ -107,6 +120,22 @@ final class FacePlayerBehavior implements IBehavior
 	}
 }
 
+final class FaceMouseBehavior implements IBehavior
+{
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		var player:Actor = game.player;
+		const degrees:Number = MathUtil.getDegreesRotation(game.input.lastMousePos.x - player.displayObject.x, game.input.lastMousePos.y - player.displayObject.y);
+		if (player is TankActor)
+		{
+			TankActor(player).turretRotation = degrees;
+		}
+		else
+		{
+			player.displayObject.rotation = degrees;
+		}
+	}
+}
 final class GravityPush implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
@@ -189,24 +218,29 @@ final class FadeBehavior implements IBehavior
 
 final class AutofireBehavior implements IBehavior
 {
-	private var _lastShot:uint;
-	private var _rate:uint;
 	private var _type:AmmoType;
-	public function AutofireBehavior(msRate:uint, type:AmmoType):void
+	private var _rateMin:uint;
+	private var _rateMax:uint;
+	private var _source:AmmoFireSource;
+	private var _nextShot:uint;
+	public function AutofireBehavior(type:AmmoType, msRateMin:uint, msRateMax:uint, source:AmmoFireSource = null):void
 	{
-		_rate = msRate;
 		_type = type;
+		_rateMin = msRateMin;
+		_rateMax = msRateMax;
+		_source = source;
 		
-		_lastShot = getTimer() - (Math.random()*msRate);
+		_nextShot = calcNextShot(getTimer());
 	}
-
+	private function calcNextShot(start:uint):uint
+	{
+		return start + _rateMin + (_rateMax - _rateMin)*Math.random();
+	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		const now:int = getTimer();
-		if ((now - _lastShot) > _rate)
+		if (now > _nextShot)
 		{
-			_lastShot = now + (Math.random()*(_rate/2));
-			
 			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
 			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
 
@@ -222,6 +256,8 @@ final class AutofireBehavior implements IBehavior
 			}
 			ammo.launch(actor.worldPos, deltaX, deltaY);
 			game.addEnemyAmmo(ammo);
+
+			_nextShot = calcNextShot(now);
 		}
 	}
 }

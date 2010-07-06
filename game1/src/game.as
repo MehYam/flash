@@ -30,6 +30,7 @@ package
 	
 	import scripts.GameScriptFactory;
 	import scripts.IGameScript;
+	import scripts.TankActor;
 
 	public final class game extends Sprite implements IGame
 	{
@@ -143,34 +144,13 @@ package
 				}
 			}
 
-			var tankActorTurretRotation:Number;
-			if (_player is TankActor)
-			{
-				tankActorTurretRotation = MathUtil.getDegreesRotation(_input.lastMousePos.x - _player.displayObject.x, _input.lastMousePos.y - _player.displayObject.y);
-				TankActor(_player).turretRotation = tankActorTurretRotation;
-			}
-
-			var bullet:Actor;
 			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
 			{
-				bullet = Actor.createBullet();
-				if (_player is TankActor)
-				{
-					bullet.launchDegrees(_player.worldPos, tankActorTurretRotation);
-				}
-				else
-				{
-					bullet.launchDegrees(_player.worldPos, _player.displayObject.rotation);
-				}
-				addPlayerAmmo(bullet);
+				_currentScript.onPlayerShootForward(this);
 			}
 			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
 			{
-				const dest:Point = _input.lastMouseDownCoords;
-
-				bullet = Actor.createBullet();
-				bullet.launch(_player.worldPos, dest.x - _player.displayObject.x, dest.y - _player.displayObject.y);
-				addPlayerAmmo(bullet);
+				_currentScript.onPlayerShootTo(this, _input.lastMouseDownCoords);
 			}
 
 			runFrameOnCast(_cast.enemies);
@@ -352,6 +332,10 @@ package
 		public function get worldBounds():Bounds
 		{
 			return _worldBounds;
+		}
+		public function get input():Input
+		{
+			return _input;
 		}
 		// END IGameState implementation
 

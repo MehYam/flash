@@ -1,6 +1,7 @@
 package
 {
 	import karnold.utils.Bounds;
+	import karnold.utils.Input;
 
 	public interface IGame
 	{
@@ -19,5 +20,7 @@ package
 		function get running():Boolean;
 		
 		function get worldBounds():Bounds;
+		
+		function get input():Input;
 	}
 }

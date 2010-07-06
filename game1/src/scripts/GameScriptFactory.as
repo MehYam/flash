@@ -23,12 +23,15 @@ import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
 
+import flash.geom.Point;
+
 import karnold.utils.Bounds;
 import karnold.utils.FrameTimer;
 import karnold.utils.MathUtil;
 import karnold.utils.Util;
 
 import scripts.IGameScript;
+import scripts.TankActor;
 
 final class Enemy
 {
@@ -60,7 +63,7 @@ final class Utils
 			msRate,
 			FLEE,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(666, AmmoType.BULLET))
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(AmmoType.BULLET, 300, 1000))
 		);
 	}
 	static public function homeAndShoot(msShootRate:uint, ammoType:AmmoType):IBehavior
@@ -68,7 +71,7 @@ final class Utils
 		return new CompositeBehavior
 		(
 			HOME,
-			BehaviorFactory.createAutofire(msShootRate, ammoType)
+			BehaviorFactory.createAutofire(ammoType, msShootRate/2, msShootRate)
 		);
 	}
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
@@ -123,7 +126,7 @@ final class Utils
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(2000, AmmoType.LASER),
+				BehaviorFactory.createAutofire(AmmoType.LASER, 1000, 3000),
 				new AlternatingBehavior( 
 					3000,
 					HOME,
@@ -190,15 +193,38 @@ final class Utils
 
 class BaseScript implements IGameScript
 {
-	public function begin(game:IGame):void
-	{
-	}	
+	// IGameScript
+	public function begin(game:IGame):void {}
+
 	// IGameEvents
 	public function onCenterPrintDone(text:String):void	{}
 
 	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
+	public function onPlayerShootForward(game:IGame):void
+	{
+		const player:Actor = game.player;
+		var bullet:Actor = Actor.createBullet();
+		
+		if (player is TankActor)
+		{
+			bullet.launchDegrees(player.worldPos, TankActor(player).turretRotation);
+		}
+		else
+		{
+			bullet.launchDegrees(player.worldPos, player.displayObject.rotation);
+		}
+		game.addPlayerAmmo(bullet);
+	}
+	public function onPlayerShootTo(game:IGame, to:Point):void
+	{
+		const player:Actor = game.player;
+		var bullet:Actor = Actor.createBullet();
+		
+		bullet.launch(player.worldPos, to.x - player.displayObject.x, to.y - player.displayObject.y);
+		game.addPlayerAmmo(bullet);
+	}
 }
 
 final class TestScript extends BaseScript

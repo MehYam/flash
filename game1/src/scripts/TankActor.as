@@ -1,11 +1,12 @@
-package
+package scripts
 {
+	import behaviors.BehaviorConsts;
+	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	
 	import karnold.utils.Util;
-	import behaviors.BehaviorConsts;
 	
 	public class TankActor extends Actor
 	{
@@ -33,6 +34,10 @@ package
 			{
 				_turret.rotation = realTurretRotation;
 			}
+		}
+		public function get turretRotation():Number
+		{
+			return _turret.rotation + displayObject.rotation;
 		}
 
 		private var _trackRunning:Boolean = true;
