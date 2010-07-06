@@ -28,6 +28,7 @@ import flash.geom.Point;
 import karnold.utils.Bounds;
 import karnold.utils.FrameTimer;
 import karnold.utils.MathUtil;
+import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
 import scripts.IGameScript;
@@ -61,9 +62,9 @@ final class Utils
 		return new AlternatingBehavior
 		(
 			msRate,
-			FLEE,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(AmmoType.BULLET, 300, 1000))
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(AmmoType.BULLET, 300, 1000)),
+			FLEE
 		);
 	}
 	static public function homeAndShoot(msShootRate:uint, ammoType:AmmoType):IBehavior
@@ -202,28 +203,36 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
+	
+	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
 	{
-		const player:Actor = game.player;
-		var bullet:Actor = Actor.createBullet();
-		
-		if (player is TankActor)
+		if (_fireRate.now)
 		{
-			bullet.launchDegrees(player.worldPos, TankActor(player).turretRotation);
+			const player:Actor = game.player;
+			var bullet:Actor = Actor.createBullet();
+			
+			if (player is TankActor)
+			{
+				bullet.launchDegrees(player.worldPos, TankActor(player).turretRotation);
+			}
+			else
+			{
+				bullet.launchDegrees(player.worldPos, player.displayObject.rotation);
+			}
+			game.addPlayerAmmo(bullet);
 		}
-		else
-		{
-			bullet.launchDegrees(player.worldPos, player.displayObject.rotation);
-		}
-		game.addPlayerAmmo(bullet);
 	}
 	public function onPlayerShootTo(game:IGame, to:Point):void
 	{
-		const player:Actor = game.player;
-		var bullet:Actor = Actor.createBullet();
-		
-		bullet.launch(player.worldPos, to.x - player.displayObject.x, to.y - player.displayObject.y);
-		game.addPlayerAmmo(bullet);
+		if (_fireRate.now)
+		{
+			const player:Actor = game.player;
+			var bullet:Actor = Actor.createBullet();
+			
+			bullet.launch(player.worldPos, to.x - player.displayObject.x, to.y - player.displayObject.y);
+			game.addPlayerAmmo(bullet);
+		}
 	}
 }
 

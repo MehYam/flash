@@ -61,21 +61,6 @@ package karnold.utils
 			setKey(_keyMappings[e.keyCode] || e.keyCode, false);
 		}
 		
-		private var _lastMouseDownCoords:Point = new Point;
-		private function onMouseDown(e:MouseEvent):void
-		{
-			_lastMouseDownCoords.x = e.stageX;
-			_lastMouseDownCoords.y = e.stageY;
-			setKey(MOUSE_BUTTON, true);
-		}
-		public function get lastMouseDownCoords():Point
-		{
-			return _lastMouseDownCoords;
-		}
-		private function onMouseUp(e:Event):void
-		{
-			setKey(MOUSE_BUTTON, false);
-		}
 		public function enableMouseMove(source:DisplayObject):void
 		{
 			Util.listen(source, MouseEvent.MOUSE_MOVE, onMouseMove);
@@ -88,6 +73,16 @@ package karnold.utils
 			}
 		}
 		private var _lastMousePos:Point = new Point;
+		private function onMouseDown(e:MouseEvent):void
+		{
+			_lastMousePos.x = e.stageX;
+			_lastMousePos.y = e.stageY;
+			setKey(MOUSE_BUTTON, true);
+		}
+		private function onMouseUp(e:Event):void
+		{
+			setKey(MOUSE_BUTTON, false);
+		}
 		private function onMouseMove(e:MouseEvent):void
 		{
 			_lastMousePos.x = e.stageX;

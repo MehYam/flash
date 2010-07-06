@@ -144,13 +144,13 @@ package
 				}
 			}
 
-			if (_input.checkKeyHistoryAndClear(Input.KEY_SPACE))
+			if (_input.isKeyDown(Input.KEY_SPACE))
 			{
 				_currentScript.onPlayerShootForward(this);
 			}
-			else if (_input.checkKeyHistoryAndClear(Input.MOUSE_BUTTON))
+			else if (_input.isKeyDown(Input.MOUSE_BUTTON))
 			{
-				_currentScript.onPlayerShootTo(this, _input.lastMouseDownCoords);
+				_currentScript.onPlayerShootTo(this, _input.lastMousePos);
 			}
 
 			runFrameOnCast(_cast.enemies);
@@ -307,15 +307,17 @@ package
 			_player = actor;
 			_player.worldPos = _worldBounds.middle;
 			_actorLayer.addChild(_player.displayObject);
-			
-			if (_player && (_player is TankActor))
-			{
-				_input.enableMouseMove(stage);
-			}
-			else
-			{
-				_input.disableMouseMove(stage);
-			}
+
+			// KAI: for non-turrets, we could disable the mouse move while the mouse is not down.  Moot
+			// if we add the reticle though
+//			if (_player && (_player is TankActor))
+//			{
+//				_input.enableMouseMove(stage);
+//			}
+//			else
+//			{
+//				_input.disableMouseMove(stage);
+//			}
 		}
 		public function start():void
 		{
