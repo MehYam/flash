@@ -41,10 +41,10 @@ package
 		private var _player:Actor;
 		private var _frameTimer:FrameTimer;
 		private var _frameRate:GameFrameRatePanel;
-		
+
+		private var _hudLayer:DisplayObjectContainer;
 		private var _actorLayer:DisplayObjectContainer;
 		private var _currentScript:IGameScript;
-
 		public function game()
 		{
 			trace("stage", stage.stageWidth, stage.stageHeight);
@@ -64,6 +64,9 @@ package
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			_actorLayer.scrollRect = this.scrollRect;
 			parent.addChild(_actorLayer);
+			
+			_hudLayer = new Sprite;
+			parent.addChild(_hudLayer);
 
 //			_currentScript = GameScriptFactory.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
@@ -140,6 +143,7 @@ package
 					Util.setPoint(_lastCameraPos, _cameraPos);
 					_tiles.setCamera(_cameraPos);
 				}
+				_radar.plot(_player, 0x0000ff);
 			}
 
 			if (_input.isKeyDown(Input.KEY_SPACE))
@@ -156,6 +160,17 @@ package
 			runFrameOnCast(_cast.playerAmmo);
 			runFrameOnCast(_cast.effects);
 			collisionCheck();
+
+			if (_radar)
+			{
+				for each (var enemy:Actor in _cast.enemies)
+				{
+					if (enemy.alive)
+					{
+						_radar.plot(enemy);
+					}
+				}
+			}
 
 			_cast.purgeDead();
 			
@@ -252,6 +267,11 @@ package
 					}
 					else
 					{
+						if (_radar)
+						{
+							_radar.remove(a);
+						}
+
 						ActorPool.instance.recycle(a);
 						cast[index] = null;
 					}
@@ -282,11 +302,23 @@ package
 		{
 			return _player;
 		}
+		private var _radar:Radar;
 		public function set tiles(str:String):void
 		{
 			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
 			_tiles = TiledBackground.createFromString(this, factory, stage.stageWidth, stage.stageHeight, str);
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
+			
+			if (_radar && _radar.parent)
+			{
+				_radar.parent.removeChild(_radar);
+			}
+			_radar = new Radar;
+			_radar.render(_worldBounds, 150, 100);
+			_radar.alpha = 0.7;
+			_radar.x = stage.stageWidth - _radar.width;
+			
+			_hudLayer.addChild(_radar);
 		}
 		public function centerPrint(text:String):void
 		{

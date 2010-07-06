@@ -59,5 +59,13 @@ package karnold.utils
 		{
 			return new Point((right - left) / 2, (bottom - top) / 2);
 		}
+		public function get width():Number
+		{
+			return right - left;
+		}
+		public function get height():Number
+		{
+			return bottom - top;
+		}
 	}
 }
