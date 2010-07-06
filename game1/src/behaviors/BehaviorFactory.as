@@ -216,6 +216,33 @@ final class FadeBehavior implements IBehavior
 	}
 }
 
+final class LimiterBehavior implements IBehavior
+{
+	private var _rateMin:uint;
+	private var _rateMax:uint;
+	private var _behavior:IBehavior;
+	private var _nextShot:uint;
+	public function LimiterBehavior(behavior:IBehavior, msRateMin:uint, msRateMax:uint)
+	{
+		_rateMin = msRateMin;
+		_rateMax = msRateMax;
+		_behavior = behavior;
+		_nextShot = calcNextShot(getTimer());
+	}
+	private function calcNextShot(start:uint):uint
+	{
+		return start + _rateMin + (_rateMax - _rateMin)*Math.random();
+	}
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		const now:int = getTimer();
+		if (now > _nextShot)
+		{
+			_behavior.onFrame(game, actor);
+			_nextShot = calcNextShot(now);
+		}		
+	}
+}
 final class AutofireBehavior implements IBehavior
 {
 	private var _type:AmmoType;
@@ -241,9 +268,6 @@ final class AutofireBehavior implements IBehavior
 		const now:int = getTimer();
 		if (now > _nextShot)
 		{
-			const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
-			const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
-
 			var ammo:Actor;
 			switch(_type) {
 			case AmmoType.BULLET:
@@ -254,7 +278,7 @@ final class AutofireBehavior implements IBehavior
 				ammo = Actor.createLaser();
 				break;
 			}
-			ammo.launch(actor.worldPos, deltaX, deltaY);
+			ammo.launchDegrees(actor.worldPos, actor.displayObject.rotation);
 			game.addEnemyAmmo(ammo);
 
 			_nextShot = calcNextShot(now);
