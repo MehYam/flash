@@ -1,6 +1,5 @@
 package 
 {
-	import behaviors.BehaviorConsts;
 	import behaviors.BehaviorFactory;
 	
 	import flash.display.Bitmap;
@@ -182,8 +181,6 @@ package
 
 			_cast.purgeDead();
 			
-			Util.ASSERT(_cast.enemies.length >= _numEnemies);
-
 			if (_frameRate && _frameRate.parent)
 			{
 				_frameRate.txt1 = this.numChildren;
@@ -193,30 +190,16 @@ package
 			}
 		}
 
-		private function damageActor(actor:Actor, damage:Number):void
-		{
-			actor.health -= damage;
-			if (actor.health < 0)
-			{
-				Actor.createExplosion(this, actor.worldPos, 15, actor == _player ? 0xff0000 : 0xffff00);
-				actor.alive = false;
-
-				--_numEnemies;
-				_currentScript.onActorDeath(actor);
-			}
-		}
-
-		static private const COLLISION_DIST:Number = 20;
 		private function collisionCheck():void
 		{
 			// enemy hits player
 			var enemy:Actor;
 			for each (enemy in _cast.enemies)
 			{
-				if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < COLLISION_DIST)
+				if (enemy && enemy.alive && 
+					MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < (_player.consts.RADIUS + enemy.consts.RADIUS))
 				{
-					Actor.createExplosion(this, enemy.worldPos, 5);
-					damageActor(enemy, BehaviorConsts.PLAYER_HEALTH);
+					_currentScript.onPlayerStruckByEnemy(this, enemy);
 				}
 			}
 			
@@ -224,10 +207,10 @@ package
 			var ammo:Actor;
 			for each (ammo in _cast.enemyAmmo)
 			{
-				if (ammo && ammo.alive && MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < COLLISION_DIST)
+				if (ammo && ammo.alive && 
+					MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < (_player.consts.RADIUS + ammo.consts.RADIUS))
 				{
-					Actor.createExplosion(this, ammo.worldPos, 5);
-					ammo.alive = false;
+					_currentScript.onPlayerStruckByAmmo(this, ammo);
 				}
 			}
 			
@@ -238,15 +221,14 @@ package
 				{
 					for each (enemy in _cast.enemies)
 					{
-						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < COLLISION_DIST)
+						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < (ammo.consts.RADIUS + enemy.consts.RADIUS))
 						{
-							Actor.createExplosion(this, ammo.worldPos, 5);
-							damageActor(enemy, 34);
-							
-							// make these two lines optional for ammo types with penetration
-								// - penetration would be a fun stat to level.  No jokes.
-							ammo.alive = false;
-							break;
+							_currentScript.onEnemyStruckByAmmo(this, enemy, ammo);
+							if (!ammo.alive)
+							{
+								// script has terminated the ammo
+								break;
+							}
 						}
 					}
 				}
@@ -304,12 +286,10 @@ package
 		}
 
 		// IGame implementation
-		private var _numEnemies:uint = 0;
 		public function addEnemy(actor:Actor):void
 		{
 			// up to the caller to ensure enemies aren't added twice
 			_cast.enemies.push(actor);
-			++_numEnemies;
 		}
 		public function addEnemyAmmo(actor:Actor):void
 		{
@@ -372,10 +352,6 @@ package
 		public function get worldBounds():Bounds
 		{
 			return _worldBounds;
-		}
-		public function get numEnemies():uint
-		{
-			return _numEnemies;
 		}
 		// END IGameState implementation
 

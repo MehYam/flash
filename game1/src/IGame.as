@@ -13,7 +13,6 @@ package
 		function addEffect(actor:Actor):void;
 		function showPlayer(actor:Actor):void;
 		function centerPrint(text:String):void;
-		function get numEnemies():uint;
 
 		function start():void;
 		function stop():void;

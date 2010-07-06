@@ -172,11 +172,16 @@ package
 			return dummy;
 		}
 
-		static private const EXPLOSION_SIZE:Number = 2;
+		static private const EXPLOSION_SIZE:Number = 3;
 		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
+		static private var _colorKey:Object = {};
 		static public function createExplosionParticle(color:uint):DisplayObject
 		{
-			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
+			if (!_colorKey[color])
+			{
+				_colorKey[color] = new Object;
+			}
+			var bmd:BitmapData = s_rasterizationStore[_colorKey[color]] as BitmapData;
 			if (!bmd)
 			{
 				var particle:Shape = new Shape;

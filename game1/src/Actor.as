@@ -108,12 +108,11 @@ package
 			// yeah this sucks incredibly - it's because of how we pool particles
 			var colorClass:Class;
 			switch(color) {
-			case 0xff0000:
-				colorClass = CriticalExplosionParticleActor;
-				break;
 			case 0xffff00:
-			default:
 				colorClass = ExplosionParticleActor;
+				break;
+			default:
+				colorClass = CriticalExplosionParticleActor;
 				break;
 			}
 			for (var i:uint = 0; i < numParticles; ++i)

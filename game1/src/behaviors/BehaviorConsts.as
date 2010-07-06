@@ -24,11 +24,13 @@ package behaviors
 		public var MAX_SPEED:Number;
 		public var ACCELERATION:Number;
 		public var SPEED_DECAY:Number;
-		public function BehaviorConsts(speed:Number, accel:Number, decay:Number = 0)
+		public var RADIUS:Number;
+		public function BehaviorConsts(speed:Number, accel:Number, decay:Number = 0, radius:Number = 20)
 		{
 			MAX_SPEED = speed;
 			ACCELERATION = accel;
 			SPEED_DECAY = decay;
+			RADIUS = radius;
 		}
 	};
 }

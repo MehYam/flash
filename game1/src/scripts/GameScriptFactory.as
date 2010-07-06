@@ -12,7 +12,7 @@ package scripts
 		}
 		static public function get level1():IGameScript
 		{
-			return new Level1Script();
+			return new WaveBasedGameScript();
 		}
 	}
 }
@@ -188,7 +188,20 @@ final class Utils
 	}
 }
 
-final class TestScript implements IGameScript
+class BaseScript implements IGameScript
+{
+	public function begin(game:IGame):void
+	{
+	}	
+	// IGameEvents
+	public function onCenterPrintDone(text:String):void	{}
+
+	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
+	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
+	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
+}
+
+final class TestScript extends BaseScript
 {
 	private var _actors:int;
 	public function TestScript(actors:int)
@@ -196,7 +209,7 @@ final class TestScript implements IGameScript
 		_actors = actors;
 	}
 
-	public function begin(game:IGame):void
+	public override function begin(game:IGame):void
 	{
 		game.tiles = GrassTiles.testLevel;
 //		game.showPlayer(Utils.getBluePlayer());
@@ -217,10 +230,6 @@ final class TestScript implements IGameScript
 		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
 		Utils.addEnemy(game, Enemy.FIGHTER5);
 	}
-	
-	// IGameEvents
-	public function onCenterPrintDone(text:String):void	{}
-	public function onActorDeath(actor:Actor):void {}
 }
 
 final class Wave
@@ -233,16 +242,15 @@ final class Wave
 		this.number = number;
 	}
 }
-final class Level1Script implements IGameScript
+final class WaveBasedGameScript extends BaseScript
 {
 	private var _game:IGame;
 	private var _waveDelay:FrameTimer = new FrameTimer(addNextWave);
-	public function begin(game:IGame):void
+	public override function begin(game:IGame):void
 	{
 		_game = game;
 
 		game.tiles = GrassTiles.smallLevel;
-//		game.showPlayer(Utils.getBluePlayer());
 		game.showPlayer(Utils.getTankPlayer());
 		
 		game.start();
@@ -285,24 +293,52 @@ final class Level1Script implements IGameScript
 		}
 	}
 	// IGameEvents
-	public function onCenterPrintDone(text:String):void	
+	public override function onCenterPrintDone(text:String):void	
 	{
 		if (_waves.length)
 		{
 			_waveDelay.start(3000, 1);
 		}
 	}
-	public function onActorDeath(actor:Actor):void 
+
+	// IGameEvents
+	public override function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void
 	{
-		if (!_game.numEnemies)
+		damageActor(game, enemy, BehaviorConsts.PLAYER_HEALTH);
+		damageActor(game, game.player, 20);
+	}
+	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
+	{
+		damageActor(game, game.player, 10);
+		ammo.alive = false;
+	}
+	public override function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void
+	{
+		damageActor(game, enemy, 34);
+		ammo.alive = false;
+	}
+
+	private function damageActor(game:IGame, actor:Actor, damage:Number):void
+	{
+		const particles:uint = Math.min(damage/6, 15);
+		Actor.createExplosion(game, actor.worldPos, particles, actor == game.player ? 0xffffff : 0xffff00);
+
+		actor.health -= damage;
+		if (actor.health <= 0 && actor != game.player)
 		{
-			if (_waves.length)
+			actor.alive = false;
+			
+			--_enemies;
+			if (!_enemies)
 			{
-				_game.centerPrint("INCOMING");	
-			}
-			else
-			{
-				_game.centerPrint("CONGRATS LEVEL DONE");
+				if (_waves.length)
+				{
+					_game.centerPrint("INCOMING");	
+				}
+				else
+				{
+					_game.centerPrint("CONGRATS LEVEL DONE");
+				}
 			}
 		}
 	}
