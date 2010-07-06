@@ -54,17 +54,20 @@ final class Enemy
 
 final class Utils
 {
+	static private const REDROGUE_FIRESOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 0, -20);
+	static private const LASERSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.LASER, 0, -20);
+
 	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
 	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-	static public function attackAndFlee(msRate:uint):IBehavior
+	static public function attackAndFlee(source:AmmoFireSource, msRate:uint):IBehavior
 	{
 		return new AlternatingBehavior
 		(
 			msRate,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(AmmoType.BULLET, 300, 1000)),
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(source, 300, 1000)),
 			FLEE
 		);
 	}
@@ -73,7 +76,7 @@ final class Utils
 		return new CompositeBehavior
 		(
 			HOME,
-			BehaviorFactory.createAutofire(ammoType, msShootRate/2, msShootRate)
+			BehaviorFactory.createAutofire(LASERSOURCE, msShootRate/2, msShootRate)
 		);
 	}
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
@@ -114,7 +117,6 @@ final class Utils
 		return tank;
 	}
 	
-	static private const REDROGUE_FIRESOURCE:AmmoFireSource = new AmmoFireSource(0, -20);
 	static public function addEnemy(game:IGame, type:Enemy):Actor
 	{
 		var a:Actor;
@@ -122,8 +124,7 @@ final class Utils
 		case Enemy.REDROGUE:
 			a = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Red Rogue";
-			a.behavior = attackAndFlee(5000);
-			a.ammoFireSource = REDROGUE_FIRESOURCE;
+			a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 			break;
 		case Enemy.GREENK:
 			a = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
@@ -134,7 +135,7 @@ final class Utils
 			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(AmmoType.LASER, 1000, 3000),
+				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
 					3000,
 					HOME,
@@ -210,36 +211,18 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
-	
+
+	static private const TANK_SOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 0, -50);
+
+	private var _weapon:IBehavior = BehaviorFactory.createAutofire(TANK_SOURCE, 300, 300);
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
 	{
-		if (_fireRate.now)
-		{
-			const player:Actor = game.player;
-			var bullet:Actor = Actor.createBullet();
-			
-			if (player is TankActor)
-			{
-				bullet.launchDegrees(player.worldPos, TankActor(player).turretRotation);
-			}
-			else
-			{
-				bullet.launchDegrees(player.worldPos, player.displayObject.rotation);
-			}
-			game.addPlayerAmmo(bullet);
-		}
+		_weapon.onFrame(game, game.player);
 	}
 	public function onPlayerShootTo(game:IGame, to:Point):void
 	{
-		if (_fireRate.now)
-		{
-			const player:Actor = game.player;
-			var bullet:Actor = Actor.createBullet();
-			
-			bullet.launch(player.worldPos, to.x - player.displayObject.x, to.y - player.displayObject.y);
-			game.addPlayerAmmo(bullet);
-		}
+		_weapon.onFrame(game, game.player);
 	}
 }
 

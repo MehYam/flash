@@ -23,8 +23,6 @@ package
 		public var consts:BehaviorConsts;
 		public var health:Number;
 
-		public var ammoFireSource:AmmoFireSource;
-
 		public function Actor(dobj:DisplayObject, consts:BehaviorConsts = null)
 		{
 			displayObject = dobj;

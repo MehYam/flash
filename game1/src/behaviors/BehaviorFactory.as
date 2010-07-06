@@ -80,9 +80,9 @@ package behaviors
 		}
 
 		// Non-singletons
-		static public function createAutofire(type:AmmoType, msRateMin:uint, msRateMax:uint, source:AmmoFireSource = null):IBehavior
+		static public function createAutofire(source:AmmoFireSource, msRateMin:uint, msRateMax:uint):IBehavior
 		{
-			return new AutofireBehavior(type, new RateLimiter(msRateMin, msRateMax), source);
+			return new AutofireBehavior(source, new RateLimiter(msRateMin, msRateMax));
 		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
@@ -224,12 +224,10 @@ final class FadeBehavior implements IBehavior
 
 final class AutofireBehavior implements IBehavior
 {
-	private var _type:AmmoType;
 	private var _source:AmmoFireSource;
 	private var _rate:RateLimiter;
-	public function AutofireBehavior(type:AmmoType, rate:RateLimiter, source:AmmoFireSource = null):void
+	public function AutofireBehavior(source:AmmoFireSource, rate:RateLimiter):void
 	{
-		_type = type;
 		_source = source;
 		_rate = rate;
 	}
@@ -239,7 +237,7 @@ final class AutofireBehavior implements IBehavior
 		if (_rate.now)
 		{
 			var ammo:Actor;
-			switch(_type) {
+			switch(_source.ammoType) {
 				case AmmoType.BULLET:
 					ammo = Actor.createBullet();
 					break;
@@ -249,10 +247,10 @@ final class AutofireBehavior implements IBehavior
 					break;
 			}
 			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
-			if (actor.ammoFireSource)
+			if (_source)
 			{
 				Util.setPoint(po_tmp, actor.worldPos);
-				po_tmp.offset(actor.ammoFireSource.offsetX, actor.ammoFireSource.offsetY);
+				po_tmp.offset(_source.offsetX, _source.offsetY);
 				
 				MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
 				ammo.launchDegrees(po_tmp, angle);
@@ -261,7 +259,14 @@ final class AutofireBehavior implements IBehavior
 			{
 				ammo.launchDegrees(actor.worldPos, angle);
 			}
-			game.addEnemyAmmo(ammo);
+			if (game.player == actor)
+			{
+				game.addPlayerAmmo(ammo);
+			}
+			else
+			{
+				game.addEnemyAmmo(ammo);
+			}
 		}
 	}
 }
