@@ -408,6 +408,7 @@ import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
 import karnold.utils.MathUtil;
+import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
 final class Cast
@@ -431,17 +432,15 @@ final class Cast
 		return actor && actor.alive;
 	}
 	
-	private var _lastPurge:int;
+	private var _purgeRate:RateLimiter = new RateLimiter(5000, 5000);
 	public function purgeDead():void
 	{
-		const now:int = getTimer();
-		if (length > 800 || (now - _lastPurge) > 5000)
+		if (length > 800 || _purgeRate.now)
 		{
 			enemies = enemies.filter(actorIsAlive);
 			enemyAmmo = enemyAmmo.filter(actorIsAlive);
 			playerAmmo = playerAmmo.filter(actorIsAlive);
 			effects = effects.filter(actorIsAlive);
-			_lastPurge = now;
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package behaviors
 {
 	import flash.geom.Point;
+	
+	import karnold.utils.RateLimiter;
 
 	final public class BehaviorFactory
 	{
@@ -80,7 +82,7 @@ package behaviors
 		// Non-singletons
 		static public function createAutofire(type:AmmoType, msRateMin:uint, msRateMax:uint, source:AmmoFireSource = null):IBehavior
 		{
-			return new AutofireBehavior(type, msRateMin, msRateMax, source);
+			return new AutofireBehavior(type, new RateLimiter(msRateMin, msRateMax), source);
 		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
@@ -98,6 +100,7 @@ import flash.geom.Point;
 import flash.utils.getTimer;
 
 import karnold.utils.MathUtil;
+import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
 import scripts.TankActor;
@@ -216,72 +219,33 @@ final class FadeBehavior implements IBehavior
 	}
 }
 
-final class LimiterBehavior implements IBehavior
-{
-	private var _rateMin:uint;
-	private var _rateMax:uint;
-	private var _behavior:IBehavior;
-	private var _nextShot:uint;
-	public function LimiterBehavior(behavior:IBehavior, msRateMin:uint, msRateMax:uint)
-	{
-		_rateMin = msRateMin;
-		_rateMax = msRateMax;
-		_behavior = behavior;
-		_nextShot = calcNextShot(getTimer());
-	}
-	private function calcNextShot(start:uint):uint
-	{
-		return start + _rateMin + (_rateMax - _rateMin)*Math.random();
-	}
-	public function onFrame(game:IGame, actor:Actor):void
-	{
-		const now:int = getTimer();
-		if (now > _nextShot)
-		{
-			_behavior.onFrame(game, actor);
-			_nextShot = calcNextShot(now);
-		}		
-	}
-}
 final class AutofireBehavior implements IBehavior
 {
 	private var _type:AmmoType;
-	private var _rateMin:uint;
-	private var _rateMax:uint;
 	private var _source:AmmoFireSource;
-	private var _nextShot:uint;
-	public function AutofireBehavior(type:AmmoType, msRateMin:uint, msRateMax:uint, source:AmmoFireSource = null):void
+	private var _rate:RateLimiter;
+	public function AutofireBehavior(type:AmmoType, rate:RateLimiter, source:AmmoFireSource = null):void
 	{
 		_type = type;
-		_rateMin = msRateMin;
-		_rateMax = msRateMax;
 		_source = source;
-		
-		_nextShot = calcNextShot(getTimer());
-	}
-	private function calcNextShot(start:uint):uint
-	{
-		return start + _rateMin + (_rateMax - _rateMin)*Math.random();
+		_rate = rate;
 	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const now:int = getTimer();
-		if (now > _nextShot)
+		if (_rate.now)
 		{
 			var ammo:Actor;
 			switch(_type) {
-			case AmmoType.BULLET:
-				ammo = Actor.createBullet();
-				break;
-			case AmmoType.LASER:
-			case AmmoType.HIGHLASER:
-				ammo = Actor.createLaser();
-				break;
+				case AmmoType.BULLET:
+					ammo = Actor.createBullet();
+					break;
+				case AmmoType.LASER:
+				case AmmoType.HIGHLASER:
+					ammo = Actor.createLaser();
+					break;
 			}
 			ammo.launchDegrees(actor.worldPos, actor.displayObject.rotation);
 			game.addEnemyAmmo(ammo);
-
-			_nextShot = calcNextShot(now);
 		}
 	}
 }
