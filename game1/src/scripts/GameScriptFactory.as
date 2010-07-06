@@ -24,6 +24,7 @@ import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
 
+import flash.display.DisplayObject;
 import flash.geom.Point;
 
 import karnold.utils.Bounds;
@@ -215,14 +216,18 @@ class BaseScript implements IGameScript
 	static private const TANK_SOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 0, -50);
 
 	private var _weapon:IBehavior = BehaviorFactory.createAutofire(TANK_SOURCE, 300, 300);
+	private var _weaponPlane:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -20), 150, 150);
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
 	{
-		_weapon.onFrame(game, game.player);
+		_weaponPlane.onFrame(game, game.player);
 	}
 	public function onPlayerShootTo(game:IGame, to:Point):void
 	{
-		_weapon.onFrame(game, game.player);
+		var dobj:DisplayObject = game.player.displayObject;
+		dobj.rotation = MathUtil.getDegreesRotation(to.x - dobj.x, to.y - dobj.y);
+
+		_weaponPlane.onFrame(game, game.player);
 	}
 }
 
@@ -276,8 +281,8 @@ final class WaveBasedGameScript extends BaseScript
 		_game = game;
 
 		game.tiles = GrassTiles.smallLevel;
-//		game.showPlayer(Utils.getBluePlayer());
-		game.showPlayer(Utils.getTankPlayer());
+		game.showPlayer(Utils.getBluePlayer());
+//		game.showPlayer(Utils.getTankPlayer());
 		
 		game.start();
 		game.centerPrint("Level 1");
