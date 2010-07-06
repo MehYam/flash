@@ -251,7 +251,7 @@ final class WaveBasedGameScript extends BaseScript
 		_game = game;
 
 		game.tiles = GrassTiles.smallLevel;
-		game.showPlayer(Utils.getTankPlayer());
+		game.showPlayer(Utils.getBluePlayer());
 		
 		game.start();
 		game.centerPrint("Level 1");
@@ -304,8 +304,8 @@ final class WaveBasedGameScript extends BaseScript
 	// IGameEvents
 	public override function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void
 	{
-		damageActor(game, enemy, BehaviorConsts.PLAYER_HEALTH);
-		damageActor(game, game.player, 20);
+		damageActor(game, enemy, game.player.consts.COLLISION_DMG);
+		damageActor(game, game.player, enemy.consts.COLLISION_DMG);
 	}
 	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
 	{

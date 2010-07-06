@@ -199,12 +199,16 @@ package
 			}
 			return new Bitmap(bmd);
 		}
-		public static function createBullet():DisplayObject
+		public static function createBullet(color:uint = 0xff7f00):DisplayObject
 		{
-			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
+			if (!_colorKey[color])
+			{
+				_colorKey[color] = new Object;
+			}
+			var bmd:BitmapData = s_rasterizationStore[_colorKey[color]] as BitmapData;
 			if (!bmd)
 			{
-				var bullet:DisplayObject = createCircle(0xff7f00, 6, 6);
+				var bullet:DisplayObject = createCircle(color, 6, 6);
 				if (!RASTERIZING)
 				{
 					return bullet;
@@ -215,13 +219,17 @@ package
 			return new Bitmap(bmd);
 		}
 		private static const LASER_LENGTH:Number = 10;
-		public static function createLaser():DisplayObject
+		public static function createLaser(color:uint = 0xff0000):DisplayObject
 		{
-			var bmd:BitmapData = s_rasterizationStore[arguments.callee] as BitmapData;
+			if (!_colorKey[color])
+			{
+				_colorKey[color] = new Object;
+			}
+			var bmd:BitmapData = s_rasterizationStore[_colorKey[color]] as BitmapData;
 			if (!bmd)
 			{
 				var bullet:Shape = new Shape;
-				bullet.graphics.lineStyle(3, 0xff0000);
+				bullet.graphics.lineStyle(3, color);
 				bullet.graphics.moveTo(0, -LASER_LENGTH/2);
 				bullet.graphics.lineTo(0, LASER_LENGTH/2);
 				if (!RASTERIZING)
