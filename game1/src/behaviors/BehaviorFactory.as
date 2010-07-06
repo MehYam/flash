@@ -300,7 +300,7 @@ final class ExpireBehavior implements IBehavior, IResettable
 	{
 		if ((getTimer() - start) > lifetime)
 		{
-			actor.alive = false;
+			game.killActor(actor);
 		}
 	}
 	public function reset():void

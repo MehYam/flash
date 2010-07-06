@@ -13,6 +13,7 @@ package
 		function addPlayerAmmo(actor:Actor):void;
 		function addEffect(actor:Actor):void;
 		function showPlayer(actor:Actor):void;
+		function killActor(actor:Actor):void;
 		function centerPrint(text:String):void;
 
 		function start():void;

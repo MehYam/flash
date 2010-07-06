@@ -298,6 +298,14 @@ package
 		{
 			_cast.effects.push(actor);
 		}
+		public function killActor(actor:Actor):void
+		{
+			actor.alive = false;
+			if (_radar)
+			{
+				_radar.remove(actor);
+			}
+		}
 		public function get player():Actor
 		{
 			return _player;

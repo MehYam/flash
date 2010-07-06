@@ -45,6 +45,7 @@ package
 			if (!dot)
 			{
 				dot = new Shape;
+				dot.graphics.lineStyle(1);
 				dot.graphics.beginFill(color);
 				dot.graphics.drawCircle(-1, -1, 2);
 				dot.graphics.endFill();
