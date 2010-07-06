@@ -65,8 +65,8 @@ package
 			_actorLayer.scrollRect = this.scrollRect;
 			parent.addChild(_actorLayer);
 
-			_currentScript = GameScriptFactory.testScript1;
-//			_currentScript = GameScriptFactory.testScript2;
+//			_currentScript = GameScriptFactory.testScript1;
+			_currentScript = GameScriptFactory.testScript2;
 //			_currentScript = GameScriptFactory.level1;
 			_currentScript.begin(this);
 		}

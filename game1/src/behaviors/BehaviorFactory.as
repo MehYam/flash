@@ -233,6 +233,7 @@ final class AutofireBehavior implements IBehavior
 		_source = source;
 		_rate = rate;
 	}
+ 	static private var po_tmp:Point = new Point;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (_rate.now)
@@ -247,7 +248,19 @@ final class AutofireBehavior implements IBehavior
 					ammo = Actor.createLaser();
 					break;
 			}
-			ammo.launchDegrees(actor.worldPos, actor.displayObject.rotation);
+			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
+			if (actor.ammoFireSource)
+			{
+				Util.setPoint(po_tmp, actor.worldPos);
+				po_tmp.offset(actor.ammoFireSource.offsetX, actor.ammoFireSource.offsetY);
+				
+				MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
+				ammo.launchDegrees(po_tmp, angle);
+			}
+			else
+			{
+				ammo.launchDegrees(actor.worldPos, angle);
+			}
 			game.addEnemyAmmo(ammo);
 		}
 	}

@@ -17,6 +17,7 @@ package scripts
 	}
 }
 import behaviors.AlternatingBehavior;
+import behaviors.AmmoFireSource;
 import behaviors.AmmoType;
 import behaviors.BehaviorConsts;
 import behaviors.BehaviorFactory;
@@ -113,6 +114,7 @@ final class Utils
 		return tank;
 	}
 	
+	static private const REDROGUE_FIRESOURCE:AmmoFireSource = new AmmoFireSource(0, -20);
 	static public function addEnemy(game:IGame, type:Enemy):Actor
 	{
 		var a:Actor;
@@ -121,6 +123,7 @@ final class Utils
 			a = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Red Rogue";
 			a.behavior = attackAndFlee(5000);
+			a.ammoFireSource = REDROGUE_FIRESOURCE;
 			break;
 		case Enemy.GREENK:
 			a = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
@@ -265,9 +268,9 @@ final class TestScript extends BaseScript
 	private function addTestActors(game:IGame):void
 	{
 		Utils.addEnemy(game, Enemy.REDROGUE);
-		Utils.addEnemy(game, Enemy.GREENK);
-		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
-		Utils.addEnemy(game, Enemy.FIGHTER5);
+//		Utils.addEnemy(game, Enemy.GREENK);
+//		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
+//		Utils.addEnemy(game, Enemy.FIGHTER5);
 	}
 }
 

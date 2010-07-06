@@ -30,6 +30,15 @@ package karnold.utils
 		{
 			return degrees * DEGREES_TO_RADIANS;
 		}
+		static public function rotatePoint(origin:Point, point:Point, degrees:Number):void
+		{
+			const deltaX:Number = point.x - origin.x;
+			const deltaY:Number = point.y - origin.y;
+			const radians:Number = degreesToRadians(degrees);
+			
+			point.x = Math.cos(radians)*deltaX - Math.sin(radians)*deltaY + origin.x;
+			point.y = Math.sin(radians)*deltaX + Math.cos(radians)*deltaY + origin.y;
+		}
 		static public function distanceBetweenPoints(a:Point, b:Point):Number
 		{
 			var x:Number = a.x - b.x;
