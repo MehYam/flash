@@ -306,7 +306,7 @@ package {
 		private var _pm:ProgressMeter;
 		private function testProgressMeter():void
 		{
-			var pm:ProgressMeter = new ProgressMeter(100, 20, 0x0000ff, 0xffff00);
+			var pm:ProgressMeter = new ProgressMeter(100, 20, 0, 0xff);
 			pm.x = 10;
 			pm.y = 10;
 			
@@ -318,6 +318,7 @@ package {
 		private function onClick(e:MouseEvent):void
 		{
 			_pm.pct = e.stageX / stage.stageWidth;
+			trace(e.stageX / stage.stageWidth);
 		}
 	}
 }

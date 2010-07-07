@@ -13,6 +13,8 @@ package karnold.ui
 		{
 			_width = width;
 
+//			var bmd:BitmapData = new BitmapData(width, height);
+//			bmd.perlinNoise( bmd.width/5, bmd.height/5, 8, 69, true, true, 1, false)
 			var bmd:BitmapData = new BitmapData(1, 1);
 			bmd.setPixel(0, 0, bgColor);
 			
