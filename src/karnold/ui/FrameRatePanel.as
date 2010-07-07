@@ -1,4 +1,4 @@
-package karnold.utils
+package karnold.ui
 {
 	import flash.display.DisplayObject;
 	import flash.display.SimpleButton;
@@ -13,7 +13,7 @@ package karnold.utils
 	import flash.utils.getTimer;
 	
 	import karnold.utils.FrameTimer;
-	import karnold.utils.NumericRasterTextField;
+	import karnold.utils.Util;
 	
 	public class FrameRatePanel extends Sprite
 	{

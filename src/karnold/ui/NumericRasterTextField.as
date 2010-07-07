@@ -1,4 +1,4 @@
-package karnold.utils
+package karnold.ui
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;

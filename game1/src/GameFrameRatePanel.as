@@ -4,8 +4,8 @@ package
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	import karnold.utils.FrameRatePanel;
-	import karnold.utils.NumericRasterTextField;
+	import karnold.ui.FrameRatePanel;
+	import karnold.ui.NumericRasterTextField;
 	import karnold.utils.Util;
 	
 	public class GameFrameRatePanel extends FrameRatePanel
