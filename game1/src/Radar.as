@@ -2,6 +2,7 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.geom.Point;
@@ -38,18 +39,28 @@ package
 			_scaling = new Point(width / bounds.width, height / bounds.height);
 		}
 
+		static private var s_rasterizationStore:Dictionary = new Dictionary;
+
+		//KAI: prolly need to pool here too
 		private var _dots:Dictionary = new Dictionary(true);
 		public function plot(actor:Actor, color:uint = 0xff0000):void
 		{
-			var dot:Shape = _dots[actor] as Shape;
+			var dot:DisplayObject = _dots[actor] as DisplayObject;
 			if (!dot)
 			{
-				dot = new Shape;
-				dot.graphics.lineStyle(1);
-				dot.graphics.beginFill(color);
-				dot.graphics.drawCircle(-1, -1, 2);
-				dot.graphics.endFill();
-				
+				var bmd:BitmapData = s_rasterizationStore[color];
+				if (!bmd)
+				{
+					var canvas:Shape = new Shape;
+					canvas.graphics.lineStyle(1);
+					canvas.graphics.beginFill(color);
+					canvas.graphics.drawCircle(-1, -1, 2);
+					canvas.graphics.endFill();
+					
+					bmd = SimpleActorAsset.rasterize(canvas);
+					s_rasterizationStore[color] = bmd;
+				}
+				dot = new Bitmap(bmd);
 				_dots[actor] = dot;
 				
 				addChild(dot);
@@ -59,7 +70,7 @@ package
 		}
 		public function remove(actor:Actor):void
 		{
-			var dot:Shape = _dots[actor] as Shape;
+			var dot:DisplayObject = _dots[actor] as DisplayObject;
 			if (dot)
 			{
 				removeChild(dot);

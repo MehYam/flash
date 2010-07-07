@@ -25,7 +25,7 @@ package
 			mouseEnabled = false;
 		}
 
-		static private function rasterize(target:DisplayObject):BitmapData
+		static public function rasterize(target:DisplayObject):BitmapData
 		{
 			const bounds:Rectangle = target.getBounds(target);
 			var bitmapData:BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
@@ -259,7 +259,7 @@ package
 		{
 			var wo:Shape = new Shape;
 			
-			wo.graphics.lineStyle(0, color);
+			wo.graphics.lineStyle(0);
 			wo.graphics.beginFill(color);
 			wo.graphics.drawEllipse(-width/2, -height/2, width, height);
 			wo.graphics.endFill();
