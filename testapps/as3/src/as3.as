@@ -19,6 +19,7 @@ package {
 	import flash.text.TextFormat;
 	import flash.utils.getTimer;
 	
+	import karnold.ui.ProgressMeter;
 	import karnold.utils.FrameTimer;
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
@@ -46,7 +47,9 @@ package {
 			
 //			testBitmapDataTransform();
 			
-			testArrayVarargs();
+//			testArrayVarargs();
+			
+			testProgressMeter();
 		}
 	
 		private function testTextField():void
@@ -298,6 +301,23 @@ package {
 			{
 				trace(obj);
 			}
+		}
+
+		private var _pm:ProgressMeter;
+		private function testProgressMeter():void
+		{
+			var pm:ProgressMeter = new ProgressMeter(100, 20, 0x0000ff, 0xffff00);
+			pm.x = 10;
+			pm.y = 10;
+			
+			addChild(pm);
+			_pm = pm;
+			
+			Util.listen(stage, MouseEvent.CLICK, onClick);
+		}
+		private function onClick(e:MouseEvent):void
+		{
+			_pm.pct = e.stageX / stage.stageWidth;
 		}
 	}
 }
