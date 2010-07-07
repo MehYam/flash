@@ -25,12 +25,13 @@ package
 			Util.removeAllChildren(this);
 			
 			var rect:Shape = new Shape;
-			rect.graphics.lineStyle(2);
+			rect.graphics.lineStyle(4);
 			rect.graphics.drawRect(0, 0, width, height);
 
 			//http://polygeek.com/1780_flex_explorer-bitmapdata-perlin-noise
 			var bmd:BitmapData = new BitmapData(width, height, true, 0);
 			bmd.perlinNoise( 436, 441, 7, 45, true, true, 2, true);
+//			bmd.perlinNoise( 400, 300, 2, 53, true, true, 2, false);
 			bmd.draw(rect);
 			
 			_background = new Bitmap(bmd);
