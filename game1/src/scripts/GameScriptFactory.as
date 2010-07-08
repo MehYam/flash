@@ -349,7 +349,7 @@ final class WaveBasedGameScript extends BaseScript
 	// IGameEvents
 	public override function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void
 	{
-		damageActor(game, enemy, game.player.consts.COLLISION_DMG);
+		damageActor(game, enemy, game.player.consts.COLLISION_DMG, true);
 		damageActor(game, game.player, enemy.consts.COLLISION_DMG);
 	}
 	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
@@ -363,7 +363,7 @@ final class WaveBasedGameScript extends BaseScript
 		game.killActor(ammo);
 	}
 
-	private function damageActor(game:IGame, actor:Actor, damage:Number):void
+	private function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
 	{
 		const particles:uint = Math.min(damage/6, 15);
 		Actor.createExplosion(game, actor.worldPos, particles, actor == game.player ? 0xffffff : 0xffff00);
@@ -375,11 +375,13 @@ final class WaveBasedGameScript extends BaseScript
 		}
 		else if (actor.health <= 0)
 		{
-			_stats.earnings += actor.value;
-			game.scoreBoard.earnings = _stats.earnings * (_stats.combo/10);
-			game.scoreBoard.combo = ++_stats.combo;
-			_comboTimer.start(COMBO_LAPSE);
-
+			if (!struckByEnemy)
+			{
+				_stats.earnings += actor.value;
+				game.scoreBoard.earnings = _stats.earnings * (_stats.combo/10);
+				game.scoreBoard.combo = ++_stats.combo;
+				_comboTimer.start(COMBO_LAPSE);
+			}
 			game.killActor(actor);
 
 			--_enemies;

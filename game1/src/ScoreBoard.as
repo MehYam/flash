@@ -25,6 +25,7 @@ package
 			var labelFormat:TextFormat = new TextFormat("Radio Stars", 24, null);
 			var labelField:ShadowTextField = new ShadowTextField(labelFormat);
 			labelField.text = "Health:";
+			labelField.cacheAsBitmap = true;
 			addChild(labelField);
 
 			_health = new ProgressMeter(120, 18, 0, 0xff0000);
@@ -38,6 +39,7 @@ package
 			labelField = new ShadowTextField(labelFormat);
 			labelField.text = "Level:";
 			labelField.x = horz;
+			labelField.cacheAsBitmap = true;
 			addChild(labelField);
 			
 			_level = new ProgressMeter(120, 18, 0, 0x0033ff);
@@ -51,6 +53,7 @@ package
 			
 			labelField = new ShadowTextField(labelFormat);
 			labelField.text = "Earnings:";
+			labelField.cacheAsBitmap = true;
 			labelField.y = vert;
 			horz = labelField.x + labelField.width + GAP/2;
 			addChild(labelField);
