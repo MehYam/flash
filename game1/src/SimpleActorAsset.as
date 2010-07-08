@@ -2,6 +2,8 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.BitmapDataChannel;
+	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Graphics;
@@ -12,10 +14,13 @@ package
 	import flash.filters.BitmapFilter;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
 	import karnold.utils.Util;
+	
+	import spark.primitives.Rect;
 	
 	public final class SimpleActorAsset extends Sprite
 	{
@@ -33,9 +38,33 @@ package
 			var matrix:Matrix = new Matrix;
 			matrix.translate(-bounds.left, -bounds.top);
 			bitmapData.draw(target, matrix);
+			
+			perlinizeIt(bitmapData);
 			return bitmapData;
 		}
 
+		static private var s_perlinTemplate:BitmapData;
+		static private var s_perlinWorkspace:BitmapData;
+		static private var s_perlinRect:Rectangle;
+		static private function perlinizeIt(bmd:BitmapData):void
+		{
+			if (!s_perlinTemplate)
+			{
+				s_perlinRect = new Rectangle(0, 0, 200, 200);
+				s_perlinTemplate = new BitmapData( s_perlinRect.width, s_perlinRect.height );
+				s_perlinTemplate.perlinNoise( 165, 125, 4, 93, true, true, 0x7, false);
+				
+				s_perlinWorkspace = new BitmapData( s_perlinTemplate.width, s_perlinTemplate.height);
+			}
+			s_perlinWorkspace.copyPixels(s_perlinTemplate, s_perlinRect, new Point(0, 0)); 
+			s_perlinWorkspace.copyChannel(bmd,
+				new Rectangle(0, 0, bmd.width, bmd.height),
+				new Point(0, 0),
+				BitmapDataChannel.ALPHA,
+				BitmapDataChannel.ALPHA);
+			bmd.draw(s_perlinWorkspace, null, null, BlendMode.OVERLAY);
+		}
+		
 		static private const RASTERIZING:Boolean = true;
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
@@ -195,7 +224,7 @@ package
 				}
 				
 				bmd = rasterize(particle);
-				s_rasterizationStore[arguments.callee] = bmd;
+				s_rasterizationStore[_colorKey[color]] = bmd;
 			}
 			return new Bitmap(bmd);
 		}
@@ -214,7 +243,7 @@ package
 					return bullet;
 				}
 				bmd = rasterize(bullet);
-				s_rasterizationStore[arguments.callee] = bmd;
+				s_rasterizationStore[_colorKey[color]] = bmd;
 			}
 			return new Bitmap(bmd);
 		}
@@ -237,7 +266,7 @@ package
 					return bullet;
 				}
 				bmd = rasterize(bullet);
-				s_rasterizationStore[arguments.callee] = bmd;
+				s_rasterizationStore[_colorKey[color]] = bmd;
 			}
 			return new Bitmap(bmd);
 		}

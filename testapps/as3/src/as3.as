@@ -49,7 +49,9 @@ package {
 			
 //			testArrayVarargs();
 			
-			testProgressMeter();
+//			testProgressMeter();
+			
+			testPerlinNoise();
 		}
 	
 		private function testTextField():void
@@ -313,12 +315,16 @@ package {
 			addChild(pm);
 			_pm = pm;
 			
-			Util.listen(stage, MouseEvent.CLICK, onClick);
+			Util.listen(stage, MouseEvent.CLICK, testProgressMeter_onClick);
 		}
-		private function onClick(e:MouseEvent):void
+		private function testProgressMeter_onClick(e:MouseEvent):void
 		{
 			_pm.pct = e.stageX / stage.stageWidth;
 			trace(e.stageX / stage.stageWidth);
+		}
+		
+		private function testPerlinNoise():void
+		{
 		}
 	}
 }
