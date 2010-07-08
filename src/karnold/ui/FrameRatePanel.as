@@ -63,7 +63,7 @@ package karnold.ui
 			addFieldOnNextLine(_txtTotalMemoryDelta);	
 			_txtTotalMemoryDelta.x = 15;
 
-			_btn = addButton(100, 20, 0x777700);
+			_btn = addButton(100, 20, 0xeeeeee);
 			_btn.addEventListener(MouseEvent.CLICK, onBtnClick);	
 		}	
 
@@ -138,7 +138,7 @@ package karnold.ui
 			_txtTotalMemory.integer = totalMemoryKB; 
 
 			const time:int = getTimer();
-			const periodRender:Boolean = (time - _lastRender) > 2000;
+			const periodRender:Boolean = (time - _lastRender) > 1000;
 			if (periodRender)
 			{			
 				_txtTotalMemoryDelta.integer = totalMemoryKB - _lastTotalMemoryKB;
@@ -148,7 +148,7 @@ package karnold.ui
 
 				if (!_lastRender)
 				{
-					graphics.beginFill(0xaaaa00, 0.8);
+					graphics.beginFill(0xaaaa00);
 					graphics.drawRect(0, 0, width + 10, height + 10);
 					graphics.endFill();
 				}

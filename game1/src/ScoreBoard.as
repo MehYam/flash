@@ -8,42 +8,69 @@ package
 	
 	public class ScoreBoard extends Sprite
 	{
+		static private const GAP:Number = 10;
+		
+		private var _health:ProgressMeter;
+		private var _level:ProgressMeter;
+		private var _earnings:ShadowTextField;
 		public function ScoreBoard()
 		{
 			super();
 			
-			var labelFormat:TextFormat = new TextFormat("Impact", 24);
+			mouseEnabled = false;
+			mouseChildren = false;
+			
+			var labelFormat:TextFormat = new TextFormat("Impact", 24, null, true);
 			var labelField:ShadowTextField = new ShadowTextField(labelFormat);
 			labelField.text = "Health:";
 			addChild(labelField);
 
-			var health:ProgressMeter = new ProgressMeter(150, 18, 0, 0xff0000);
-			health.pct = .30;
-			health.x = labelField.x + labelField.width + 10;
-			health.y = labelField.y + 10;
-			addChild(health);
+			_health = new ProgressMeter(150, 18, 0, 0xff0000);
+			_health.pct = .30;
+			_health.x = labelField.x + labelField.width + GAP/2;
+			_health.y = labelField.y + GAP;
+			addChild(_health);
 
-			var vert:Number = health.x + health.width + 5;
+			var horz:Number = _health.x + _health.width + GAP;
 
 			labelField = new ShadowTextField(labelFormat);
 			labelField.text = "Level:";
-			labelField.x = vert;
+			labelField.x = horz;
 			addChild(labelField);
 			
-			var progress:ProgressMeter = new ProgressMeter(150, 18, 0, 0x0033ff);
-			progress.pct = .5;
-			progress.x = labelField.x + labelField.width + 10;
-			progress.y = health.y;
-			addChild(progress);
+			_level = new ProgressMeter(150, 18, 0, 0x0033ff);
+			_level.pct = .5;
+			_level.x = labelField.x + labelField.width + GAP/2;
+			_level.y = _health.y;
+			addChild(_level);
 
-			var horz:Number = labelField.y + labelField.height;
+			var vert:Number = labelField.y + labelField.height;
 			addChild(labelField);
 			
 			labelField = new ShadowTextField(labelFormat);
 			labelField.text = "Earnings:";
-			labelField.y = horz;
+			labelField.y = vert;
+			horz = labelField.x + labelField.width + GAP/2;
 			addChild(labelField);
 			
+			_earnings = new ShadowTextField(labelFormat);
+			_earnings.text = "0";
+			_earnings.x = horz;
+			_earnings.y = vert;
+			addChild(_earnings);
+		}
+		
+		public function set pctLevel(p:Number):void
+		{
+			_level.pct = p;
+		}
+		public function set pctHealth(p:Number):void
+		{
+			_health.pct = p;
+		}
+		public function set earnings(e:uint):void
+		{
+			_earnings.text = String(e);
 		}
 	}
 }

@@ -16,6 +16,8 @@ package
 		public function Radar()
 		{
 			super();
+			mouseEnabled = false;
+			mouseChildren = false;
 		}
 
 		private var _background:Bitmap;

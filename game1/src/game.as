@@ -97,6 +97,7 @@ package
 				else
 				{
 					_frameRate.enabled = true;
+					_frameRate.y = _sb.y + _sb.height;
 					parent.addChild(_frameRate);
 				}
 			}
@@ -310,7 +311,12 @@ package
 		{
 			return _player;
 		}
+		public function get scoreBoard():ScoreBoard
+		{
+			return _sb;
+		}
 		private var _radar:Radar;
+		private var _sb:ScoreBoard;
 		public function set tiles(str:String):void
 		{
 			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
@@ -324,13 +330,14 @@ package
 			_radar = new Radar;
 			_radar.render(_worldBounds, 150, 100);
 			_radar.alpha = 0.7;
-			_radar.x = stage.stageWidth - _radar.width;
-			
+			_radar.x = stage.stageWidth - _radar.width - 5;
+			_radar.y = 5;
+
 			_hudLayer.addChild(_radar);
 			
-			var sb:ScoreBoard = new ScoreBoard;
-			sb.alpha = 0.8;
-			_hudLayer.addChild(sb);
+			_sb = new ScoreBoard;
+			_sb.x = 5;
+			_hudLayer.addChild(_sb);
 		}
 		public function centerPrint(text:String):void
 		{

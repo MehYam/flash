@@ -16,19 +16,23 @@ package
 	{
 		private var _alive:Boolean = true;
 
-		public var name:String;
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
 		public var consts:BehaviorConsts;
+
+		// meta-data that really doesn't belong here
 		public var health:Number;
+		public var name:String;
+		public var value:uint;
 
 		public function Actor(dobj:DisplayObject, consts:BehaviorConsts = null)
 		{
 			displayObject = dobj;
 			this.consts = consts;
 			
-			health = BehaviorConsts.PLAYER_HEALTH;
+			health = BehaviorConsts.MAX_HEALTH;
+			value = BehaviorConsts.DEFAULT_VALUE;
 		}
 		
 		private var _behavior:IBehavior;

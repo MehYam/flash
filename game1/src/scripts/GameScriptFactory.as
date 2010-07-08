@@ -241,9 +241,9 @@ final class TestScript extends BaseScript
 
 	public override function begin(game:IGame):void
 	{
-		game.tiles = GrassTiles.testLevel;
-//		game.showPlayer(Utils.getBluePlayer());
-		game.showPlayer(Utils.getTankPlayer());
+		game.tiles = GrassTilesAssets.testLevel;
+		game.showPlayer(Utils.getBluePlayer());
+//		game.showPlayer(Utils.getTankPlayer());
 		game.start();
 		game.centerPrint("Level 1");
 		
@@ -276,16 +276,21 @@ final class WaveBasedGameScript extends BaseScript
 {
 	private var _game:IGame;
 	private var _waveDelay:FrameTimer = new FrameTimer(addNextWave);
+	private var _stats:Stats = new Stats;
 	public override function begin(game:IGame):void
 	{
 		_game = game;
 
-		game.tiles = GrassTiles.smallLevel;
+		game.tiles = GrassTilesAssets.smallLevel;
 		game.showPlayer(Utils.getBluePlayer());
 //		game.showPlayer(Utils.getTankPlayer());
 		
 		game.start();
 		game.centerPrint("Level 1");
+
+		game.scoreBoard.pctHealth = 1;
+		game.scoreBoard.pctLevel = 0;
+		game.scoreBoard.earnings = 0;
 	}
 
 	private var _waves:Array = 
@@ -299,11 +304,13 @@ final class WaveBasedGameScript extends BaseScript
 		[new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 3)],
 		[new Wave(Enemy.GREENK, 5), new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 5)]
 	];
+	private const NUMWAVES:uint = _waves.length;
 
 	static private const _tmpArray:Array = [];
 	private var _enemies:uint = 0;
 	private function addNextWave():void
 	{
+		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
 		if (_waves.length)
 		{
 			var next:Object = _waves.shift();
@@ -330,6 +337,10 @@ final class WaveBasedGameScript extends BaseScript
 		{
 			_waveDelay.start(3000, 1);
 		}
+		else
+		{
+			_game.scoreBoard.pctLevel = 1;
+		}
 	}
 
 	// IGameEvents
@@ -355,8 +366,14 @@ final class WaveBasedGameScript extends BaseScript
 		Actor.createExplosion(game, actor.worldPos, particles, actor == game.player ? 0xffffff : 0xffff00);
 
 		actor.health -= damage;
-		if (actor.health <= 0 && actor != game.player)
+		if (actor == game.player)
 		{
+			game.scoreBoard.pctHealth = actor.health / BehaviorConsts.MAX_HEALTH;
+		}
+		else if (actor.health <= 0)
+		{
+			_stats.earnings += actor.value;
+			game.scoreBoard.earnings = _stats.earnings;
 			game.killActor(actor);
 			
 			--_enemies;
@@ -364,7 +381,7 @@ final class WaveBasedGameScript extends BaseScript
 			{
 				if (_waves.length)
 				{
-					_game.centerPrint("INCOMING");	
+					_game.centerPrint("INCOMING WAVE " + (NUMWAVES - _waves.length));	
 				}
 				else
 				{
@@ -375,7 +392,14 @@ final class WaveBasedGameScript extends BaseScript
 	}
 }
 
-final class GrassTiles
+final class Stats
+{
+	public var earnings:uint;
+	public var levelsDone:Object;
+	public var purchasedItems:Object;
+}
+
+final class GrassTilesAssets
 {
 	[Embed(source="assets/level1_small.txt", mimeType="application/octet-stream")]
 	static private const SmallLevel:Class;

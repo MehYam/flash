@@ -17,11 +17,10 @@ package behaviors
 		static public const LASER_LIFETIME:uint = 3000;
 		static public const BULLET_LIFETIME:uint = 1200;
 		static public const EXPLOSION_LIFETIME:uint = 700;
-
-		// these DON'T belong here
-		static public const PLAYER_HEALTH:Number = 100;
-		static public const PLAYER_ENERGY:Number = 100;
 		
+		static public const MAX_HEALTH:uint = 100;
+		static public const DEFAULT_VALUE:uint = 10;
+
 		public var MAX_SPEED:Number;
 		public var ACCELERATION:Number;
 		public var SPEED_DECAY:Number;

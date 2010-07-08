@@ -5,6 +5,8 @@ package karnold.ui
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	
+	import karnold.utils.MathUtil;
+	
 	public class ProgressMeter extends Sprite
 	{
 		private var _meter:DisplayObject;
@@ -32,7 +34,8 @@ package karnold.ui
 		
 		public function set pct(percent:Number):void
 		{
-			_meter.scaleX = _width * percent; 
+			const scale:Number = MathUtil.constrainToRange(_width*percent, 0, _width);
+			_meter.scaleX = scale; 
 		}
 	}
 }

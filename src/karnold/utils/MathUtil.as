@@ -99,6 +99,18 @@ package karnold.utils
 			}
 			return value;
 		}
+		static public function constrainToRange(value:Number, min:Number, max:Number):Number
+		{
+			if (value < min)
+			{
+				return min;
+			}
+			if (value > max)
+			{
+				return max;
+			}
+			return value;
+		}
 		static public function objectIsContained(dobj:DisplayObject, left:Number, top:Number, width:Number, height:Number):Boolean
 		{
 			return	dobj.x >= left &&

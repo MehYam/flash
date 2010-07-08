@@ -5,9 +5,6 @@ package
 
 	public interface IGame
 	{
-		function get player():Actor;
-		function set tiles(str:String):void;
-
 		function addEnemy(actor:Actor):void;
 		function addEnemyAmmo(actor:Actor):void;
 		function addPlayerAmmo(actor:Actor):void;
@@ -18,10 +15,13 @@ package
 
 		function start():void;
 		function stop():void;
+
+		function set tiles(str:String):void;
+
 		function get running():Boolean;
-		
 		function get worldBounds():Bounds;
-		
 		function get input():Input;
+		function get player():Actor;
+		function get scoreBoard():ScoreBoard;
 	}
 }
