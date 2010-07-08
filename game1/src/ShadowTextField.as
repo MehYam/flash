@@ -27,7 +27,15 @@ package
 			addChild(_bottom);
 			addChild(_top);
 		}
-		
+
+		public function set fgColor(color:uint):void
+		{
+			_top.textColor = color;
+		}
+		public function set bgColor(color:uint):void
+		{
+			_bottom.textColor = color;
+		}
 		public function set text(str:String):void
 		{
 			_top.text = str;

@@ -2,10 +2,12 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.BitmapDataChannel;
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
 	import karnold.utils.Bounds;
@@ -30,9 +32,11 @@ package
 			rect.graphics.lineStyle(4);
 			rect.graphics.drawRect(0, 0, width, height);
 
-			//http://polygeek.com/1780_flex_explorer-bitmapdata-perlin-noise
+			scrollRect = new Rectangle(0, 0, width, height);
+
+			//http://polygeek.com/1780_flex_explorer-bitmapdata-perlin-noise	
 			var bmd:BitmapData = new BitmapData(width, height, true, 0);
-			bmd.perlinNoise( 436, 441, 7, 45, true, true, 2, true);
+			bmd.perlinNoise( 436, 441, 7, 45, false, true, BitmapDataChannel.GREEN, true);
 //			bmd.perlinNoise( 400, 300, 2, 53, true, true, 2, false);
 			bmd.draw(rect);
 			
@@ -45,8 +49,9 @@ package
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
 		//KAI: prolly need to pool here too
+		static private const DOT_RADIUS:Number = 1.5;
 		private var _dots:Dictionary = new Dictionary(true);
-		public function plot(actor:Actor, color:uint = 0xff0000):void
+		public function plot(actor:Actor, color:uint = 0xff2222):void
 		{
 			var dot:DisplayObject = _dots[actor] as DisplayObject;
 			if (!dot)
@@ -57,7 +62,7 @@ package
 					var canvas:Shape = new Shape;
 					canvas.graphics.lineStyle(1);
 					canvas.graphics.beginFill(color);
-					canvas.graphics.drawCircle(-1, -1, 2);
+					canvas.graphics.drawCircle(-DOT_RADIUS, -DOT_RADIUS, DOT_RADIUS*2);
 					canvas.graphics.endFill();
 					
 					bmd = SimpleActorAsset.rasterize(canvas);
@@ -68,8 +73,8 @@ package
 				
 				addChild(dot);
 			}
-			dot.x = actor.worldPos.x * _scaling.x;
-			dot.y = actor.worldPos.y * _scaling.y;
+			dot.x = actor.worldPos.x * _scaling.x - dot.width/2;
+			dot.y = actor.worldPos.y * _scaling.y - dot.height/2;
 		}
 		public function remove(actor:Actor):void
 		{

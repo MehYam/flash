@@ -274,8 +274,11 @@ final class Wave
 }
 final class WaveBasedGameScript extends BaseScript
 {
+	static private const COMBO_LAPSE:uint = 2000;
+
 	private var _game:IGame;
 	private var _waveDelay:FrameTimer = new FrameTimer(addNextWave);
+	private var _comboTimer:FrameTimer = new FrameTimer(decreaseCombo);
 	private var _stats:Stats = new Stats;
 	public override function begin(game:IGame):void
 	{
@@ -373,9 +376,12 @@ final class WaveBasedGameScript extends BaseScript
 		else if (actor.health <= 0)
 		{
 			_stats.earnings += actor.value;
-			game.scoreBoard.earnings = _stats.earnings;
+			game.scoreBoard.earnings = _stats.earnings * (_stats.combo/10);
+			game.scoreBoard.combo = ++_stats.combo;
+			_comboTimer.start(COMBO_LAPSE);
+
 			game.killActor(actor);
-			
+
 			--_enemies;
 			if (!_enemies)
 			{
@@ -390,6 +396,18 @@ final class WaveBasedGameScript extends BaseScript
 			}
 		}
 	}
+	
+	private function decreaseCombo():void
+	{
+		if (_stats.combo)
+		{
+			_game.scoreBoard.combo = --_stats.combo;
+		}
+		else
+		{
+			_comboTimer.stop();
+		}
+	}
 }
 
 final class Stats
@@ -397,6 +415,7 @@ final class Stats
 	public var earnings:uint;
 	public var levelsDone:Object;
 	public var purchasedItems:Object;
+	public var combo:uint;
 }
 
 final class GrassTilesAssets

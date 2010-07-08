@@ -5,6 +5,7 @@ package
 	import flash.text.TextFormat;
 	
 	import karnold.ui.ProgressMeter;
+	import karnold.utils.FrameTimer;
 	
 	public class ScoreBoard extends Sprite
 	{
@@ -13,6 +14,7 @@ package
 		private var _health:ProgressMeter;
 		private var _level:ProgressMeter;
 		private var _earnings:ShadowTextField;
+		private var _comboIndicator:ShadowTextField;
 		public function ScoreBoard()
 		{
 			super();
@@ -58,6 +60,12 @@ package
 			_earnings.x = horz;
 			_earnings.y = vert;
 			addChild(_earnings);
+			
+			_comboIndicator = new ShadowTextField(new TextFormat("Radio Stars", 18, null, true));
+			_comboIndicator.x = _earnings.x;
+			_comboIndicator.y = _earnings.y + _earnings.height;
+			combo = 1;
+			addChild(_comboIndicator);
 		}
 		
 		public function set pctLevel(p:Number):void
@@ -71,6 +79,40 @@ package
 		public function set earnings(e:uint):void
 		{
 			_earnings.text = String(e);
+		}
+		private var _comboAnimate:FrameTimer = new FrameTimer(onComboAnimate);
+		private var _lastCombo:uint;
+		private var _color:uint = 0xffffff;
+		public function set combo(val:uint):void
+		{
+			if (val > 1)
+			{
+				_comboIndicator.visible = true;
+				_comboIndicator.text = val + "x combo";
+				
+				_comboAnimate.startPerFrame();
+				_comboIndicator.alpha = 1;
+				
+				_comboIndicator.fgColor = val > _lastCombo ? 0xffffff : 0xff0000;
+			}
+			else
+			{
+				_comboIndicator.visible = false;
+				
+				_comboAnimate.stop();
+			}
+			_lastCombo = val;
+		}
+		private function onComboAnimate():void
+		{
+			if (_comboIndicator.alpha > 0.3)
+			{
+				_comboIndicator.alpha -= 0.005;
+			}
+			else
+			{
+				_comboAnimate.stop();
+			}
 		}
 	}
 }

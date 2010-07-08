@@ -144,7 +144,7 @@ package
 					Util.setPoint(_lastCameraPos, _cameraPos);
 					_tiles.setCamera(_cameraPos);
 				}
-				_radar.plot(_player, 0x0000ff);
+				_radar.plot(_player, 0xff);
 			}
 
 			if (_input.isKeyDown(Input.KEY_SPACE))
