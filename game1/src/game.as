@@ -327,6 +327,10 @@ package
 			_radar.x = stage.stageWidth - _radar.width;
 			
 			_hudLayer.addChild(_radar);
+			
+			var sb:ScoreBoard = new ScoreBoard;
+			sb.alpha = 0.8;
+			_hudLayer.addChild(sb);
 		}
 		public function centerPrint(text:String):void
 		{
