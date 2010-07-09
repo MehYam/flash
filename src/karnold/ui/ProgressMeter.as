@@ -9,7 +9,7 @@ package karnold.ui
 	
 	public class ProgressMeter extends Sprite
 	{
-		private var _meter:DisplayObject;
+		private var _meter:Bitmap;
 		private var _width:Number;
 		public function ProgressMeter(width:Number, height:Number, bgColor:uint, fgColor:uint)
 		{
@@ -36,6 +36,10 @@ package karnold.ui
 		{
 			const scale:Number = MathUtil.constrainToRange(_width*percent, 0, _width);
 			_meter.scaleX = scale; 
+		}
+		public function set fgColor(color:uint):void
+		{
+			_meter.bitmapData.setPixel(0, 0, color);
 		}
 	}
 }

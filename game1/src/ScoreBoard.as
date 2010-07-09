@@ -78,6 +78,18 @@ package
 		public function set pctHealth(p:Number):void
 		{
 			_health.pct = p;
+			if (p > .33)
+			{
+				_health.fgColor = 0x00ff00;
+			}
+			else if (p > .10)
+			{
+				_health.fgColor = 0xffff00;
+			}
+			else
+			{
+				_health.fgColor = 0xff0000;
+			}
 		}
 		public function set earnings(e:uint):void
 		{
@@ -96,7 +108,7 @@ package
 				_comboAnimate.startPerFrame();
 				_comboIndicator.alpha = 1;
 				
-				_comboIndicator.fgColor = val > _lastCombo ? 0x00ff00 : 0xff0000;
+				_comboIndicator.fgColor = val > _lastCombo ? 0xffff00 : 0xff0000;
 			}
 			else
 			{
