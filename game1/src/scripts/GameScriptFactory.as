@@ -213,21 +213,31 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
 
-	static private const TANK_SOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 0, -50);
+	static protected const TANK:Boolean = true;
+	protected var _weapon:IBehavior;
 
-	private var _weapon:IBehavior = BehaviorFactory.createAutofire(TANK_SOURCE, 300, 300);
-	private var _weaponPlane:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -20), 150, 150);
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
 	{
-		_weaponPlane.onFrame(game, game.player);
+		if (_weapon)
+		{
+			_weapon.onFrame(game, game.player);
+		}
 	}
-	public function onPlayerShootTo(game:IGame, to:Point):void
+	public function onPlayerShootToMouse(game:IGame):void
 	{
-		var dobj:DisplayObject = game.player.displayObject;
-		dobj.rotation = MathUtil.getDegreesRotation(to.x - dobj.x, to.y - dobj.y);
+		if (_weapon)
+		{
+			if (!TANK)
+			{
+				// should go in a behavior
+				const mouse:Point = game.input.lastMousePos;
+				var dobj:DisplayObject = game.player.displayObject;
+				dobj.rotation = MathUtil.getDegreesRotation(mouse.x - dobj.x, mouse.y - dobj.y);
+			}
 
-		_weaponPlane.onFrame(game, game.player);
+			_weapon.onFrame(game, game.player);
+		}
 	}
 }
 
@@ -242,8 +252,14 @@ final class TestScript extends BaseScript
 	public override function begin(game:IGame):void
 	{
 		game.tiles = GrassTilesAssets.testLevel;
-		game.showPlayer(Utils.getBluePlayer());
-//		game.showPlayer(Utils.getTankPlayer());
+		if (TANK)
+		{
+			game.showPlayer(Utils.getTankPlayer());
+		}
+		else
+		{
+			game.showPlayer(Utils.getBluePlayer());
+		}
 		game.start();
 		game.centerPrint("Level 1");
 		
@@ -285,8 +301,17 @@ final class WaveBasedGameScript extends BaseScript
 		_game = game;
 
 		game.tiles = GrassTilesAssets.smallLevel;
-		game.showPlayer(Utils.getBluePlayer());
-//		game.showPlayer(Utils.getTankPlayer());
+
+		if (TANK)
+		{
+			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -50), 300, 300);
+			game.showPlayer(Utils.getTankPlayer());
+		}
+		else
+		{
+			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -20), 150, 150);
+			game.showPlayer(Utils.getBluePlayer());
+		}
 		
 		game.start();
 		game.centerPrint("Level 1");

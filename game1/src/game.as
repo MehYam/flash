@@ -153,7 +153,7 @@ package
 			}
 			else if (_input.isKeyDown(Input.MOUSE_BUTTON))
 			{
-				_currentScript.onPlayerShootTo(this, _input.lastMousePos);
+				_currentScript.onPlayerShootToMouse(this);
 			}
 
 			runFrameOnCast(_cast.enemies);
