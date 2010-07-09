@@ -31,7 +31,7 @@ package
 			_health = new ProgressMeter(120, 18, 0, 0xff0000);
 			_health.pct = .30;
 			_health.x = labelField.x + labelField.width + GAP/2;
-			_health.y = labelField.y + GAP/2 + 2;
+			_health.y = labelField.y + GAP/2 + 1;
 			addChild(_health);
 
 			var horz:Number = _health.x + _health.width + GAP;
@@ -96,7 +96,7 @@ package
 				_comboAnimate.startPerFrame();
 				_comboIndicator.alpha = 1;
 				
-				_comboIndicator.fgColor = val > _lastCombo ? 0xffffff : 0xff0000;
+				_comboIndicator.fgColor = val > _lastCombo ? 0x00ff00 : 0xff0000;
 			}
 			else
 			{
