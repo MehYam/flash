@@ -58,15 +58,15 @@ package
 			horz = labelField.x + labelField.width + GAP/2;
 			addChild(labelField);
 			
-			_earnings = new ShadowTextField(labelFormat);
+			_earnings = new ShadowTextField(new TextFormat("SF TransRobotics", 26));
 			_earnings.text = "0";
 			_earnings.x = horz;
-			_earnings.y = vert;
+			_earnings.y = vert - 3;
 			addChild(_earnings);
 			
-			_comboIndicator = new ShadowTextField(new TextFormat("Radio Stars", 18, null, true));
+			_comboIndicator = new ShadowTextField(new TextFormat("SF TransRobotics", 20));
 			_comboIndicator.x = _earnings.x;
-			_comboIndicator.y = _earnings.y + _earnings.height;
+			_comboIndicator.y = _earnings.y + _earnings.height - 5;
 			combo = 1;
 			addChild(_comboIndicator);
 		}
@@ -91,7 +91,7 @@ package
 			if (val > 1)
 			{
 				_comboIndicator.visible = true;
-				_comboIndicator.text = val + "x combo";
+				_comboIndicator.text = val + "x COMBO";
 				
 				_comboAnimate.startPerFrame();
 				_comboIndicator.alpha = 1;

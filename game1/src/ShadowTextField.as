@@ -20,8 +20,8 @@ package
 			_bottom = new TextField();
 			_bottom.defaultTextFormat = tf;
 			_bottom.autoSize = TextFieldAutoSize.LEFT;
-			_bottom.x = 3;
-			_bottom.y = 3;
+			_bottom.x = 2;
+			_bottom.y = 2;
 			_bottom.textColor = shadowColor;
 			
 			addChild(_bottom);

@@ -26,6 +26,7 @@ import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
+import flash.media.Sound;
 
 import karnold.utils.Bounds;
 import karnold.utils.FrameTimer;
@@ -200,7 +201,6 @@ final class Utils
 		return a;
 	}
 }
-
 class BaseScript implements IGameScript
 {
 	// IGameScript
@@ -362,23 +362,36 @@ final class WaveBasedGameScript extends BaseScript
 		damageActor(game, enemy, 34);
 		game.killActor(ammo);
 	}
+	[Embed(source="assets/crash1.mp3")]
+	static private const CrashSound:Class;
+	private var _crashSound:Sound;
+	private function playCrash():void
+	{
+		if (!_crashSound)
+		{
+			_crashSound = new CrashSound() as Sound;
+		}
+		_crashSound.play();
+	}
 
 	private function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
 	{
-		const particles:uint = Math.min(damage/6, 15);
-		Actor.createExplosion(game, actor.worldPos, particles, actor == game.player ? 0xffffff : 0xffff00);
+		const isPlayer:Boolean = actor == game.player;
+		const particles:uint = isPlayer ? damage/2 : Math.min(damage/6, 15);
+		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 0xffff00);
 
 		actor.health -= damage;
-		if (actor == game.player)
+		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / BehaviorConsts.MAX_HEALTH;
 		}
 		else if (actor.health <= 0)
 		{
+			playCrash();
 			if (!struckByEnemy)
 			{
-				_stats.earnings += actor.value;
-				game.scoreBoard.earnings = _stats.earnings * (_stats.combo/10);
+				_stats.earnings += actor.value * (1 + _stats.combo/10);
+				game.scoreBoard.earnings = _stats.earnings;
 				game.scoreBoard.combo = ++_stats.combo;
 				_comboTimer.start(COMBO_LAPSE);
 			}
