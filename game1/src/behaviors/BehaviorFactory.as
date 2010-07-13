@@ -97,7 +97,6 @@ import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
-import flash.media.Sound;
 import flash.utils.getTimer;
 
 import karnold.utils.MathUtil;
@@ -234,22 +233,11 @@ final class AutofireBehavior implements IBehavior
 	}
  	static private var po_tmp:Point = new Point;
 
-	[Embed(source="assets/laser1.mp3")]
-	static private const WeaponSound:Class;
-	private var _weaponSound:Sound;
-	protected function playLaser():void
-	{
-		if (!_weaponSound)
-		{
-			_weaponSound = new WeaponSound() as Sound;
-		}
-		_weaponSound.play();
-	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (_rate.now)
 		{
-playLaser();
+			AssetManager.instance.laserSound();
 			var ammo:Actor;
 			switch(_source.ammoType) {
 				case AmmoType.BULLET:

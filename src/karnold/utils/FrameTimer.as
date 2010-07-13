@@ -36,11 +36,6 @@ package karnold.utils
 		private var _callback:Function;
 		public function FrameTimer(callback:Function)
 		{
-			if (!s_engine)
-			{
-				s_engine = new FrameTimerEngine(); // because AS3 won't let you statically create an internal class 
-			}
-			
 			_callback = callback;
 		}
 		
@@ -58,6 +53,11 @@ package karnold.utils
 		private var _checkpoint:ICheckpoint;
 		private function start_impl(delay:int, count:int, perFrame:Boolean):void
 		{
+			if (!s_engine)
+			{
+				throw "FrameTimer started without FrameTimer.init() first being called"; 
+			}
+			
 			_delay = delay;
 			_repeatCount = count;
 			_currentCount = 0;

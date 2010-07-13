@@ -4,6 +4,7 @@ package
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.media.Sound;
 	
 	import karnold.tile.IBitmapFactory;
 
@@ -16,7 +17,7 @@ package
 		//KAI: if this goes in-game, it's better to load it and ditch the loader so that the bitmap data's not duplicated
 		// when we copy it out - OR - see if Bitmap is really smart, and just use the tiled thing.  Worth profiling to
 		// see what the difference is
-		[Embed(source="assets/tiled_snow.png")]
+		[Embed(source="assets/tiled_sepia_inv.png")]
 		private var TiledImages:Class;
 		
 		static private var s_instance:AssetManager;
@@ -55,5 +56,29 @@ package
 			}
 			return new Bitmap(_cachedTiles[index]);
 		}
+		
+		[Embed(source="assets/crash1.mp3")]
+		static private const CrashSound:Class;
+		private var _crashSound:Sound;
+		public function crashSound():void
+		{
+			if (!_crashSound)
+			{
+				_crashSound = new CrashSound() as Sound;
+			}
+			_crashSound.play();
+		}
+		[Embed(source="assets/laser1.mp3")]
+		static private const WeaponSound:Class;
+		private var _weaponSound:Sound;
+		public function laserSound():void
+		{
+			if (!_weaponSound)
+			{
+				_weaponSound = new WeaponSound() as Sound;
+			}
+			_weaponSound.play();
+		}
+
 	}
 }

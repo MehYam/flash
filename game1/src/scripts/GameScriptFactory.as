@@ -26,7 +26,6 @@ import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
-import flash.media.Sound;
 
 import karnold.utils.Bounds;
 import karnold.utils.FrameTimer;
@@ -387,17 +386,6 @@ final class WaveBasedGameScript extends BaseScript
 		damageActor(game, enemy, 34);
 		game.killActor(ammo);
 	}
-	[Embed(source="assets/crash1.mp3")]
-	static private const CrashSound:Class;
-	private var _crashSound:Sound;
-	private function playCrash():void
-	{
-		if (!_crashSound)
-		{
-			_crashSound = new CrashSound() as Sound;
-		}
-		_crashSound.play();
-	}
 
 	private function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
 	{
@@ -412,7 +400,7 @@ final class WaveBasedGameScript extends BaseScript
 		}
 		else if (actor.health <= 0)
 		{
-			playCrash();
+			AssetManager.instance.crashSound();
 			if (!struckByEnemy)
 			{
 				_stats.earnings += actor.value * (1 + _stats.combo/10);

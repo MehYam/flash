@@ -9,6 +9,7 @@ package
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -31,20 +32,12 @@ package
 	import scripts.GameScriptFactory;
 	import scripts.IGameScript;
 	import scripts.TankActor;
+	
+	import ui.TitleScreen;
 
+	[SWF(backgroundColor="#0")]
 	public final class game extends Sprite implements IGame
 	{
-		private var _tiles:TiledBackground;
-		private var _worldBounds:Bounds;
-
-		private var _input:Input;
-		private var _player:Actor;
-		private var _frameTimer:FrameTimer;
-		private var _frameRate:GameFrameRatePanel;
-
-		private var _hudLayer:DisplayObjectContainer;
-		private var _actorLayer:DisplayObjectContainer;
-		private var _currentScript:IGameScript;
 		public function game()
 		{
 			trace("stage", stage.stageWidth, stage.stageHeight);
@@ -56,10 +49,37 @@ package
 			mouseEnabled = false;
 
 			FrameTimer.init(stage);
-			_frameTimer = new FrameTimer(onFrame);
 			_input = new Input(stage);
-			_input.enableMouseMove(stage);
 
+			toTitleScreen();
+		}
+		
+		private function toTitleScreen():void
+		{
+			var titleScreen:TitleScreen = new TitleScreen;
+			addChild(titleScreen);
+			
+			Util.listen(titleScreen, Event.COMPLETE, onTitleComplete);
+		}
+		private function onTitleComplete(e:Event):void
+		{
+			IEventDispatcher(e.target).removeEventListener(e.type, arguments.callee);
+			startGame();
+		}
+
+		private var _input:Input;
+		private var _player:Actor;
+		private var _frameTimer:FrameTimer;
+		private var _frameRate:GameFrameRatePanel;
+		
+		private var _hudLayer:DisplayObjectContainer;
+		private var _actorLayer:DisplayObjectContainer;
+		private var _currentScript:IGameScript;
+		private function startGame():void
+		{
+			_frameTimer = new FrameTimer(onFrame);
+			_input.enableMouseMove(stage);
+			
 			_actorLayer = new Sprite;
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			_actorLayer.scrollRect = this.scrollRect;
@@ -67,12 +87,15 @@ package
 			
 			_hudLayer = new Sprite;
 			parent.addChild(_hudLayer);
-
+			
 //			_currentScript = GameScriptFactory.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
 			_currentScript = GameScriptFactory.level1;
 			_currentScript.begin(this);
 		}
+
+		private var _tiles:TiledBackground;
+		private var _worldBounds:Bounds;
 
 		private var _cast:Cast = new Cast;
 		private var _lastPlayerPos:Point = new Point;
