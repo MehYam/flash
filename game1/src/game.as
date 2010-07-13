@@ -364,7 +364,6 @@ package
 		}
 		public function centerPrint(text:String):void
 		{
-			trace("would centerprint", text);
 			_currentScript.onCenterPrintDone(text);
 		}
 		public function showPlayer(actor:Actor):void

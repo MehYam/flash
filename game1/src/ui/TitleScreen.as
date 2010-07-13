@@ -13,13 +13,14 @@ package ui
 	
 	public class TitleScreen extends Sprite
 	{
-		private var _hackPreventGC:Object;
+		static private const LEFT:Number = 20;
+		private var _typer:TextFieldTyper;
 		public function TitleScreen()
 		{
 			super();
 			
 			var textField:TextField = new TextField();
-			textField.x = 20;
+			textField.x = LEFT;
 			textField.y = 80;
 			textField.autoSize = TextFieldAutoSize.LEFT;
 
@@ -27,13 +28,13 @@ package ui
 			textField.defaultTextFormat = format;
 
 			var textFieldTyper:TextFieldTyper = new TextFieldTyper(textField, true);
-			textFieldTyper.text = "Prepare yourself for...";
+			textFieldTyper.text = "Prepare Yourself For...";
 
 			addChild(textField);
 			
 			textFieldTyper.timer.start(200);
 			textFieldTyper.addEventListener(Event.COMPLETE, onPreambleComplete);
-			_hackPreventGC = textFieldTyper;  // mystery - shouldn't the event listener be putting a hard reference on this?   It gc's w/o this line
+			_typer = textFieldTyper;  // mystery - shouldn't the event listener be putting a hard reference on this?   It gc's w/o this line
 
 			Util.listen(this, Event.ADDED_TO_STAGE, onAddedToStage);
 		}
@@ -44,7 +45,7 @@ package ui
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 			
 			var textField:TextField = new TextField();
-			textField.x = 20;
+			textField.x = LEFT;
 			textField.y = 150;
 			textField.autoSize = TextFieldAutoSize.LEFT;
 			textField.defaultTextFormat = new TextFormat("SF Transrobotics", 96, 0xffffff);
@@ -53,8 +54,28 @@ package ui
 			textFieldTyper.textField = textField;
 			textFieldTyper.words = ["Plane", "Vs.", "Tank"];
 			textFieldTyper.timer.start(1000);
+			textFieldTyper.addEventListener(Event.COMPLETE, onTitleComplete);
 		}
-		
+
+		private function onTitleComplete(e:Event):void
+		{
+			var textFieldTyper:TextFieldTyper = TextFieldTyper(e.target);
+			textFieldTyper.removeEventListener(e.type, arguments.callee);
+
+			var textField:TextField = new TextField();
+			textField.x = LEFT;
+			textField.y = stage.stageHeight - 30;
+			textField.autoSize = TextFieldAutoSize.LEFT;
+			textField.defaultTextFormat = new TextFormat("Computerfont", 24, 0x00ff00);
+			
+			addChild(textField);
+			
+			textFieldTyper.textField = textField;
+			textFieldTyper.sounds = false;
+			textFieldTyper.text = "Press Any Key to Start";
+			textFieldTyper.timer.start(100);
+		}
+
 		private function onAddedToStage(e:Event):void
 		{
 			Util.listen(stage, KeyboardEvent.KEY_DOWN, onUserDismissed);
@@ -62,6 +83,7 @@ package ui
 		}
 		private function onUserDismissed(e:Event):void
 		{
+			_typer.timer.stop();
 			dispatchEvent(new Event(Event.COMPLETE));
 		}
 	}

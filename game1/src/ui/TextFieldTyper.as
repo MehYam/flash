@@ -17,6 +17,10 @@ package ui
 			_frameTimer = new FrameTimer(onInterval);
 			_sounds = sounds;
 		}
+		public function set sounds(b:Boolean):void
+		{
+			_sounds = b;
+		}
 		public function set textField(tf:TextField):void
 		{
 			_tf = tf;
