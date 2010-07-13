@@ -4,7 +4,7 @@ package
 
 	public interface IGameEvents
 	{
-		function onCenterPrintDone(text:String):void;
+		function onCenterPrintDone():void;
 		
 		function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void;
 		function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void;

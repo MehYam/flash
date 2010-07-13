@@ -206,7 +206,7 @@ class BaseScript implements IGameScript
 	public function begin(game:IGame):void {}
 
 	// IGameEvents
-	public function onCenterPrintDone(text:String):void	{}
+	public function onCenterPrintDone():void	{}
 
 	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
@@ -260,7 +260,7 @@ final class TestScript extends BaseScript
 			game.showPlayer(Utils.getBluePlayer());
 		}
 		game.start();
-		game.centerPrint("Level 1");
+		game.centerPrint("Test Script Begin");
 		
 		for (var i:int = 0; i < _actors; ++i)
 		{
@@ -313,7 +313,7 @@ final class WaveBasedGameScript extends BaseScript
 		}
 		
 		game.start();
-		game.centerPrint("Level 1");
+		game.centerPrint("Wave 1");
 
 		game.scoreBoard.pctHealth = 1;
 		game.scoreBoard.pctLevel = 0;
@@ -358,11 +358,11 @@ final class WaveBasedGameScript extends BaseScript
 		}
 	}
 	// IGameEvents
-	public override function onCenterPrintDone(text:String):void	
+	public override function onCenterPrintDone():void	
 	{
 		if (_waves.length)
 		{
-			_waveDelay.start(3000, 1);
+			_waveDelay.start(200, 1);
 		}
 		else
 		{
@@ -415,11 +415,11 @@ final class WaveBasedGameScript extends BaseScript
 			{
 				if (_waves.length)
 				{
-					_game.centerPrint("INCOMING WAVE " + (NUMWAVES - _waves.length));	
+					_game.centerPrint("Wave " + (NUMWAVES - _waves.length + 1));	
 				}
 				else
 				{
-					_game.centerPrint("CONGRATS LEVEL DONE");
+					_game.centerPrint("Level complete - you did it!");
 				}
 			}
 		}

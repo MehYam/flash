@@ -13,6 +13,9 @@ package
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	
@@ -33,6 +36,7 @@ package
 	import scripts.IGameScript;
 	import scripts.TankActor;
 	
+	import ui.TextFieldTyper;
 	import ui.TitleScreen;
 
 	[SWF(backgroundColor="#0")]
@@ -362,9 +366,32 @@ package
 			_sb.x = 5;
 			_hudLayer.addChild(_sb);
 		}
+
+		private var _centerPrint:ShadowTextField;
+		private var _textFieldTyper:TextFieldTyper;
 		public function centerPrint(text:String):void
 		{
-			_currentScript.onCenterPrintDone(text);
+			if (!_textFieldTyper)
+			{
+				_centerPrint = new ShadowTextField(new TextFormat("Computerfont", 36));
+				_textFieldTyper = new TextFieldTyper(_centerPrint, false);
+				_textFieldTyper.postDelay = 3000;
+				Util.listen(_textFieldTyper, Event.COMPLETE, onCenterPrintDone);
+			}
+			_centerPrint.text = text;
+			_centerPrint.x = (stage.stageWidth - _centerPrint.width) / 2;
+			_centerPrint.y = stage.stageHeight/2 - 40;
+			_centerPrint.text = "";
+			_hudLayer.addChild(_centerPrint);
+
+			_textFieldTyper.text = text;
+			_textFieldTyper.timer.start(100);
+		}
+		private function onCenterPrintDone(e:Event):void
+		{
+			_hudLayer.removeChild(_centerPrint);
+
+			_currentScript.onCenterPrintDone();
 		}
 		public function showPlayer(actor:Actor):void
 		{

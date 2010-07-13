@@ -8,22 +8,27 @@ package ui
 
 	public class TextFieldTyper extends EventDispatcher
 	{
-		private var _tf:TextField;
+		private var _tf:*;
 		private var _frameTimer:FrameTimer;
 		private var _sounds:Boolean;
-		public function TextFieldTyper(tf:TextField, sounds:Boolean)
+		public function TextFieldTyper(textField:*, sounds:Boolean)  //KAI: should use an adapter class instead?
 		{
-			_tf = tf;
+			_tf = textField;
 			_frameTimer = new FrameTimer(onInterval);
 			_sounds = sounds;
+		}
+		private var _postDelay:uint;
+		public function set postDelay(ms:uint):void
+		{
+			_postDelay = ms;
 		}
 		public function set sounds(b:Boolean):void
 		{
 			_sounds = b;
 		}
-		public function set textField(tf:TextField):void
+		public function set textField(textField:*):void
 		{
-			_tf = tf;
+			_tf = textField;
 		}
 		private var _next:uint = 0;
 		private var _text:Object;
@@ -41,33 +46,47 @@ package ui
 		{
 			return _frameTimer;
 		}
-		
+		private var _postDelayTimer:FrameTimer = new FrameTimer(onDone);
 		private function onInterval():void
 		{
-			if (_next < _text.length && _text is String)
+			if (_next < _text.length) 
 			{
-				_tf.text = String(_text).substr(0, ++_next);
-
-				if (_sounds)
+				if (_text is String)
 				{
-					AssetManager.instance.laserSound();
+					_tf.text = String(_text).substr(0, ++_next);
+	
+					if (_sounds)
+					{
+						AssetManager.instance.laserSound();
+					}
 				}
-			}
-			else if (_next < _text.length && _text is Array)
-			{
-				_tf.text = (_text as Array).slice(0, ++_next).join(" ");
-				
-				if (_sounds)
+				else
 				{
-					AssetManager.instance.crashSound();
+					_tf.text = (_text as Array).slice(0, ++_next).join(" ");
+					
+					if (_sounds)
+					{
+						AssetManager.instance.crashSound();
+					}
 				}
 			}
 			else
 			{
 				_frameTimer.stop();
-				
-				dispatchEvent(new Event(Event.COMPLETE));
+
+				if (_postDelay)
+				{
+					_postDelayTimer.start(_postDelay, 1);
+				}
+				else
+				{
+					onDone();
+				}
 			}
+		}
+		private function onDone():void
+		{
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 	}
 }

@@ -5,9 +5,11 @@ package ui
 	import flash.events.IEventDispatcher;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.system.System;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.utils.Dictionary;
 	
 	import karnold.utils.Util;
 	
