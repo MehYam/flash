@@ -61,7 +61,7 @@ package
 		private function toTitleScreen():void
 		{
 			var titleScreen:TitleScreen = new TitleScreen;
-			addChild(titleScreen);
+			parent.addChild(titleScreen);
 			
 			Util.listen(titleScreen, Event.COMPLETE, onTitleComplete);
 		}
@@ -69,6 +69,8 @@ package
 		{
 			IEventDispatcher(e.target).removeEventListener(e.type, arguments.callee);
 			startGame();
+			
+			TitleScreen(e.target).fadeAndRemoveSelf();
 		}
 
 		private var _input:Input;

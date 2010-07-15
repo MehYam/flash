@@ -11,6 +11,7 @@ package ui
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
 	
+	import karnold.utils.FrameTimer;
 	import karnold.utils.Util;
 	
 	public class TitleScreen extends Sprite
@@ -82,11 +83,29 @@ package ui
 		{
 			Util.listen(stage, KeyboardEvent.KEY_DOWN, onUserDismissed);
 			Util.listen(stage, MouseEvent.MOUSE_DOWN, onUserDismissed);
+			
+			graphics.beginFill(0);
+			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 		}
 		private function onUserDismissed(e:Event):void
 		{
 			_typer.timer.stop();
 			dispatchEvent(new Event(Event.COMPLETE));
+		}
+		
+		private var _fade:FrameTimer = new FrameTimer(tweenAlpha);
+		public function fadeAndRemoveSelf():void
+		{
+			_fade.startPerFrame();
+		}
+		private function tweenAlpha():void
+		{
+			this.alpha -= 0.01;
+			if (this.alpha < 0.05)
+			{
+				parent.removeChild(this);
+				_fade.stop();
+			}
 		}
 	}
 }
