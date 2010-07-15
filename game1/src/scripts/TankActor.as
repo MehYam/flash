@@ -83,23 +83,23 @@ package scripts
 			
 			var hull:DisplayObject;
 			switch(hullDesc) {
-			case HULL0:	hull = SimpleActorAsset.createHull0();	break;
-			case HULL1: hull = SimpleActorAsset.createHull1();  break;
-			case HULL2: hull = SimpleActorAsset.createHull2();  break;
-			case HULL3: hull = SimpleActorAsset.createHull3();  break;
-			case HULL4: hull = SimpleActorAsset.createHull4();  break;
+			case HULL0:	hull = ActorAssetManager.createHull0();	break;
+			case HULL1: hull = ActorAssetManager.createHull1();  break;
+			case HULL2: hull = ActorAssetManager.createHull2();  break;
+			case HULL3: hull = ActorAssetManager.createHull3();  break;
+			case HULL4: hull = ActorAssetManager.createHull4();  break;
 			}
 			var turret:DisplayObject;
 			switch (turretDesc) {
-			case TURRET0: turret = SimpleActorAsset.createTurret0(); break;
-			case TURRET1: turret = SimpleActorAsset.createTurret1(); break;
-			case TURRET2: turret = SimpleActorAsset.createTurret2(); break;
-			case TURRET3: turret = SimpleActorAsset.createTurret3(); break;
-			case TURRET4: turret = SimpleActorAsset.createTurret4(); break;
+			case TURRET0: turret = ActorAssetManager.createTurret0(); break;
+			case TURRET1: turret = ActorAssetManager.createTurret1(); break;
+			case TURRET2: turret = ActorAssetManager.createTurret2(); break;
+			case TURRET3: turret = ActorAssetManager.createTurret3(); break;
+			case TURRET4: turret = ActorAssetManager.createTurret4(); break;
 			}
 
-			var track:DisplayObject = SimpleActorAsset.createTrack();
-			var track2:DisplayObject = SimpleActorAsset.createTrack();
+			var track:DisplayObject = ActorAssetManager.createTrack();
+			var track2:DisplayObject = ActorAssetManager.createTrack();
 			
 			const width:Number = track.width + hull.width;
 			const height:Number = hull.height;

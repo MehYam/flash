@@ -17,11 +17,11 @@ package
 		{
 			switch (tileID) {
 			case TILE_SPIRO:
-				return SimpleActorAsset.createSpiro(Math.random() * 0xffffff, tileSize, tileSize)
+				return ActorAssetManager.createSpiro(Math.random() * 0xffffff, tileSize, tileSize)
 			case TILE_CIRCLE:
-				return SimpleActorAsset.createCircle(Math.random() * 0xff0000, tileSize, tileSize);
+				return ActorAssetManager.createCircle(Math.random() * 0xff0000, tileSize, tileSize);
 			case TILE_SQUARE:
-				return SimpleActorAsset.createSquare(Math.random() * 0x00ff00, tileSize);
+				return ActorAssetManager.createSquare(Math.random() * 0x00ff00, tileSize);
 			}
 			return null;
 		}

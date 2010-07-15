@@ -65,7 +65,7 @@ package
 					canvas.graphics.drawCircle(-DOT_RADIUS, -DOT_RADIUS, DOT_RADIUS*2);
 					canvas.graphics.endFill();
 					
-					bmd = SimpleActorAsset.rasterize(canvas);
+					bmd = ActorAssetManager.rasterize(canvas);
 					s_rasterizationStore[color] = bmd;
 				}
 				dot = new Bitmap(bmd);

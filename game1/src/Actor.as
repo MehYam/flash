@@ -96,7 +96,7 @@ package
 			var bullet:Actor = ActorPool.instance.get(BulletActor) as BulletActor;
 			if (!bullet)
 			{
-				bullet = new BulletActor(SimpleActorAsset.createBullet());
+				bullet = new BulletActor(ActorAssetManager.createBullet());
 				bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(BehaviorConsts.BULLET_LIFETIME));
 			}
 			return bullet;
@@ -106,7 +106,7 @@ package
 			var laser:Actor = ActorPool.instance.get(LaserActor) as LaserActor
 			if (!laser)
 			{
-				laser = new LaserActor(SimpleActorAsset.createLaser());
+				laser = new LaserActor(ActorAssetManager.createLaser());
 				laser.behavior = new CompositeBehavior(BehaviorFactory.createExpire(BehaviorConsts.LASER_LIFETIME), BehaviorFactory.faceForward);
 			}
 			return laser;
@@ -128,7 +128,7 @@ package
 				var actor:Actor = ActorPool.instance.get(colorClass) as Actor;
 				if (!actor)
 				{
-					actor = new colorClass(SimpleActorAsset.createExplosionParticle(color));
+					actor = new colorClass(ActorAssetManager.createExplosionParticle(color));
 				}
 				actor.displayObject.alpha = Math.random();
 				Util.setPoint(actor.worldPos, worldPos);

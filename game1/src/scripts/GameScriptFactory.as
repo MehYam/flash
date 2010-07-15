@@ -101,7 +101,7 @@ final class Utils
 	}
 	static public function getBluePlayer():Actor
 	{
-		var plane:Actor = new Actor(SimpleActorAsset.createBlueShip(), BehaviorConsts.BLUE_SHIP);
+		var plane:Actor = new Actor(ActorAssetManager.createBlueShip(), BehaviorConsts.BLUE_SHIP);
 		plane.behavior = BehaviorFactory.faceForward;
 		return plane;
 	}
@@ -121,17 +121,17 @@ final class Utils
 		var a:Actor;
 		switch (type) {
 		case Enemy.REDROGUE:
-			a = new Actor(SimpleActorAsset.createRedShip(), BehaviorConsts.RED_SHIP);
+			a = new Actor(ActorAssetManager.createRedShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Red Rogue";
 			a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 			break;
 		case Enemy.GREENK:
-			a = new Actor(SimpleActorAsset.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+			a = new Actor(ActorAssetManager.createGreenShip(), BehaviorConsts.GREEN_SHIP);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
 		case Enemy.GRAYSHOOTER:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -143,52 +143,52 @@ final class Utils
 			);
 			break;
 		case Enemy.FUNNEL:
-			a = new Actor(SimpleActorAsset.createFunnelShip(), BehaviorConsts.RED_SHIP);
+			a = new Actor(ActorAssetManager.createFunnelShip(), BehaviorConsts.RED_SHIP);
 			a.name = "Funnel";
 			a.behavior = Utils.homeAndShoot(4000, AmmoType.LASER);
 			break;
 		case Enemy.BLUE:
-			a = new Actor(SimpleActorAsset.createBlueShip()(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createBlueShip()(), BehaviorConsts.GRAY_SHIP);
 			a.name = "Blue Bird";
 			a.behavior = Utils.homeAndShoot(5000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER5:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "5";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER6:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "6";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER7:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "7";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER8:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "8";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER9:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "9";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER10:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "10";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER11:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "11";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;
 		case Enemy.FIGHTER12:
-			a = new Actor(SimpleActorAsset.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
 			a.name = "12";
 			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
 			break;

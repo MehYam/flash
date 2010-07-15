@@ -20,11 +20,9 @@ package
 	
 	import karnold.utils.Util;
 	
-	import spark.primitives.Rect;
-	
-	public final class SimpleActorAsset extends Sprite
+	public final class ActorAssetManager extends Sprite
 	{
-		public function SimpleActorAsset()
+		public function ActorAssetManager()
 		{
 			super();
 			mouseEnabled = false;
