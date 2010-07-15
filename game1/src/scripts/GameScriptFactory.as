@@ -108,8 +108,8 @@ final class Utils
 	static public function getTankPlayer():Actor
 	{
 		var tank:Actor = TankActor.createTankActor(
-			TankActor.HULL3,
-			TankActor.TURRET0,
+			TankActor.HULL1,
+			TankActor.TURRET3,
 			BehaviorConsts.TEST_TANK
 		);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
@@ -210,7 +210,7 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
 
-	static protected const TANK:Boolean = true;
+	static protected const TANK:Boolean = false;
 	protected var _weapon:IBehavior;
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);

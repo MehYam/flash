@@ -13,11 +13,13 @@ package
 		public function ShadowTextField(tf:TextFormat, textColor:uint = 0xffffff, shadowColor:uint = 0x000000)
 		{
 			_top = new TextField();
+			_top.selectable = false;
 			_top.defaultTextFormat = tf;
 			_top.autoSize = TextFieldAutoSize.LEFT;
 			_top.textColor = textColor;
 			
 			_bottom = new TextField();
+			_bottom.selectable = false;
 			_bottom.defaultTextFormat = tf;
 			_bottom.autoSize = TextFieldAutoSize.LEFT;
 			_bottom.x = 2;

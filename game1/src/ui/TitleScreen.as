@@ -23,6 +23,7 @@ package ui
 			super();
 			
 			var textField:TextField = new TextField();
+			textField.selectable = false;
 			textField.x = LEFT;
 			textField.y = 80;
 			textField.autoSize = TextFieldAutoSize.LEFT;
@@ -48,6 +49,7 @@ package ui
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 			
 			var textField:TextField = new TextField();
+			textField.selectable = false;
 			textField.x = LEFT;
 			textField.y = 150;
 			textField.autoSize = TextFieldAutoSize.LEFT;
@@ -66,6 +68,7 @@ package ui
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 
 			var textField:TextField = new TextField();
+			textField.selectable = false;
 			textField.x = LEFT;
 			textField.y = stage.stageHeight - 30;
 			textField.autoSize = TextFieldAutoSize.LEFT;

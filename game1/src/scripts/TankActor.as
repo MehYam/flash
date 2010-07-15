@@ -64,10 +64,10 @@ package scripts
 			turretY: 62
 		}
 		static public const TURRET0:Object = { y: 62 };
-		static public const TURRET1:Object = {};
-		static public const TURRET2:Object = {};
-		static public const TURRET3:Object = {};
-		static public const TURRET4:Object = {};
+		static public const TURRET1:Object = { y: 56 };
+		static public const TURRET2:Object = { y: 56 };
+		static public const TURRET3:Object = { y: 56 };
+		static public const TURRET4:Object = { y: 48 };
 		static public const HULL0:Object = {};
 		static public const HULL1:Object = {};
 		static public const HULL2:Object = {};
