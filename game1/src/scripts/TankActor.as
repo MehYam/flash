@@ -10,13 +10,13 @@ package scripts
 	
 	public class TankActor extends Actor
 	{
-		private var _leftTrack:MovieClip;
-		private var _rightTrack:MovieClip;
+		private var _leftTrack:DisplayObject;
+		private var _rightTrack:DisplayObject;
 		private var _turret:DisplayObject;
 		public function TankActor(MustUseFactoryFunction:MUSTUSEFACTORYFUNCTION, 
 								  dobj:DisplayObject,
-								  leftTrack:MovieClip,
-								  rightTrack:MovieClip,
+								  leftTrack:DisplayObject,
+								  rightTrack:DisplayObject,
 								  turret:DisplayObject,
 								  bc:BehaviorConsts)
 		{
@@ -48,28 +48,56 @@ package scripts
 			{
 				if (_trackRunning)
 				{
-					_leftTrack.stop();
-					_rightTrack.stop();
 					_trackRunning = false;
 				}
 			}
 			else if (!_trackRunning)
 			{
-				_leftTrack.play();
-				_rightTrack.play();
 				_trackRunning = true;
 			}
 		}
-		public static function createTankActor( leftTrack:MovieClip,
-												rightTrack:MovieClip,
-												hull:DisplayObject,
-												turret:DisplayObject,
+		// need a list of recipes here - need to know
+		// 1) where to center the turret
+		// 2) where the tracks go, how much they're scaled
+		static private const OFFSETS:Object = 
+		{
+			turretY: 62
+		}
+		static public const TURRET0:Object = { y: 62 };
+		static public const TURRET1:Object = {};
+		static public const TURRET2:Object = {};
+		static public const TURRET3:Object = {};
+		static public const TURRET4:Object = {};
+		static public const HULL0:Object = {};
+		static public const HULL1:Object = {};
+		static public const HULL2:Object = {};
+		static public const HULL3:Object = {};
+		static public const HULL4:Object = {};
+
+		//KAI: this is all kinds of ugliness
+		public static function createTankActor( hullDesc:Object,
+												turretDesc:Object,
 												bc:BehaviorConsts):TankActor
 		{
 			var parent:Sprite = new Sprite;
 			
-			var hull:DisplayObject = SimpleActorAsset.createHull0();
-			var turret:DisplayObject = SimpleActorAsset.createTurret0();
+			var hull:DisplayObject;
+			switch(hullDesc) {
+			case HULL0:	hull = SimpleActorAsset.createHull0();	break;
+			case HULL1: hull = SimpleActorAsset.createHull1();  break;
+			case HULL2: hull = SimpleActorAsset.createHull2();  break;
+			case HULL3: hull = SimpleActorAsset.createHull3();  break;
+			case HULL4: hull = SimpleActorAsset.createHull4();  break;
+			}
+			var turret:DisplayObject;
+			switch (turretDesc) {
+			case TURRET0: turret = SimpleActorAsset.createTurret0(); break;
+			case TURRET1: turret = SimpleActorAsset.createTurret1(); break;
+			case TURRET2: turret = SimpleActorAsset.createTurret2(); break;
+			case TURRET3: turret = SimpleActorAsset.createTurret3(); break;
+			case TURRET4: turret = SimpleActorAsset.createTurret4(); break;
+			}
+
 			var track:DisplayObject = SimpleActorAsset.createTrack();
 			var track2:DisplayObject = SimpleActorAsset.createTrack();
 			
@@ -84,8 +112,8 @@ package scripts
 			track.y = track2.y = hull.y = -height/2;
 			
 			var turretParent:Sprite = new Sprite;
-			turret.x = -14.5;
-			turret.y = -59;
+			turret.x = -turret.width/2;
+			turret.y = -turretDesc.y;
 			turretParent.addChild(turret);
 
 			parent.addChild(track);
@@ -93,7 +121,7 @@ package scripts
 			parent.addChild(hull);
 			parent.addChild(turretParent);
 
-			return new TankActor(MUSTUSEFACTORYFUNCTION.instance, parent, leftTrack, rightTrack, turretParent, bc);
+			return new TankActor(MUSTUSEFACTORYFUNCTION.instance, parent, track, track2, turretParent, bc);
 		}
 	}
 }

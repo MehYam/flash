@@ -30,13 +30,14 @@ package
 			mouseEnabled = false;
 		}
 
-		static public function rasterize(target:DisplayObject):BitmapData
+		static public function rasterize(target:DisplayObject, scale:Number = 1):BitmapData
 		{
 			const bounds:Rectangle = target.getBounds(target);
-			var bitmapData:BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
+			var bitmapData:BitmapData = new BitmapData(bounds.width * scale, bounds.height * scale, true, 0);
 
 			var matrix:Matrix = new Matrix;
 			matrix.translate(-bounds.left, -bounds.top);
+			matrix.scale(scale, scale);
 			bitmapData.draw(target, matrix);
 			
 			perlinizeIt(bitmapData);
@@ -69,16 +70,18 @@ package
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];
-		static private function createAssetRasterized(clss:Class, centered:Boolean, dropShadow:Boolean):DisplayObject
+		static private function createAssetRasterized(clss:Class, centered:Boolean, dropShadow:Boolean, scale:Number = 1):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;
 			var retval:DisplayObject;
 			if (!bmd)
 			{
 				retval = new clss();
+				retval.scaleX = scale;
+				retval.scaleY = scale;
 				if (RASTERIZING)
 				{
-					bmd = rasterize(retval);
+					bmd = rasterize(retval, scale);
 					s_rasterizationStore[clss] = bmd;
 				}
 			}
@@ -90,23 +93,27 @@ package
 				{
 					bmp.x = -bmp.width/2;
 					bmp.y = -bmp.height/2;
+					retval = new Sprite;
+					DisplayObjectContainer(retval).addChild(bmp);
 				}
-				retval = new Sprite;
+				else
+				{
+					retval = bmp;
+				}
 				if (dropShadow)
 				{
 					retval.filters = s_dropShadowFilter;
 				}
-				DisplayObjectContainer(retval).addChild(bmp);
 			}
 			return retval; // this will be either a bitmap, a bitmap centered on a sprite, or the source vector object 
 		}
-		[Embed(source="assets/master.swf", symbol="ship0")]
+		[Embed(source="assets/master.swf", symbol="ship2_10")]
 		static private const REDSHIP:Class;
 		static public function createRedShip():DisplayObject
 		{
-			return createAssetRasterized(REDSHIP, true, true);
+			return createAssetRasterized(REDSHIP, true, true, 0.7);
 		}
-		[Embed(source="assets/master.swf", symbol="ship1")]
+		[Embed(source="assets/master.swf", symbol="ship2_12_1")]
 		static private const BLUESHIP:Class;
 		static public function createBlueShip():DisplayObject
 		{
@@ -118,13 +125,13 @@ package
 		{
 			return createAssetRasterized(ORANGESHIP, true, true);
 		}
-		[Embed(source="assets/master.swf", symbol="ship3")]
+		[Embed(source="assets/master.swf", symbol="ship2_1")]
 		static private const GREENSHIP:Class;
 		static public function createGreenShip():DisplayObject
 		{
 			return createAssetRasterized(GREENSHIP, true, true);
 		}
-		[Embed(source="assets/master.swf", symbol="ship4")]
+		[Embed(source="assets/master.swf", symbol="ship2_2")]
 		static private const GRAYSHIP:Class;
 		static public function createGrayShip():DisplayObject
 		{
@@ -179,26 +186,76 @@ package
 			return createAssetRasterized(SHIP12, true, true);
 		}
 
-		[Embed(source="assets/master.swf", symbol="hull1")]
+		[Embed(source="assets/master.swf", symbol="tankhull0")]
 		static private const HULL0:Class;
 		static public function createHull0():DisplayObject
 		{
 			return createAssetRasterized(HULL0, false, false);
 		}
-		[Embed(source="assets/master.swf", symbol="turret0")]
+		[Embed(source="assets/master.swf", symbol="tankhull1")]
+		static private const HULL1:Class;
+		static public function createHull1():DisplayObject
+		{
+			return createAssetRasterized(HULL1, false, false);
+		}
+		[Embed(source="assets/master.swf", symbol="tankhull2")]
+		static private const HULL2:Class;
+		static public function createHull2():DisplayObject
+		{
+			return createAssetRasterized(HULL2, false, false);
+		}
+		[Embed(source="assets/master.swf", symbol="tankhull3")]
+		static private const HULL3:Class;
+		static public function createHull3():DisplayObject
+		{
+			return createAssetRasterized(HULL3, false, false);
+		}
+		[Embed(source="assets/master.swf", symbol="tankhull4")]
+		static private const HULL4:Class;
+		static public function createHull4():DisplayObject
+		{
+			return createAssetRasterized(HULL4, false, false);
+		}
+		[Embed(source="assets/master.swf", symbol="tankturret0")]
 		static private const TURRET0:Class;
 		static public function createTurret0():DisplayObject
 		{
-			return createAssetRasterized(TURRET0, false, false);
+			return createAssetRasterized(TURRET0, false, false, 1.1);
+		}
+		[Embed(source="assets/master.swf", symbol="tankturret1")]
+		static private const TURRET1:Class;
+		static public function createTurret1():DisplayObject
+		{
+			return createAssetRasterized(TURRET1, false, false, 1.1);
+		}
+		[Embed(source="assets/master.swf", symbol="tankturret2")]
+		static private const TURRET2:Class;
+		static public function createTurret2():DisplayObject
+		{
+			return createAssetRasterized(TURRET2, false, false, 1.1);
+		}
+		[Embed(source="assets/master.swf", symbol="tankturret3")]
+		static private const TURRET3:Class;
+		static public function createTurret3():DisplayObject
+		{
+			return createAssetRasterized(TURRET3, false, false, 1.1);
+		}
+		[Embed(source="assets/master.swf", symbol="tankturret4")]
+		static private const TURRET4:Class;
+		static public function createTurret4():DisplayObject
+		{
+			return createAssetRasterized(TURRET4, false, false, 1.1);
 		}
 
-		[Embed(source="assets/master.swf", symbol="trackNonAnimated")]
-		static private const TRACK:Class;
-		static public function createTrack():MovieClip
+		[Embed(source="assets/master.swf", symbol="tanktread")]
+		static private const TANKTREAD:Class;
+		[Embed(source="assets/master.swf", symbol="tanktreadtop")]
+		static private const TANKTREADTOP:Class;
+		static public function createTrack():DisplayObject
 		{
-			var dummy:MovieClip = new MovieClip;
-			dummy.addChild(new TRACK);
-			return dummy;
+			var base:DisplayObjectContainer = new TANKTREAD;
+			base.addChild(new TANKTREADTOP);
+			return base;
 		}
 
 		static private const EXPLOSION_SIZE:Number = 3;

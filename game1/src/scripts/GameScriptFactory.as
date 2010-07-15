@@ -107,11 +107,9 @@ final class Utils
 	}
 	static public function getTankPlayer():Actor
 	{
-		var tank:Actor = TankActor.createTankActor(	
-			SimpleActorAsset.createTrack(),
-			SimpleActorAsset.createTrack(),
-			SimpleActorAsset.createHull0(),
-			SimpleActorAsset.createTurret0(),
+		var tank:Actor = TankActor.createTankActor(
+			TankActor.HULL3,
+			TankActor.TURRET0,
 			BehaviorConsts.TEST_TANK
 		);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
