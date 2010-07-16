@@ -43,14 +43,7 @@ final class Enemy
 	static public const GRAYSHOOTER:Enemy = new Enemy;
 	static public const FUNNEL:Enemy = new Enemy;
 	static public const BLUE:Enemy = new Enemy;
-	static public const FIGHTER5:Enemy = new Enemy;
-	static public const FIGHTER6:Enemy = new Enemy;
-	static public const FIGHTER7:Enemy = new Enemy;
-	static public const FIGHTER8:Enemy = new Enemy;
-	static public const FIGHTER9:Enemy = new Enemy;
-	static public const FIGHTER10:Enemy = new Enemy;
-	static public const FIGHTER11:Enemy = new Enemy;
-	static public const FIGHTER12:Enemy = new Enemy;
+	static public const BAT:Enemy = new Enemy;
 }
 
 final class Utils
@@ -101,7 +94,7 @@ final class Utils
 	}
 	static public function getBluePlayer():Actor
 	{
-		var plane:Actor = new Actor(ActorAssetManager.createBlueShip(), BehaviorConsts.BLUE_SHIP);
+		var plane:Actor = new Actor(ActorAssetManager.createShip(29), BehaviorConsts.BLUE_SHIP);
 		plane.behavior = BehaviorFactory.faceForward;
 		return plane;
 	}
@@ -115,23 +108,33 @@ final class Utils
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 		return tank;
 	}
+
+	static public function addEnemyByIndex(game:IGame, index:uint):Actor
+	{
+		var a:Actor = new Actor(ActorAssetManager.createShip(index), BehaviorConsts.RED_SHIP);
+		a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
+
+		placeAtRandomEdge(a, game.worldBounds);
+		game.addEnemy(a);
+		return a;
+	}
 	
 	static public function addEnemy(game:IGame, type:Enemy):Actor
 	{
 		var a:Actor;
 		switch (type) {
 		case Enemy.REDROGUE:
-			a = new Actor(ActorAssetManager.createRedShip(), BehaviorConsts.RED_SHIP);
+			a = new Actor(ActorAssetManager.createShip(23, 0.7), BehaviorConsts.RED_SHIP);
 			a.name = "Red Rogue";
 			a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 			break;
 		case Enemy.GREENK:
-			a = new Actor(ActorAssetManager.createGreenShip(), BehaviorConsts.GREEN_SHIP);
+			a = new Actor(ActorAssetManager.createShip(3), BehaviorConsts.GREEN_SHIP);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
 		case Enemy.GRAYSHOOTER:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createShip(6), BehaviorConsts.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -142,55 +145,17 @@ final class Utils
 				)
 			);
 			break;
-		case Enemy.FUNNEL:
-			a = new Actor(ActorAssetManager.createFunnelShip(), BehaviorConsts.RED_SHIP);
-			a.name = "Funnel";
-			a.behavior = Utils.homeAndShoot(4000, AmmoType.LASER);
-			break;
-		case Enemy.BLUE:
-			a = new Actor(ActorAssetManager.createBlueShip()(), BehaviorConsts.GRAY_SHIP);
-			a.name = "Blue Bird";
-			a.behavior = Utils.homeAndShoot(5000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER5:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "5";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER6:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "6";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER7:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "7";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER8:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "8";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER9:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "9";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER10:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "10";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER11:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "11";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
-			break;
-		case Enemy.FIGHTER12:
-			a = new Actor(ActorAssetManager.createGrayShip(), BehaviorConsts.GRAY_SHIP);
-			a.name = "12";
-			a.behavior = Utils.homeAndShoot(6000, AmmoType.BULLET);
+		case Enemy.BAT:
+			a = new Actor(ActorAssetManager.createShip(9), BehaviorConsts.GRAY_SHIP);
+			a.name = "Bat";
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
+				new AlternatingBehavior( 
+					3000,
+					HOME,
+					BehaviorFactory.strafe
+				)
+			);
 			break;
 		}
 		placeAtRandomEdge(a, game.worldBounds);
@@ -285,7 +250,7 @@ final class Wave
 		this.number = number;
 	}
 }
-final class WaveBasedGameScript extends BaseScript
+class WaveBasedGameScript extends BaseScript
 {
 	static private const COMBO_LAPSE:uint = 2000;
 
@@ -321,10 +286,10 @@ final class WaveBasedGameScript extends BaseScript
 	private var _waves:Array = 
 	[
 		new Wave(Enemy.GREENK, 10),
-		new Wave(Enemy.FIGHTER5, 10),
+		new Wave(Enemy.BAT, 10),
 		new Wave(Enemy.GREENK, 15),
 		[new Wave(Enemy.GREENK, 10), new Wave(Enemy.REDROGUE, 2)],
-		[new Wave(Enemy.FIGHTER5, 10), new Wave(Enemy.REDROGUE, 3)],
+		[new Wave(Enemy.BAT, 10), new Wave(Enemy.REDROGUE, 3)],
 		new Wave(Enemy.GREENK, 20),
 		[new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 3)],
 		[new Wave(Enemy.GREENK, 5), new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 5)]
@@ -333,8 +298,12 @@ final class WaveBasedGameScript extends BaseScript
 
 	static private const _tmpArray:Array = [];
 	private var _enemies:uint = 0;
+//private var _wave:uint = 0;
 	private function addNextWave():void
 	{
+//		Utils.addEnemyByIndex(_game, _wave);
+//		Utils.addEnemyByIndex(_game, _wave++);
+//		_enemies = 2;
 		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
 		if (_waves.length)
 		{

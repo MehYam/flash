@@ -105,85 +105,82 @@ package
 			}
 			return retval; // this will be either a bitmap, a bitmap centered on a sprite, or the source vector object 
 		}
-		[Embed(source="assets/master.swf", symbol="ship2_10")]
-		static private const REDSHIP:Class;
-		static public function createRedShip():DisplayObject
-		{
-			return createAssetRasterized(REDSHIP, true, true, 0.7);
-		}
-		[Embed(source="assets/master.swf", symbol="ship2_12_1")]
-		static private const BLUESHIP:Class;
-		static public function createBlueShip():DisplayObject
-		{
-			return createAssetRasterized(BLUESHIP, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship2")]
-		static private const ORANGESHIP:Class;
-		static public function createOrangeShip():DisplayObject
-		{
-			return createAssetRasterized(ORANGESHIP, true, true);
-		}
+		// Ship assets /////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="ship2_1")]
-		static private const GREENSHIP:Class;
-		static public function createGreenShip():DisplayObject
-		{
-			return createAssetRasterized(GREENSHIP, true, true);
-		}
+		static private const SHIP1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_1_0")]
+		static private const SHIP1_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_1_1")]
+		static private const SHIP1_1:Class;
 		[Embed(source="assets/master.swf", symbol="ship2_2")]
-		static private const GRAYSHIP:Class;
-		static public function createGrayShip():DisplayObject
-		{
-			return createAssetRasterized(GRAYSHIP, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship5")]
-		static private const FUNNELSHIP:Class;
-		static public function createFunnelShip():DisplayObject
-		{
-			return createAssetRasterized(FUNNELSHIP, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship6")]
-		static private const BLUEBOSS:Class;
-		static public function createBlueBossShip():DisplayObject
-		{
-			return createAssetRasterized(BLUEBOSS, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship7")]
-		static private const FIGHTER:Class;
-		static public function createFighterShip():DisplayObject
-		{
-			return createAssetRasterized(FIGHTER, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship8")]
+		static private const SHIP2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_2_0")]
+		static private const SHIP2_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_2_1")]
+		static private const SHIP2_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_3")]
+		static private const SHIP3:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_3_0")]
+		static private const SHIP3_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_3_1")]
+		static private const SHIP3_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_4")]
+		static private const SHIP4:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_4_0")]
+		static private const SHIP4_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_4_1")]
+		static private const SHIP4_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_5")]
+		static private const SHIP5:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_5_0")]
+		static private const SHIP5_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_5_1")]
+		static private const SHIP5_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_6")]
+		static private const SHIP6:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_6_0")]
+		static private const SHIP6_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_6_1")]
+		static private const SHIP6_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_7")]
+		static private const SHIP7:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_7_0")]
+		static private const SHIP7_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_7_1")]
+		static private const SHIP7_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_8")]
 		static private const SHIP8:Class;
-		static public function createShip8():DisplayObject
-		{
-			return createAssetRasterized(SHIP8, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship9")]
+		[Embed(source="assets/master.swf", symbol="ship2_9")]
 		static private const SHIP9:Class;
-		static public function createShip9():DisplayObject
-		{
-			return createAssetRasterized(SHIP9, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship10")]
+		[Embed(source="assets/master.swf", symbol="ship2_10")]
 		static private const SHIP10:Class;
-		static public function createShip10():DisplayObject
-		{
-			return createAssetRasterized(SHIP10, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship11")]
+		[Embed(source="assets/master.swf", symbol="ship2_10_1")]
+		static private const SHIP10_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_10_2")]
+		static private const SHIP10_2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_11")]
 		static private const SHIP11:Class;
-		static public function createShip11():DisplayObject
-		{
-			return createAssetRasterized(SHIP11, true, true);
-		}
-		[Embed(source="assets/master.swf", symbol="ship12")]
+		[Embed(source="assets/master.swf", symbol="ship2_11_1")]
+		static private const SHIP11_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_11_2")]
+		static private const SHIP11_2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_12")]
 		static private const SHIP12:Class;
-		static public function createShip12():DisplayObject
+		[Embed(source="assets/master.swf", symbol="ship2_12_0")]
+		static private const SHIP12_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_12_1")]
+		static private const SHIP12_1:Class;
+
+		static private const SHIP_TYPES:Array = 
+			[SHIP1, SHIP1_0, SHIP1_1, SHIP2, SHIP2_0, SHIP2_1, SHIP3, SHIP3_0, SHIP3_1, SHIP4, SHIP4_0, SHIP4_1, SHIP5, SHIP5_0, SHIP5_1, SHIP6, SHIP6_0, SHIP6_1, SHIP7, SHIP7_0, SHIP7_1, SHIP8, SHIP9, SHIP10, SHIP10_1, SHIP10_2, SHIP11, SHIP11_1, SHIP11_2, SHIP12, SHIP12_0, SHIP12_1];
+		//     0      1        2         3      4        5       6       7        8       9       10      11       12     13      14         15     16     17       18     19        20       21    22      23     24        25         26      27       28         29      30        31
+		static public function createShip(index:uint, scale:Number = 1):DisplayObject
 		{
-			return createAssetRasterized(SHIP12, true, true);
+			return createAssetRasterized(SHIP_TYPES[index], true, true, scale);
 		}
 
+		// end ships /////////////////////////////////////////////////////////////
+		// tanks ////////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="tankhull0")]
 		static private const HULL0:Class;
 		static public function createHull0():DisplayObject
