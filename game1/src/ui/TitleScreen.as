@@ -62,38 +62,52 @@ package ui
 			textFieldTyper.addEventListener(Event.COMPLETE, onTitleComplete);
 		}
 
+		private var _titleComplete:Boolean = false;
 		private function onTitleComplete(e:Event):void
 		{
 			var textFieldTyper:TextFieldTyper = TextFieldTyper(e.target);
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 
-			var textField:TextField = new TextField();
-			textField.selectable = false;
-			textField.x = LEFT;
-			textField.y = stage.stageHeight - 30;
-			textField.autoSize = TextFieldAutoSize.LEFT;
-			textField.defaultTextFormat = new TextFormat("Computerfont", 24, 0x00ff00);
-			
-			addChild(textField);
-			
-			textFieldTyper.textField = textField;
-			textFieldTyper.sounds = false;
-			textFieldTyper.text = "Press Any Key to Start";
-			textFieldTyper.timer.start(100);
+			var newGameButton:GameButton = GameButton.create("New Game");
+			Util.centerChild(newGameButton, this);
+			newGameButton.y = 300;
+			addChild(newGameButton);
+
+			Util.listen(newGameButton, MouseEvent.CLICK, onNewGame);
+
+			var continueButton:GameButton = GameButton.create("Continue");
+			continueButton.width = newGameButton.width;
+			Util.centerChild(continueButton, this);
+			continueButton.y = newGameButton.y + newGameButton.height + 20;
+			addChild(continueButton);
+
+			Util.listen(continueButton, MouseEvent.CLICK, onContinue);
+
+			_titleComplete = true;
 		}
 
 		private function onAddedToStage(e:Event):void
 		{
-			Util.listen(stage, KeyboardEvent.KEY_DOWN, onUserDismissed);
-			Util.listen(stage, MouseEvent.MOUSE_DOWN, onUserDismissed);
+			Util.listen(stage, KeyboardEvent.KEY_DOWN, onUserImpatient);
+			Util.listen(stage, MouseEvent.MOUSE_DOWN, onUserImpatient);
 			
 			graphics.beginFill(0);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 		}
-		private function onUserDismissed(e:Event):void
+		private function onUserImpatient(e:Event):void
 		{
-			_typer.timer.stop();
-			dispatchEvent(new Event(Event.COMPLETE));
+			if (!_titleComplete)
+			{
+				_typer.skip();
+			}
+		}
+		private function onNewGame(e:Event):void
+		{
+			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
+		}
+		private function onContinue(e:Event):void
+		{
+			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.CONTINUE));
 		}
 		
 		private var _fade:FrameTimer = new FrameTimer(tweenAlpha);

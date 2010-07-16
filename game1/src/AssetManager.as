@@ -2,6 +2,7 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
@@ -80,5 +81,14 @@ package
 			_weaponSound.play();
 		}
 
+		[Embed(source="assets/master.swf", symbol="buttonFace")]
+		static private const BUTTONFACE:Class;
+		[Embed(source="assets/master.swf", symbol="buttonFaceDown")]
+		static private const BUTTONFACEDOWN:Class;
+		[Embed(source="assets/master.swf", symbol="buttonFaceOver")]
+		static private const BUTTONFACEOVER:Class;
+		public function buttonFace():DisplayObject { return new BUTTONFACE; } 
+		public function buttonFaceDown():DisplayObject { return new BUTTONFACEDOWN; } 
+		public function buttonFaceOver():DisplayObject { return new BUTTONFACEOVER; } 
 	}
 }

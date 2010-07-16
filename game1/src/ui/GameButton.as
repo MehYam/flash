@@ -1,5 +1,6 @@
 package ui
 {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -9,17 +10,28 @@ package ui
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	
+	import karnold.utils.Util;
+	
 	// There are about a million better ways to do this - resorting to this	because I'm running out of
 	// time and can't get 9 sliced Buttons to work from CS3.
 	public class GameButton extends Sprite
 	{
-		private var _up:Sprite;
-		private var _over:Sprite;
-		private var _down:Sprite;
-		private var _text:TextField;
+		private var _up:DisplayObject;
+		private var _over:DisplayObject;
+		private var _down:DisplayObject;
+		private var _text:*;  // sucks, but because it could be a TextField or ShadowTextField
 		
-		private static const TEXTOFFSET:Point = new Point(8, 9);
-		public function TilesButton(label:String, up:Sprite, over:Sprite, down:Sprite)
+		public static function create(label:String):GameButton
+		{
+			var tf:TextFormat = new TextFormat("Computerfont", 24);
+			tf.align = TextFormatAlign.CENTER;
+
+			var text:ShadowTextField = new ShadowTextField(tf);
+			text.text = label;
+
+			return new GameButton(text, AssetManager.instance.buttonFace(), AssetManager.instance.buttonFaceOver(), AssetManager.instance.buttonFaceDown());
+		}
+		public function GameButton(text:DisplayObject, up:DisplayObject, over:DisplayObject, down:DisplayObject)
 		{
 			super();
 			
@@ -27,26 +39,21 @@ package ui
 			this.buttonMode = true;
 			this.useHandCursor = true;
 			
-			Utils.listen(this, MouseEvent.ROLL_OUT, onRollOut);
-			Utils.listen(this, MouseEvent.ROLL_OVER, onRollOver);
-			Utils.listen(this, MouseEvent.MOUSE_DOWN, onMouseDown);
+			Util.listen(this, MouseEvent.ROLL_OUT, onRollOut);
+			Util.listen(this, MouseEvent.ROLL_OVER, onRollOver);
+			Util.listen(this, MouseEvent.MOUSE_DOWN, onMouseDown);
 			
 			_up = up;
 			_over = over;
 			_down = down;
+			_text = text;
 			
-			var tf:TextFormat = AssetManager.inst().newBoulderTextFormat(18);
-			tf.align = TextFormatAlign.CENTER;
-			
-			_text = AssetManager.inst().newEmbeddedFontTextField(tf, 0xffffff);
-			_text.height = 18;
-			_text.text = label;
 			_text.x = TEXTOFFSET.x;
 			_text.y = TEXTOFFSET.y;
-			_text.autoSize = TextFieldAutoSize.NONE;
-			
-			this.width = _text.width + 2*TEXTOFFSET.x;
-			
+
+			width = 2*_text.x + _text.width;
+			height = 2*_text.y + _text.height - 3;
+
 			addChild(_up);
 			addChild(_text);
 		}
@@ -61,17 +68,29 @@ package ui
 			_up.width = value;
 			_down.width = value;
 			_over.width = value;
-			_text.width = value - 2*TEXTOFFSET.x;
 		}
 		public function set label(text:String):void
 		{
 			_text.text = text;
 		}
 		
-		private function setFace(sprite:Sprite):void
+		private static const TEXTOFFSET:Point = new Point(7, 2);
+		private static const TEXTOFFSET_DOWN:Point = new Point(TEXTOFFSET.x + 4, TEXTOFFSET.y + 4);
+		private function setFace(sprite:DisplayObject):void
 		{
 			removeChildAt(0);
 			addChildAt(sprite, 0);
+
+			if (sprite == _down)
+			{
+				_text.x = TEXTOFFSET_DOWN.x;
+				_text.y = TEXTOFFSET_DOWN.y;
+			}
+			else
+			{
+				_text.x = TEXTOFFSET.x;
+				_text.y = TEXTOFFSET.y;
+			}
 		}
 		
 		private var _mouseDown:Boolean = false;
@@ -81,9 +100,9 @@ package ui
 			_mouseDown = true;
 			setFace(_down);
 			
-			Utils.listen(stage, MouseEvent.MOUSE_UP, onMouseUp);
-			Utils.listen(stage, Event.MOUSE_LEAVE, onMouseUp);
-			Utils.listen(this, MouseEvent.CLICK, onClick);
+			Util.listen(stage, MouseEvent.MOUSE_UP, onMouseUp);
+			Util.listen(stage, Event.MOUSE_LEAVE, onMouseUp);
+			Util.listen(this, MouseEvent.CLICK, onClick);
 		}
 		private function onMouseUp(e:Event):void
 		{
@@ -102,7 +121,7 @@ package ui
 		}
 		private function onClick(e:Event):void
 		{
-			GlobalGameEvents.inst().UIClick();
+//KAI: play a sound
 		}
 	}
 }

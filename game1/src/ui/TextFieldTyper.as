@@ -84,6 +84,17 @@ package ui
 				}
 			}
 		}
+		public function skip():void
+		{
+			// force the final interval
+			_next = _text.length - 1;
+			onInterval();
+			
+			_frameTimer.stop();
+			_postDelayTimer.stop();
+			
+			onDone();
+		}
 		private function onDone():void
 		{
 			dispatchEvent(new Event(Event.COMPLETE));
