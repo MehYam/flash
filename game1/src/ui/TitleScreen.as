@@ -1,5 +1,6 @@
 package ui
 {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -79,6 +80,7 @@ package ui
 			continueButton.width = newGameButton.width;
 			Util.centerChild(continueButton, this);
 			continueButton.y = newGameButton.y + newGameButton.height + 20;
+			continueButton.enabled = false;
 			addChild(continueButton);
 
 			Util.listen(continueButton, MouseEvent.CLICK, onContinue);
@@ -104,6 +106,10 @@ package ui
 		private function onNewGame(e:Event):void
 		{
 			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
+var d:GameDialog = new LevelSelectionDialog;
+d.title = "LEVEL SELECTION";
+addChild(d);
+Util.centerChild(d, this);
 		}
 		private function onContinue(e:Event):void
 		{

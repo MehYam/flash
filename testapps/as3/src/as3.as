@@ -9,6 +9,7 @@ package {
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.BevelFilter;
 	import flash.filters.BitmapFilter;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
@@ -51,7 +52,7 @@ package {
 			
 //			testProgressMeter();
 			
-			testPerlinNoise();
+			testProgrammaticSkin();
 		}
 	
 		private function testTextField():void
@@ -322,9 +323,37 @@ package {
 			_pm.pct = e.stageX / stage.stageWidth;
 			trace(e.stageX / stage.stageWidth);
 		}
-		
-		private function testPerlinNoise():void
+
+		static private const s_scale9:Rectangle = new Rectangle(10, 10, 30, 30);
+		static private function testProgrammaticSkin_rect(color:uint):DisplayObject
 		{
+			var rect:Shape = new Shape;
+			
+			rect.graphics.lineStyle(1);
+			rect.graphics.beginFill(color);
+			rect.graphics.drawRoundRect(0, 0, 50, 50, 15, 15);
+			rect.graphics.endFill();
+			
+			rect.scale9Grid = s_scale9;
+			return rect;			
+		}
+		private function testProgrammaticSkin():void
+		{
+			var rect:DisplayObject = testProgrammaticSkin_rect(0xa6a6a6);
+			rect.x = 50;
+			rect.y = 50;
+			rect.width = 150;
+			rect.height = 150;
+			rect.filters = [new BevelFilter(3, 45)];
+			addChild(rect);
+			
+			rect = testProgrammaticSkin_rect(0xcccccc);
+			rect.x = 55;
+			rect.y = 75;
+			rect.width = 139;
+			rect.height = 119;
+			rect.filters = [new BevelFilter(3, 235)];
+			addChild(rect);
 		}
 	}
 }

@@ -20,16 +20,16 @@ package ui
 		private var _over:DisplayObject;
 		private var _down:DisplayObject;
 		private var _text:*;  // sucks, but because it could be a TextField or ShadowTextField
-		
-		public static function create(label:String):GameButton
+
+		public static function create(label:String, raised:Boolean = true, size:Number = 24, distance:Number = 2):GameButton
 		{
-			var tf:TextFormat = new TextFormat("Computerfont", 24);
+			var tf:TextFormat = new TextFormat("Computerfont", size);
 			tf.align = TextFormatAlign.CENTER;
 
-			var text:ShadowTextField = new ShadowTextField(tf);
+			var text:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x000000, distance);
 			text.text = label;
 
-			return new GameButton(text, AssetManager.instance.buttonFace(), AssetManager.instance.buttonFaceOver(), AssetManager.instance.buttonFaceDown());
+			return new GameButton(text, AssetManager.instance.buttonFace(raised), AssetManager.instance.buttonFaceOver(raised), AssetManager.instance.buttonFaceDown());
 		}
 		public function GameButton(text:DisplayObject, up:DisplayObject, over:DisplayObject, down:DisplayObject)
 		{
@@ -73,9 +73,15 @@ package ui
 		{
 			_text.text = text;
 		}
+		public function set enabled(b:Boolean):void
+		{
+			this.alpha = b ? 1 : 0.5;
+			mouseChildren = b;
+			mouseEnabled = b;
+		}
 		
 		private static const TEXTOFFSET:Point = new Point(7, 2);
-		private static const TEXTOFFSET_DOWN:Point = new Point(TEXTOFFSET.x + 4, TEXTOFFSET.y + 4);
+		private static const TEXTOFFSET_DOWN:Point = new Point(TEXTOFFSET.x + 2, TEXTOFFSET.y + 2);
 		private function setFace(sprite:DisplayObject):void
 		{
 			removeChildAt(0);

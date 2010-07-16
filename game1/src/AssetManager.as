@@ -3,6 +3,12 @@ package
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
+	import flash.display.Shape;
+	import flash.display.Sprite;
+	import flash.filters.BevelFilter;
+	import flash.filters.DropShadowFilter;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
@@ -81,14 +87,77 @@ package
 			_weaponSound.play();
 		}
 
-		[Embed(source="assets/master.swf", symbol="buttonFace")]
-		static private const BUTTONFACE:Class;
-		[Embed(source="assets/master.swf", symbol="buttonFaceDown")]
-		static private const BUTTONFACEDOWN:Class;
-		[Embed(source="assets/master.swf", symbol="buttonFaceOver")]
-		static private const BUTTONFACEOVER:Class;
-		public function buttonFace():DisplayObject { return new BUTTONFACE; } 
-		public function buttonFaceDown():DisplayObject { return new BUTTONFACEDOWN; } 
-		public function buttonFaceOver():DisplayObject { return new BUTTONFACEOVER; } 
+		//KAI: remove these if unused
+		//KAI: remove the ships also
+//		[Embed(source="assets/master.swf", symbol="buttonFace")]
+//		static private const BUTTONFACE:Class;
+//		[Embed(source="assets/master.swf", symbol="buttonFaceDown")]
+//		static private const BUTTONFACEDOWN:Class;
+//		[Embed(source="assets/master.swf", symbol="buttonFaceOver")]
+//		static private const BUTTONFACEOVER:Class;
+//		public function buttonFace():DisplayObject { return new BUTTONFACE; } 
+//		public function buttonFaceDown():DisplayObject { return new BUTTONFACEDOWN; } 
+//		public function buttonFaceOver():DisplayObject { return new BUTTONFACEOVER; }
+//		[Embed(source="assets/master.swf", symbol="titleWindow")]
+//		static private const TITLEWINDOW:Class;
+//		public function titleWindow():DisplayObjectContainer { return new TITLEWINDOW; }
+		
+		static private const s_uiFaceScale9:Rectangle = new Rectangle(10, 10, 30, 30);
+		static private function uiFace(color:uint):DisplayObject
+		{
+			var rect:Shape = new Shape;
+			
+			rect.graphics.lineStyle(1);
+			rect.graphics.beginFill(color);
+			rect.graphics.drawRoundRect(0, 0, 50, 50, 15, 15);
+			rect.graphics.endFill();
+			
+			rect.scale9Grid = s_uiFaceScale9;
+			return rect;			
+		}
+		static private const s_faceFilter:Array = [new BevelFilter(3, 45)]; 
+		public function buttonFace(raised:Boolean = true):DisplayObject
+		{
+			var retval:DisplayObject = uiFace(0xa6a6a6);
+			if (raised)
+			{
+				retval.filters = s_faceFilter;
+			}
+			return retval;
+		}
+		public function buttonFaceDown():DisplayObject
+		{
+			var retval:DisplayObject = uiFace(0xa6a6a6); 
+			var colorTransform:ColorTransform = retval.transform.colorTransform;
+			colorTransform.greenOffset = 10;
+			colorTransform.blueOffset = -0xff;
+			colorTransform.redOffset = -0xff;
+			
+			retval.transform.colorTransform = colorTransform;
+			return retval;
+		}
+		static private const s_faceOverFilter:Array = [new BevelFilter(3, 45), new DropShadowFilter()];
+		public function buttonFaceOver(raised:Boolean = true):DisplayObject
+		{
+			var retval:DisplayObject = uiFace(0xa6a6a6);
+			var colorTransform:ColorTransform = retval.transform.colorTransform;
+			colorTransform.greenOffset = 32;
+			colorTransform.blueOffset = -0xff;
+			colorTransform.redOffset = -0xff;
+
+			retval.transform.colorTransform = colorTransform;
+			if (raised)
+			{
+				retval.filters = s_faceOverFilter;
+			}
+			return retval;
+		}
+		static private const s_innerFaceFilter:Array = [new BevelFilter(3, 235)];
+		public function innerFace():DisplayObject
+		{
+			var rect:DisplayObject = uiFace(0xcccccc);
+			rect.filters = s_innerFaceFilter
+			return rect;
+		}
 	}
 }

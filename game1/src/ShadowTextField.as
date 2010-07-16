@@ -10,7 +10,7 @@ package
 	{
 		private var _top:TextField;
 		private var _bottom:TextField;
-		public function ShadowTextField(tf:TextFormat, textColor:uint = 0xffffff, shadowColor:uint = 0x000000)
+		public function ShadowTextField(tf:TextFormat, textColor:uint = 0xffffff, shadowColor:uint = 0x000000, distance:Number = 2)
 		{
 			_top = new TextField();
 			_top.selectable = false;
@@ -22,8 +22,8 @@ package
 			_bottom.selectable = false;
 			_bottom.defaultTextFormat = tf;
 			_bottom.autoSize = TextFieldAutoSize.LEFT;
-			_bottom.x = 2;
-			_bottom.y = 2;
+			_bottom.x = distance;
+			_bottom.y = distance;
 			_bottom.textColor = shadowColor;
 			
 			addChild(_bottom);
