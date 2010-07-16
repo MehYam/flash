@@ -11,11 +11,14 @@ package ui
 	{
 		private var _background:DisplayObject;
 		private var _inner:DisplayObject;
-		
+
 		static private const s_titleHeight:Number = 25;
 		static private const s_innerMarginTopLeft:Point = new Point(5, 5);
 		static private const s_innerMarginBottomRight:Point = new Point(7, 7);
 		static private const s_titleOffset:Point = new Point(3, 2);
+		
+		static protected const TOPMARGIN:Number = s_titleHeight + 15;
+
 		public function GameDialog()
 		{
 			super();

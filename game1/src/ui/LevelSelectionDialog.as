@@ -11,7 +11,9 @@ package ui
 		public function LevelSelectionDialog()
 		{
 			super();
-			
+
+			title = "LEVEL SELECTION";
+
 			addLevelButtons();
 			addBottomInterface();
 
@@ -19,7 +21,7 @@ package ui
 			this.height = height + 20;
 		}
 		
-		public function addLevelButtons():void
+		private function addLevelButtons():void
 		{
 			var btn:GameButton
 			for (var r:uint = 0; r < 7; ++r)
@@ -29,7 +31,7 @@ package ui
 					btn = GameButton.create("Level " + ((r*c) + r), false, 18, 1);
 					btn.enabled = !r && !c;
 					btn.width = 85;
-					btn.y = 40 + (r * (btn.height + 2));
+					btn.y = TOPMARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
 					
 					addChild(btn);
@@ -37,7 +39,7 @@ package ui
 			}
 		}
 		
-		public function addBottomInterface():void
+		private function addBottomInterface():void
 		{
 			var hangar:GameButton = GameButton.create("Buy Upgrades", true, 24, 1);
 			hangar.x = 10;

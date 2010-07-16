@@ -49,12 +49,9 @@ package ui
 			var textFieldTyper:TextFieldTyper = TextFieldTyper(e.target);
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 			
-			var textField:TextField = new TextField();
-			textField.selectable = false;
+			var textField:DisplayObject = new ShadowTextField(new TextFormat("SF Transrobotics", 96), 0xffffff, 0x00cc00, 5);
 			textField.x = LEFT;
 			textField.y = 150;
-			textField.autoSize = TextFieldAutoSize.LEFT;
-			textField.defaultTextFormat = new TextFormat("SF Transrobotics", 96, 0xffffff);
 			addChild(textField);
 			
 			textFieldTyper.textField = textField;
@@ -106,8 +103,7 @@ package ui
 		private function onNewGame(e:Event):void
 		{
 			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
-var d:GameDialog = new LevelSelectionDialog;
-d.title = "LEVEL SELECTION";
+var d:GameDialog = new LevelCompleteDialog;
 addChild(d);
 Util.centerChild(d, this);
 		}
