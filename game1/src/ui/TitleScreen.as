@@ -103,7 +103,7 @@ package ui
 		private function onNewGame(e:Event):void
 		{
 //			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
-var d:GameDialog = new UpgradeDialog;
+var d:GameDialog = new UpgradeTankDialog;
 addChild(d);
 Util.centerChild(d, this);
 		}

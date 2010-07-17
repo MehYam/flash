@@ -8,9 +8,9 @@ package ui
 	import karnold.ui.ProgressMeter;
 	import karnold.utils.Util;
 
-	public class UpgradeDialog extends GameDialog
+	public class UpgradeTankDialog extends GameDialog
 	{
-		public function UpgradeDialog()
+		public function UpgradeTankDialog()
 		{
 			super(false);
 
@@ -27,34 +27,34 @@ package ui
 			width = width + 20;
 			height = height + 20;
 		}
-		private function addGroupBox(label:String, locX:Number, locY:Number, width:Number, height:Number):void
-		{
-			var skin:DisplayObject = AssetManager.instance.innerFace();
-			skin.width =   width;
-			skin.height =  height;
-			
-			skin.x = locX;
-			skin.y = locY;
-			
-			addChild(skin);
-			
-			var tf:TextFormat = new TextFormat("Radio Stars", 14);
-			var labelField:ShadowTextField = new ShadowTextField(tf, 0, 0x00ff00, 1);
-			labelField.text = label;
-			
-			labelField.x = skin.x + 3;
-			labelField.y = skin.y;
-			
-			addChild(labelField);
-		}
+//		private function addGroupBox(label:String, locX:Number, locY:Number, width:Number, height:Number):void
+//		{
+//			var skin:DisplayObject = AssetManager.instance.innerFace();
+//			skin.width =   width;
+//			skin.height =  height;
+//			
+//			skin.x = locX;
+//			skin.y = locY;
+//			
+//			addChild(skin);
+//			
+//			var tf:TextFormat = new TextFormat("Radio Stars", 14);
+//			var labelField:ShadowTextField = new ShadowTextField(tf, 0, 0x00ff00, 1);
+//			labelField.text = label;
+//			
+//			labelField.x = skin.x + 3;
+//			labelField.y = skin.y;
+//			
+//			addChild(labelField);
+//		}
 		static private const LEFT_MARGIN:Number = 10;
 		static private const LIST_WIDTH:Number = 200;
 		static private const LIST_HEIGHT:Number = 125;
 		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
 		private function addShipList():void
 		{
-			addGroupBox("Ships", LEFT_MARGIN, TOPMARGIN, LIST_WIDTH, LIST_HEIGHT);
-			addGroupBox("Upgrades", LIST_WIDTH + 15, TOPMARGIN, UPGRADE_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Ships", LEFT_MARGIN, TOPMARGIN, LIST_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, TOPMARGIN, UPGRADE_WIDTH, LIST_HEIGHT);
 			
 			var list:GameList = new GameList;
 //			list.addItem(ActorAssetManager.createShip(0));
@@ -73,8 +73,8 @@ package ui
 		private function addTankHullList():void
 		{
 			const top:Number = TOPMARGIN + ((LIST_HEIGHT+10));
-			addGroupBox("Tank Hulls", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
-			addGroupBox("Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Tank Hulls", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			var list:GameList = new GameList;
 			list.addItem(ActorAssetManager.createHull0());
@@ -92,8 +92,8 @@ package ui
 		private function addTankTurretList():void
 		{
 			const top:Number = TOPMARGIN + ((LIST_HEIGHT+10)*2)
-			addGroupBox("Tank Turrets", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
-			addGroupBox("Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Tank Turrets", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			var list:GameList = new GameList;
 			list.addItem(ActorAssetManager.createTurret0());
