@@ -19,15 +19,18 @@ package ui
 		
 		static protected const TOPMARGIN:Number = s_titleHeight + 15;
 
-		public function GameDialog()
+		public function GameDialog(inner:Boolean = true)
 		{
 			super();
 
 			_background = AssetManager.instance.buttonFace();
 			addChild(_background);
 			
-			_inner = AssetManager.instance.innerFace();
-			addChild(_inner);
+			if (inner)
+			{
+				_inner = AssetManager.instance.innerFace();
+				addChild(_inner);
+			}
 		}
 		
 		public function layoutSkins():void

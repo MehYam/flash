@@ -41,7 +41,7 @@ package ui
 		
 		private function addBottomInterface():void
 		{
-			var hangar:GameButton = GameButton.create("Buy Upgrades", true, 24, 1);
+			var hangar:GameButton = GameButton.create("Upgrades/Hangar", true, 24, 1);
 			hangar.x = 10;
 			hangar.y = height + 20;
 			
