@@ -47,10 +47,14 @@ package ui
 			
 			addChild(labelField);
 		}
+		static private const LEFT_MARGIN:Number = 10;
+		static private const LIST_WIDTH:Number = 200;
+		static private const LIST_HEIGHT:Number = 125;
+		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
 		private function addShipList():void
 		{
-			addGroupBox("Ships", 10, TOPMARGIN, 200, 100);
-			addGroupBox("Upgrades", 215, TOPMARGIN, 100, 100);
+			addGroupBox("Ships", LEFT_MARGIN, TOPMARGIN, LIST_WIDTH, LIST_HEIGHT);
+			addGroupBox("Upgrades", LIST_WIDTH + 15, TOPMARGIN, UPGRADE_WIDTH, LIST_HEIGHT);
 			
 			var list:GameList = new GameList;
 //			list.addItem(ActorAssetManager.createShip(0));
@@ -68,8 +72,9 @@ package ui
 		}
 		private function addTankHullList():void
 		{
-			addGroupBox("Tank Hulls", 10, TOPMARGIN + 110, 200, 100);
-			addGroupBox("Upgrades", 215, TOPMARGIN + 110, 100, 100);
+			const top:Number = TOPMARGIN + ((LIST_HEIGHT+10));
+			addGroupBox("Tank Hulls", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
+			addGroupBox("Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			var list:GameList = new GameList;
 			list.addItem(ActorAssetManager.createHull0());
@@ -77,7 +82,7 @@ package ui
 			list.addItem(ActorAssetManager.createHull2());
 			list.addItem(ActorAssetManager.createHull3());
 			list.x = 15;
-			list.y = TOPMARGIN + 110 + 20;
+			list.y = top + 20;
 			list.setBounds(190, 70);
 			
 			list.render();
@@ -86,8 +91,9 @@ package ui
 		}
 		private function addTankTurretList():void
 		{
-			addGroupBox("Tank Turrets", 10, TOPMARGIN + 220, 200, 100);
-			addGroupBox("Upgrades", 215, TOPMARGIN + 220, 100, 100);
+			const top:Number = TOPMARGIN + ((LIST_HEIGHT+10)*2)
+			addGroupBox("Tank Turrets", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
+			addGroupBox("Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			var list:GameList = new GameList;
 			list.addItem(ActorAssetManager.createTurret0());
@@ -95,7 +101,7 @@ package ui
 			list.addItem(ActorAssetManager.createTurret2());
 			list.addItem(ActorAssetManager.createTurret3());
 			list.x = 15;
-			list.y = TOPMARGIN + 220 + 20;
+			list.y = top + 20;
 			list.setBounds(190, 70);
 			
 			list.render();
@@ -108,7 +114,7 @@ package ui
 			var skin:DisplayObject = AssetManager.instance.innerFace();
 			
 			skin.width = 150;
-			skin.height = 100;
+			skin.height = LIST_HEIGHT;
 			
 			skin.y = TOPMARGIN;
 			skin.x = 350;
@@ -135,9 +141,9 @@ package ui
 			addStatField(fields, "Ammo", 1);
 			addStatField(fields, "Speed", 0.3);
 			
-			skin.height = fields.height + 10;
+			skin.height = LIST_HEIGHT;
 			skin.x = 350;
-			skin.y = 150;
+			skin.y = LIST_HEIGHT + 50;
 			addChild(skin);
 			
 			fields.x = skin.x + 5;
@@ -180,7 +186,7 @@ package ui
 			fieldParent.addChild(valueField);
 			
 			fieldParent.x = width - fieldParent.width;
-			fieldParent.y = 275;
+			fieldParent.y = 300;
 			
 			addChild(fieldParent);
 			

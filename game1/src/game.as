@@ -38,6 +38,7 @@ package
 	
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
+	import ui.TitleScreenEvent;
 
 	[SWF(backgroundColor="#0")]
 	public final class game extends Sprite implements IGame
@@ -63,9 +64,9 @@ package
 			var titleScreen:TitleScreen = new TitleScreen;
 			parent.addChild(titleScreen);
 			
-			Util.listen(titleScreen, Event.COMPLETE, onTitleComplete);
+			Util.listen(titleScreen, TitleScreenEvent.NEW_GAME, onNewGame);
 		}
-		private function onTitleComplete(e:Event):void
+		private function onNewGame(e:Event):void
 		{
 			IEventDispatcher(e.target).removeEventListener(e.type, arguments.callee);
 			startGame();

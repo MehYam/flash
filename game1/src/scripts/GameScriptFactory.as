@@ -298,12 +298,14 @@ class WaveBasedGameScript extends BaseScript
 
 	static private const _tmpArray:Array = [];
 	private var _enemies:uint = 0;
-//private var _wave:uint = 0;
+private var _wave:uint = 0;
 	private function addNextWave():void
 	{
-//		Utils.addEnemyByIndex(_game, _wave);
-//		Utils.addEnemyByIndex(_game, _wave++);
-//		_enemies = 2;
+Utils.addEnemyByIndex(_game, _wave++);
+Utils.addEnemyByIndex(_game, _wave++);
+Utils.addEnemyByIndex(_game, _wave++);
+_enemies = 3;
+return;
 		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
 		if (_waves.length)
 		{
