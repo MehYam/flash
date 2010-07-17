@@ -23,7 +23,7 @@ package ui
 		
 		private function addLevelButtons():void
 		{
-			var btn:GameButton
+			var btn:GameButton;
 			for (var r:uint = 0; r < 7; ++r)
 			{
 				for (var c:uint = 0; c < 5; ++c)
@@ -41,7 +41,7 @@ package ui
 		
 		private function addBottomInterface():void
 		{
-			var hangar:GameButton = GameButton.create("Upgrades/Hangar", true, 24, 1);
+			var hangar:GameButton = GameButton.create("Vehicle Selection", true, 24, 1);
 			hangar.x = 10;
 			hangar.y = height + 20;
 			
@@ -55,15 +55,15 @@ package ui
 			
 			goldReportParent.addChild(goldReport);
 			
-			var gold:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), 0xaaaa33, 0, 1);
+			var gold:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), Consts.CREDIT_FIELD_COLOR, 0, 1);
 			gold.y = goldReport.y - 2;
 			gold.x = goldReport.x + goldReport.width + 2;
 			gold.text = "230000";
 			
 			goldReportParent.addChild(gold);
 
-			Util.centerChild(goldReportParent, hangar);
 			goldReportParent.x = width - goldReportParent.width;
+			goldReportParent.y = height - goldReportParent.height;
 		
 			addChild(goldReportParent);
 		}

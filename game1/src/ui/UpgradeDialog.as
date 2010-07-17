@@ -21,12 +21,13 @@ package ui
 			addTankTurretList();
 			addVehicleDisplay();
 			addStatDisplay();
+			addButtons();
 
 			//KAI: find something less ridiculous
-			width = width + 100;
-			height = height + 100;
+			width = width + 20;
+			height = height + 20;
 		}
-		private function addList(label:String, locX:Number, locY:Number, width:Number, height:Number):void
+		private function addGroupBox(label:String, locX:Number, locY:Number, width:Number, height:Number):void
 		{
 			var skin:DisplayObject = AssetManager.instance.innerFace();
 			skin.width =   width;
@@ -45,32 +46,68 @@ package ui
 			labelField.y = skin.y;
 			
 			addChild(labelField);
-			
-			var upgradeSkin:DisplayObject = AssetManager.instance.innerFace();
-			upgradeSkin.width = upgradeSkin.height = skin.height;
-			upgradeSkin.x = skin.x + skin.width + 5;
-			upgradeSkin.y = skin.y;
-			
-			addChild(upgradeSkin);
 		}
 		private function addShipList():void
 		{
-			addList("Ships", 10, TOPMARGIN, 200, 100);
+			addGroupBox("Ships", 10, TOPMARGIN, 200, 100);
+			addGroupBox("Upgrades", 215, TOPMARGIN, 100, 100);
+			
+			var list:GameList = new GameList;
+//			list.addItem(ActorAssetManager.createShip(0));
+//			list.addItem(ActorAssetManager.createShip(1));
+			list.addItem(ActorAssetManager.createShip(12));
+			list.addItem(ActorAssetManager.createShip(2));
+			list.addItem(ActorAssetManager.createShip(4));
+			
+			list.x = 15;
+			list.y = TOPMARGIN + 20;
+			list.setBounds(190, 70);
+			list.render();
+			
+			addChild(list);
 		}
 		private function addTankHullList():void
 		{
-			addList("Tank Hulls", 10, TOPMARGIN + 110, 200, 100);
+			addGroupBox("Tank Hulls", 10, TOPMARGIN + 110, 200, 100);
+			addGroupBox("Upgrades", 215, TOPMARGIN + 110, 100, 100);
+
+			var list:GameList = new GameList;
+			list.addItem(ActorAssetManager.createHull0());
+			list.addItem(ActorAssetManager.createHull1());
+			list.addItem(ActorAssetManager.createHull2());
+			list.addItem(ActorAssetManager.createHull3());
+			list.x = 15;
+			list.y = TOPMARGIN + 110 + 20;
+			list.setBounds(190, 70);
+			
+			list.render();
+			
+			addChild(list);
 		}
 		private function addTankTurretList():void
 		{
-			addList("Tank Turrets", 10, TOPMARGIN + 220, 200, 100);
+			addGroupBox("Tank Turrets", 10, TOPMARGIN + 220, 200, 100);
+			addGroupBox("Upgrades", 215, TOPMARGIN + 220, 100, 100);
+
+			var list:GameList = new GameList;
+			list.addItem(ActorAssetManager.createTurret0());
+			list.addItem(ActorAssetManager.createTurret1());
+			list.addItem(ActorAssetManager.createTurret2());
+			list.addItem(ActorAssetManager.createTurret3());
+			list.x = 15;
+			list.y = TOPMARGIN + 220 + 20;
+			list.setBounds(190, 70);
+			
+			list.render();
+			
+			addChild(list);
 		}
 		
 		private function addVehicleDisplay():void
 		{
 			var skin:DisplayObject = AssetManager.instance.innerFace();
 			
-			skin.width = 100;
+			skin.width = 150;
 			skin.height = 100;
 			
 			skin.y = TOPMARGIN;
@@ -107,7 +144,7 @@ package ui
 			fields.y = skin.y + 5;
 			addChild(fields);
 		}
-		static private function addStatField(parent:DisplayObjectContainer, label:String, meterValue:Number, meterColor:uint = 0x0033cc):void
+		static private function addStatField(parent:DisplayObjectContainer, label:String, meterValue:Number, meterColor:uint = 0x0033ff):void
 		{
 			var tf:TextFormat = new TextFormat("SF Transrobotics", 18);
 			var labelField:ShadowTextField = new ShadowTextField(tf, 0x00, 0xff, 1);
@@ -116,14 +153,42 @@ package ui
 			
 			s_fieldTop += 20;
 
-			var valueField:ProgressMeter = new ProgressMeter(30, 7, 0, meterColor);
+			var valueField:ProgressMeter = new ProgressMeter(50, 7, 0, meterColor);
 			valueField.pct = meterValue;
 			
 			Util.centerChild(valueField, labelField);
+			valueField.y += 2;
 			valueField.x = 135 - valueField.width;
 			
 			parent.addChild(labelField);
 			parent.addChild(valueField);
+		}
+		private function addButtons():void
+		{
+			var fieldParent:Sprite = new Sprite;
+			
+			var tf:TextFormat = new TextFormat("Computerfont", 18);
+			var labelField:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x00, 1);
+			labelField.text = "Credits:";
+			labelField.y = 7;
+			
+			var valueField:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), Consts.CREDIT_FIELD_COLOR, 0, 1);
+			valueField.x = labelField.width + 5;
+			valueField.text = "32768";
+			
+			fieldParent.addChild(labelField);
+			fieldParent.addChild(valueField);
+			
+			fieldParent.x = width - fieldParent.width;
+			fieldParent.y = 275;
+			
+			addChild(fieldParent);
+			
+			var btn:GameButton = GameButton.create("Done", true, 24, 1);
+			btn.y = height - btn.height;
+			btn.x = width - btn.width;
+			
+			addChild(btn);
 		}
 	}
 }

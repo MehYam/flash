@@ -11,5 +11,7 @@ package
 		{
 			return frames * 1000 / FRAMERATE;
 		}
+		
+		static public const CREDIT_FIELD_COLOR:uint = 0xffcc33;
 	}
 }
