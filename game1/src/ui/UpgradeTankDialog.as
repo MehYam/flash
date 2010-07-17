@@ -53,8 +53,8 @@ package ui
 		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
 		private function addShipList():void
 		{
-			UIUtil.addGroupBox(this, "Ships", LEFT_MARGIN, TOPMARGIN, LIST_WIDTH, LIST_HEIGHT);
-			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, TOPMARGIN, UPGRADE_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Ships", LEFT_MARGIN, TOP_MARGIN, LIST_WIDTH, LIST_HEIGHT);
+			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, TOP_MARGIN, UPGRADE_WIDTH, LIST_HEIGHT);
 			
 			var list:GameList = new GameList;
 //			list.addItem(ActorAssetManager.createShip(0));
@@ -64,7 +64,7 @@ package ui
 			list.addItem(ActorAssetManager.createShip(4));
 			
 			list.x = 15;
-			list.y = TOPMARGIN + 20;
+			list.y = TOP_MARGIN + 20;
 			list.setBounds(190, 70);
 			list.render();
 			
@@ -72,7 +72,7 @@ package ui
 		}
 		private function addTankHullList():void
 		{
-			const top:Number = TOPMARGIN + ((LIST_HEIGHT+10));
+			const top:Number = TOP_MARGIN + ((LIST_HEIGHT+10));
 			UIUtil.addGroupBox(this, "Tank Hulls", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
 			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
@@ -91,7 +91,7 @@ package ui
 		}
 		private function addTankTurretList():void
 		{
-			const top:Number = TOPMARGIN + ((LIST_HEIGHT+10)*2)
+			const top:Number = TOP_MARGIN + ((LIST_HEIGHT+10)*2)
 			UIUtil.addGroupBox(this, "Tank Turrets", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
 			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
@@ -116,7 +116,7 @@ package ui
 			skin.width = 150;
 			skin.height = LIST_HEIGHT;
 			
-			skin.y = TOPMARGIN;
+			skin.y = TOP_MARGIN;
 			skin.x = 350;
 			
 			var ship:DisplayObject = ActorAssetManager.createShip(12);

@@ -14,9 +14,8 @@ package ui
 			
 			addFields();
 			addBottomStuff();
-			
-			width = width + 20;
-			height = height + 20;
+
+			render();
 		}
 		
 		private function addFields():void
@@ -28,7 +27,7 @@ package ui
 			addField("Damage per second", "35.65");
 			addField("DPS received", "23.23");
 		}
-		private var _lastFieldBottom:Number = TOPMARGIN;
+		private var _lastFieldBottom:Number = TOP_MARGIN;
 		private function addField(label:String, value:String, valueColor:uint = 0xffffff):void
 		{
 			var tf:TextFormat = new TextFormat("Computerfont", 24);

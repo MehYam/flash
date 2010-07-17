@@ -102,8 +102,8 @@ package ui
 		}
 		private function onNewGame(e:Event):void
 		{
-//			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
-var d:GameDialog = new UpgradeTankDialog;
+			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
+var d:GameDialog = new UpgradePlaneDialog;
 addChild(d);
 Util.centerChild(d, this);
 		}

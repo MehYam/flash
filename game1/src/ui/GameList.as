@@ -18,7 +18,7 @@ package ui
 		{
 			Util.setPointXY(_bounds, width, height);
 			
-//			scrollRect = new Rectangle(0, 0, width, height);
+			scrollRect = new Rectangle(0, 0, width, height);
 		}
 
 		private var _items:Array = [];
@@ -33,7 +33,7 @@ package ui
 		}
 
 		//KAI: this is all quick and dirty, and brittle
-		public function render():void
+		public function render(hGap:Number = 10):void
 		{
 			var hPos:Number = 0;
 			var bounds:Rectangle;
@@ -47,7 +47,7 @@ package ui
 				
 				addChild(dobj);
 				
-				hPos = dobj.x + bounds.width + 20;
+				hPos = dobj.x + bounds.width;
 				if (hPos > _bounds.x)
 				{
 					break;

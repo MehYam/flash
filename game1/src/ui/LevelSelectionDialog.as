@@ -17,8 +17,7 @@ package ui
 			addLevelButtons();
 			addBottomInterface();
 
-			this.width = width + 20;
-			this.height = height + 20;
+			render();
 		}
 		
 		private function addLevelButtons():void
@@ -31,7 +30,7 @@ package ui
 					btn = GameButton.create("Level " + ((r*c) + r), false, 18, 1);
 					btn.enabled = !r && !c;
 					btn.width = 85;
-					btn.y = TOPMARGIN + (r * (btn.height + 2));
+					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
 					
 					addChild(btn);

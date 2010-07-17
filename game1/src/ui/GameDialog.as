@@ -17,7 +17,7 @@ package ui
 		static private const s_innerMarginBottomRight:Point = new Point(7, 7);
 		static private const s_titleOffset:Point = new Point(3, 2);
 		
-		static protected const TOPMARGIN:Number = s_titleHeight + 15;
+		static protected const TOP_MARGIN:Number = s_titleHeight + 15;
 
 		public function GameDialog(inner:Boolean = true)
 		{
@@ -32,7 +32,13 @@ package ui
 				addChild(_inner);
 			}
 		}
-		
+
+		protected function render():void
+		{
+			// LAAAAAAAAAAAAAAAAME
+			width = width + 20;
+			height = height + 20;
+		}
 		public function layoutSkins():void
 		{
 			if (_inner && _background)
