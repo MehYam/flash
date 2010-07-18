@@ -45,11 +45,10 @@ package ui
 			UIUtil.addGroupBox(this, "Ships", LEFT_MARGIN, TOP_MARGIN, LIST_WIDTH, LIST_HEIGHT + 25);
 
 			var list:GameList = new GameList;
-			list.addItem(new GameListItem(ActorAssetManager.createShip(0), LIST_HEIGHT, LIST_HEIGHT));
-			list.addItem(new GameListItem(ActorAssetManager.createShip(1), LIST_HEIGHT, LIST_HEIGHT));
-			list.addItem(new GameListItem(ActorAssetManager.createShip(12), LIST_HEIGHT, LIST_HEIGHT));
-			list.addItem(new GameListItem(ActorAssetManager.createShip(2), LIST_HEIGHT, LIST_HEIGHT));
-			list.addItem(new GameListItem(ActorAssetManager.createShip(4), LIST_HEIGHT, LIST_HEIGHT));
+			for (var i:uint = 0; i < 20; ++i)
+			{
+				list.addItem(new GameListItem(ActorAssetManager.createShip(i), LIST_HEIGHT, LIST_HEIGHT));
+			}
 			
 			list.x = LEFT_MARGIN + 5;
 			list.y = TOP_MARGIN + 20;
