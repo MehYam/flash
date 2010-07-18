@@ -67,7 +67,7 @@ package
 		static private const RASTERIZING:Boolean = true;
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
-		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5)];
+		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
 		static private function createAssetRasterized(clss:Class, centered:Boolean, dropShadow:Boolean, scale:Number = 1):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;

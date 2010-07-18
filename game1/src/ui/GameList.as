@@ -18,7 +18,7 @@ package ui
 		{
 			Util.setPointXY(_bounds, width, height);
 			
-			scrollRect = new Rectangle(0, 0, width, height);
+//			scrollRect = new Rectangle(0, 0, width, height);
 		}
 
 		private var _items:Array = [];
@@ -36,18 +36,13 @@ package ui
 		public function render(hGap:Number = 10):void
 		{
 			var hPos:Number = 0;
-			var bounds:Rectangle;
 			for each (var dobj:DisplayObject in _items)
 			{
-				bounds = dobj.getBounds(dobj);
-//				dobj.x = hPos + dobj.width/2;
-//				dobj.y = _bounds.y/2;
-				dobj.x = -bounds.left + hPos;
-				dobj.y = -bounds.top;
+				dobj.x = hPos;
 				
 				addChild(dobj);
 				
-				hPos = dobj.x + bounds.width;
+				hPos = dobj.x + dobj.width;
 				if (hPos > _bounds.x)
 				{
 					break;
@@ -55,6 +50,17 @@ package ui
 			}
 			graphics.lineStyle(1, 0xff0000);
 			graphics.drawRect(0, 0, width, height);
+			
+			var leftButton:GameButton = GameButton.create("<", true, 12, 1);
+			leftButton.x = 0;
+			leftButton.y = _bounds.y - leftButton.height;
+			leftButton.enabled = false;
+			addChild(leftButton);
+			
+			var rightButton:GameButton = GameButton.create(">", true, 12, 1);
+			rightButton.x = _bounds.x - rightButton.width;
+			rightButton.y = leftButton.y;
+			addChild(rightButton);
 		}
 	}
 }

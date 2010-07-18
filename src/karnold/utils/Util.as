@@ -75,6 +75,10 @@ package karnold.utils
 			child.x = point.x - child.width/2;
 			child.y = point.y - child.height/2;
 		}
+//		static public function centerNonOriginedChildInRect(child:DisplayObject, rect:Rectangle):void
+//		{
+//			const bounds:Rectangle = child.getBounds(child);
+//		}
 		static public function mapChildrenByName(parent:DisplayObjectContainer, map:Object):void
 		{
 			const children:uint = parent.numChildren;
