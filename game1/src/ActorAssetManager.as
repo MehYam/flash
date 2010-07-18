@@ -106,6 +106,12 @@ package
 			return retval; // this will be either a bitmap, a bitmap centered on a sprite, or the source vector object 
 		}
 		// Ship assets /////////////////////////////////////////////////////
+		[Embed(source="assets/master.swf", symbol="ship2_0")]
+		static private const SHIP0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_0_0")]
+		static private const SHIP0_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_0_1")]
+		static private const SHIP0_1:Class;
 		[Embed(source="assets/master.swf", symbol="ship2_1")]
 		static private const SHIP1:Class;
 		[Embed(source="assets/master.swf", symbol="ship2_1_0")]
@@ -152,6 +158,10 @@ package
 		static private const SHIP8:Class;
 		[Embed(source="assets/master.swf", symbol="ship2_9")]
 		static private const SHIP9:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_9_1")]
+		static private const SHIP9_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_9_2")]
+		static private const SHIP9_2:Class;
 		[Embed(source="assets/master.swf", symbol="ship2_10")]
 		static private const SHIP10:Class;
 		[Embed(source="assets/master.swf", symbol="ship2_10_1")]
@@ -172,8 +182,8 @@ package
 		static private const SHIP12_1:Class;
 
 		static private const SHIP_TYPES:Array = 
-			[SHIP1, SHIP1_0, SHIP1_1, SHIP2, SHIP2_0, SHIP2_1, SHIP3, SHIP3_0, SHIP3_1, SHIP4, SHIP4_0, SHIP4_1, SHIP5, SHIP5_0, SHIP5_1, SHIP6, SHIP6_0, SHIP6_1, SHIP7, SHIP7_0, SHIP7_1, SHIP8, SHIP9, SHIP10, SHIP10_1, SHIP10_2, SHIP11, SHIP11_1, SHIP11_2, SHIP12, SHIP12_0, SHIP12_1];
-		//     0      1        2         3      4        5       6       7        8       9       10      11       12     13      14         15     16     17       18     19        20       21    22      23     24        25         26      27       28         29      30        31
+			[SHIP0, SHIP0_0, SHIP0_1, SHIP1, SHIP1_0, SHIP1_1, SHIP2, SHIP2_0, SHIP2_1, SHIP3, SHIP3_0, SHIP3_1, SHIP4, SHIP4_0, SHIP4_1, SHIP5, SHIP5_0, SHIP5_1, SHIP6, SHIP6_0, SHIP6_1, SHIP7, SHIP7_0, SHIP7_1, SHIP8, SHIP9, SHIP9_1, SHIP9_2, SHIP10, SHIP10_1, SHIP10_2, SHIP11, SHIP11_1, SHIP11_2, SHIP12, SHIP12_0, SHIP12_1];
+
 		static public function createShip(index:uint, scale:Number = 1):DisplayObject
 		{
 			return createAssetRasterized(SHIP_TYPES[index], true, true, scale);

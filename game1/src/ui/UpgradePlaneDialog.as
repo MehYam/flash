@@ -45,7 +45,7 @@ package ui
 			UIUtil.addGroupBox(this, "Ships", LEFT_MARGIN, TOP_MARGIN, LIST_WIDTH, LIST_HEIGHT + 25);
 
 			var list:GameList = new GameList;
-			for (var i:uint = 0; i < 20; ++i)
+			for (var i:uint = 0; i < 37; ++i)
 			{
 				list.addItem(new GameListItem(ActorAssetManager.createShip(i), LIST_HEIGHT, LIST_HEIGHT));
 			}
@@ -53,7 +53,7 @@ package ui
 			list.x = LEFT_MARGIN + 5;
 			list.y = TOP_MARGIN + 20;
 			list.setBounds(LIST_WIDTH-15, LIST_HEIGHT);
-			list.render(0);
+			list.render();
 			
 			addChild(list);
 		}

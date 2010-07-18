@@ -2,6 +2,8 @@ package ui
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -9,10 +11,6 @@ package ui
 
 	public class GameList extends Sprite
 	{
-		public function GameList()
-		{
-		}
-		
 		private var _bounds:Point = new Point;
 		public function setBounds(width:Number, height:Number):void
 		{
@@ -33,34 +31,78 @@ package ui
 		}
 
 		//KAI: this is all quick and dirty, and brittle
-		public function render(hGap:Number = 10):void
+		private var _scrollPos:uint = 0;
+		private var _itemsVisible:uint = 0;
+		private var _leftButton:GameButton;
+		private var _rightButton:GameButton;
+		public function render():void
 		{
-			var hPos:Number = 0;
-			for each (var dobj:DisplayObject in _items)
+			for each (var removee:DisplayObject in _items)
 			{
+				if (removee.parent)
+				{
+					removee.parent.removeChild(removee);
+				}
+			}
+
+			var hPos:Number = 0;
+			_itemsVisible = 0;
+			for (var item:uint = _scrollPos; _scrollPos < _items.length; ++item)
+			{
+				var dobj:DisplayObject = _items[item];
 				dobj.x = hPos;
 				
-				addChild(dobj);
+				addChildAt(dobj, 0);
 				
 				hPos = dobj.x + dobj.width;
+				++_itemsVisible;
 				if (hPos > _bounds.x)
 				{
 					break;
 				}
 			}
+			graphics.clear();
 			graphics.lineStyle(1, 0xff0000);
 			graphics.drawRect(0, 0, width, height);
 			
-			var leftButton:GameButton = GameButton.create("<", true, 12, 1);
-			leftButton.x = 0;
-			leftButton.y = _bounds.y - leftButton.height;
-			leftButton.enabled = false;
-			addChild(leftButton);
-			
-			var rightButton:GameButton = GameButton.create(">", true, 12, 1);
-			rightButton.x = _bounds.x - rightButton.width;
-			rightButton.y = leftButton.y;
-			addChild(rightButton);
+			if (!_leftButton)
+			{
+				_leftButton = GameButton.create("<", true, 12, 1);
+				_leftButton.x = 0;
+				_leftButton.y = _bounds.y - _leftButton.height;
+				_leftButton.enabled = false;
+				Util.listen(_leftButton, MouseEvent.CLICK, onScrollLeft);
+				addChild(_leftButton);
+				
+				_rightButton = GameButton.create(">", true, 12, 1);
+				_rightButton.x = _bounds.x - _rightButton.width;
+				_rightButton.y = _leftButton.y;
+				Util.listen(_rightButton, MouseEvent.CLICK, onScrollRight);
+				addChild(_rightButton);
+			}
+			updateScrollButtons();
+		}
+		
+		private function onScrollLeft(e:Event):void
+		{
+			if (_scrollPos > 0)
+			{
+				--_scrollPos;
+				render();
+			}
+		}
+		private function onScrollRight(e:Event):void
+		{
+			if ((_scrollPos + _itemsVisible) < _items.length)
+			{
+				++_scrollPos;
+				render();
+			}
+		}
+		private function updateScrollButtons():void
+		{
+			_leftButton.enabled = (_scrollPos > 0);
+			_rightButton.enabled = (_scrollPos + _itemsVisible) < _items.length;
 		}
 	}
 }
