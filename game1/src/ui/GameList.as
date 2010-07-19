@@ -73,7 +73,7 @@ package ui
 				}
 			}
 
-			var hPos:Number = 0;
+			var hPos:Number = 4;
 			_itemsVisible = 0;
 			for (var item:uint = _scrollPos; item < _items.length; ++item)
 			{
@@ -137,6 +137,10 @@ package ui
 		{
 			_leftButton.enabled = (_scrollPos > 0);
 			_rightButton.enabled = !allTheWayRight;
+			
+			//hack on hack on hack....... this fixes that annoying bug where you scroll all the way in either direction
+			_leftButton.mouseEnabled = true;
+			_rightButton.mouseEnabled = true;
 		}
 	}
 }

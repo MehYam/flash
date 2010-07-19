@@ -184,7 +184,9 @@ package
 		}
 		static public function createShipRaw(index:uint):DisplayObject
 		{
-			return new SHIP_TYPES[index];
+			var ship:DisplayObject = new SHIP_TYPES[index];
+			ship.filters = s_dropShadowFilter;
+			return ship;
 		}
 
 		// end ships /////////////////////////////////////////////////////////////

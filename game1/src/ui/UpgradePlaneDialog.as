@@ -38,7 +38,7 @@ package ui
 			
 			_list.x = LEFT_MARGIN + 5;
 			_list.y = TOP_MARGIN + 20;
-			_list.setBounds(LIST_WIDTH-15, LIST_HEIGHT);
+			_list.setBounds(LIST_WIDTH-20, LIST_HEIGHT);
 			
 			addChild(_list);
 		}
