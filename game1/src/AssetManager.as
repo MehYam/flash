@@ -159,6 +159,8 @@ package
 		public function arrow():DisplayObject
 		{	
 			var retval:DisplayObject = new ARROW;
+			retval.scaleX = .5;
+			retval.scaleY = .5;
 			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}

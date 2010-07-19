@@ -2,13 +2,14 @@ package ui
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
 	import flash.text.TextFormat;
 
 	public class UIUtil
 	{
 		public function UIUtil(){ throw "don't"; }
 		
-		static public function addGroupBox(parent:DisplayObjectContainer, label:String, locX:Number, locY:Number, width:Number, height:Number):void
+		static public function addGroupBox(parent:DisplayObjectContainer, label:String, locX:Number, locY:Number, width:Number, height:Number):DisplayObject
 		{
 			var skin:DisplayObject = AssetManager.instance.innerFace();
 			skin.width =   width;
@@ -27,7 +28,26 @@ package ui
 			labelField.y = skin.y;
 			
 			parent.addChild(labelField);
+			
+			return skin;
 		}
+		static public function createCreditDisplay():DisplayObjectContainer
+		{
+			var fieldParent:Sprite = new Sprite;
 
+			var tf:TextFormat = new TextFormat("Computerfont", 18);
+			var labelField:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x00, 1);
+			labelField.text = "Credits:";
+			labelField.y = 7;
+			
+			var valueField:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), Consts.CREDIT_FIELD_COLOR, 0, 1);
+			valueField.x = labelField.width + 5;
+			valueField.text = "32768";
+			
+			fieldParent.addChild(labelField);
+			fieldParent.addChild(valueField);
+
+			return fieldParent;
+		}
 	}
 }

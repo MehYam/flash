@@ -47,7 +47,7 @@ package ui
 
 			var hPos:Number = 0;
 			_itemsVisible = 0;
-			for (var item:uint = _scrollPos; _scrollPos < _items.length; ++item)
+			for (var item:uint = _scrollPos; item < _items.length; ++item)
 			{
 				var dobj:DisplayObject = _items[item];
 				dobj.x = hPos;
@@ -55,11 +55,11 @@ package ui
 				addChildAt(dobj, 0);
 				
 				hPos = dobj.x + dobj.width;
-				++_itemsVisible;
 				if (hPos > _bounds.x)
 				{
 					break;
 				}
+				++_itemsVisible;
 			}
 			graphics.clear();
 			graphics.lineStyle(1, 0xff0000);
@@ -71,13 +71,13 @@ package ui
 				_leftButton.x = 0;
 				_leftButton.y = _bounds.y - _leftButton.height;
 				_leftButton.enabled = false;
-				Util.listen(_leftButton, MouseEvent.CLICK, onScrollLeft);
+				Util.listen(_leftButton, MouseEvent.MOUSE_DOWN, onScrollLeft);
 				addChild(_leftButton);
 				
 				_rightButton = GameButton.create(">", true, 12, 1);
 				_rightButton.x = _bounds.x - _rightButton.width;
 				_rightButton.y = _leftButton.y;
-				Util.listen(_rightButton, MouseEvent.CLICK, onScrollRight);
+				Util.listen(_rightButton, MouseEvent.MOUSE_DOWN, onScrollRight);
 				addChild(_rightButton);
 			}
 			updateScrollButtons();
@@ -91,9 +91,13 @@ package ui
 				render();
 			}
 		}
+		private function get allTheWayRight():Boolean
+		{
+			return (_scrollPos + _itemsVisible) >= _items.length; 
+		}
 		private function onScrollRight(e:Event):void
 		{
-			if ((_scrollPos + _itemsVisible) < _items.length)
+			if (!allTheWayRight)
 			{
 				++_scrollPos;
 				render();
@@ -102,7 +106,7 @@ package ui
 		private function updateScrollButtons():void
 		{
 			_leftButton.enabled = (_scrollPos > 0);
-			_rightButton.enabled = (_scrollPos + _itemsVisible) < _items.length;
+			_rightButton.enabled = !allTheWayRight;
 		}
 	}
 }

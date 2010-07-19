@@ -20,14 +20,8 @@ package
 	
 	import karnold.utils.Util;
 	
-	public final class ActorAssetManager extends Sprite
+	public final class ActorAssetManager
 	{
-		public function ActorAssetManager()
-		{
-			super();
-			mouseEnabled = false;
-		}
-
 		static public function rasterize(target:DisplayObject, scale:Number = 1):BitmapData
 		{
 			const bounds:Rectangle = target.getBounds(target);
