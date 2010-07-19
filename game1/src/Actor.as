@@ -7,6 +7,8 @@ package
 	import behaviors.IBehavior;
 	
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
+	import flash.display.InteractiveObject;
 	import flash.geom.Point;
 	
 	import karnold.utils.MathUtil;
@@ -29,6 +31,15 @@ package
 		public function Actor(dobj:DisplayObject, consts:BehaviorConsts = null)
 		{
 			displayObject = dobj;
+			if (displayObject is InteractiveObject)
+			{
+				InteractiveObject(dobj).mouseEnabled = false;
+				if (displayObject is DisplayObjectContainer)
+				{
+					DisplayObjectContainer(dobj).mouseChildren = false;
+				}
+			}
+
 			this.consts = consts;
 			
 			health = BehaviorConsts.MAX_HEALTH;

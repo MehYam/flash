@@ -11,12 +11,17 @@ package ui
 
 	public class GameList extends Sprite
 	{
+		static public const DEBUG_MODE:Boolean = false;
+
 		private var _bounds:Point = new Point;
 		public function setBounds(width:Number, height:Number):void
 		{
 			Util.setPointXY(_bounds, width, height);
-			
-//			scrollRect = new Rectangle(0, 0, width, height);
+
+			if (!DEBUG_MODE)
+			{
+				scrollRect = new Rectangle(0, 0, width, height);
+			}
 		}
 
 		private var _items:Array = [];
@@ -61,10 +66,12 @@ package ui
 				}
 				++_itemsVisible;
 			}
-			graphics.clear();
-			graphics.lineStyle(1, 0xff0000);
-			graphics.drawRect(0, 0, width, height);
-			
+			if (DEBUG_MODE)
+			{
+				graphics.clear();
+				graphics.lineStyle(1, 0xff0000);
+				graphics.drawRect(0, 0, width, height);
+			}			
 			if (!_leftButton)
 			{
 				_leftButton = GameButton.create("<", true, 12, 1);

@@ -48,7 +48,7 @@ package ui
 			{
 				if ((i % 3) == 0)
 				{
-					var item:GameListItem = new GameListItem(ActorAssetManager.createShip(i), LIST_HEIGHT, LIST_HEIGHT);
+					var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(i), LIST_HEIGHT, LIST_HEIGHT);
 					if (i == 0)
 					{
 						var check:DisplayObject = AssetManager.instance.checkmark();
@@ -83,7 +83,7 @@ package ui
 			_upgradeGroup = UIUtil.addGroupBox(this, "Upgrades", LEFT_MARGIN, TOP_MARGIN + LIST_HEIGHT + LIST_PADDING + 10, 225, LIST_HEIGHT + LIST_PADDING);
 
 			var item:DisplayObject = createMysteryItem();			
-			item.y = _upgradeGroup.y + 25;
+			item.y = _upgradeGroup.y + 20;
 			item.x = _upgradeGroup.x + 3;
 			
 			var item2:DisplayObject = createMysteryItem();

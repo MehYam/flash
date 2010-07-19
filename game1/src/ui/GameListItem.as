@@ -27,8 +27,8 @@ package ui
 			child.y = childOriginOffset.y + sizeDiff.y/2;
 			
 			addChild(child);
-			
-			graphics.lineStyle(1, 0x00ff00);
+
+			graphics.lineStyle(1, 0x00ff00, GameList.DEBUG_MODE ? 1 : 0);
 			graphics.drawRect(0, 0, width, height);
 		}
 		

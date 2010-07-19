@@ -182,6 +182,10 @@ package
 		{
 			return createAssetRasterized(SHIP_TYPES[index], true, true, scale);
 		}
+		static public function createShipRaw(index:uint):DisplayObject
+		{
+			return new SHIP_TYPES[index];
+		}
 
 		// end ships /////////////////////////////////////////////////////////////
 		// tanks ////////////////////////////////////////////////////////////////
