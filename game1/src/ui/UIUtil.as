@@ -1,9 +1,14 @@
 package ui
 {
+	import com.greensock.TweenLite;
+	import com.greensock.easing.Bounce;
+	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.text.TextFormat;
+	
+	import karnold.utils.Util;
 
 	public class UIUtil
 	{
@@ -48,6 +53,46 @@ package ui
 			fieldParent.addChild(valueField);
 
 			return fieldParent;
+		}
+		static public var s_tweenInDialogArg:Object;
+		static public function openDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void
+		{
+			if (!s_tweenInDialogArg)
+			{
+				s_tweenInDialogArg = {x: 0, y: 0, ease:Bounce.easeOut};
+			}
+
+			Util.centerChild(dialog, parent);
+			
+			s_tweenInDialogArg.x = dialog.x;
+			s_tweenInDialogArg.y = dialog.y;
+			TweenLite.to(dialog, 1, s_tweenInDialogArg);
+			
+			dialog.y = -dialog.height;
+			
+			parent.addChild(dialog);
+		}
+		
+		static public var s_tweenOutDialogArg:Object;
+		static public function closeDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void
+		{
+			if (!s_tweenOutDialogArg)
+			{
+				s_tweenOutDialogArg = {x: 0, y: 0, ease:Bounce.easeIn, onComplete:removeThyself};
+			}
+			
+			s_tweenOutDialogArg.x = dialog.x;
+			s_tweenOutDialogArg.y = -dialog.height;
+			
+			TweenLite.to(dialog, 1, s_tweenOutDialogArg);
+		}
+		
+		static public function removeThyself(thy:DisplayObject):void
+		{
+			if (thy.parent)
+			{
+				thy.parent.removeChild(thy);
+			}
 		}
 	}
 }

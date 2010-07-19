@@ -1,5 +1,8 @@
 package ui
 {
+	import com.greensock.TweenLite;
+	import com.greensock.easing.Bounce;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -103,9 +106,8 @@ package ui
 		private function onNewGame(e:Event):void
 		{
 //			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
-var d:GameDialog = new UpgradePlaneDialog;
-addChild(d);
-Util.centerChild(d, this);
+			
+UIUtil.openDialog(this, new LevelSelectionDialog);
 		}
 		private function onContinue(e:Event):void
 		{

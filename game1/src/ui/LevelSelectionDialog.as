@@ -2,6 +2,8 @@ package ui
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
 	
 	import karnold.utils.Util;
@@ -40,11 +42,20 @@ package ui
 		
 		private function addBottomInterface():void
 		{
-			var hangar:GameButton = GameButton.create("Vehicle Selection", true, 24, 1);
+			var hangar:GameButton = GameButton.create("Plane Selection", true, 20, 1);
 			hangar.x = 10;
 			hangar.y = height + 20;
 			
 			addChild(hangar);
+			Util.listen(hangar, MouseEvent.CLICK, onPlaneHangar); 
+
+			var garage:GameButton = GameButton.create("Tank Selection", true, 20, 1);
+			garage.x = hangar.x;
+			garage.y = hangar.y + hangar.height + 5;
+			garage.width = hangar.width;
+			
+			addChild(garage);
+			Util.listen(garage, MouseEvent.CLICK, onTankGarage);
 
 			var goldReportParent:Sprite = new Sprite;
 
@@ -65,6 +76,15 @@ package ui
 			goldReportParent.y = height - goldReportParent.height;
 		
 			addChild(goldReportParent);
+		}
+		
+		private function onPlaneHangar(e:Event):void
+		{
+			UIUtil.openDialog(parent, new UpgradePlaneDialog);
+		}
+		private function onTankGarage(e:Event):void
+		{
+			UIUtil.openDialog(parent, new UpgradeTankDialog);
 		}
 	}
 }
