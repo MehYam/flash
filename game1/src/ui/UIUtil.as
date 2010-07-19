@@ -1,7 +1,9 @@
 package ui
 {
 	import com.greensock.TweenLite;
+	import com.greensock.easing.Back;
 	import com.greensock.easing.Bounce;
+	import com.greensock.easing.Elastic;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -59,14 +61,14 @@ package ui
 		{
 			if (!s_tweenInDialogArg)
 			{
-				s_tweenInDialogArg = {x: 0, y: 0, ease:Bounce.easeOut};
+				s_tweenInDialogArg = {x: 0, y: 0, ease:Back.easeOut};
 			}
 
 			Util.centerChild(dialog, parent);
 			
 			s_tweenInDialogArg.x = dialog.x;
 			s_tweenInDialogArg.y = dialog.y;
-			TweenLite.to(dialog, 1, s_tweenInDialogArg);
+			TweenLite.to(dialog, 0.5, s_tweenInDialogArg);
 			
 			dialog.y = -dialog.height;
 			
@@ -76,15 +78,18 @@ package ui
 		static public var s_tweenOutDialogArg:Object;
 		static public function closeDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void
 		{
+			parent.mouseChildren = true;
+
 			if (!s_tweenOutDialogArg)
 			{
-				s_tweenOutDialogArg = {x: 0, y: 0, ease:Bounce.easeIn, onComplete:removeThyself};
+				s_tweenOutDialogArg = {x: 0, y: 0, ease:Back.easeIn, onComplete:removeThyself, onCompleteParams:[]};
 			}
 			
 			s_tweenOutDialogArg.x = dialog.x;
 			s_tweenOutDialogArg.y = -dialog.height;
+			s_tweenOutDialogArg.onCompleteParams[0] = dialog;
 			
-			TweenLite.to(dialog, 1, s_tweenOutDialogArg);
+			TweenLite.to(dialog, 0.5, s_tweenOutDialogArg);
 		}
 		
 		static public function removeThyself(thy:DisplayObject):void

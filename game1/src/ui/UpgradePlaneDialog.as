@@ -3,6 +3,10 @@ package ui
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	
+	import karnold.utils.Util;
 
 	public class UpgradePlaneDialog extends GameDialog
 	{
@@ -115,6 +119,7 @@ package ui
 			
 			var done:DisplayObject = GameButton.create("Done", true, 24, 1);
 			done.y = height - done.height - 3;
+			Util.listen(done, MouseEvent.CLICK, onDone);
 
 			var purchase:GameButton = GameButton.create("Purchase", true, 24, 1);
 			purchase.y = done.y - purchase.height - 3;
@@ -126,6 +131,11 @@ package ui
 			
 			addChild(purchase);
 			addChild(done);
+		}
+		
+		private function onDone(e:Event):void
+		{
+			UIUtil.closeDialog(parent, this);
 		}
 	}
 }

@@ -3,6 +3,8 @@ package ui
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
 	
 	import karnold.ui.ProgressMeter;
@@ -148,6 +150,11 @@ package ui
 			btn.x = width - btn.width;
 			
 			addChild(btn);
+			Util.listen(btn, MouseEvent.CLICK, onDone);
+		}
+		private function onDone(e:Event):void
+		{
+			UIUtil.closeDialog(parent, this);
 		}
 	}
 }
