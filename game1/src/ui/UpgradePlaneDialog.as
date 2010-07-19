@@ -48,9 +48,11 @@ package ui
 		}
 		private function populateShipList():void
 		{
-			for each (var entry:PlaneEntry in PlaneEntry.entries)
+			for (var i:uint = 0; i < PlaneEntry.entries.length; ++i)
 			{
-				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT);
+				const entry:PlaneEntry = PlaneEntry.entries[i];
+				
+				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
 				if (entry.assetIndex == 0)
 				{
 					var check:DisplayObject = AssetManager.instance.checkmark();
@@ -83,6 +85,7 @@ package ui
 		}
 		private var _upgradeGroup:DisplayObject;
 		private var _upgradeList:GameList;
+		private var _upgradeArrow:DisplayObject;
 		private var _mysteryItems:Array;
 		private function addUpgradeList():void
 		{
@@ -110,6 +113,8 @@ package ui
 			arrow.y = LIST_HEIGHT/2;
 
 			_upgradeList.addChild(arrow);
+			
+			_upgradeArrow = arrow;
 		}
 		private function addStats():void
 		{
@@ -148,8 +153,20 @@ package ui
 		private function onShipSelected(e:Event):void
 		{
 			const item:GameListItem = _list.selection as GameListItem;
-			_upgradeList.selectItem(null);
+			_upgradeList.clearItems();
 			
+			const planeEntry:PlaneEntry = PlaneEntry.entries[item.cookie];
+			if (planeEntry.upgrades)
+			{
+				_upgradeList.addItem(new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(planeEntry.upgrades[0]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 0));
+				_upgradeList.addItem(new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(planeEntry.upgrades[1]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 1));
+			}
+			else
+			{
+				_upgradeList.addItem(_mysteryItems[0]);
+				_upgradeList.addItem(_mysteryItems[1]);
+			}
+			_upgradeList.render();
 		}
 		private function onUpgradeSelected(e:Event):void
 		{

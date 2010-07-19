@@ -68,7 +68,14 @@ package ui
 			dispatchEvent(new Event(Event.SELECT));
 		}
 
-		public function clear():void
+		public function clearItems():void
+		{
+			//KAI: brittle as hell... just use Flex 4 dammit
+			selectItem(null);
+			clear();
+			_items.length = 0;
+		}
+		private function clear():void
 		{
 			for each (var removee:DisplayObject in _items)
 			{

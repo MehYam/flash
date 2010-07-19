@@ -15,12 +15,15 @@ package ui
 	{
 		private var _explicitWidth:Number;
 		private var _explicitHeight:Number;
-		public function GameListItem(child:DisplayObject, width:Number, height:Number)
+		
+		public var cookie:uint;
+		public function GameListItem(child:DisplayObject, width:Number, height:Number, cookie:uint = 0)
 		{
 			super();
 			
 			_explicitWidth = width;
 			_explicitHeight = height;
+			this.cookie = cookie;
 
 			const bounds:Rectangle = child.getBounds(child);
 			const childOriginOffset:Point = new Point(-bounds.left, -bounds.top);
