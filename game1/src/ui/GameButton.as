@@ -50,6 +50,7 @@ package ui
 			
 			_text.x = TEXTOFFSET.x;
 			_text.y = TEXTOFFSET.y;
+			_text.mouseEnabled = false;
 
 			width = 2*_text.x + _text.width;
 			height = 2*_text.y + _text.height - 3;

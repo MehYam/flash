@@ -25,14 +25,37 @@ package ui
 		}
 
 		private var _items:Array = [];
+		private var _currentSelection:DisplayObject;
 		public function addItem(item:DisplayObject):void
 		{
 			_items.push(item);
+			Util.listen(item, MouseEvent.MOUSE_DOWN, onItemMouseDown);
 		}
 		
 		public function getItem(index:uint):DisplayObject
 		{
 			return _items[index];
+		}
+
+		public function selectItem(item:DisplayObject):void
+		{
+			if (item != _currentSelection)
+			{
+				if (_currentSelection is GameListItem)
+				{
+					GameListItem(_currentSelection).selected = false;
+				}
+				_currentSelection = item as DisplayObject;
+				if (_currentSelection is GameListItem)
+				{
+					GameListItem(_currentSelection).selected = true;
+				}
+			}			
+		}
+
+		private function onItemMouseDown(e:Event):void
+		{
+			selectItem(DisplayObject(e.currentTarget));
 		}
 
 		//KAI: this is all quick and dirty, and brittle

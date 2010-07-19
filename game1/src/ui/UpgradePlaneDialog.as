@@ -53,10 +53,10 @@ package ui
 					{
 						var check:DisplayObject = AssetManager.instance.checkmark();
 						check.x = item.width - check.width/2;
-						check.y = check.height/2;
+						check.y = check.height/2 + 5;
 						item.addChild(check);
-						
-						item.selected = true;
+
+						_list.selectItem(item);
 					}
 					_list.addItem(item);
 				}
