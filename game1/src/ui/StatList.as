@@ -3,14 +3,17 @@ package ui
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
+	import flash.filters.DropShadowFilter;
 	import flash.text.TextFormat;
+	
+	import gameData.BaseStats;
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.utils.Util;
 	
 	public class StatList extends Sprite
 	{
-		public function StatList(height:Number)
+		public function StatList(stats:BaseStats, height:Number)
 		{
 			super();
 			
@@ -20,11 +23,11 @@ package ui
 			
 			s_fieldTop = 0;
 			var fields:Sprite = new Sprite;
-			addStatField(fields, "Armor", 0.2);
-			addStatField(fields, "Damage", 0.3);
-			addStatField(fields, "Fire Rate", 0.7);
+			addStatField(fields, "Armor", stats.armor);
+			addStatField(fields, "Damage", stats.damage);
+			addStatField(fields, "Fire Rate", stats.fireRate);
 			addStatField(fields, "Ammo", 1);
-			addStatField(fields, "Speed", 0.3);
+			addStatField(fields, "Speed", stats.speed);
 			
 			skin.height = height;
 			addChild(skin);
@@ -34,6 +37,7 @@ package ui
 			addChild(fields);
 		}
 		static private var s_fieldTop:Number;
+		static private var s_dropShadow:Array = [new DropShadowFilter(2, 45, 0, 1, 0, 0)];
 		static private function addStatField(parent:DisplayObjectContainer, label:String, meterValue:Number, meterColor:uint = 0x0033ff):void
 		{
 			var tf:TextFormat = new TextFormat("SF Transrobotics", 18);
@@ -45,6 +49,7 @@ package ui
 			
 			var valueField:ProgressMeter = new ProgressMeter(50, 7, 0, meterColor);
 			valueField.pct = meterValue;
+			valueField.filters = s_dropShadow
 			
 			Util.centerChild(valueField, labelField);
 			valueField.y += 2;

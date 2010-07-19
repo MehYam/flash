@@ -63,41 +63,17 @@ package scripts
 		{
 			turretY: 62
 		}
-		static public const TURRET0:Object = { y: 62 };
-		static public const TURRET1:Object = { y: 56 };
-		static public const TURRET2:Object = { y: 56 };
-		static public const TURRET3:Object = { y: 56 };
-		static public const TURRET4:Object = { y: 48 };
-		static public const HULL0:Object = {};
-		static public const HULL1:Object = {};
-		static public const HULL2:Object = {};
-		static public const HULL3:Object = {};
-		static public const HULL4:Object = {};
+		static private const TURRET_OFFSETS:Array = [62, 56, 56, 56, 48];
 
 		//KAI: this is all kinds of ugliness
-		public static function createTankActor( hullDesc:Object,
-												turretDesc:Object,
+		public static function createTankActor( hullIndex:uint,
+												turretIndex:uint,
 												bc:BehaviorConsts):TankActor
 		{
 			var parent:Sprite = new Sprite;
 			
-			var hull:DisplayObject;
-			switch(hullDesc) {
-			case HULL0:	hull = ActorAssetManager.createHull0();	break;
-			case HULL1: hull = ActorAssetManager.createHull1();  break;
-			case HULL2: hull = ActorAssetManager.createHull2();  break;
-			case HULL3: hull = ActorAssetManager.createHull3();  break;
-			case HULL4: hull = ActorAssetManager.createHull4();  break;
-			}
-			var turret:DisplayObject;
-			switch (turretDesc) {
-			case TURRET0: turret = ActorAssetManager.createTurret0(); break;
-			case TURRET1: turret = ActorAssetManager.createTurret1(); break;
-			case TURRET2: turret = ActorAssetManager.createTurret2(); break;
-			case TURRET3: turret = ActorAssetManager.createTurret3(); break;
-			case TURRET4: turret = ActorAssetManager.createTurret4(); break;
-			}
-
+			var hull:DisplayObject = ActorAssetManager.createHull(hullIndex);
+			var turret:DisplayObject = ActorAssetManager.createTurret(turretIndex);
 			var track:DisplayObject = ActorAssetManager.createTrack();
 			var track2:DisplayObject = ActorAssetManager.createTrack();
 			
@@ -113,7 +89,7 @@ package scripts
 			
 			var turretParent:Sprite = new Sprite;
 			turret.x = -turret.width/2;
-			turret.y = -turretDesc.y;
+			turret.y = -TURRET_OFFSETS[turretIndex];
 			turretParent.addChild(turret);
 
 			parent.addChild(track);

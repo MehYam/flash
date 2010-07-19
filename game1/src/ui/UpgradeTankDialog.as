@@ -7,6 +7,8 @@ package ui
 	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
 	
+	import gameData.BaseStats;
+	
 	import karnold.ui.ProgressMeter;
 	import karnold.utils.Util;
 
@@ -38,10 +40,10 @@ package ui
 			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			var list:GameList = new GameList;
-			list.addItem(new GameListItem(ActorAssetManager.createHull0(), ITEM_SIZE, ITEM_SIZE));
-			list.addItem(new GameListItem(ActorAssetManager.createHull1(), ITEM_SIZE, ITEM_SIZE));
-			list.addItem(new GameListItem(ActorAssetManager.createHull2(), ITEM_SIZE, ITEM_SIZE));
-			list.addItem(new GameListItem(ActorAssetManager.createHull3(), ITEM_SIZE, ITEM_SIZE));
+			for (var hull:uint = 0; hull < 5; ++hull)
+			{
+				list.addItem(new GameListItem(ActorAssetManager.createHull(hull, false), ITEM_SIZE, ITEM_SIZE));
+			}
 			list.x = 15;
 			list.y = top + 20;
 			list.setBounds(LIST_WIDTH-10, LIST_HEIGHT-25);
@@ -57,10 +59,10 @@ package ui
 			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			var list:GameList = new GameList;
-			list.addItem(new GameListItem(ActorAssetManager.createTurret0(), ITEM_SIZE, ITEM_SIZE));
-			list.addItem(new GameListItem(ActorAssetManager.createTurret1(), ITEM_SIZE, ITEM_SIZE));
-			list.addItem(new GameListItem(ActorAssetManager.createTurret2(), ITEM_SIZE, ITEM_SIZE));
-			list.addItem(new GameListItem(ActorAssetManager.createTurret3(), ITEM_SIZE, ITEM_SIZE));
+			for (var turret:uint = 0; turret < 5; ++turret)
+			{
+				list.addItem(new GameListItem(ActorAssetManager.createTurret(turret, false), ITEM_SIZE, ITEM_SIZE));
+			}
 			list.x = 15;
 			list.y = top + 20;
 			list.setBounds(LIST_WIDTH-10, LIST_HEIGHT-25);
@@ -89,7 +91,7 @@ package ui
 		}
 		private function addStatDisplay():void
 		{
-			var stats:DisplayObject = new StatList(LIST_HEIGHT);
+			var stats:DisplayObject = new StatList(new BaseStats(.5, .1, .2, .8, .3), LIST_HEIGHT);
 			stats.x = 470;
 			stats.y = LIST_HEIGHT + 50;
 			

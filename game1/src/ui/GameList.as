@@ -13,6 +13,11 @@ package ui
 	{
 		static public const DEBUG_MODE:Boolean = false;
 
+		private var _scroll:Boolean;
+		public function GameList(scroll:Boolean = true)
+		{
+			_scroll = scroll;
+		}
 		private var _bounds:Point = new Point;
 		public function setBounds(width:Number, height:Number):void
 		{
@@ -52,10 +57,27 @@ package ui
 				}
 			}			
 		}
-
+		public function get selection():DisplayObject
+		{
+			return _currentSelection;
+		}
 		private function onItemMouseDown(e:Event):void
 		{
 			selectItem(DisplayObject(e.currentTarget));
+			
+			dispatchEvent(new Event(Event.SELECT));
+		}
+
+		public function clear():void
+		{
+			for each (var removee:DisplayObject in _items)
+			{
+				if (removee.parent)
+				{
+					removee.parent.removeChild(removee);
+				}
+			}
+			updateScrollButtons();
 		}
 
 		//KAI: this is all quick and dirty, and brittle
@@ -65,13 +87,7 @@ package ui
 		private var _rightButton:GameButton;
 		public function render():void
 		{
-			for each (var removee:DisplayObject in _items)
-			{
-				if (removee.parent)
-				{
-					removee.parent.removeChild(removee);
-				}
-			}
+			clear();
 
 			var hPos:Number = 4;
 			_itemsVisible = 0;
@@ -95,7 +111,7 @@ package ui
 				graphics.lineStyle(1, 0xff0000);
 				graphics.drawRect(0, 0, width, height);
 			}			
-			if (!_leftButton)
+			if (!_leftButton && _scroll)
 			{
 				_leftButton = GameButton.create("<", true, 12, 1);
 				_leftButton.x = 0;
@@ -135,12 +151,15 @@ package ui
 		}
 		private function updateScrollButtons():void
 		{
-			_leftButton.enabled = (_scrollPos > 0);
-			_rightButton.enabled = !allTheWayRight;
-			
-			//hack on hack on hack....... this fixes that annoying bug where you scroll all the way in either direction
-			_leftButton.mouseEnabled = true;
-			_rightButton.mouseEnabled = true;
+			if (_leftButton)
+			{
+				_leftButton.enabled = (_scrollPos > 0);
+				_rightButton.enabled = !allTheWayRight;
+				
+				//hack on hack on hack....... this fixes that annoying bug where you scroll all the way in either direction
+				_leftButton.mouseEnabled = true;
+				_rightButton.mouseEnabled = true;
+			}
 		}
 	}
 }

@@ -38,6 +38,7 @@ package ui
 			this.mouseChildren = false;
 			this.buttonMode = true;
 			this.useHandCursor = true;
+			this.tabEnabled = false;
 			
 			Util.listen(this, MouseEvent.ROLL_OUT, onRollOut);
 			Util.listen(this, MouseEvent.ROLL_OVER, onRollOver);

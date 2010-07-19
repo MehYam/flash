@@ -193,63 +193,34 @@ package
 		// tanks ////////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="tankhull0")]
 		static private const HULL0:Class;
-		static public function createHull0():DisplayObject
-		{
-			return createAssetRasterized(HULL0, false, false);
-		}
 		[Embed(source="assets/master.swf", symbol="tankhull1")]
 		static private const HULL1:Class;
-		static public function createHull1():DisplayObject
-		{
-			return createAssetRasterized(HULL1, false, false);
-		}
 		[Embed(source="assets/master.swf", symbol="tankhull2")]
 		static private const HULL2:Class;
-		static public function createHull2():DisplayObject
-		{
-			return createAssetRasterized(HULL2, false, false);
-		}
 		[Embed(source="assets/master.swf", symbol="tankhull3")]
 		static private const HULL3:Class;
-		static public function createHull3():DisplayObject
-		{
-			return createAssetRasterized(HULL3, false, false);
-		}
 		[Embed(source="assets/master.swf", symbol="tankhull4")]
 		static private const HULL4:Class;
-		static public function createHull4():DisplayObject
-		{
-			return createAssetRasterized(HULL4, false, false);
-		}
 		[Embed(source="assets/master.swf", symbol="tankturret0")]
 		static private const TURRET0:Class;
-		static public function createTurret0():DisplayObject
-		{
-			return createAssetRasterized(TURRET0, false, false, 1.1);
-		}
 		[Embed(source="assets/master.swf", symbol="tankturret1")]
 		static private const TURRET1:Class;
-		static public function createTurret1():DisplayObject
-		{
-			return createAssetRasterized(TURRET1, false, false, 1.1);
-		}
 		[Embed(source="assets/master.swf", symbol="tankturret2")]
 		static private const TURRET2:Class;
-		static public function createTurret2():DisplayObject
-		{
-			return createAssetRasterized(TURRET2, false, false, 1.1);
-		}
 		[Embed(source="assets/master.swf", symbol="tankturret3")]
 		static private const TURRET3:Class;
-		static public function createTurret3():DisplayObject
-		{
-			return createAssetRasterized(TURRET3, false, false, 1.1);
-		}
 		[Embed(source="assets/master.swf", symbol="tankturret4")]
 		static private const TURRET4:Class;
-		static public function createTurret4():DisplayObject
+
+		static private const HULL_TYPES:Array =	[HULL0, HULL1, HULL2, HULL3, HULL4];
+		static private const TURRET_TYPES:Array = [TURRET0, TURRET1, TURRET2, TURRET3, TURRET4];
+		static public function createHull(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return createAssetRasterized(TURRET4, false, false, 1.1);
+			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, false) : new HULL_TYPES[index];
+		}
+		static public function createTurret(index:uint, rasterized:Boolean = true):DisplayObject
+		{
+			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, false, 1.1) : new TURRET_TYPES[index];
 		}
 
 		[Embed(source="assets/master.swf", symbol="tanktread")]
