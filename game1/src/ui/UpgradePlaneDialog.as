@@ -8,22 +8,15 @@ package ui
 	import flash.media.Video;
 	
 	import gameData.BaseStats;
+	import gameData.PlaneData;
+	import gameData.UserData;
 	
 	import karnold.utils.Util;
 
 	public class UpgradePlaneDialog extends GameDialog
 	{
-private var _sampleUserData:UserData = new UserData;
 		public function UpgradePlaneDialog()
 		{
-_sampleUserData.credits = 10000;
-_sampleUserData.currentPlane = 3;
-_sampleUserData.purchasedPlanes[0] = true;
-_sampleUserData.purchasedPlanes[1] = true;
-_sampleUserData.purchasedPlanes[3] = true;
-_sampleUserData.purchasedPlanes[9] = true;
-_sampleUserData.purchasedPlanes[10] = true;
-_sampleUserData.purchasedPlanes[11] = true;
 			super(false);
 			
 			title = "PLANE HANGAR";
@@ -31,13 +24,27 @@ _sampleUserData.purchasedPlanes[11] = true;
 			addShipList();
 			addUpgradeList();
 			addStats();
-			addBottomButtons(_sampleUserData);
+			addBottomButtons(UserData.instance);
 
 			render();
 
-			populateShipList(_sampleUserData);
-			
-			onShipSelected(null);
+			populateShipList(UserData.instance);
+
+			//KAI: THIS IS SO HORRIBLE
+			if (PlaneData.getEntry(UserData.instance.currentPlane).upgrades)
+			{
+				onShipSelected(null);
+			}
+			else
+			{
+				var parentPlane:uint = UserData.instance.currentPlane-1;
+				if (!PlaneData.getEntry(parentPlane).upgrades)
+				{
+					--parentPlane;
+				}
+				populateUpgradeList(parentPlane);
+				shipSelectedCommon(UserData.instance.currentPlane);
+			}
 		}
 		static private const LEFT_MARGIN:Number = 10;
 		static private const LIST_HEIGHT:Number = 100;
@@ -68,7 +75,7 @@ _sampleUserData.purchasedPlanes[11] = true;
 		private function populateShipList(userData:UserData):void
 		{
 			var upgrades:uint;
-			for (var i:uint = 0; i < PlaneEntry.entries.length; ++i)
+			for (var i:uint = 0; i < PlaneData.entries.length; ++i)
 			{
 				if (upgrades)
 				{
@@ -76,7 +83,7 @@ _sampleUserData.purchasedPlanes[11] = true;
 					--upgrades;
 					continue;
 				}
-				const entry:PlaneEntry = PlaneEntry.entries[i];
+				const entry:PlaneData = PlaneData.entries[i];
 				upgrades = entry.upgrades;
 		
 				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
@@ -169,6 +176,7 @@ _sampleUserData.purchasedPlanes[11] = true;
 			_purchaseBtn.y = done.y - _purchaseBtn.height - 3;
 			_purchaseBtn.x = width - _purchaseBtn.width;
 			_purchaseBtn.enabled = false;
+			Util.listen(_purchaseBtn, MouseEvent.CLICK, onPurchase);
 
 			done.x = _purchaseBtn.x;
 			done.width = _purchaseBtn.width;
@@ -177,16 +185,45 @@ _sampleUserData.purchasedPlanes[11] = true;
 			addChild(done);
 		}
 		
+		private function onPurchase(_unused:Event):void
+		{
+			Util.ASSERT(UserData.instance.currentPlane != _currentSelected);
+
+			const plane:PlaneData = PlaneData.getEntry(_currentSelected);
+			const canAfford:Boolean = plane.baseStats.cost <= UserData.instance.credits; 
+
+			Util.ASSERT(canAfford);
+			
+			if (canAfford)
+			{
+				UserData.instance.purchasePlane(_currentSelected, plane.baseStats.cost);
+				UserData.instance.currentPlane = _currentSelected;
+			}
+			
+			//HAAAAACK
+			var refresh:UpgradePlaneDialog = new UpgradePlaneDialog;
+			refresh.x = x;
+			refresh.y = y;
+			
+			parent.addChildAt(refresh, parent.getChildIndex(this) + 1);
+			parent.removeChild(this);
+		}
+
 		private function addUpgradeItem(forItem:uint, slot:uint):void
 		{
-			if (_sampleUserData.purchasedPlanes[forItem])
+			if (UserData.instance.purchasedPlanes[forItem])
 			{
-				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(PlaneEntry.entries[forItem+1]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, forItem+1);
-				if (_sampleUserData.purchasedPlanes[forItem+1])
+				const targetItem:uint = forItem + 1;
+				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneData(PlaneData.entries[targetItem]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetItem);
+				if (UserData.instance.purchasedPlanes[forItem+1])
 				{
 					addCheck(upgradeItem);
 				}
 				_upgradeList.addItem(upgradeItem);
+				if (targetItem == UserData.instance.currentPlane)
+				{
+					_upgradeList.selectItem(upgradeItem);
+				}
 			}
 			else
 			{
@@ -195,17 +232,22 @@ _sampleUserData.purchasedPlanes[11] = true;
 		}
 		private function onShipSelected(_unused:Event):void
 		{
-			// repopulate the upgrade list
 			const item:GameListItem = _list.selection as GameListItem;
+			populateUpgradeList(item.cookie);
+			shipSelectedCommon(item.cookie);
+		}
+		private function populateUpgradeList(forPlane:uint):void
+		{
+			// repopulate the upgrade list
 			_upgradeList.clearItems();
 			
-			const planeEntry:PlaneEntry = PlaneEntry.entries[item.cookie];
-			if (planeEntry.upgrades)
+			const planeData:PlaneData = PlaneData.entries[forPlane];
+			if (planeData.upgrades)
 			{
-				Util.ASSERT(planeEntry.upgrades == 2);
+				Util.ASSERT(planeData.upgrades == 2);
 				
-				addUpgradeItem(item.cookie, 0);
-				addUpgradeItem(item.cookie+1, 1);
+				addUpgradeItem(forPlane, 0);
+				addUpgradeItem(forPlane+1, 1);
 				_upgradeArrow.visible = true;
 			}
 			else
@@ -213,8 +255,6 @@ _sampleUserData.purchasedPlanes[11] = true;
 				_upgradeArrow.visible = false;
 			}
 			_upgradeList.render();
-			
-			shipSelectedCommon(item.cookie);
 		}
 		private function onUpgradeSelected(e:Event):void
 		{
@@ -229,12 +269,12 @@ _sampleUserData.purchasedPlanes[11] = true;
 			_currentSelected = selection;
 			_purchaseBtn.enabled = false;
 
-			var planeEntry:PlaneEntry = PlaneEntry.entries[selection];
-			if (_sampleUserData.purchasedPlanes[selection])
+			const planeData:PlaneData = PlaneData.entries[selection];
+			if (UserData.instance.purchasedPlanes[selection])
 			{
-				_sampleUserData.currentPlane = selection;
+				UserData.instance.currentPlane = selection;
 			}
-			else if (planeEntry.baseStats.cost <= _sampleUserData.credits)
+			else if (planeData.baseStats.cost <= UserData.instance.credits)
 			{
 				_purchaseBtn.enabled = true;
 			}
@@ -246,73 +286,3 @@ _sampleUserData.purchasedPlanes[11] = true;
 	}
 }
 import gameData.BaseStats;
-
-final internal class PlaneEntry
-{
-	public var name:String;
-	public var assetIndex:uint;
-	public var baseStats:BaseStats;
-	public var upgrades:uint;
-
-	public function PlaneEntry(name:String, index:uint, baseStats:BaseStats, upgrades:uint = 0)
-	{
-		this.name = name;
-		this.assetIndex = index;
-		this.baseStats = baseStats;
-		this.upgrades = upgrades;
-	}
-	static private var s_entries:Array;
-	static public function get entries():Array
-	{
-		if (!s_entries)
-		{
-			s_entries = [];
-			s_entries.push(new PlaneEntry("Hornet", 0,	new BaseStats(0.2, 0.4, 0.3, 0.8, 1000), 2));
-			s_entries.push(new PlaneEntry(null, 1,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 2,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Jem", 3,		new BaseStats(0.2, 0, 0, 0.8, 2000), 2));
-			s_entries.push(new PlaneEntry(null, 4,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 5,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Yango", 6,	new BaseStats(0.3, 0.4, 0.3, 0.2, 3000), 2));
-			s_entries.push(new PlaneEntry(null, 7,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 8,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Osprey", 9,	new BaseStats(0.4, 0.4, 0.3, 0.8, 4000), 2));
-			s_entries.push(new PlaneEntry(null, 10, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 11, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Diptera", 12, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 5000), 2));
-			s_entries.push(new PlaneEntry(null, 13, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 14, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Cygnus X-1", 15, new BaseStats(0.3, 0.4, 0.3, 0.8, 6000), 2));
-			s_entries.push(new PlaneEntry(null, 16, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 17, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Ghost", 18, 		new BaseStats(0.6, 0.4, 0.3, 0.8, 7000), 2));
-			s_entries.push(new PlaneEntry(null, 19, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 20, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Attacus", 21, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 8000), 2));
-			s_entries.push(new PlaneEntry(null, 22, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 23, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("???", 24, 		new BaseStats(0.1, 0.4, 0.3, 0.8, 9000)));
-			s_entries.push(new PlaneEntry("Stealth", 25, 	new BaseStats(0.02, 0.4, 0.3, 0.8, 10000), 2));
-			s_entries.push(new PlaneEntry(null, 26, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 27, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Rocinante", 28, 	new BaseStats(0.2, 0.4, 0.3, 0.8, 11000), 2));
-			s_entries.push(new PlaneEntry(null, 29, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 30, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Esox", 31, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000), 2));
-			s_entries.push(new PlaneEntry(null, 32, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 33, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Corvid", 34, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000), 2));
-			s_entries.push(new PlaneEntry(null, 35, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry(null, 36, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-		}
-		return s_entries;
-	}
-}
-
-final internal class UserData
-{
-	public var purchasedPlanes:Array = [];
-	public var credits:uint;
-	public var levelReached:uint;
-	public var currentPlane:uint;
-}

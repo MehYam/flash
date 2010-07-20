@@ -25,7 +25,7 @@ package ui
 
 			if (!DEBUG_MODE)
 			{
-				scrollRect = new Rectangle(0, 0, width, height);
+//				scrollRect = new Rectangle(0, 0, width, height);
 			}
 		}
 
@@ -103,13 +103,12 @@ package ui
 				var dobj:DisplayObject = _items[item];
 				dobj.x = hPos;
 				
-				addChildAt(dobj, 0);
-				
 				hPos = dobj.x + dobj.width;
 				if (hPos > _bounds.x)
 				{
 					break;
 				}
+				addChildAt(dobj, 0);
 				++_itemsVisible;
 			}
 			if (DEBUG_MODE)

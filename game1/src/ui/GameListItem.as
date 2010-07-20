@@ -40,36 +40,50 @@ package ui
 			
 			addChild(child);
 
-			highlight(0);
+			renderHighlight();
 			
 			Util.listen(this, MouseEvent.ROLL_OVER, onRollOver);
 			Util.listen(this, MouseEvent.ROLL_OUT, onRollOut);
 		}
 
 		private var _selected:Boolean = false;
+		private var _rolledOver:Boolean = false;
 		public function set selected(b:Boolean):void
 		{
-			highlight(b ? 0.3 : 0);
 			_selected = b;
+			renderHighlight();
 		}
-		private function highlight(amount:Number):void
+		static private const ROLLOVER_ALPHA:Number = 0.1;
+		static private const SELECT_ALPHA:Number = 0.3;
+		private function renderHighlight():void
 		{
 			if (GameList.DEBUG_MODE)
 			{
 				graphics.lineStyle(1, 0x00ff00);
 			}
 
+			var amount:Number = 0;
+			if (_selected)
+			{
+				amount += SELECT_ALPHA;
+			}
+			if (_rolledOver)
+			{
+				amount += ROLLOVER_ALPHA;
+			}
 			this.graphics.clear();
 			this.graphics.beginFill(0xff, amount);
 			this.graphics.drawRoundRect(0, 0, _explicitWidth, _explicitHeight, 20, 20);
 		}
 		private function onRollOver(e:Event):void
 		{
-			highlight(_selected ? 0.5 : 0.1);
+			_rolledOver = true;
+			renderHighlight();
 		}
 		private function onRollOut(e:Event):void
 		{
-			highlight(_selected ? 0.3 : 0);
+			_rolledOver = false;
+			renderHighlight();
 		}
 	}
 }
