@@ -206,11 +206,15 @@ package ui
 				UserData.instance.currentPlane = _currentSelected;
 			}
 			
-			//HAAAAACK
+			//HAAAAACK /////////////////////////////
+			//HAAAAACK /////////////////////////////
+			//HAAAAACK /////////////////////////////
+			// omg programmer hell
 			var refresh:UpgradePlaneDialog = new UpgradePlaneDialog;
 			refresh.x = x;
 			refresh.y = y;
-			
+			refresh._list.scrollPos = _list.scrollPos;
+
 			parent.addChildAt(refresh, parent.getChildIndex(this) + 1);
 			parent.removeChild(this);
 		}

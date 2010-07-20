@@ -63,6 +63,15 @@ package ui
 		{
 			return _currentSelection;
 		}
+		public function get scrollPos():uint
+		{
+			return _scrollPos;
+		}
+		public function set scrollPos(where:uint):void
+		{
+			_scrollPos = where;
+			render();
+		}
 		private function onItemMouseDown(e:Event):void
 		{
 			selectItem(DisplayObject(e.currentTarget));
