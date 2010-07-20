@@ -1,6 +1,7 @@
 package ui
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -30,11 +31,22 @@ package ui
 				for (var c:uint = 0; c < 5; ++c)
 				{
 					btn = GameButton.create("Level " + ((r*c) + r), false, 18, 1);
-					btn.enabled = !r && !c;
+					
 					btn.width = 85;
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
-					
+
+					if (r || c)
+					{
+						btn.enabled = false;
+						var lock:DisplayObject = AssetManager.instance.lock();
+						lock.scaleX = 0.7;
+						lock.scaleY = 0.7;
+						lock.x = btn.width - lock.width;
+						lock.y = btn.height - lock.height;
+						DisplayObjectContainer(btn).addChild(lock);
+					}
+
 					addChild(btn);
 				}
 			}

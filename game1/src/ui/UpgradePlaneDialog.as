@@ -5,6 +5,7 @@ package ui
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.media.Video;
 	
 	import gameData.BaseStats;
 	
@@ -25,8 +26,17 @@ package ui
 
 			render();
 
-			populateShipList();
+			_sampleUserData.credits = 1000;
+			_sampleUserData.currentPlane = 3;
+			_sampleUserData.purchasedPlanes[0] = true;
+			_sampleUserData.purchasedPlanes[1] = true;
+			_sampleUserData.purchasedPlanes[3] = true;
+			_sampleUserData.purchasedPlanes[9] = true;
+			_sampleUserData.purchasedPlanes[10] = true;
+			_sampleUserData.purchasedPlanes[11] = true;
+			populateShipList(_sampleUserData);
 		}
+private var _sampleUserData:UserData = new UserData;
 		static private const LEFT_MARGIN:Number = 10;
 		static private const LIST_HEIGHT:Number = 100;
 		static private const LIST_WIDTH:Number = 530;
@@ -46,20 +56,36 @@ package ui
 			
 			Util.listen(_list, Event.SELECT, onShipSelected);
 		}
-		private function populateShipList():void
+		static private function addCheck(item:GameListItem):void
 		{
+			var check:DisplayObject = AssetManager.instance.checkmark();
+			check.x = item.width - check.width/2;
+			check.y = check.height/2 + 5;
+			item.addChild(check);
+		}
+		private function populateShipList(userData:UserData):void
+		{
+			var upgrades:uint;
 			for (var i:uint = 0; i < PlaneEntry.entries.length; ++i)
 			{
-				const entry:PlaneEntry = PlaneEntry.entries[i];
-				
-				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
-				if (entry.assetIndex == 0)
+				if (upgrades)
 				{
-					var check:DisplayObject = AssetManager.instance.checkmark();
-					check.x = item.width - check.width/2;
-					check.y = check.height/2 + 5;
-					item.addChild(check);
-					
+					// lameness
+					--upgrades;
+					continue;
+				}
+				const entry:PlaneEntry = PlaneEntry.entries[i];
+				upgrades = entry.upgrades;
+		
+				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
+
+				if (userData.purchasedPlanes[i])
+				{
+					addCheck(item);
+				}
+				if (i == userData.currentPlane)
+				{
+					Util.ASSERT(userData.purchasedPlanes[i]);
 					_list.selectItem(item);
 				}
 				_list.addItem(item);
@@ -67,7 +93,7 @@ package ui
 			}
 			_list.render();
 		}
-		private function createMysteryItem():DisplayObject
+		static private function createMysteryItem():DisplayObject
 		{
 			var question:DisplayObject = AssetManager.instance.question();
 			question.scaleX = 1.3;
@@ -158,13 +184,39 @@ package ui
 			const planeEntry:PlaneEntry = PlaneEntry.entries[item.cookie];
 			if (planeEntry.upgrades)
 			{
-				_upgradeList.addItem(new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(planeEntry.upgrades[0]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 0));
-				_upgradeList.addItem(new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(planeEntry.upgrades[1]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 1));
+				Util.ASSERT(planeEntry.upgrades == 2);
+				
+				var upgradeItem:GameListItem;
+				if (_sampleUserData.purchasedPlanes[item.cookie])
+				{
+					upgradeItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(PlaneEntry.entries[item.cookie+1]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 0);
+					if (_sampleUserData.purchasedPlanes[item.cookie+1])
+					{
+						addCheck(upgradeItem);
+					}
+					_upgradeList.addItem(upgradeItem);
+				}
+				else
+				{
+					_upgradeList.addItem(_mysteryItems[0]);
+				}
+				if (_sampleUserData.purchasedPlanes[item.cookie + 1])
+				{
+					_upgradeList.addItem(new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(PlaneEntry.entries[item.cookie+2]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 0));
+					if (_sampleUserData.purchasedPlanes[item.cookie+2])
+					{
+						addCheck(upgradeItem);
+					}
+				}
+				else
+				{
+					_upgradeList.addItem(_mysteryItems[1]);
+				}
+				_upgradeArrow.visible = true;
 			}
 			else
 			{
-				_upgradeList.addItem(_mysteryItems[0]);
-				_upgradeList.addItem(_mysteryItems[1]);
+				_upgradeArrow.visible = false;
 			}
 			_upgradeList.render();
 		}
@@ -186,74 +238,67 @@ final internal class PlaneEntry
 	public var name:String;
 	public var assetIndex:uint;
 	public var baseStats:BaseStats;
-	public var upgrades:Array;
+	public var upgrades:uint;
 
-	public function PlaneEntry(name:String, index:uint, baseStats:BaseStats)
+	public function PlaneEntry(name:String, index:uint, baseStats:BaseStats, upgrades:uint = 0)
 	{
 		this.name = name;
 		this.assetIndex = index;
 		this.baseStats = baseStats;
+		this.upgrades = upgrades;
 	}
 	static private var s_entries:Array;
-	static private function pushUpgrade(entry:PlaneEntry):void
-	{
-		var parent:PlaneEntry = s_entries[s_entries.length-1];
-		if (!parent.upgrades)
-		{
-			parent.upgrades = [];
-		}
-		parent.upgrades.push(entry);
-	}
 	static public function get entries():Array
 	{
 		if (!s_entries)
 		{
 			s_entries = [];
-			s_entries.push(new PlaneEntry("Hornet", 0, 	new BaseStats(0.2, 0.4, 0.3, 0.8, 1000)));
-			pushUpgrade(new PlaneEntry(null, 1, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 2, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Jem", 3, 		new BaseStats(0.2, 0, 0, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 4, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 5, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Yango", 6, 		new BaseStats(0.3, 0.4, 0.3, 0.2, 3000)));
-			pushUpgrade(new PlaneEntry(null, 7, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 8, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Osprey", 9, 	new BaseStats(0.4, 0.4, 0.3, 0.8, 4000)));
-			pushUpgrade(new PlaneEntry(null, 10, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 11, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Diptera", 12, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 5000)));
-			pushUpgrade(new PlaneEntry(null, 13, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 14, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Cygnus X-1", 15, new BaseStats(0.3, 0.4, 0.3, 0.8, 6000)));
-			pushUpgrade(new PlaneEntry(null, 16, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 17, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Ghost", 18, 		new BaseStats(0.6, 0.4, 0.3, 0.8, 7000)));
-			pushUpgrade(new PlaneEntry(null, 19, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 20, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Attacus", 21, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 8000)));
-			pushUpgrade(new PlaneEntry(null, 22, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 23, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Hornet", 0,	new BaseStats(0.2, 0.4, 0.3, 0.8, 1000), 2));
+			s_entries.push(new PlaneEntry(null, 1,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 2,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Jem", 3,		new BaseStats(0.2, 0, 0, 0.8, 2000), 2));
+			s_entries.push(new PlaneEntry(null, 4,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 5,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Yango", 6,	new BaseStats(0.3, 0.4, 0.3, 0.2, 3000), 2));
+			s_entries.push(new PlaneEntry(null, 7,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 8,		new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Osprey", 9,	new BaseStats(0.4, 0.4, 0.3, 0.8, 4000), 2));
+			s_entries.push(new PlaneEntry(null, 10, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 11, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Diptera", 12, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 5000), 2));
+			s_entries.push(new PlaneEntry(null, 13, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 14, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Cygnus X-1", 15, new BaseStats(0.3, 0.4, 0.3, 0.8, 6000), 2));
+			s_entries.push(new PlaneEntry(null, 16, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 17, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Ghost", 18, 		new BaseStats(0.6, 0.4, 0.3, 0.8, 7000), 2));
+			s_entries.push(new PlaneEntry(null, 19, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 20, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Attacus", 21, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 8000), 2));
+			s_entries.push(new PlaneEntry(null, 22, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 23, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
 			s_entries.push(new PlaneEntry("???", 24, 		new BaseStats(0.1, 0.4, 0.3, 0.8, 9000)));
-			s_entries.push(new PlaneEntry("Stealth", 25, 	new BaseStats(0.02, 0.4, 0.3, 0.8, 10000)));
-			pushUpgrade(new PlaneEntry(null, 26, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 27, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Rocinante", 28, 	new BaseStats(0.2, 0.4, 0.3, 0.8, 11000)));
-			pushUpgrade(new PlaneEntry(null, 29, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 30, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Esox", 31, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000)));
-			pushUpgrade(new PlaneEntry(null, 32, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 33, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			s_entries.push(new PlaneEntry("Corvid", 34, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000)));
-			pushUpgrade(new PlaneEntry(null, 35, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
-			pushUpgrade(new PlaneEntry(null, 36, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Stealth", 25, 	new BaseStats(0.02, 0.4, 0.3, 0.8, 10000), 2));
+			s_entries.push(new PlaneEntry(null, 26, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 27, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Rocinante", 28, 	new BaseStats(0.2, 0.4, 0.3, 0.8, 11000), 2));
+			s_entries.push(new PlaneEntry(null, 29, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 30, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Esox", 31, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000), 2));
+			s_entries.push(new PlaneEntry(null, 32, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 33, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry("Corvid", 34, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000), 2));
+			s_entries.push(new PlaneEntry(null, 35, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
+			s_entries.push(new PlaneEntry(null, 36, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)));
 		}
-
 		return s_entries;
 	}
 }
 
-
-final internal class TEMPDATA
+final internal class UserData
 {
-	
+	public var purchasedPlanes:Array = [];
+	public var credits:uint;
+	public var levelReached:uint;
+	public var currentPlane:uint;
 }
