@@ -2,6 +2,7 @@ package ui
 {
 	import flash.display.Sprite;
 	import flash.text.TextFormat;
+	import karnold.ui.ShadowTextField;
 	
 	public class CreditDisplay extends Sprite
 	{

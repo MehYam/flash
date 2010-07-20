@@ -17,6 +17,7 @@ package ui
 	
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Util;
+	import karnold.ui.ShadowTextField;
 	
 	public class TitleScreen extends Sprite
 	{

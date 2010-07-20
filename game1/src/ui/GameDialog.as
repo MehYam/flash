@@ -5,6 +5,7 @@ package ui
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextFormat;
+	import karnold.ui.ShadowTextField;
 	
 	//KAI: this and gamebutton could be moved to karnold.ui
 	public class GameDialog extends Sprite

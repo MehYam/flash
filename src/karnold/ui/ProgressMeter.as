@@ -34,12 +34,44 @@ package karnold.ui
 		
 		public function set pct(percent:Number):void
 		{
-			const scale:Number = MathUtil.constrainToRange(_width*percent, 0, _width);
+			const scale:Number = _width * MathUtil.constrainToRange(percent, 0, 1);
 			_meter.scaleX = scale; 
 		}
 		public function set fgColor(color:uint):void
 		{
 			_meter.bitmapData.setPixel(0, 0, color);
 		}
+		
+		private var _diff:Bitmap;
+		public function set diff(d:Number):void
+		{
+			if (d != 0)
+			{
+				var bmd:BitmapData;
+				if (_diff)
+				{
+					bmd = _diff.bitmapData;
+				}
+				else
+				{
+					bmd = new BitmapData(1, 1);
+					_diff = new Bitmap(bmd);
+					_diff.scaleY = height;
+				}
+
+				_diff.x = _meter.scaleX;
+				_diff.scaleX = _width * d;
+				bmd.setPixel(0, 0, (d > 0) ? 0x00ff00 : 0xff0000);
+				if (!_diff.parent)
+				{
+					addChild(_diff);
+				}
+			}
+			else if (_diff && _diff.parent)
+			{
+				_diff.parent.removeChild(_diff);
+			}
+		}
+			
 	}
 }

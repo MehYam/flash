@@ -35,6 +35,8 @@ package ui
 		{
 			_items.push(item);
 			Util.listen(item, MouseEvent.MOUSE_DOWN, onItemMouseDown);
+			Util.listen(item, MouseEvent.ROLL_OVER, onItemRollOver);
+			Util.listen(item, MouseEvent.ROLL_OUT, onItemRollOut);
 		}
 		
 		public function getItem(index:uint):DisplayObject
@@ -66,6 +68,23 @@ package ui
 			selectItem(DisplayObject(e.currentTarget));
 			
 			dispatchEvent(new Event(Event.SELECT));
+		}
+		private var _currentRolledOver:DisplayObject;
+		private function onItemRollOver(e:Event):void
+		{
+			_currentRolledOver = DisplayObject(e.target);
+			
+			dispatchEvent(e.clone());
+		}
+		private function onItemRollOut(e:Event):void
+		{
+			_currentRolledOver = null;
+			
+			dispatchEvent(e.clone());
+		}
+		public function get rolledOverItem():DisplayObject
+		{
+			return _currentRolledOver;
 		}
 
 		public function clearItems():void

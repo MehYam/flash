@@ -3,6 +3,7 @@ package ui
 	import flash.text.TextFormat;
 	
 	import karnold.utils.Util;
+	import karnold.ui.ShadowTextField;
 
 	public class LevelCompleteDialog extends GameDialog
 	{

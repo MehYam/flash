@@ -1,4 +1,4 @@
-package ui
+package karnold.ui
 {
 	import flash.display.Sprite;
 	import flash.text.AntiAliasType;

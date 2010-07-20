@@ -33,7 +33,7 @@ package ui
 			//KAI: THIS IS SO HORRIBLE
 			if (PlaneData.getEntry(UserData.instance.currentPlane).upgrades)
 			{
-				onShipSelected(null);
+				onTopListSelection(null);
 			}
 			else
 			{
@@ -63,7 +63,9 @@ package ui
 			
 			addChild(_list);
 			
-			Util.listen(_list, Event.SELECT, onShipSelected);
+			Util.listen(_list, Event.SELECT, onTopListSelection);
+			Util.listen(_list, MouseEvent.ROLL_OVER, onItemRoll);
+			Util.listen(_list, MouseEvent.ROLL_OUT, onItemRoll);
 		}
 		static private function addCheck(item:GameListItem):void
 		{
@@ -133,6 +135,8 @@ package ui
 			addChild(_upgradeList);
 			
 			Util.listen(_upgradeList, Event.SELECT, onUpgradeSelected);
+			Util.listen(_upgradeList, MouseEvent.ROLL_OVER, onItemRoll);
+			Util.listen(_upgradeList, MouseEvent.ROLL_OUT, onItemRoll);
 
 			if (!_mysteryItems)
 			{
@@ -149,13 +153,15 @@ package ui
 			
 			_upgradeArrow = arrow;
 		}
+		
+		private var _statList:StatList;
 		private function addStats():void
 		{
-			var stats:DisplayObject = new StatList(new BaseStats(.5, .1, .2, .8, .3), _upgradeGroup.height);
-			stats.x = _upgradeGroup.x + _upgradeGroup.width + 10;
-			stats.y = _upgradeGroup.y;
+			_statList = new StatList(new BaseStats(.5, .1, .2, .8, .3), _upgradeGroup.height);
+			_statList.x = _upgradeGroup.x + _upgradeGroup.width + 10;
+			_statList.y = _upgradeGroup.y;
 			
-			addChild(stats);
+			addChild(_statList);
 		}
 		private var _purchaseBtn:GameButton;
 		private var _creditDisplay:CreditDisplay;
@@ -230,11 +236,13 @@ package ui
 				_upgradeList.addItem(_mysteryItems[slot]);
 			}
 		}
-		private function onShipSelected(_unused:Event):void
+		private function onTopListSelection(_unused:Event):void
 		{
 			const item:GameListItem = _list.selection as GameListItem;
 			populateUpgradeList(item.cookie);
 			shipSelectedCommon(item.cookie);
+			
+			_upgradeList.selectItem(null);
 		}
 		private function populateUpgradeList(forPlane:uint):void
 		{
@@ -278,6 +286,15 @@ package ui
 			{
 				_purchaseBtn.enabled = true;
 			}
+			
+			_statList.stats = planeData.baseStats;
+		}
+		private function onItemRoll(e:Event):void
+		{
+			const item:GameListItem = (_list.rolledOverItem || _upgradeList.rolledOverItem) as GameListItem;
+			const stats:BaseStats = item ? PlaneData.getEntry(item.cookie).baseStats : null;
+			
+			_statList.compare = stats;
 		}
 		private function onDone(e:Event):void
 		{

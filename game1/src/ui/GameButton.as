@@ -11,6 +11,7 @@ package ui
 	import flash.text.TextFormatAlign;
 	
 	import karnold.utils.Util;
+	import karnold.ui.ShadowTextField;
 	
 	// There are about a million better ways to do this - resorting to this	because I'm running out of
 	// time and can't get 9 sliced Buttons to work from CS3.

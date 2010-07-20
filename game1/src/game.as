@@ -39,7 +39,7 @@ package
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
 	import ui.TitleScreenEvent;
-	import ui.ShadowTextField;
+	import karnold.ui.ShadowTextField;
 
 	[SWF(backgroundColor="#0")]
 	public final class game extends Sprite implements IGame
