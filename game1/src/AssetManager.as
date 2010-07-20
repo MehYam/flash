@@ -103,7 +103,7 @@ package
 		static private const s_faceFilter:Array = [new BevelFilter(3, 45)]; 
 		public function buttonFace(raised:Boolean = true):DisplayObject
 		{
-			var retval:DisplayObject = uiFace(0xa6a6a6);
+			var retval:DisplayObject = uiFace(0x555577);
 			if (raised)
 			{
 				retval.filters = s_faceFilter;

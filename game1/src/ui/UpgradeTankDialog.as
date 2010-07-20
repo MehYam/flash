@@ -29,7 +29,7 @@ package ui
 			render();
 		}
 		static private const LEFT_MARGIN:Number = 10;
-		static private const LIST_WIDTH:Number = 320;
+		static private const LIST_WIDTH:Number = 325;
 		static private const LIST_HEIGHT:Number = 125;
 		static private const ITEM_SIZE:Number = LIST_HEIGHT - 25;
 		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
@@ -46,7 +46,7 @@ package ui
 			}
 			list.x = 15;
 			list.y = top + 20;
-			list.setBounds(LIST_WIDTH-10, LIST_HEIGHT-25);
+			list.setBounds(LIST_WIDTH-15, LIST_HEIGHT-25);
 			
 			list.render();
 			
@@ -65,7 +65,7 @@ package ui
 			}
 			list.x = 15;
 			list.y = top + 20;
-			list.setBounds(LIST_WIDTH-10, LIST_HEIGHT-25);
+			list.setBounds(LIST_WIDTH-15, LIST_HEIGHT-25);
 			
 			list.render();
 			
