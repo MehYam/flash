@@ -13,8 +13,17 @@ package ui
 
 	public class UpgradePlaneDialog extends GameDialog
 	{
+private var _sampleUserData:UserData = new UserData;
 		public function UpgradePlaneDialog()
 		{
+_sampleUserData.credits = 10000;
+_sampleUserData.currentPlane = 3;
+_sampleUserData.purchasedPlanes[0] = true;
+_sampleUserData.purchasedPlanes[1] = true;
+_sampleUserData.purchasedPlanes[3] = true;
+_sampleUserData.purchasedPlanes[9] = true;
+_sampleUserData.purchasedPlanes[10] = true;
+_sampleUserData.purchasedPlanes[11] = true;
 			super(false);
 			
 			title = "PLANE HANGAR";
@@ -22,21 +31,14 @@ package ui
 			addShipList();
 			addUpgradeList();
 			addStats();
-			addBottomButtons();
+			addBottomButtons(_sampleUserData);
 
 			render();
 
-			_sampleUserData.credits = 1000;
-			_sampleUserData.currentPlane = 3;
-			_sampleUserData.purchasedPlanes[0] = true;
-			_sampleUserData.purchasedPlanes[1] = true;
-			_sampleUserData.purchasedPlanes[3] = true;
-			_sampleUserData.purchasedPlanes[9] = true;
-			_sampleUserData.purchasedPlanes[10] = true;
-			_sampleUserData.purchasedPlanes[11] = true;
 			populateShipList(_sampleUserData);
+			
+			onShipSelected(null);
 		}
-private var _sampleUserData:UserData = new UserData;
 		static private const LEFT_MARGIN:Number = 10;
 		static private const LIST_HEIGHT:Number = 100;
 		static private const LIST_WIDTH:Number = 530;
@@ -129,8 +131,6 @@ private var _sampleUserData:UserData = new UserData;
 			{
 				_mysteryItems = [createMysteryItem(), createMysteryItem()];
 			}
-			_upgradeList.addItem(_mysteryItems[0]);
-			_upgradeList.addItem(_mysteryItems[1]);
 			_upgradeList.setBounds(_upgradeGroup.width, _upgradeGroup.height);
 			_upgradeList.render();
 
@@ -150,34 +150,52 @@ private var _sampleUserData:UserData = new UserData;
 			
 			addChild(stats);
 		}
-		
-		private function addBottomButtons():void
+		private var _purchaseBtn:GameButton;
+		private var _creditDisplay:CreditDisplay;
+		private function addBottomButtons(userData:UserData):void
 		{
-			var credit:DisplayObjectContainer = UIUtil.createCreditDisplay();
+			_creditDisplay = new CreditDisplay;
+			_creditDisplay.credits = userData.credits;
+			_creditDisplay.x = width - _creditDisplay.width;
+			_creditDisplay.y = _upgradeGroup.y;
 			
-			credit.x = width - credit.width;
-			credit.y = _upgradeGroup.y;
-			
-			addChild(credit);
+			addChild(_creditDisplay);
 			
 			var done:DisplayObject = GameButton.create("Done", true, 24, 1);
 			done.y = height - done.height - 3;
 			Util.listen(done, MouseEvent.CLICK, onDone);
 
-			var purchase:GameButton = GameButton.create("Purchase", true, 24, 1);
-			purchase.y = done.y - purchase.height - 3;
-			purchase.x = width - purchase.width;
-			purchase.enabled = false;
+			_purchaseBtn = GameButton.create("Purchase", true, 24, 1);
+			_purchaseBtn.y = done.y - _purchaseBtn.height - 3;
+			_purchaseBtn.x = width - _purchaseBtn.width;
+			_purchaseBtn.enabled = false;
 
-			done.x = purchase.x;
-			done.width = purchase.width;
+			done.x = _purchaseBtn.x;
+			done.width = _purchaseBtn.width;
 			
-			addChild(purchase);
+			addChild(_purchaseBtn);
 			addChild(done);
 		}
 		
-		private function onShipSelected(e:Event):void
+		private function addUpgradeItem(forItem:uint, slot:uint):void
 		{
+			if (_sampleUserData.purchasedPlanes[forItem])
+			{
+				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(PlaneEntry.entries[forItem+1]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, forItem+1);
+				if (_sampleUserData.purchasedPlanes[forItem+1])
+				{
+					addCheck(upgradeItem);
+				}
+				_upgradeList.addItem(upgradeItem);
+			}
+			else
+			{
+				_upgradeList.addItem(_mysteryItems[slot]);
+			}
+		}
+		private function onShipSelected(_unused:Event):void
+		{
+			// repopulate the upgrade list
 			const item:GameListItem = _list.selection as GameListItem;
 			_upgradeList.clearItems();
 			
@@ -186,32 +204,8 @@ private var _sampleUserData:UserData = new UserData;
 			{
 				Util.ASSERT(planeEntry.upgrades == 2);
 				
-				var upgradeItem:GameListItem;
-				if (_sampleUserData.purchasedPlanes[item.cookie])
-				{
-					upgradeItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(PlaneEntry.entries[item.cookie+1]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 0);
-					if (_sampleUserData.purchasedPlanes[item.cookie+1])
-					{
-						addCheck(upgradeItem);
-					}
-					_upgradeList.addItem(upgradeItem);
-				}
-				else
-				{
-					_upgradeList.addItem(_mysteryItems[0]);
-				}
-				if (_sampleUserData.purchasedPlanes[item.cookie + 1])
-				{
-					_upgradeList.addItem(new GameListItem(ActorAssetManager.createShipRaw(PlaneEntry(PlaneEntry.entries[item.cookie+2]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, 0));
-					if (_sampleUserData.purchasedPlanes[item.cookie+2])
-					{
-						addCheck(upgradeItem);
-					}
-				}
-				else
-				{
-					_upgradeList.addItem(_mysteryItems[1]);
-				}
+				addUpgradeItem(item.cookie, 0);
+				addUpgradeItem(item.cookie+1, 1);
 				_upgradeArrow.visible = true;
 			}
 			else
@@ -219,11 +213,31 @@ private var _sampleUserData:UserData = new UserData;
 				_upgradeArrow.visible = false;
 			}
 			_upgradeList.render();
+			
+			shipSelectedCommon(item.cookie);
 		}
 		private function onUpgradeSelected(e:Event):void
 		{
 			const item:GameListItem = _upgradeList.selection as GameListItem;
 			_list.selectItem(null);
+			
+			shipSelectedCommon(item.cookie);
+		}
+		private var _currentSelected:uint;
+		private function shipSelectedCommon(selection:uint):void
+		{
+			_currentSelected = selection;
+			_purchaseBtn.enabled = false;
+
+			var planeEntry:PlaneEntry = PlaneEntry.entries[selection];
+			if (_sampleUserData.purchasedPlanes[selection])
+			{
+				_sampleUserData.currentPlane = selection;
+			}
+			else if (planeEntry.baseStats.cost <= _sampleUserData.credits)
+			{
+				_purchaseBtn.enabled = true;
+			}
 		}
 		private function onDone(e:Event):void
 		{

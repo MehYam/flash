@@ -112,7 +112,7 @@ package ui
 			purchase.enabled = false;
 			addChild(purchase);
 
-			var fieldParent:DisplayObjectContainer = UIUtil.createCreditDisplay();
+			var fieldParent:DisplayObjectContainer = new CreditDisplay;
 			
 			fieldParent.x = purchase.x - fieldParent.width - 5;
 			fieldParent.y = purchase.y;

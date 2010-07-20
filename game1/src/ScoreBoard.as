@@ -6,6 +6,7 @@ package
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.utils.FrameTimer;
+	import ui.ShadowTextField;
 	
 	public class ScoreBoard extends Sprite
 	{
