@@ -20,22 +20,45 @@ package gameData
 				s_instance.purchasePlane(9, 0);
 				s_instance.purchasePlane(10, 0);
 				s_instance.purchasePlane(11, 0);
+				
+				s_instance.purchaseHull(0, 0);
+				s_instance.purchaseTurret(0, 0);
+				s_instance.currentPlane = 0;
+				s_instance.currentTurret = 0;
 			}
 			return s_instance;
 		}
 		
 		public var purchasedPlanes:Array = [];
+		public var purchasedHulls:Array = [];
+		public var purchasedTurrets:Array = [];
+
 		public var credits:uint;
 		public var levelReached:uint;
 		public var currentPlane:uint;
+		public var currentHull:uint;
+		public var currentTurret:uint;
 		
-		public function purchasePlane(plane:uint, cost:uint):void
+		private function purchasePart(purchased:Array, partIndex:uint, cost:uint):void
 		{
-			Util.ASSERT(!purchasedPlanes[plane]);
+			Util.ASSERT(!purchased[partIndex]);
 			Util.ASSERT(cost <= credits);
 			
-			purchasedPlanes[plane] = true;
+			purchased[partIndex] = true;
 			credits -= cost;
+			
+		}
+		public function purchasePlane(plane:uint, cost:uint):void
+		{
+			purchasePart(purchasedPlanes, plane, cost);
+		}
+		public function purchaseHull(hull:uint, cost:uint):void
+		{
+			purchasePart(purchasedHulls, hull, cost);
+		}
+		public function purchaseTurret(turret:uint, cost:uint):void
+		{
+			purchasePart(purchasedTurrets, turret, cost);
 		}
 	}
 }

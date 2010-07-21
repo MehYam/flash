@@ -94,7 +94,8 @@ final class Utils
 	}
 	static public function getBluePlayer():Actor
 	{
-		var plane:Actor = new Actor(ActorAssetManager.createShip(29), BehaviorConsts.BLUE_SHIP);
+//		var plane:Actor = new Actor(ActorAssetManager.createShip(29), BehaviorConsts.BLUE_SHIP);
+		var plane:Actor = new Actor(ActorAssetManager.createShip(0), BehaviorConsts.BLUE_SHIP);
 		plane.behavior = BehaviorFactory.faceForward;
 		return plane;
 	}

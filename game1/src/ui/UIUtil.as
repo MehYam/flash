@@ -10,8 +10,8 @@ package ui
 	import flash.display.Sprite;
 	import flash.text.TextFormat;
 	
-	import karnold.utils.Util;
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.Util;
 
 	public class UIUtil
 	{
@@ -38,6 +38,29 @@ package ui
 			parent.addChild(labelField);
 			
 			return skin;
+		}
+		static public function createMysteryGameListItem(size:Number):DisplayObject
+		{
+			var question:DisplayObject = AssetManager.instance.question();
+			question.scaleX = 1.3;
+			question.scaleY = 1.3;
+			
+			var item:GameListItem = new GameListItem(question, size, size);
+			var lock:DisplayObject = AssetManager.instance.lock();
+			lock.x = item.width - 15;
+			lock.y = item.height - 15;
+			item.addChild(lock);
+			
+			item.mouseChildren = false;
+			item.mouseEnabled = false;
+			return item;
+		}
+		static public function addCheckmark(item:GameListItem):void
+		{
+			var check:DisplayObject = AssetManager.instance.checkmark();
+			check.x = item.width - check.width/2;
+			check.y = check.height/2 + 5;
+			item.addChild(check);
 		}
 		static public var s_tweenInDialogArg:Object;
 		static public function openDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void

@@ -8,6 +8,8 @@ package ui
 	import flash.text.TextFormat;
 	
 	import gameData.BaseStats;
+	import gameData.TankPartData;
+	import gameData.UserData;
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.utils.Util;
@@ -33,43 +35,79 @@ package ui
 		static private const LIST_HEIGHT:Number = 125;
 		static private const ITEM_SIZE:Number = LIST_HEIGHT - 25;
 		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
+		private var _listHulls:GameList;
 		private function addTankHullList():void
 		{
 			const top:Number = TOP_MARGIN;
 			UIUtil.addGroupBox(this, "Tank Hulls", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
 			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
-			var list:GameList = new GameList;
-			for (var hull:uint = 0; hull < 5; ++hull)
+			_listHulls = new GameList;
+			var index:uint = 0;
+			for each (var hull:TankPartData in TankPartData.hulls)
 			{
-				list.addItem(new GameListItem(ActorAssetManager.createHull(hull, false), ITEM_SIZE, ITEM_SIZE));
+				var item:GameListItem = new GameListItem(ActorAssetManager.createHull(hull.assetIndex, false), ITEM_SIZE, ITEM_SIZE, index); 
+				_listHulls.addItem(item);
+				if (UserData.instance.purchasedHulls[index])
+				{
+					UIUtil.addCheckmark(item);
+				}
+				if (index == UserData.instance.currentHull)
+				{
+					Util.ASSERT(UserData.instance.purchasedHulls[index]);
+					_listHulls.selectItem(item);
+				}
+				++index;
 			}
-			list.x = 15;
-			list.y = top + 20;
-			list.setBounds(LIST_WIDTH-15, LIST_HEIGHT-25);
+			_listHulls.x = 15;
+			_listHulls.y = top + 20;
+			_listHulls.setBounds(LIST_WIDTH-15, LIST_HEIGHT-25);
 			
-			list.render();
+			_listHulls.render();
 			
-			addChild(list);
+			addChild(_listHulls);
+			
+			Util.listen(_listHulls, Event.SELECT, onHullSelection);
+			Util.listen(_listHulls, MouseEvent.ROLL_OVER, onHullRoll);
+			Util.listen(_listHulls, MouseEvent.ROLL_OUT, onHullRoll);
 		}
+		
+		private var _listTurrets:GameList;
 		private function addTankTurretList():void
 		{
 			const top:Number = TOP_MARGIN + (LIST_HEIGHT+10);
 			UIUtil.addGroupBox(this, "Tank Turrets", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
 			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
-			var list:GameList = new GameList;
-			for (var turret:uint = 0; turret < 5; ++turret)
+			_listTurrets = new GameList;
+			var index:uint = 0;
+			for each (var turret:TankPartData in TankPartData.turrets)
 			{
-				list.addItem(new GameListItem(ActorAssetManager.createTurret(turret, false), ITEM_SIZE, ITEM_SIZE));
+				var item:GameListItem = new GameListItem(ActorAssetManager.createTurret(turret.assetIndex, false), ITEM_SIZE, ITEM_SIZE, index); 
+				_listTurrets.addItem(item);
+				if (UserData.instance.purchasedHulls[index])
+				{
+					UIUtil.addCheckmark(item);
+				}
+				if (index == UserData.instance.currentTurret)
+				{
+					Util.ASSERT(UserData.instance.purchasedTurrets[index]);
+					_listTurrets.selectItem(item);
+				}
+
+				++index;
 			}
-			list.x = 15;
-			list.y = top + 20;
-			list.setBounds(LIST_WIDTH-15, LIST_HEIGHT-25);
+			_listTurrets.x = 15;
+			_listTurrets.y = top + 20;
+			_listTurrets.setBounds(LIST_WIDTH-15, LIST_HEIGHT-25);
 			
-			list.render();
+			_listTurrets.render();
 			
-			addChild(list);
+			addChild(_listTurrets);
+
+			Util.listen(_listHulls, Event.SELECT, onTurretSelection);
+			Util.listen(_listHulls, MouseEvent.ROLL_OVER, onTurretRoll);
+			Util.listen(_listHulls, MouseEvent.ROLL_OUT, onTurretRoll);
 		}
 		
 		private function addVehicleDisplay():void
@@ -118,6 +156,45 @@ package ui
 			fieldParent.y = purchase.y;
 			
 			addChild(fieldParent);
+			
+		}
+		
+		private function onHullRoll(_unused:Event):void
+		{
+			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
+			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
+			if (hull)
+			{
+				trace("hull roll", hull);
+			}
+		}
+		private function onHullSelection(_unused:Event):void
+		{
+			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
+			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
+			if (hull)
+			{
+				trace("hull select", hull);
+			}
+			
+		}
+		private function onTurretRoll(_unused:Event):void
+		{
+			const item:GameListItem = _listTurrets.rolledOverItem as GameListItem;
+			const turret:TankPartData = (item && TankPartData.turrets[item.cookie]) as TankPartData;
+			if (turret)
+			{
+				trace("turret roll", turret);
+			}
+		}
+		private function onTurretSelection(_unused:Event):void
+		{
+			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
+			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
+			if (hull)
+			{
+				trace("hull select", hull);
+			}
 			
 		}
 		private function onDone(e:Event):void

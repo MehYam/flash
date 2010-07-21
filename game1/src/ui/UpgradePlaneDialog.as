@@ -67,13 +67,6 @@ package ui
 			Util.listen(_list, MouseEvent.ROLL_OVER, onItemRoll);
 			Util.listen(_list, MouseEvent.ROLL_OUT, onItemRoll);
 		}
-		static private function addCheck(item:GameListItem):void
-		{
-			var check:DisplayObject = AssetManager.instance.checkmark();
-			check.x = item.width - check.width/2;
-			check.y = check.height/2 + 5;
-			item.addChild(check);
-		}
 		private function populateShipList(userData:UserData):void
 		{
 			var upgrades:uint;
@@ -92,7 +85,7 @@ package ui
 
 				if (userData.purchasedPlanes[i])
 				{
-					addCheck(item);
+					UIUtil.addCheckmark(item);
 				}
 				if (i == userData.currentPlane)
 				{
@@ -103,22 +96,6 @@ package ui
 				
 			}
 			_list.render();
-		}
-		static private function createMysteryItem():DisplayObject
-		{
-			var question:DisplayObject = AssetManager.instance.question();
-			question.scaleX = 1.3;
-			question.scaleY = 1.3;
-			
-			var item:GameListItem = new GameListItem(question, LIST_HEIGHT, LIST_HEIGHT);
-			var lock:DisplayObject = AssetManager.instance.lock();
-			lock.x = item.width - 15;
-			lock.y = item.height - 15;
-			item.addChild(lock);
-
-			item.mouseChildren = false;
-			item.mouseEnabled = false;
-			return item;
 		}
 		private var _upgradeGroup:DisplayObject;
 		private var _upgradeList:GameList;
@@ -140,7 +117,9 @@ package ui
 
 			if (!_mysteryItems)
 			{
-				_mysteryItems = [createMysteryItem(), createMysteryItem()];
+				_mysteryItems = [];
+				_mysteryItems.push(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
+				_mysteryItems.push(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
 			}
 			_upgradeList.setBounds(_upgradeGroup.width, _upgradeGroup.height);
 			_upgradeList.render();
@@ -227,7 +206,7 @@ package ui
 				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneData(PlaneData.entries[targetItem]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetItem);
 				if (UserData.instance.purchasedPlanes[forItem+1])
 				{
-					addCheck(upgradeItem);
+					UIUtil.addCheckmark(upgradeItem);
 				}
 				_upgradeList.addItem(upgradeItem);
 				if (targetItem == UserData.instance.currentPlane)
