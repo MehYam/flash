@@ -43,5 +43,15 @@ package karnold.ui
 			_top.text = str;
 			_bottom.text = str;
 		}
+		public function set autoSize(sizeType:String):void
+		{
+			_top.autoSize = sizeType;
+			_bottom.autoSize = sizeType;
+		}
+		public function set wordWrap(w:Boolean):void
+		{
+			_top.wordWrap = w;
+			_bottom.wordWrap = w;
+		}
 	}
 }

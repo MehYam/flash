@@ -55,14 +55,14 @@ package ui
 		
 		private function addBottomInterface():void
 		{
-			var hangar:GameButton = GameButton.create("Plane Selection", true, 20, 1);
+			var hangar:GameButton = GameButton.create("Plane Hangar", true, 20, 1);
 			hangar.x = 10;
 			hangar.y = height + 20;
 			
 			addChild(hangar);
 			Util.listen(hangar, MouseEvent.CLICK, onPlaneHangar); 
 
-			var garage:GameButton = GameButton.create("Tank Selection", true, 20, 1);
+			var garage:GameButton = GameButton.create("Tank Garage", true, 20, 1);
 			garage.x = hangar.x;
 			garage.y = hangar.y + hangar.height + 5;
 			garage.width = hangar.width;

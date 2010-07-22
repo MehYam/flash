@@ -9,6 +9,8 @@ package ui
 	
 	import karnold.utils.Util;
 
+	// this is possibly the most poorly written UI code in history.  The fact that it looks pretty decent
+	// and works nicely is frightening genius on my part
 	public class GameList extends Sprite
 	{
 		static public const DEBUG_MODE:Boolean = false;
@@ -162,7 +164,27 @@ package ui
 			}
 			updateScrollButtons();
 		}
-		
+
+		public function renderVert():void  // atrocities!
+		{
+			clear();
+			
+			var vPos:Number = 4;
+			for (var item:uint = _scrollPos; item < _items.length; ++item)
+			{
+				var dobj:DisplayObject = _items[item];
+				dobj.y = vPos;
+				
+				vPos = dobj.y + dobj.height;
+				if (vPos > _bounds.y)
+				{
+					break;
+				}
+				addChildAt(dobj, 0);
+				++_itemsVisible;
+			}
+		}
+
 		private function onScrollLeft(e:Event):void
 		{
 			if (_scrollPos > 0)

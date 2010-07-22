@@ -2,11 +2,13 @@ package gameData
 {
 	public class TankPartData extends VehiclePartData
 	{
+		public var upgradeA:String = (Math.random() > 0.5) ? "Improved Firerate" : "Improved Damage";
+		public var upgradeB:String = (Math.random() > 0.5) ? "Speed Bonus" : "Adds Rockets";
 		public function TankPartData(name:String, assetIndex:uint, baseStats:BaseStats)
 		{
 			super(name, assetIndex, baseStats);
 		}
-		
+
 		static private var s_hulls:Array;
 		static public function get hulls():Array
 		{

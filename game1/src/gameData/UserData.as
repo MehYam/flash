@@ -32,6 +32,9 @@ package gameData
 		public var purchasedPlanes:Array = [];
 		public var purchasedHulls:Array = [];
 		public var purchasedTurrets:Array = [];
+		public var purchasedHullUpgrades:Array = [[], []];
+		public var purchasedTurretUpgrades:Array = [[], []];
+		
 
 		public var credits:uint;
 		public var levelReached:uint;
@@ -48,6 +51,7 @@ package gameData
 			credits -= cost;
 			
 		}
+		//KAI: needs a better interface for all this
 		public function purchasePlane(plane:uint, cost:uint):void
 		{
 			purchasePart(purchasedPlanes, plane, cost);
@@ -59,6 +63,14 @@ package gameData
 		public function purchaseTurret(turret:uint, cost:uint):void
 		{
 			purchasePart(purchasedTurrets, turret, cost);
+		}
+		public function purchaseHullUpgrade(hull:uint, upgrade:uint, cost:uint):void
+		{
+			purchasePart(purchasedHullUpgrades[upgrade], hull, cost);
+		}
+		public function purchaseTurretUpgrade(turret:uint, upgrade:uint, cost:uint):void
+		{
+			purchasePart(purchasedTurretUpgrades[upgrade], turret, cost);
 		}
 	}
 }

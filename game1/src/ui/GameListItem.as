@@ -46,6 +46,14 @@ package ui
 			Util.listen(this, MouseEvent.ROLL_OUT, onRollOut);
 		}
 
+		private var _border:Boolean = false;
+		public function set border(b:Boolean):void
+		{
+			_border = b;
+			renderHighlight();
+			
+//			UIUtil.addGroupBox(this, "", 0, 0, _explicitWidth, _explicitHeight);
+		}
 		private var _selected:Boolean = false;
 		private var _rolledOver:Boolean = false;
 		public function set selected(b:Boolean):void
@@ -72,7 +80,13 @@ package ui
 				amount += ROLLOVER_ALPHA;
 			}
 			this.graphics.clear();
-			this.graphics.beginFill(0xff, amount);
+			if (_border)
+			{
+				this.graphics.lineStyle(1, 0);
+				this.graphics.drawRoundRect(1, 1, _explicitWidth-2, _explicitHeight-2, 20, 20);
+				this.graphics.lineStyle(0, 0, 0);
+			}
+			this.graphics.beginFill(0x337777, amount);
 			this.graphics.drawRoundRect(0, 0, _explicitWidth, _explicitHeight, 20, 20);
 		}
 		private function onRollOver(e:Event):void

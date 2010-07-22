@@ -5,6 +5,8 @@ package ui
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
 	import gameData.BaseStats;
@@ -12,6 +14,7 @@ package ui
 	import gameData.UserData;
 	
 	import karnold.ui.ProgressMeter;
+	import karnold.ui.ShadowTextField;
 	import karnold.utils.Util;
 
 	public class UpgradeTankDialog extends GameDialog
@@ -20,7 +23,7 @@ package ui
 		{
 			super(false);
 
-			title = "HANGAR";
+			title = "TANK GARAGE";
 			
 			addTankHullList();
 			addTankTurretList();
@@ -36,11 +39,11 @@ package ui
 		static private const ITEM_SIZE:Number = LIST_HEIGHT - 25;
 		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
 		private var _listHulls:GameList;
+		private var _listHullUpgrades:GameList;
 		private function addTankHullList():void
 		{
 			const top:Number = TOP_MARGIN;
 			UIUtil.addGroupBox(this, "Tank Hulls", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
-			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			_listHulls = new GameList;
 			var index:uint = 0;
@@ -70,14 +73,42 @@ package ui
 			Util.listen(_listHulls, Event.SELECT, onHullSelection);
 			Util.listen(_listHulls, MouseEvent.ROLL_OVER, onHullRoll);
 			Util.listen(_listHulls, MouseEvent.ROLL_OUT, onHullRoll);
+
+			// Upgrades //////////////////////
+			var parent:DisplayObject = UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
+			_listHullUpgrades = new GameList;
+			_listHullUpgrades.x = parent.x + 5;
+			_listHullUpgrades.y = parent.y + 15;
+			
+			addUpgrade(_listHullUpgrades, TankPartData(TankPartData.hulls[0]).upgradeA, 0);
+			addUpgrade(_listHullUpgrades, TankPartData(TankPartData.hulls[0]).upgradeB, 1);
+			
+			_listHullUpgrades.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
+			_listHullUpgrades.renderVert();
+			addChild(_listHullUpgrades);
 		}
-		
+
+		static private function addUpgrade(list:GameList, text:String, cookie:uint):void
+		{
+			const fmt:TextFormat = new TextFormat("SF TransRobotics", 16);
+			var tf:TextField = new TextField();
+			tf.defaultTextFormat = fmt;
+			tf.autoSize = TextFieldAutoSize.CENTER;
+			tf.wordWrap = true;
+			tf.text = text;
+			tf.mouseEnabled = false;
+			tf.width = UPGRADE_WIDTH - 20;
+			
+			var upgrade:GameListItem = new GameListItem(tf, UPGRADE_WIDTH - 10, (LIST_HEIGHT-27)/2, cookie);
+			upgrade.border = true;
+			list.addItem(upgrade);
+		}
 		private var _listTurrets:GameList;
+		private var _listTurretUpgrades:GameList;
 		private function addTankTurretList():void
 		{
 			const top:Number = TOP_MARGIN + (LIST_HEIGHT+10);
 			UIUtil.addGroupBox(this, "Tank Turrets", LEFT_MARGIN, top, LIST_WIDTH, LIST_HEIGHT);
-			UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
 
 			_listTurrets = new GameList;
 			var index:uint = 0;
@@ -105,9 +136,22 @@ package ui
 			
 			addChild(_listTurrets);
 
-			Util.listen(_listHulls, Event.SELECT, onTurretSelection);
-			Util.listen(_listHulls, MouseEvent.ROLL_OVER, onTurretRoll);
-			Util.listen(_listHulls, MouseEvent.ROLL_OUT, onTurretRoll);
+			Util.listen(_listTurrets, Event.SELECT, onTurretSelection);
+			Util.listen(_listTurrets, MouseEvent.ROLL_OVER, onTurretRoll);
+			Util.listen(_listTurrets, MouseEvent.ROLL_OUT, onTurretRoll);
+
+			// Upgrades //////////////////////
+			var parent:DisplayObject = UIUtil.addGroupBox(this, "Upgrades", LIST_WIDTH + 15, top, UPGRADE_WIDTH, LIST_HEIGHT);
+			_listTurretUpgrades = new GameList;
+			_listTurretUpgrades.x = parent.x + 5;
+			_listTurretUpgrades.y = parent.y + 15;
+			
+			addUpgrade(_listTurretUpgrades, TankPartData(TankPartData.turrets[0]).upgradeA, 0);
+			addUpgrade(_listTurretUpgrades, TankPartData(TankPartData.turrets[0]).upgradeB, 1);
+			
+			_listTurretUpgrades.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
+			_listTurretUpgrades.renderVert();
+			addChild(_listTurretUpgrades);
 		}
 		
 		private function addVehicleDisplay():void
