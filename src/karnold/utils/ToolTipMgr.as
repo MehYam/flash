@@ -39,6 +39,7 @@ package karnold.utils
 
 				if (!dobj.parent)
 				{	
+					_tooltip.text = entry.text;
 					_lastMousedOverItem.stage.addChild(dobj);
 				}
 			}				

@@ -105,5 +105,12 @@ package ui
 				thy.parent.removeChild(thy);
 			}
 		}
+		
+		static public function formatItemTooltip(name:String, cost:uint, description:String):String
+		{
+			var retval:String = "Name: <b>" + name + "</b><br>Cost: <b>" + cost + "</b><br><br>";
+			retval += "This ship is a pretty cool ship because as far as ship goes, it ship ships shipsss pretty cool ship ship.  ship.";
+			return retval;
+		}
 	}
 }

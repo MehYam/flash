@@ -52,7 +52,9 @@ package {
 			
 //			testProgressMeter();
 			
-			testProgrammaticSkin();
+//			testProgrammaticSkin();
+			
+			testHtmlText();
 		}
 	
 		private function testTextField():void
@@ -354,6 +356,26 @@ package {
 			rect.height = 119;
 			rect.filters = [new BevelFilter(3, 235)];
 			addChild(rect);
+		}
+		
+		private function testHtmlText():void
+		{
+			var tf:TextField = new TextField;
+			tf.autoSize = TextFieldAutoSize.LEFT;
+			tf.multiline = true;
+			tf.wordWrap = true;
+			tf.border = true;
+			tf.width = 200;
+			tf.defaultTextFormat = new TextFormat("Arial", 18);
+			tf.x = 20;
+			tf.y = 20;
+
+			var html:String = "Name: <b>Some Ship</b>\tCost: <b>1232 Credits</b>";
+			html += "<br><br>";
+			html += "<font size='-4'>";
+			html += "This ship is a pretty cool ship because as far as ship goes, it ship ships shipsss pretty cool ship ship.  ship.";
+			tf.htmlText = html;
+			addChild(tf);
 		}
 	}
 }
