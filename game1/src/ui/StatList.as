@@ -9,8 +9,8 @@ package ui
 	import gameData.BaseStats;
 	
 	import karnold.ui.ProgressMeter;
-	import karnold.utils.Util;
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.Util;
 	
 	public class StatList extends Sprite
 	{
@@ -32,8 +32,9 @@ package ui
 			_armor = addStatField(fields, "Armor", stats.armor);
 			_damage = addStatField(fields, "Damage", stats.damage);
 			_fireRate = addStatField(fields, "Fire Rate", stats.fireRate);
-			addStatField(fields, "Ammo", 1);
+			addStatField(fields, "Ammo", 0.1);
 			_speed = addStatField(fields, "Speed", stats.speed);
+			_stats = stats;
 			
 			skin.height = height;
 			addChild(skin);
@@ -93,6 +94,17 @@ package ui
 				_damage.diff = 0;
 				_fireRate.diff = 0;
 				_speed.diff = 0;
+			}
+		}
+		// pass in BaseStats.ZERO to turn off the diff
+		public function set diff(diff:BaseStats):void
+		{
+			if (diff)
+			{
+				_armor.diff = diff.armor;
+				_damage.diff = diff.damage;
+				_fireRate.diff = diff.fireRate;
+				_speed.diff = diff.speed;
 			}
 		}
 	}

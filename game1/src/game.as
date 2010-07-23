@@ -31,12 +31,14 @@ package
 	import karnold.utils.Input;
 	import karnold.utils.Location;
 	import karnold.utils.MathUtil;
+	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
 	
 	import scripts.GameScriptFactory;
 	import scripts.IGameScript;
 	import scripts.TankActor;
 	
+	import ui.GameToolTip;
 	import ui.TestDialog;
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
@@ -64,6 +66,8 @@ package
 		
 		private function toTitleScreen():void
 		{
+			ToolTipMgr.instance.tooltip = new GameToolTip;			
+
 			var titleScreen:TitleScreen = new TitleScreen;
 			parent.addChild(titleScreen);
 			

@@ -108,8 +108,8 @@ package ui
 		{
 //			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
 			
-//UIUtil.openDialog(this, new LevelSelectionDialog);
-UIUtil.openDialog(this, new UpgradeTankDialog);
+UIUtil.openDialog(this, new LevelSelectionDialog);
+//UIUtil.openDialog(this, new UpgradeTankDialog);
 //UIUtil.openDialog(this, new TestDialog);
 		}
 		private function onContinue(e:Event):void

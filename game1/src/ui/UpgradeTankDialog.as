@@ -43,6 +43,7 @@ package ui
 		static private const UPGRADE_WIDTH:Number = LIST_HEIGHT;
 		private var _listHulls:GameList;
 		private var _listHullUpgrades:GameList;
+		private var _lastSelectedHull:uint;
 		private function addTankHullList():void
 		{
 			const top:Number = TOP_MARGIN;
@@ -62,6 +63,7 @@ package ui
 				{
 					Util.ASSERT(UserData.instance.purchasedHulls[index]);
 					_listHulls.selectItem(item);
+					_lastSelectedHull = index;
 				}
 				++index;
 			}
@@ -131,6 +133,7 @@ package ui
 		}
 		private var _listTurrets:GameList;
 		private var _listTurretUpgrades:GameList;
+		private var _lastSelectedTurret:uint;
 		private function addTankTurretList():void
 		{
 			const top:Number = TOP_MARGIN + (LIST_HEIGHT+10);
@@ -150,6 +153,7 @@ package ui
 				{
 					Util.ASSERT(UserData.instance.purchasedTurrets[index]);
 					_listTurrets.selectItem(item);
+					_lastSelectedTurret = index;
 				}
 
 				++index;
@@ -201,34 +205,39 @@ package ui
 		private function populatePreview():void
 		{
 			var dobj:DisplayObject;
+			var prevRotation:Number = 0;
+			var prevTurretRotation:Number = 0;
 			if (_preview.tank)
 			{
 				Util.ASSERT(_preview.tank.displayObject.parent != null);
 				dobj = _preview.tank.displayObject;
 				dobj.parent.removeChild(dobj);
+
+				prevRotation = dobj.rotation;
+				prevTurretRotation = _preview.tank.turretRotation;
 			}
-			var item:GameListItem = _listHulls.selection as GameListItem;
-			const hull:uint = item.cookie;
 
-			item = _listTurrets.selection as GameListItem;
-			const turret:uint = item.cookie;
-
-			_preview.tank = TankActor.createTankActor(hull, turret, null);
+			_preview.tank = TankActor.createTankActor(_lastSelectedHull, _lastSelectedTurret, null);
 			dobj = _preview.tank.displayObject;
 			dobj.x = _previewSkin.x + _previewSkin.width/2;
 			dobj.y = _previewSkin.y + _previewSkin.height/2;
+			dobj.rotation = prevRotation;
+			_preview.tank.turretRotation = prevTurretRotation;
 			addChild(dobj);
 
 			_preview.start();
 		}
 		
+		private var _stats:StatList;
 		private function addStatDisplay():void
 		{
-			var stats:DisplayObject = new StatList(new BaseStats(.5, .1, .2, .8, .3), LIST_HEIGHT);
-			stats.x = 470;
-			stats.y = LIST_HEIGHT + 50;
+			_stats = new StatList(new BaseStats(0, 0, 0, 0, 0), LIST_HEIGHT);
+			_stats.x = 470;
+			_stats.y = LIST_HEIGHT + 50;
 			
-			addChild(stats);
+			addChild(_stats);
+			
+			updateStats();
 		}
 		private var _purchaseBtn:GameButton;
 		private function addButtons():void
@@ -246,6 +255,8 @@ package ui
 			_purchaseBtn.enabled = false;
 			addChild(_purchaseBtn);
 			
+			Util.listen(_purchaseBtn, MouseEvent.CLICK, onPurchase);
+			
 			var fieldParent:DisplayObjectContainer = new CreditDisplay;
 			
 			fieldParent.x = _purchaseBtn.x - fieldParent.width - 5;
@@ -257,33 +268,69 @@ package ui
 		private function onHullSelection(_unused:Event):void
 		{
 			const item:GameListItem = _listHulls.selection as GameListItem;
-			const hull:TankPartData = item ? TankPartData.getHull(item.cookie) : null;
-			const ownHull:Boolean = UserData.instance.purchasedHulls[item.cookie];
+			_lastSelectedHull = item.cookie;
 
-			populateUpgrades(_listHullUpgrades, ownHull, TankPartData.hulls[UserData.instance.currentHull], UserData.instance.purchasedHullUpgrades[UserData.instance.currentHull]);
+			const hull:TankPartData = item ? TankPartData.getHull(_lastSelectedHull) : null;
+			const own:Boolean = UserData.instance.purchasedHulls[_lastSelectedHull];
+			populateUpgrades(_listHullUpgrades, own, TankPartData.hulls[_lastSelectedHull], UserData.instance.purchasedHullUpgrades[_lastSelectedHull]);
 
-			const enabled:Boolean = !ownHull && UserData.instance.credits >= hull.baseStats.cost;
-			
-			_purchaseBtn.enabled = enabled;
+			if (own)
+			{
+				UserData.instance.currentHull = _lastSelectedHull;
+			}
+			_purchaseBtn.enabled = !own && UserData.instance.credits >= hull.baseStats.cost;;
 			
 			populatePreview();
+			updateStats();
 		}
+		private function onTurretSelection(_unused:Event):void
+		{
+			const item:GameListItem = _listTurrets.selection as GameListItem;
+			_lastSelectedTurret = item.cookie;
+			
+			const turret:TankPartData = item ? TankPartData.getHull(_lastSelectedTurret) : null;
+			const own:Boolean = UserData.instance.purchasedTurrets[_lastSelectedTurret];
+			populateUpgrades(_listTurretUpgrades, own, TankPartData.turrets[_lastSelectedTurret], UserData.instance.purchasedTurretUpgrades[_lastSelectedTurret]);
+			
+			if (own)
+			{
+				UserData.instance.currentTurret = _lastSelectedTurret;
+			}
+			_purchaseBtn.enabled = !own && UserData.instance.credits >= turret.baseStats.cost;;
+			
+			populatePreview();
+			updateStats();
+		}
+		// KAI: if you really wanted to eliminate this copy/paste, you need to start with the user
+		// data - put all the array and lookup nonsense into a single class, add some methods, stamp out multiple
+		// instances of that type for each type of merchandise, then let the changes trickle down to here.
 		private function onHullUpgradeSelection(_unused:Event):void
 		{
+			Util.ASSERT(UserData.instance.currentHull == _lastSelectedHull);
+			
 			const item:GameListItem = _listHullUpgrades.selection as GameListItem;
 			const upgrade:TankPartData = item ? TankPartData.getHull(UserData.instance.currentHull).getUpgrade(item.cookie) : null;
 
 			_listHulls.selectItem(null);
 			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
 		}
+		private function onTurretUpgradeSelection(_unused:Event):void
+		{
+			Util.ASSERT(UserData.instance.currentTurret == _lastSelectedTurret);
+
+			const item:GameListItem = _listTurretUpgrades.selection as GameListItem;
+			const upgrade:TankPartData = item ? TankPartData.getTurret(UserData.instance.currentTurret).getUpgrade(item.cookie) : null;
+			
+			_listTurrets.selectItem(null);
+			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
+		}
 		private function onHullRoll(_unused:Event):void
 		{
-			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
-			const hull:TankPartData = item ? TankPartData.getHull(item.cookie) : null;
-			if (hull)
-			{
-				trace("hull roll", hull);
-			}
+			updateStats();
+		}
+		private function onTurretRoll(_unused:Event):void
+		{
+			updateStats();
 		}
 		private function onHullUpgradeRoll(_unused:Event):void
 		{
@@ -294,26 +341,6 @@ package ui
 				trace("hull upgrade roll", upgrade);
 			}
 		}
-
-		private function onTurretRoll(_unused:Event):void
-		{
-			const item:GameListItem = _listTurrets.rolledOverItem as GameListItem;
-			const turret:TankPartData = (item && TankPartData.turrets[item.cookie]) as TankPartData;
-			if (turret)
-			{
-				trace("turret roll", turret);
-			}
-		}
-		private function onTurretSelection(_unused:Event):void
-		{
-			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
-			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
-			if (hull)
-			{
-				trace("hull select", hull);
-			}
-			populatePreview();
-		}
 		private function onTurretUpgradeRoll(_unused:Event):void
 		{
 			const item:GameListItem = _listTurrets.rolledOverItem as GameListItem;
@@ -323,14 +350,30 @@ package ui
 				trace("turret roll", turret);
 			}
 		}
-		private function onTurretUpgradeSelection(_unused:Event):void
+		private var po_stats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
+		private var po_compareStats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
+		private function updateStats():void
 		{
-			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
-			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
-			if (hull)
-			{
-				trace("hull select", hull);
-			}
+			po_stats.reset();
+			po_compareStats.reset();
+
+			const selectedHull:TankPartData = TankPartData.getHull(_lastSelectedHull);
+			po_stats.add(selectedHull.baseStats);
+
+			var rolledItem:GameListItem = _listHulls.rolledOverItem as GameListItem;
+			po_compareStats.add(rolledItem ? TankPartData.getHull(rolledItem.cookie).baseStats : selectedHull.baseStats);
+
+			const selectedTurret:TankPartData = TankPartData.getTurret(_lastSelectedTurret);
+			po_stats.add(selectedTurret.baseStats);
+
+			rolledItem = _listTurrets.rolledOverItem as GameListItem;
+			po_compareStats.add (rolledItem ? TankPartData.getTurret(rolledItem.cookie).baseStats : selectedTurret.baseStats);
+
+			_stats.stats = po_stats;
+			_stats.compare = po_compareStats;
+		}
+		private function onPurchase(e:Event):void
+		{
 			
 		}
 		private function onDone(e:Event):void

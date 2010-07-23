@@ -19,7 +19,6 @@ package ui
 		public function UpgradePlaneDialog()
 		{
 			super(false);
-ToolTipMgr.instance.tooltip = new GameToolTip;			
 			title = "PLANE HANGAR";
 			
 			addShipList();
@@ -271,6 +270,7 @@ ToolTipMgr.instance.tooltip = new GameToolTip;
 			}
 			
 			_statList.stats = planeData.baseStats;
+			_statList.compare = null;
 		}
 		private function onItemRoll(e:Event):void
 		{
