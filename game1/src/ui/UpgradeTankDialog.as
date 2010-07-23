@@ -240,6 +240,7 @@ package ui
 			updateStats();
 		}
 		private var _purchaseBtn:GameButton;
+		private var _costField:KeyValueDisplay;
 		private function addButtons():void
 		{
 			var btn:GameButton = GameButton.create("Done", true, 24, 1);
@@ -257,12 +258,20 @@ package ui
 			
 			Util.listen(_purchaseBtn, MouseEvent.CLICK, onPurchase);
 			
-			var fieldParent:DisplayObjectContainer = new CreditDisplay;
+			var creditDisplay:KeyValueDisplay = new KeyValueDisplay("Credits:");
+			creditDisplay.x = _purchaseBtn.x - creditDisplay.width - 5;
+			creditDisplay.y = _purchaseBtn.y;
+			creditDisplay.value = UserData.instance.credits;
 			
-			fieldParent.x = _purchaseBtn.x - fieldParent.width - 5;
-			fieldParent.y = _purchaseBtn.y;
+			addChild(creditDisplay);
 			
-			addChild(fieldParent);
+			_costField = new KeyValueDisplay("Cost:");
+			_costField.x = LEFT_MARGIN;
+			_costField.y = creditDisplay.y;
+			
+			addChild(_costField);
+			
+			updatePurchaseButton();
 		}
 		
 		private function onHullSelection(_unused:Event):void
@@ -278,10 +287,11 @@ package ui
 			{
 				UserData.instance.currentHull = _lastSelectedHull;
 			}
-			_purchaseBtn.enabled = !own && UserData.instance.credits >= hull.baseStats.cost;;
+			_purchaseBtn.enabled = !own && UserData.instance.credits >= hull.baseStats.cost;
 			
 			populatePreview();
 			updateStats();
+			updatePurchaseButton();
 		}
 		private function onTurretSelection(_unused:Event):void
 		{
@@ -300,6 +310,7 @@ package ui
 			
 			populatePreview();
 			updateStats();
+			updatePurchaseButton();
 		}
 		// KAI: if you really wanted to eliminate this copy/paste, you need to start with the user
 		// data - put all the array and lookup nonsense into a single class, add some methods, stamp out multiple
@@ -312,9 +323,9 @@ package ui
 			const upgrade:TankPartData = item ? TankPartData.getHull(UserData.instance.currentHull).getUpgrade(item.cookie) : null;
 
 			_listHulls.selectItem(null);
-			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
 
 			updateStats();
+			updatePurchaseButton();
 		}
 		private function onTurretUpgradeSelection(_unused:Event):void
 		{
@@ -327,6 +338,7 @@ package ui
 			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
 
 			updateStats();
+			updatePurchaseButton();
 		}
 		private function onHullRoll(_unused:Event):void
 		{
@@ -393,9 +405,80 @@ package ui
 				po_compareStats.add(upgrade);
 			}
 		}
+		private function updatePurchaseButton():void
+		{
+			const ud:UserData = UserData.instance;
+			var cost:uint;
+			
+			var item:GameListItem = _listHulls.selection as GameListItem;
+			if (item && !ud.purchasedHulls[item.cookie])
+			{
+				cost += TankPartData.getHull(item.cookie).baseStats.cost;
+			}
+			item = _listTurrets.selection as GameListItem;
+			if (item && !ud.purchasedTurrets[item.cookie])
+			{
+				cost += TankPartData.getTurret(item.cookie).baseStats.cost;
+			}
+			item = _listHullUpgrades.selection as GameListItem;
+			if (item && !ud.purchasedHullUpgrades[_lastSelectedHull][item.cookie])
+			{
+				cost += TankPartData.getHull(_lastSelectedHull).getUpgrade(item.cookie).baseStats.cost;
+			}
+			item = _listTurretUpgrades.selection as GameListItem;
+			if (item && !ud.purchasedTurretUpgrades[_lastSelectedTurret][item.cookie])
+			{
+				cost += TankPartData.getTurret(_lastSelectedTurret).getUpgrade(item.cookie).baseStats.cost;
+			}
+
+			const afford:Boolean = ud.credits >= cost;
+			_purchaseBtn.enabled = cost && afford;
+			_costField.value = cost;
+			
+			_costField.valColor = afford ? Consts.CREDIT_FIELD_COLOR : 0xff0000;
+		}
 		private function onPurchase(e:Event):void
 		{
+			updatePurchaseButton();
 			
+			const ud:UserData = UserData.instance;
+			var cost:uint;
+			
+			var item:GameListItem = _listHulls.selection as GameListItem;
+			if (item && !ud.purchasedHulls[item.cookie])
+			{
+				ud.purchaseHull(item.cookie, TankPartData.getHull(item.cookie).baseStats.cost);
+				ud.currentHull = item.cookie;
+			}
+			item = _listTurrets.selection as GameListItem;
+			if (item && !ud.purchasedTurrets[item.cookie])
+			{
+				ud.purchaseTurret(item.cookie, TankPartData.getTurret(item.cookie).baseStats.cost);
+				ud.currentTurret = item.cookie;
+			}
+			item = _listHullUpgrades.selection as GameListItem;
+			if (item && !ud.purchasedHullUpgrades[_lastSelectedHull][item.cookie])
+			{
+				ud.purchaseHullUpgrade(_lastSelectedHull, item.cookie, TankPartData.getHull(_lastSelectedHull).getUpgrade(item.cookie).baseStats.cost);
+			}
+			item = _listTurretUpgrades.selection as GameListItem;
+			if (item && !ud.purchasedTurretUpgrades[_lastSelectedTurret][item.cookie])
+			{
+				ud.purchaseTurretUpgrade(_lastSelectedTurret, item.cookie, TankPartData.getTurret(_lastSelectedTurret).getUpgrade(item.cookie).baseStats.cost);
+			}
+
+			//HAAAAACK /////////////////////////////
+			//HAAAAACK /////////////////////////////
+			//HAAAAACK /////////////////////////////
+			// omg programmer hell
+			var refresh:UpgradeTankDialog = new UpgradeTankDialog;
+			refresh.x = x;
+			refresh.y = y;
+			refresh._listHulls.scrollPos = _listHulls.scrollPos;
+			refresh._listTurrets.scrollPos = _listTurrets.scrollPos;
+			
+			parent.addChildAt(refresh, parent.getChildIndex(this) + 1);
+			parent.removeChild(this);
 		}
 		private function onDone(e:Event):void
 		{

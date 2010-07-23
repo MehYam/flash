@@ -145,8 +145,8 @@ package ui
 		private var _purchaseBtn:GameButton;
 		private function addBottomButtons(userData:UserData):void
 		{
-			var credit:CreditDisplay = new CreditDisplay;
-			credit.credits = userData.credits;
+			var credit:KeyValueDisplay = new KeyValueDisplay("Credits:");
+			credit.value = userData.credits;
 			credit.x = width - credit.width;
 			credit.y = _upgradeGroup.y;
 			
