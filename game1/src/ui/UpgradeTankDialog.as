@@ -313,6 +313,8 @@ package ui
 
 			_listHulls.selectItem(null);
 			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
+
+			updateStats();
 		}
 		private function onTurretUpgradeSelection(_unused:Event):void
 		{
@@ -323,6 +325,8 @@ package ui
 			
 			_listTurrets.selectItem(null);
 			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
+
+			updateStats();
 		}
 		private function onHullRoll(_unused:Event):void
 		{
@@ -334,43 +338,60 @@ package ui
 		}
 		private function onHullUpgradeRoll(_unused:Event):void
 		{
-			const item:GameListItem = _listHullUpgrades.rolledOverItem as GameListItem;
-			const upgrade:TankPartData = item ? TankPartData.getHull(UserData.instance.currentHull).getUpgrade(item.cookie) : null;
-			if (upgrade)
-			{
-				trace("hull upgrade roll", upgrade);
-			}
+			updateStats();
 		}
 		private function onTurretUpgradeRoll(_unused:Event):void
 		{
-			const item:GameListItem = _listTurrets.rolledOverItem as GameListItem;
-			const turret:TankPartData = (item && TankPartData.turrets[item.cookie]) as TankPartData;
-			if (turret)
-			{
-				trace("turret roll", turret);
-			}
+			updateStats();
 		}
-		private var po_stats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
-		private var po_compareStats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
+		static private var po_stats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
+		static private var po_compareStats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
 		private function updateStats():void
 		{
 			po_stats.reset();
 			po_compareStats.reset();
 
+			// hull and turret
 			const selectedHull:TankPartData = TankPartData.getHull(_lastSelectedHull);
+			const selectedTurret:TankPartData = TankPartData.getTurret(_lastSelectedTurret);
+
 			po_stats.add(selectedHull.baseStats);
+			po_stats.add(selectedTurret.baseStats);
 
 			var rolledItem:GameListItem = _listHulls.rolledOverItem as GameListItem;
 			po_compareStats.add(rolledItem ? TankPartData.getHull(rolledItem.cookie).baseStats : selectedHull.baseStats);
 
-			const selectedTurret:TankPartData = TankPartData.getTurret(_lastSelectedTurret);
-			po_stats.add(selectedTurret.baseStats);
-
 			rolledItem = _listTurrets.rolledOverItem as GameListItem;
 			po_compareStats.add (rolledItem ? TankPartData.getTurret(rolledItem.cookie).baseStats : selectedTurret.baseStats);
 
+			// upgrades
+			accumulateUpgrade(_listHullUpgrades, UserData.instance.purchasedHullUpgrades, selectedHull, _lastSelectedHull, 0);
+			accumulateUpgrade(_listHullUpgrades, UserData.instance.purchasedHullUpgrades, selectedHull, _lastSelectedHull, 1);
+			accumulateUpgrade(_listTurretUpgrades, UserData.instance.purchasedTurretUpgrades, selectedTurret, _lastSelectedTurret, 0);
+			accumulateUpgrade(_listTurretUpgrades, UserData.instance.purchasedTurretUpgrades, selectedTurret, _lastSelectedTurret, 1);
+				
+			// now perform the compare
 			_stats.stats = po_stats;
 			_stats.compare = po_compareStats;
+		}
+		static private function accumulateUpgrade(list:GameList, purchaseIndex:Array, tankPart:TankPartData, tankPartIndex:uint, upgradeIndex:uint):void
+		{
+			const upgrade:BaseStats = tankPart.getUpgrade(upgradeIndex).baseStats;
+			const selectedItem:GameListItem = list.selection as GameListItem;
+			const rolledItem:GameListItem = list.rolledOverItem as GameListItem;
+
+			if ((purchaseIndex[tankPartIndex] && purchaseIndex[tankPartIndex][upgradeIndex]) || 
+				(selectedItem && selectedItem.cookie == upgradeIndex))
+			{
+				// if we've bought or selected it
+				po_stats.add(upgrade);
+				po_compareStats.add(upgrade);
+			}
+			else if (rolledItem && rolledItem.cookie == upgradeIndex)
+			{
+				// no, but we've just rolled over it
+				po_compareStats.add(upgrade);
+			}
 		}
 		private function onPurchase(e:Event):void
 		{

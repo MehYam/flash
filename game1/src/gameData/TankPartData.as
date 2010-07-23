@@ -4,7 +4,7 @@ package gameData
 	{
 		static private const s_upgrades:Array = 
 		[
-			new TankPartData("Improved Firerate", 0, new BaseStats(0, 0, 0.5, 0, 2000)),
+			new TankPartData("Improved Firerate", 0, new BaseStats(0, 0, 0.2, 0, 2000)),
 			new TankPartData("Improved Damage",   0, new BaseStats(0, 0.3, 0, 0, 4000)),
 			new TankPartData("Speed Boost",       0, new BaseStats(0, 0, 0, 0.3, 5000)),
 			new TankPartData("Adds Rockets",      0, new BaseStats(0, 0, 0, 0, 7000))
@@ -20,6 +20,10 @@ package gameData
 		public function getUpgrade(index:uint):TankPartData
 		{
 			return s_upgrades[_upgrades[index]];
+		}
+		public function getUpgradeIndex(index:uint):uint
+		{
+			return _upgrades[index];
 		}
 		static private var s_hulls:Array;
 		static public function get hulls():Array
