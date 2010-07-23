@@ -3,6 +3,7 @@ package scripts
 	import behaviors.BehaviorConsts;
 	
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	
@@ -10,13 +11,13 @@ package scripts
 	
 	public class TankActor extends Actor
 	{
-		private var _leftTrack:DisplayObject;
-		private var _rightTrack:DisplayObject;
+		private var _leftTrack:DisplayObjectContainer;
+		private var _rightTrack:DisplayObjectContainer;
 		private var _turret:DisplayObject;
 		public function TankActor(MustUseFactoryFunction:MUSTUSEFACTORYFUNCTION, 
 								  dobj:DisplayObject,
-								  leftTrack:DisplayObject,
-								  rightTrack:DisplayObject,
+								  leftTrack:DisplayObjectContainer,
+								  rightTrack:DisplayObjectContainer,
 								  turret:DisplayObject,
 								  bc:BehaviorConsts)
 		{
@@ -55,7 +56,25 @@ package scripts
 			{
 				_trackRunning = true;
 			}
+			treadFrame();
 		}
+		
+		private var _treadOffset:Number = 0;
+		public function treadFrame():void
+		{
+			var leftTread:DisplayObject = _leftTrack.getChildAt(1);
+			var rightTread:DisplayObject= _rightTrack.getChildAt(1);
+			
+			leftTread.y = _treadOffset;
+			rightTread.y = _treadOffset;
+
+			_treadOffset += .1;
+			if (_treadOffset > 5)
+			{
+				_treadOffset = 0;
+			}
+		}
+
 		// need a list of recipes here - need to know
 		// 1) where to center the turret
 		// 2) where the tracks go, how much they're scaled
@@ -74,8 +93,8 @@ package scripts
 			
 			var hull:DisplayObject = ActorAssetManager.createHull(hullIndex);
 			var turret:DisplayObject = ActorAssetManager.createTurret(turretIndex);
-			var track:DisplayObject = ActorAssetManager.createTrack();
-			var track2:DisplayObject = ActorAssetManager.createTrack();
+			var track:DisplayObjectContainer = ActorAssetManager.createTrack();
+			var track2:DisplayObjectContainer = ActorAssetManager.createTrack();
 			
 			const width:Number = track.width + hull.width;
 			const height:Number = hull.height;

@@ -37,7 +37,7 @@ package ui
 			labelField.x = 20;
 			labelField.y = _lastFieldBottom;
 
-			var valueField:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), 0x77aa77, valueColor, 1);
+			var valueField:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), 0x555577, valueColor, 1);
 			
 			valueField.y = labelField.y - 2;
 			valueField.x = 250 - valueField.width;

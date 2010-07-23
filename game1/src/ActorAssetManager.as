@@ -227,7 +227,7 @@ package
 		static private const TANKTREAD:Class;
 		[Embed(source="assets/master.swf", symbol="tanktreadtop")]
 		static private const TANKTREADTOP:Class;
-		static public function createTrack():DisplayObject
+		static public function createTrack():DisplayObjectContainer
 		{
 			var base:DisplayObjectContainer = new TANKTREAD;
 			base.addChild(new TANKTREADTOP);

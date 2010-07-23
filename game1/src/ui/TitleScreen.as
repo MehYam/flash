@@ -15,9 +15,9 @@ package ui
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
 	
+	import karnold.ui.ShadowTextField;
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Util;
-	import karnold.ui.ShadowTextField;
 	
 	public class TitleScreen extends Sprite
 	{
@@ -108,7 +108,8 @@ package ui
 		{
 //			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
 			
-UIUtil.openDialog(this, new LevelSelectionDialog);
+//UIUtil.openDialog(this, new LevelSelectionDialog);
+UIUtil.openDialog(this, new TestDialog);
 		}
 		private function onContinue(e:Event):void
 		{
