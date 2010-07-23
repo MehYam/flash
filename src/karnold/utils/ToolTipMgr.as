@@ -34,9 +34,13 @@ package karnold.utils
 			if (entry && _lastMousedOverItem.stage)
 			{
 				var dobj:DisplayObject = _tooltip.displayObject;
+
+				if (!dobj.parent)
+				{	
+					_tooltip.text = entry.text;
+				}
 				dobj.x = x + 3;
 				dobj.y = y - dobj.height - 3;
-
 				if (!dobj.parent)
 				{	
 					_tooltip.text = entry.text;
@@ -100,7 +104,6 @@ package karnold.utils
 		private function onMouseMove(evt:MouseEvent):void
 		{
 			Util.ASSERT(evt.target == _lastMousedOverItem);
-
 			_lastMouseOverSpot.x = evt.stageX;
 			_lastMouseOverSpot.y = evt.stageY;
 			if (_tooltip.displayObject.parent)

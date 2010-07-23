@@ -83,7 +83,7 @@ ToolTipMgr.instance.tooltip = new GameToolTip;
 				upgrades = entry.upgrades;
 		
 				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
-				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(entry.name, entry.baseStats.cost, null));
+				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(entry.name, entry.baseStats.cost, UserData.instance.credits >= entry.baseStats.cost, null));
 				if (userData.purchasedPlanes[i])
 				{
 					UIUtil.addCheckmark(item);
