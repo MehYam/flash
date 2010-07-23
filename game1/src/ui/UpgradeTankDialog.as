@@ -80,15 +80,32 @@ package ui
 			_listHullUpgrades.x = parent.x + 5;
 			_listHullUpgrades.y = parent.y + 15;
 			
-			addUpgrade(_listHullUpgrades, TankPartData(TankPartData.hulls[0]).upgradeA, 0);
-			addUpgrade(_listHullUpgrades, TankPartData(TankPartData.hulls[0]).upgradeB, 1);
-			
-			_listHullUpgrades.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
-			_listHullUpgrades.renderVert();
+			const iHull:uint = UserData.instance.currentHull;
+			populateUpgrades(_listHullUpgrades, UserData.instance.purchasedHulls[iHull], TankPartData.hulls[iHull], UserData.instance.purchasedHullUpgrades[iHull]);
 			addChild(_listHullUpgrades);
+
+			Util.listen(_listHullUpgrades, Event.SELECT, onHullUpgradeSelection);
+			Util.listen(_listHullUpgrades, MouseEvent.ROLL_OVER, onHullUpgradeRoll);
+			Util.listen(_listHullUpgrades, MouseEvent.ROLL_OUT, onHullUpgradeRoll);
 		}
 
-		static private function addUpgrade(list:GameList, text:String, cookie:uint):void
+		private function populateUpgrades(list:GameList, own:Boolean, tankPart:TankPartData, purchaseMatrix:Array):void
+		{
+			list.clearItems();
+			if (own)
+			{
+				addUpgrade(list, tankPart.getUpgrade(0).name, purchaseMatrix[0], 0);
+				addUpgrade(list, tankPart.getUpgrade(1).name, purchaseMatrix[1], 1);
+			}
+			else
+			{
+				list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT-25));
+			}
+			
+			list.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
+			list.renderVert();
+		}
+		static private function addUpgrade(list:GameList, text:String, purchased:Boolean, cookie:uint):void
 		{
 			const fmt:TextFormat = new TextFormat("SF TransRobotics", 16);
 			var tf:TextField = new TextField();
@@ -101,6 +118,12 @@ package ui
 			
 			var upgrade:GameListItem = new GameListItem(tf, UPGRADE_WIDTH - 10, (LIST_HEIGHT-27)/2, cookie);
 			upgrade.border = true;
+			if (purchased)
+			{
+				upgrade.mouseEnabled = false;
+				upgrade.alpha = 0.5;
+				UIUtil.addCheckmark(upgrade);
+			}
 			list.addItem(upgrade);
 		}
 		private var _listTurrets:GameList;
@@ -145,13 +168,16 @@ package ui
 			_listTurretUpgrades = new GameList;
 			_listTurretUpgrades.x = parent.x + 5;
 			_listTurretUpgrades.y = parent.y + 15;
-			
-			addUpgrade(_listTurretUpgrades, TankPartData(TankPartData.turrets[0]).upgradeA, 0);
-			addUpgrade(_listTurretUpgrades, TankPartData(TankPartData.turrets[0]).upgradeB, 1);
-			
 			_listTurretUpgrades.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
-			_listTurretUpgrades.renderVert();
+
+			const iTurret:uint = UserData.instance.currentTurret;
+			populateUpgrades(_listTurretUpgrades, UserData.instance.purchasedTurrets[iTurret], TankPartData.turrets[iTurret], UserData.instance.purchasedTurretUpgrades[iTurret]);
+			
 			addChild(_listTurretUpgrades);
+
+			Util.listen(_listTurretUpgrades, Event.SELECT, onTurretUpgradeSelection);
+			Util.listen(_listTurretUpgrades, MouseEvent.ROLL_OVER, onTurretUpgradeRoll);
+			Util.listen(_listTurretUpgrades, MouseEvent.ROLL_OUT, onTurretUpgradeRoll);
 		}
 		
 		private function addVehicleDisplay():void
@@ -179,6 +205,7 @@ package ui
 			
 			addChild(stats);
 		}
+		private var _purchaseBtn:GameButton;
 		private function addButtons():void
 		{
 			var btn:GameButton = GameButton.create("Done", true, 24, 1);
@@ -187,41 +214,60 @@ package ui
 			
 			addChild(btn);
 			Util.listen(btn, MouseEvent.CLICK, onDone);
-
-			var purchase:GameButton = GameButton.create("Purchase", true, 24, 1);
-			purchase.y = btn.y;
-			purchase.x = btn.x - purchase.width - 5;
-			purchase.enabled = false;
-			addChild(purchase);
-
+			
+			_purchaseBtn = GameButton.create("Purchase", true, 24, 1);
+			_purchaseBtn.y = btn.y;
+			_purchaseBtn.x = btn.x - _purchaseBtn.width - 5;
+			_purchaseBtn.enabled = false;
+			addChild(_purchaseBtn);
+			
 			var fieldParent:DisplayObjectContainer = new CreditDisplay;
 			
-			fieldParent.x = purchase.x - fieldParent.width - 5;
-			fieldParent.y = purchase.y;
+			fieldParent.x = _purchaseBtn.x - fieldParent.width - 5;
+			fieldParent.y = _purchaseBtn.y;
 			
 			addChild(fieldParent);
-			
 		}
 		
+		private function onHullSelection(_unused:Event):void
+		{
+			const item:GameListItem = _listHulls.selection as GameListItem;
+			const hull:TankPartData = item ? TankPartData.getHull(item.cookie) : null;
+			const ownHull:Boolean = UserData.instance.purchasedHulls[item.cookie];
+
+			populateUpgrades(_listHullUpgrades, ownHull, TankPartData.hulls[UserData.instance.currentHull], UserData.instance.purchasedHullUpgrades[UserData.instance.currentHull]);
+
+			const enabled:Boolean = !ownHull && UserData.instance.credits >= hull.baseStats.cost;
+			
+			_purchaseBtn.enabled = enabled;
+		}
+		private function onHullUpgradeSelection(_unused:Event):void
+		{
+			const item:GameListItem = _listHullUpgrades.selection as GameListItem;
+			const upgrade:TankPartData = item ? TankPartData.getHull(UserData.instance.currentHull).getUpgrade(item.cookie) : null;
+
+			_listHulls.selectItem(null);
+			_purchaseBtn.enabled = UserData.instance.credits >= upgrade.baseStats.cost;
+		}
 		private function onHullRoll(_unused:Event):void
 		{
 			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
-			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
+			const hull:TankPartData = item ? TankPartData.getHull(item.cookie) : null;
 			if (hull)
 			{
 				trace("hull roll", hull);
 			}
 		}
-		private function onHullSelection(_unused:Event):void
+		private function onHullUpgradeRoll(_unused:Event):void
 		{
-			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
-			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
-			if (hull)
+			const item:GameListItem = _listHullUpgrades.rolledOverItem as GameListItem;
+			const upgrade:TankPartData = item ? TankPartData.getHull(UserData.instance.currentHull).getUpgrade(item.cookie) : null;
+			if (upgrade)
 			{
-				trace("hull select", hull);
+				trace("hull upgrade roll", upgrade);
 			}
-			
 		}
+
 		private function onTurretRoll(_unused:Event):void
 		{
 			const item:GameListItem = _listTurrets.rolledOverItem as GameListItem;
@@ -232,6 +278,25 @@ package ui
 			}
 		}
 		private function onTurretSelection(_unused:Event):void
+		{
+			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
+			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;
+			if (hull)
+			{
+				trace("hull select", hull);
+			}
+			
+		}
+		private function onTurretUpgradeRoll(_unused:Event):void
+		{
+			const item:GameListItem = _listTurrets.rolledOverItem as GameListItem;
+			const turret:TankPartData = (item && TankPartData.turrets[item.cookie]) as TankPartData;
+			if (turret)
+			{
+				trace("turret roll", turret);
+			}
+		}
+		private function onTurretUpgradeSelection(_unused:Event):void
 		{
 			const item:GameListItem = _listHulls.rolledOverItem as GameListItem;
 			const hull:TankPartData = (item && TankPartData.hulls[item.cookie]) as TankPartData;

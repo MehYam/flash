@@ -44,6 +44,8 @@ package ui
 			
 			Util.listen(this, MouseEvent.ROLL_OVER, onRollOver);
 			Util.listen(this, MouseEvent.ROLL_OUT, onRollOut);
+			
+			mouseChildren = false;
 		}
 
 		private var _border:Boolean = false;

@@ -23,6 +23,8 @@ package gameData
 				
 				s_instance.purchaseHull(0, 0);
 				s_instance.purchaseTurret(0, 0);
+				s_instance.purchaseHullUpgrade(0, 0, 0);
+				s_instance.purchaseTurretUpgrade(0, 1, 0);
 				s_instance.currentPlane = 0;
 				s_instance.currentTurret = 0;
 			}
@@ -34,7 +36,6 @@ package gameData
 		public var purchasedTurrets:Array = [];
 		public var purchasedHullUpgrades:Array = [[], []];
 		public var purchasedTurretUpgrades:Array = [[], []];
-		
 
 		public var credits:uint;
 		public var levelReached:uint;

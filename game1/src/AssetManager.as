@@ -88,7 +88,7 @@ package
 		}
 
 		static private const s_uiFaceScale9:Rectangle = new Rectangle(10, 10, 30, 30);
-		static private function uiFace(color:uint):DisplayObject
+		public function uiFace(color:uint):DisplayObject
 		{
 			var rect:Shape = new Shape;
 			

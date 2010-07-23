@@ -11,6 +11,7 @@ package ui
 	import gameData.PlaneData;
 	import gameData.UserData;
 	
+	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
 
 	public class UpgradePlaneDialog extends GameDialog
@@ -18,7 +19,7 @@ package ui
 		public function UpgradePlaneDialog()
 		{
 			super(false);
-			
+ToolTipMgr.instance.tooltip = new GameToolTip;			
 			title = "PLANE HANGAR";
 			
 			addShipList();
@@ -82,7 +83,7 @@ package ui
 				upgrades = entry.upgrades;
 		
 				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
-
+				ToolTipMgr.instance.addToolTip(item, entry.name);
 				if (userData.purchasedPlanes[i])
 				{
 					UIUtil.addCheckmark(item);
@@ -143,15 +144,14 @@ package ui
 			addChild(_statList);
 		}
 		private var _purchaseBtn:GameButton;
-		private var _creditDisplay:CreditDisplay;
 		private function addBottomButtons(userData:UserData):void
 		{
-			_creditDisplay = new CreditDisplay;
-			_creditDisplay.credits = userData.credits;
-			_creditDisplay.x = width - _creditDisplay.width;
-			_creditDisplay.y = _upgradeGroup.y;
+			var credit:CreditDisplay = new CreditDisplay;
+			credit.credits = userData.credits;
+			credit.x = width - credit.width;
+			credit.y = _upgradeGroup.y;
 			
-			addChild(_creditDisplay);
+			addChild(credit);
 			
 			var done:DisplayObject = GameButton.create("Done", true, 24, 1);
 			done.y = height - done.height - 3;
