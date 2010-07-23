@@ -24,6 +24,7 @@ package
 	import karnold.tile.BitmapTileFactory;
 	import karnold.tile.ITileFactory;
 	import karnold.tile.TiledBackground;
+	import karnold.ui.ShadowTextField;
 	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
 	import karnold.utils.FrameTimer;
@@ -36,10 +37,11 @@ package
 	import scripts.IGameScript;
 	import scripts.TankActor;
 	
+	import ui.TestDialog;
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
 	import ui.TitleScreenEvent;
-	import karnold.ui.ShadowTextField;
+	import ui.UIUtil;
 
 	[SWF(backgroundColor="#0")]
 	public final class game extends Sprite implements IGame

@@ -68,21 +68,12 @@ package scripts
 			leftTread.y = _treadOffset;
 			rightTread.y = _treadOffset;
 
-			_treadOffset += .1;
-			if (_treadOffset > 5)
+			_treadOffset -= .1;
+			if (_treadOffset < -5)
 			{
 				_treadOffset = 0;
 			}
 		}
-
-		// need a list of recipes here - need to know
-		// 1) where to center the turret
-		// 2) where the tracks go, how much they're scaled
-		static private const OFFSETS:Object = 
-		{
-			turretY: 62
-		}
-		static private const TURRET_OFFSETS:Array = [62, 56, 56, 56, 48];
 
 		//KAI: this is all kinds of ugliness
 		public static function createTankActor( hullIndex:uint,
@@ -98,17 +89,23 @@ package scripts
 			
 			const width:Number = track.width + hull.width;
 			const height:Number = hull.height;
+			const spec:HullSpec = HullSpec.LIST[hullIndex];
 			
-			track.x = -width/2;
-			hull.x  = track.x - 1 +  track.width/2;
-			track2.x = hull.x + hull.width - track.width/2;
+			track.scaleX = track2.scaleX = spec.trackScaleX; 
+			track.x = -width/2 + spec.trackOffsetX;
+			hull.x  = -hull.width/2;
+			track2.x = hull.x + hull.width - track.width/2 - spec.trackOffsetX;
 			
-			track.scaleY = track2.scaleY = hull.height / track.height;
-			track.y = track2.y = hull.y = -height/2;
+			track.scaleY = track2.scaleY = spec.trackScaleY;
+			hull.y = -height/2;
+			track.y = track2.y = hull.y + spec.trackOffsetY;
 			
 			var turretParent:Sprite = new Sprite;
 			turret.x = -turret.width/2;
-			turret.y = -TURRET_OFFSETS[turretIndex];
+			turret.y = -TurretSpec(TurretSpec.LIST[turretIndex]).turretOffsetY;
+//			turretParent.y = spec.turretOffsetY;
+// shooting logic currently expects turret to be at 0, 0
+//    - would be easier to deal with if we split the tank into two separate actors
 			turretParent.addChild(turret);
 
 			parent.addChild(track);
@@ -122,3 +119,44 @@ package scripts
 }
 
 final class MUSTUSEFACTORYFUNCTION { public static var instance:MUSTUSEFACTORYFUNCTION = new MUSTUSEFACTORYFUNCTION; }
+
+final class TurretSpec
+{
+	static public const LIST:Array = [
+		new TurretSpec(67),
+		new TurretSpec(67),
+		new TurretSpec(67),
+		new TurretSpec(67),
+		new TurretSpec(43.5)
+	];
+	public var turretOffsetY:Number;
+	public function TurretSpec(turretOffsetY:Number)
+	{
+		this.turretOffsetY = turretOffsetY;
+	}
+}
+final class HullSpec
+{
+	static public const LIST:Array = [
+		new HullSpec(1.3, 1.36),
+		new HullSpec(1.6, 1.3, 0, 12),
+		new HullSpec(1.3, 1, 5, 10),
+		new HullSpec(1.3),
+		new HullSpec(1.5, 1, 5, 10)
+	];
+	
+	public var turretOffsetY:Number;
+	public var trackScaleX:Number;
+	public var trackScaleY:Number;
+	public var trackOffsetX:Number;
+	public var trackOffsetY:Number;
+	
+	public function HullSpec(trackScaleX:Number = 1, trackScaleY:Number = 1, trackOffsetX:Number = 0, trackOffsetY:Number = 0)
+	{
+		this.turretOffsetY = turretOffsetY;
+		this.trackScaleX = trackScaleX;
+		this.trackScaleY = trackScaleY;
+		this.trackOffsetX = trackOffsetX;
+		this.trackOffsetY = trackOffsetY;
+	}
+}

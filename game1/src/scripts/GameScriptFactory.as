@@ -92,7 +92,7 @@ final class Utils
 			break;
 		}
 	}
-	static public function getBluePlayer():Actor
+	static public function getPlanePlayer():Actor
 	{
 //		var plane:Actor = new Actor(ActorAssetManager.createShip(29), BehaviorConsts.BLUE_SHIP);
 		var plane:Actor = new Actor(ActorAssetManager.createShip(0), BehaviorConsts.BLUE_SHIP);
@@ -101,7 +101,7 @@ final class Utils
 	}
 	static public function getTankPlayer():Actor
 	{
-		var tank:Actor = TankActor.createTankActor(1, 3, BehaviorConsts.TEST_TANK);
+		var tank:Actor = TankActor.createTankActor(1, 2, BehaviorConsts.TEST_TANK);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 		return tank;
 	}
@@ -172,7 +172,7 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
 
-	static protected const TANK:Boolean = false;
+	static protected const TANK:Boolean = true;
 	protected var _weapon:IBehavior;
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
@@ -217,7 +217,7 @@ final class TestScript extends BaseScript
 		}
 		else
 		{
-			game.showPlayer(Utils.getBluePlayer());
+			game.showPlayer(Utils.getPlanePlayer());
 		}
 		game.start();
 		game.centerPrint("Test Script Begin");
@@ -269,7 +269,7 @@ class WaveBasedGameScript extends BaseScript
 		else
 		{
 			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -20), 150, 150);
-			game.showPlayer(Utils.getBluePlayer());
+			game.showPlayer(Utils.getPlanePlayer());
 		}
 		
 		game.start();

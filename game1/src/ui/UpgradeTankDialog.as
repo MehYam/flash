@@ -15,7 +15,10 @@ package ui
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.FrameTimer;
 	import karnold.utils.Util;
+	
+	import scripts.TankActor;
 
 	public class UpgradeTankDialog extends GameDialog
 	{
@@ -27,7 +30,7 @@ package ui
 			
 			addTankHullList();
 			addTankTurretList();
-			addVehicleDisplay();
+			addPreview();
 			addStatDisplay();
 			addButtons();
 
@@ -180,23 +183,45 @@ package ui
 			Util.listen(_listTurretUpgrades, MouseEvent.ROLL_OUT, onTurretUpgradeRoll);
 		}
 		
-		private function addVehicleDisplay():void
+		private var _previewSkin:DisplayObject
+		private function addPreview():void
 		{
-			var skin:DisplayObject = AssetManager.instance.innerFace();
+			_previewSkin = AssetManager.instance.innerFace();
+			_previewSkin.width = 150;
+			_previewSkin.height = LIST_HEIGHT;
 			
-			skin.width = 150;
-			skin.height = LIST_HEIGHT;
+			_previewSkin.y = TOP_MARGIN;
+			_previewSkin.x = 470;
 			
-			skin.y = TOP_MARGIN;
-			skin.x = 470;
+			addChild(_previewSkin);
 			
-			var ship:DisplayObject = ActorAssetManager.createShip(12);
-			ship.x = skin.x + skin.width/2;
-			ship.y = skin.y + skin.height/2;
-			
-			addChild(skin);
-			addChild(ship);
+			populatePreview();
 		}
+		private var _preview:PreviewStuff = new PreviewStuff;
+		private function populatePreview():void
+		{
+			var dobj:DisplayObject;
+			if (_preview.tank)
+			{
+				Util.ASSERT(_preview.tank.displayObject.parent != null);
+				dobj = _preview.tank.displayObject;
+				dobj.parent.removeChild(dobj);
+			}
+			var item:GameListItem = _listHulls.selection as GameListItem;
+			const hull:uint = item.cookie;
+
+			item = _listTurrets.selection as GameListItem;
+			const turret:uint = item.cookie;
+
+			_preview.tank = TankActor.createTankActor(hull, turret, null);
+			dobj = _preview.tank.displayObject;
+			dobj.x = _previewSkin.x + _previewSkin.width/2;
+			dobj.y = _previewSkin.y + _previewSkin.height/2;
+			addChild(dobj);
+
+			_preview.start();
+		}
+		
 		private function addStatDisplay():void
 		{
 			var stats:DisplayObject = new StatList(new BaseStats(.5, .1, .2, .8, .3), LIST_HEIGHT);
@@ -240,6 +265,8 @@ package ui
 			const enabled:Boolean = !ownHull && UserData.instance.credits >= hull.baseStats.cost;
 			
 			_purchaseBtn.enabled = enabled;
+			
+			populatePreview();
 		}
 		private function onHullUpgradeSelection(_unused:Event):void
 		{
@@ -285,7 +312,7 @@ package ui
 			{
 				trace("hull select", hull);
 			}
-			
+			populatePreview();
 		}
 		private function onTurretUpgradeRoll(_unused:Event):void
 		{
@@ -310,5 +337,38 @@ package ui
 		{
 			UIUtil.closeDialog(parent, this);
 		}
+	}
+}
+import karnold.utils.FrameTimer;
+import karnold.utils.MathUtil;
+
+import scripts.TankActor;
+
+final internal class PreviewStuff
+{
+	public var tank:TankActor;
+	public function start():void { _timer.startPerFrame(); }
+
+	private var _rotationSpeed:Number = 0;
+	private var _turretRotationSpeed:Number = 0;
+	private var _timer:FrameTimer = new FrameTimer(onFrame);
+	private function onFrame():void
+	{
+		tank.treadFrame();
+		tank.displayObject.rotation += _rotationSpeed;
+		tank.turretRotation += _turretRotationSpeed;
+		
+		//KAI: this effect is super awesome and needs to be a behavior
+		//KAI: speaking of that - we should be able to do this with Actors and behaviors w/o hacking frames
+		if (Math.abs(_turretRotationSpeed) < 0.1)
+		{
+			_turretRotationSpeed = MathUtil.random(-2, 2);
+		}
+		_turretRotationSpeed *= 0.99;
+		if (Math.abs(_rotationSpeed) < 0.1)
+		{
+			_rotationSpeed = MathUtil.random(-2, 2);
+		}
+		_rotationSpeed *= 0.99;
 	}
 }
