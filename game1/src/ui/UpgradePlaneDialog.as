@@ -82,7 +82,7 @@ package ui
 				upgrades = entry.upgrades;
 		
 				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
-				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(entry.name, entry.baseStats.cost, UserData.instance.credits >= entry.baseStats.cost, null));
+				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(entry));
 				if (userData.purchasedPlanes[i])
 				{
 					UIUtil.addCheckmark(item);
@@ -201,14 +201,17 @@ package ui
 		{
 			if (UserData.instance.purchasedPlanes[forItem])
 			{
-				const targetItem:uint = forItem + 1;
-				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(PlaneData(PlaneData.entries[targetItem]).assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetItem);
+				const targetIndex:uint = forItem + 1;
+				const target:PlaneData = PlaneData.getEntry(targetIndex);
+
+				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(target.assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetIndex);
+				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target));
 				if (UserData.instance.purchasedPlanes[forItem+1])
 				{
 					UIUtil.addCheckmark(upgradeItem);
 				}
 				_upgradeList.addItem(upgradeItem);
-				if (targetItem == UserData.instance.currentPlane)
+				if (targetIndex == UserData.instance.currentPlane)
 				{
 					_upgradeList.selectItem(upgradeItem);
 				}

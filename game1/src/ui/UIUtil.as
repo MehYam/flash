@@ -10,6 +10,9 @@ package ui
 	import flash.display.Sprite;
 	import flash.text.TextFormat;
 	
+	import gameData.UserData;
+	import gameData.VehiclePartData;
+	
 	import karnold.ui.ShadowTextField;
 	import karnold.utils.Util;
 
@@ -106,10 +109,12 @@ package ui
 			}
 		}
 		
-		static public function formatItemTooltip(name:String, cost:uint, canAfford:Boolean, description:String):String
+		static public function formatItemTooltip(part:VehiclePartData):String
 		{
+			const cost:uint = part.baseStats.cost;
+			const canAfford:Boolean = part.baseStats.cost <= UserData.instance.credits;
 			const costString:String = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");  
-			var retval:String = "Name: <b>" + name + "</b><br>Cost: <b>" + costString + "</b><br><br>";
+			var retval:String = "Name: <font size='+2'><b>" + part.name + "</b></font><br>Cost: <b>" + costString + "</b><br><br>";
 			retval += "This ship is a pretty cool ship because as far as ship goes, it ship ships shipsss pretty cool ship ship.  ship.";
 			return retval;
 		}

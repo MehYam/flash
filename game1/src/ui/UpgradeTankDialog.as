@@ -16,6 +16,7 @@ package ui
 	import karnold.ui.ProgressMeter;
 	import karnold.ui.ShadowTextField;
 	import karnold.utils.FrameTimer;
+	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
 	
 	import scripts.TankActor;
@@ -54,6 +55,8 @@ package ui
 			for each (var hull:TankPartData in TankPartData.hulls)
 			{
 				var item:GameListItem = new GameListItem(ActorAssetManager.createHull(hull.assetIndex, false), ITEM_SIZE, ITEM_SIZE, index); 
+				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(hull));
+
 				_listHulls.addItem(item);
 				if (UserData.instance.purchasedHulls[index])
 				{
@@ -93,44 +96,6 @@ package ui
 			Util.listen(_listHullUpgrades, MouseEvent.ROLL_OVER, onHullUpgradeRoll);
 			Util.listen(_listHullUpgrades, MouseEvent.ROLL_OUT, onHullUpgradeRoll);
 		}
-
-		private function populateUpgrades(list:GameList, own:Boolean, tankPart:TankPartData, purchaseMatrix:Array):void
-		{
-			list.clearItems();
-			if (own)
-			{
-				addUpgrade(list, tankPart.getUpgrade(0).name, purchaseMatrix[0], 0);
-				addUpgrade(list, tankPart.getUpgrade(1).name, purchaseMatrix[1], 1);
-			}
-			else
-			{
-				list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT-25));
-			}
-			
-			list.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
-			list.renderVert();
-		}
-		static private function addUpgrade(list:GameList, text:String, purchased:Boolean, cookie:uint):void
-		{
-			const fmt:TextFormat = new TextFormat("SF TransRobotics", 16);
-			var tf:TextField = new TextField();
-			tf.defaultTextFormat = fmt;
-			tf.autoSize = TextFieldAutoSize.CENTER;
-			tf.wordWrap = true;
-			tf.text = text;
-			tf.mouseEnabled = false;
-			tf.width = UPGRADE_WIDTH - 20;
-			
-			var upgrade:GameListItem = new GameListItem(tf, UPGRADE_WIDTH - 10, (LIST_HEIGHT-27)/2, cookie);
-			upgrade.border = true;
-			if (purchased)
-			{
-				upgrade.mouseEnabled = false;
-				upgrade.alpha = 0.5;
-				UIUtil.addCheckmark(upgrade);
-			}
-			list.addItem(upgrade);
-		}
 		private var _listTurrets:GameList;
 		private var _listTurretUpgrades:GameList;
 		private var _lastSelectedTurret:uint;
@@ -144,6 +109,7 @@ package ui
 			for each (var turret:TankPartData in TankPartData.turrets)
 			{
 				var item:GameListItem = new GameListItem(ActorAssetManager.createTurret(turret.assetIndex, false), ITEM_SIZE, ITEM_SIZE, index); 
+				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(turret));
 				_listTurrets.addItem(item);
 				if (UserData.instance.purchasedHulls[index])
 				{
@@ -185,6 +151,44 @@ package ui
 			Util.listen(_listTurretUpgrades, Event.SELECT, onTurretUpgradeSelection);
 			Util.listen(_listTurretUpgrades, MouseEvent.ROLL_OVER, onTurretUpgradeRoll);
 			Util.listen(_listTurretUpgrades, MouseEvent.ROLL_OUT, onTurretUpgradeRoll);
+		}
+		private function populateUpgrades(list:GameList, own:Boolean, tankPart:TankPartData, purchaseMatrix:Array):void
+		{
+			list.clearItems();
+			if (own)
+			{
+				addUpgrade(list, tankPart.getUpgrade(0), purchaseMatrix[0], 0);
+				addUpgrade(list, tankPart.getUpgrade(1), purchaseMatrix[1], 1);
+			}
+			else
+			{
+				list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT-25));
+			}
+			
+			list.setBounds(UPGRADE_WIDTH, LIST_HEIGHT); 
+			list.renderVert();
+		}
+		static private function addUpgrade(list:GameList, part:TankPartData, purchased:Boolean, cookie:uint):void
+		{
+			const fmt:TextFormat = new TextFormat("SF TransRobotics", 16);
+			var tf:TextField = new TextField();
+			tf.defaultTextFormat = fmt;
+			tf.autoSize = TextFieldAutoSize.CENTER;
+			tf.wordWrap = true;
+			tf.text = part.name;
+			tf.mouseEnabled = false;
+			tf.width = UPGRADE_WIDTH - 20;
+			
+			var upgrade:GameListItem = new GameListItem(tf, UPGRADE_WIDTH - 10, (LIST_HEIGHT-27)/2, cookie);
+			ToolTipMgr.instance.addToolTip(upgrade, UIUtil.formatItemTooltip(part));
+			upgrade.border = true;
+			if (purchased)
+			{
+				upgrade.mouseEnabled = false;
+				upgrade.alpha = 0.5;
+				UIUtil.addCheckmark(upgrade);
+			}
+			list.addItem(upgrade);
 		}
 		
 		private var _previewSkin:DisplayObject
