@@ -10,11 +10,11 @@ package gameData
 			this.upgrades = upgrades;
 		}
 		static private var s_entries:Array;
-		static public function getEntry(i:uint):PlaneData
+		static public function getPlane(i:uint):PlaneData
 		{
-			return entries[i];
+			return planes[i];
 		}
-		static public function get entries():Array
+		static public function get planes():Array
 		{
 			if (!s_entries)
 			{

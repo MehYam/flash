@@ -31,14 +31,14 @@ package ui
 			populateShipList(UserData.instance);
 
 			//KAI: THIS IS SO HORRIBLE
-			if (PlaneData.getEntry(UserData.instance.currentPlane).upgrades)
+			if (PlaneData.getPlane(UserData.instance.currentPlane).upgrades)
 			{
 				onTopListSelection(null);
 			}
 			else
 			{
 				var parentPlane:uint = UserData.instance.currentPlane-1;
-				if (!PlaneData.getEntry(parentPlane).upgrades)
+				if (!PlaneData.getPlane(parentPlane).upgrades)
 				{
 					--parentPlane;
 				}
@@ -70,7 +70,7 @@ package ui
 		private function populateShipList(userData:UserData):void
 		{
 			var upgrades:uint;
-			for (var i:uint = 0; i < PlaneData.entries.length; ++i)
+			for (var i:uint = 0; i < PlaneData.planes.length; ++i)
 			{
 				if (upgrades)
 				{
@@ -78,19 +78,18 @@ package ui
 					--upgrades;
 					continue;
 				}
-				const entry:PlaneData = PlaneData.entries[i];
-				upgrades = entry.upgrades;
+				const plane:PlaneData = PlaneData.planes[i];
+				upgrades = plane.upgrades;
 		
-				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(entry.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
-				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(entry));
-				if (userData.purchasedPlanes[i])
+				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(plane.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
+				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(plane));
+				if (plane.purchased)
 				{
 					UIUtil.addCheckmark(item);
-				}
-				if (i == userData.currentPlane)
-				{
-					Util.ASSERT(userData.purchasedPlanes[i]);
-					_list.selectItem(item);
+					if (i == userData.currentPlane)
+					{
+						_list.selectItem(item);
+					}
 				}
 				_list.addItem(item);
 				
@@ -173,14 +172,14 @@ package ui
 		{
 			Util.ASSERT(UserData.instance.currentPlane != _currentSelected);
 
-			const plane:PlaneData = PlaneData.getEntry(_currentSelected);
+			const plane:PlaneData = PlaneData.getPlane(_currentSelected);
 			const canAfford:Boolean = plane.baseStats.cost <= UserData.instance.credits; 
 
 			Util.ASSERT(canAfford);
 			
 			if (canAfford)
 			{
-				UserData.instance.purchasePlane(_currentSelected, plane.baseStats.cost);
+				UserData.instance.purchasePart(plane, plane.baseStats.cost);
 				UserData.instance.currentPlane = _currentSelected;
 			}
 			
@@ -199,14 +198,15 @@ package ui
 
 		private function addUpgradeItem(forItem:uint, slot:uint):void
 		{
-			if (UserData.instance.purchasedPlanes[forItem])
+			const forPlane:PlaneData = PlaneData.getPlane(forItem);
+			if (forPlane.purchased)
 			{
 				const targetIndex:uint = forItem + 1;
-				const target:PlaneData = PlaneData.getEntry(targetIndex);
+				const target:PlaneData = PlaneData.getPlane(targetIndex);
 
 				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(target.assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetIndex);
 				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target));
-				if (UserData.instance.purchasedPlanes[forItem+1])
+				if (target.purchased)
 				{
 					UIUtil.addCheckmark(upgradeItem);
 				}
@@ -234,7 +234,7 @@ package ui
 			// repopulate the upgrade list
 			_upgradeList.clearItems();
 			
-			const planeData:PlaneData = PlaneData.entries[forPlane];
+			const planeData:PlaneData = PlaneData.planes[forPlane];
 			if (planeData.upgrades)
 			{
 				Util.ASSERT(planeData.upgrades == 2);
@@ -262,8 +262,8 @@ package ui
 			_currentSelected = selection;
 			_purchaseBtn.enabled = false;
 
-			const planeData:PlaneData = PlaneData.entries[selection];
-			if (UserData.instance.purchasedPlanes[selection])
+			const planeData:PlaneData = PlaneData.planes[selection];
+			if (planeData.purchased)
 			{
 				UserData.instance.currentPlane = selection;
 			}
@@ -278,7 +278,7 @@ package ui
 		private function onItemRoll(e:Event):void
 		{
 			const item:GameListItem = (_list.rolledOverItem || _upgradeList.rolledOverItem) as GameListItem;
-			const stats:BaseStats = item ? PlaneData.getEntry(item.cookie).baseStats : null;
+			const stats:BaseStats = item ? PlaneData.getPlane(item.cookie).baseStats : null;
 			
 			_statList.compare = stats;
 		}
