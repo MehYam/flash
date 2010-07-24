@@ -2,26 +2,35 @@ package gameData
 {
 	public class TankPartData extends VehiclePartData
 	{
-		static private const s_upgrades:Array = 
-		[
-			new TankPartData("Improved Firerate", 0, new BaseStats(0, 0, 0.2, 0, 2000)),
-			new TankPartData("Improved Damage",   0, new BaseStats(0, 0.3, 0, 0, 4000)),
-			new TankPartData("Speed Boost",       0, new BaseStats(0, 0, 0, 0.3, 5000)),
-			new TankPartData("Adds Rockets",      0, new BaseStats(0, 0, 0, 0, 7000))
-		];
+		static private function createUpgrade(i:uint):TankPartData
+		{
+			switch (i) {
+			case 0:
+				return new TankPartData("Improved Firerate", 0, new BaseStats(0, 0, 0.2, 0, 2000));
+			case 1:
+				return new TankPartData("Improved Damage",   0, new BaseStats(0, 0.3, 0, 0, 4000));
+			case 2:
+				return new TankPartData("Speed Boost",       0, new BaseStats(0, 0, 0, 0.3, 5000));
+			case 3:
+				return new TankPartData("Adds Rockets",      0, new BaseStats(0, 0, 0, 0, 7000));
+			}
+			return null;
+		}
 		private var _upgrades:Array = [];
-		public function TankPartData(name:String, assetIndex:uint, baseStats:BaseStats, upgradeA:uint = 0, upgradeB:uint = 0)
+		public function TankPartData(name:String, assetIndex:uint, baseStats:BaseStats, upgradeA:int = -1, upgradeB:int = -1)
 		{
 			super(name, assetIndex, baseStats);
-			_upgrades[0] = upgradeA;
-			_upgrades[1] = upgradeB;
+			if (upgradeA >= 0)
+			{
+				_upgrades[0] = createUpgrade(upgradeA);
+			}
+			if (upgradeB >= 0)
+			{
+				_upgrades[1] = createUpgrade(upgradeB);
+			}
 		}
 
 		public function getUpgrade(index:uint):TankPartData
-		{
-			return s_upgrades[_upgrades[index]];
-		}
-		public function getUpgradeIndex(index:uint):uint
 		{
 			return _upgrades[index];
 		}
