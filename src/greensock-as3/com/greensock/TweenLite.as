@@ -224,7 +224,6 @@ package com.greensock {
 			rootFramesTimeline.cachedStartTime = rootFrame;
 			rootTimeline.autoRemoveChildren = true;
 			rootFramesTimeline.autoRemoveChildren = true;
-			_shape.addEventListener(Event.ENTER_FRAME, updateAll, false, 0, true);
 			if (overwriteManager == null) {
 				overwriteManager = {mode:1, enabled:false};
 			}
@@ -566,7 +565,17 @@ package com.greensock {
 		 * @param vars An object containing the end values of the properties you're tweening. For example, to tween to x=100, y=100, you could pass {x:100, y:100}. It can also contain special properties like "onComplete", "ease", "delay", etc.
 		 * @return TweenLite instance
 		 */
+private static var _first:Boolean = true;
 		public static function to(target:Object, duration:Number, vars:Object):TweenLite {
+if (!_shape.hasEventListener(Event.ENTER_FRAME)) {
+	_shape.addEventListener(Event.ENTER_FRAME, updateAll, false, 0, true);
+	if (!_first)
+	{
+		updateAll();
+	}
+	_first = false;
+//	trace("KAI:", "restarting tween");
+}
 			return new TweenLite(target, duration, vars);
 		}
 		
@@ -632,6 +641,7 @@ package com.greensock {
 			
 			if (!(rootFrame % 60)) { //garbage collect every 60 frames...
 				var ml:Dictionary = masterList, tgt:Object, a:Array, i:int;
+				var processed:uint = 0;
 				for (tgt in ml) {
 					a = ml[tgt];
 					i = a.length;
@@ -643,6 +653,13 @@ package com.greensock {
 					if (a.length == 0) {
 						delete ml[tgt];
 					}
+					else {
+						++processed;
+					}
+				}
+				if (!processed && e) {
+					_shape.removeEventListener(Event.ENTER_FRAME, arguments.callee);
+//trace("KAI:", "killing tween");
 				}
 			}
 			

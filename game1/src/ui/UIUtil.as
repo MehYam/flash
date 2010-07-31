@@ -105,6 +105,9 @@ package ui
 		{
 			if (thy.parent)
 			{
+				// release the last remaining references to the dialog
+				s_tweenOutDialogArg.onCompleteParams.length = 0;
+
 				thy.parent.removeChild(thy);
 			}
 		}

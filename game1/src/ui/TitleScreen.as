@@ -108,10 +108,10 @@ package ui
 		{
 //			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
 			
-//UIUtil.openDialog(this, new LevelSelectionDialog);
+UIUtil.openDialog(this, new LevelSelectionDialog);
 //UIUtil.openDialog(this, new UpgradeTankDialog);
 //UIUtil.openDialog(this, new TestDialog);
-UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
+//UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
 		}
 		private function onContinue(e:Event):void
 		{
