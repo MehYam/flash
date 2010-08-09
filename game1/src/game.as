@@ -34,7 +34,7 @@ package
 	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
 	
-	import scripts.GameScriptFactory;
+	import scripts.GameScript;
 	import scripts.IGameScript;
 	import scripts.TankActor;
 	
@@ -104,7 +104,7 @@ package
 			
 //			_currentScript = GameScriptFactory.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
-			_currentScript = GameScriptFactory.level1;
+			_currentScript = GameScript.level1;
 			_currentScript.begin(this);
 		}
 

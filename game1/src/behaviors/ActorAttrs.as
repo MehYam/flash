@@ -27,10 +27,10 @@ package behaviors
 		public var RADIUS:Number;
 		public var COLLISION_DMG:Number;
 		public function ActorAttrs(speed:Number, 
-									   accel:Number, 
-									   decay:Number = 0, 
-									   radius:Number = 20,
-									   collisionDmg:Number = 100)
+								   accel:Number, 
+								   decay:Number = 0, 
+								   radius:Number = 20,
+								   collisionDmg:Number = 100)
 		{
 			MAX_SPEED = speed;
 			ACCELERATION = accel;

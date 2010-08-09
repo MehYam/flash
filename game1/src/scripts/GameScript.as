@@ -1,6 +1,6 @@
 package scripts
 {
-	public class GameScriptFactory
+	public class GameScript
 	{
 		static public function get testScript1():IGameScript
 		{
