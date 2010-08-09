@@ -56,7 +56,7 @@ package gameData
 				new PlaneData("Musky", 33, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Corvid", 34, 	new BaseStats(0.5, 0.4, 0.3, 0.8, 12000), 2),
 				new PlaneData("Corvid X", 35, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Bird Kill", 36, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000))
+				new PlaneData("Death Bird", 36, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000))
 				];
 			}
 			return s_entries;

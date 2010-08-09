@@ -101,7 +101,7 @@ final class Utils
 	}
 	static public function getTankPlayer():Actor
 	{
-		var tank:Actor = TankActor.createTankActor(1, 2, BehaviorConsts.TEST_TANK);
+		var tank:Actor = TankActor.createTankActor(0, 0, BehaviorConsts.TEST_TANK);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 		return tank;
 	}
@@ -172,7 +172,7 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
 
-	static protected const TANK:Boolean = true;
+	static protected const TANK:Boolean = false;
 	protected var _weapon:IBehavior;
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
@@ -298,11 +298,11 @@ class WaveBasedGameScript extends BaseScript
 private var _wave:uint = 0;
 	private function addNextWave():void
 	{
-Utils.addEnemyByIndex(_game, _wave++);
-Utils.addEnemyByIndex(_game, _wave++);
-Utils.addEnemyByIndex(_game, _wave++);
-_enemies = 3;
-return;
+//Utils.addEnemyByIndex(_game, _wave++);
+//Utils.addEnemyByIndex(_game, _wave++);
+//Utils.addEnemyByIndex(_game, _wave++);
+//_enemies = 3;
+//return;
 		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
 		if (_waves.length)
 		{

@@ -58,7 +58,7 @@ package
 			bmd.draw(s_perlinWorkspace, null, null, BlendMode.OVERLAY);
 		}
 		
-		static private const RASTERIZING:Boolean = true;
+		static public const RASTERIZING:Boolean = true;
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
@@ -234,74 +234,17 @@ package
 			return base;
 		}
 
-		static private const EXPLOSION_SIZE:Number = 3;
-		static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
-		static private var _colorKey:Object = {};
 		static public function createExplosionParticle(color:uint):DisplayObject
 		{
-			if (!_colorKey[color])
-			{
-				_colorKey[color] = new Object;
-			}
-			var bmd:BitmapData = s_rasterizationStore[_colorKey[color]] as BitmapData;
-			if (!bmd)
-			{
-				var particle:Shape = new Shape;
-				particle.graphics.lineStyle(0, color);
-				particle.graphics.beginFill(color);
-				particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
-				particle.graphics.endFill();
-				if (!RASTERIZING)
-				{
-					return particle;
-				}
-				
-				bmd = rasterize(particle);
-				s_rasterizationStore[_colorKey[color]] = bmd;
-			}
-			return new Bitmap(bmd);
+			return SimpleRasterizedObjectCreator.getInstance(ExplosionCreator).create(color);
 		}
-		public static function createBullet(color:uint = 0xff7f00):DisplayObject
+		static public function createBullet(color:uint = 0xff7f00):DisplayObject
 		{
-			if (!_colorKey[color])
-			{
-				_colorKey[color] = new Object;
-			}
-			var bmd:BitmapData = s_rasterizationStore[_colorKey[color]] as BitmapData;
-			if (!bmd)
-			{
-				var bullet:DisplayObject = createCircle(color, 6, 6);
-				if (!RASTERIZING)
-				{
-					return bullet;
-				}
-				bmd = rasterize(bullet);
-				s_rasterizationStore[_colorKey[color]] = bmd;
-			}
-			return new Bitmap(bmd);
+			return SimpleRasterizedObjectCreator.getInstance(BulletCreator).create(color);
 		}
-		private static const LASER_LENGTH:Number = 10;
-		public static function createLaser(color:uint = 0xff0000):DisplayObject
+		static public function createLaser(color:uint = 0xff0000):DisplayObject
 		{
-			if (!_colorKey[color])
-			{
-				_colorKey[color] = new Object;
-			}
-			var bmd:BitmapData = s_rasterizationStore[_colorKey[color]] as BitmapData;
-			if (!bmd)
-			{
-				var bullet:Shape = new Shape;
-				bullet.graphics.lineStyle(3, color);
-				bullet.graphics.moveTo(0, -LASER_LENGTH/2);
-				bullet.graphics.lineTo(0, LASER_LENGTH/2);
-				if (!RASTERIZING)
-				{
-					return bullet;
-				}
-				bmd = rasterize(bullet);
-				s_rasterizationStore[_colorKey[color]] = bmd;
-			}
-			return new Bitmap(bmd);
+			return SimpleRasterizedObjectCreator.getInstance(LaserCreator).create(color);
 		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
@@ -350,3 +293,82 @@ package
 		}
 	}
 }
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
+import flash.display.Shape;
+import flash.utils.Dictionary;
+
+// a cleaner way to do this is to pass function objects around.  I want to avoid closures, though
+internal class SimpleRasterizedObjectCreator
+{
+	static private var s_store:Dictionary = new Dictionary;
+	static private var s_keyLookup:Object = {};
+
+	protected function create_impl(color:uint):DisplayObject { throw "override me"; } // "abstract" template method, to be overridden by subclass 
+	public function create(color:uint):DisplayObject
+	{
+		var key:Object = s_keyLookup[color];
+		if (!key)
+		{
+			key = s_keyLookup[color] = new Object;
+		}
+		var bmd:BitmapData = s_store[key] as BitmapData;
+		if (!bmd)
+		{
+			var raw:DisplayObject = create_impl(color);
+			if (!ActorAssetManager.RASTERIZING)
+			{
+				return raw;
+			}
+			bmd = ActorAssetManager.rasterize(raw);
+			s_store[key] = bmd;
+		}
+		return new Bitmap(bmd);
+	}
+
+	static private var s_instances:Dictionary = new Dictionary;
+	static public function getInstance(clss:Class):SimpleRasterizedObjectCreator
+	{
+		if (!s_instances[clss])
+		{
+			s_instances[clss] = new clss;
+		}
+		return s_instances[clss];
+	}
+}
+
+final internal class ExplosionCreator extends SimpleRasterizedObjectCreator
+{
+	static private const EXPLOSION_SIZE:Number = 3;
+	static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
+	protected override function create_impl(color:uint):DisplayObject
+	{
+		var particle:Shape = new Shape;
+		particle.graphics.lineStyle(0, color);
+		particle.graphics.beginFill(color);
+		particle.graphics.drawRect(-HALFSIZE, -HALFSIZE, EXPLOSION_SIZE, EXPLOSION_SIZE);
+		particle.graphics.endFill();
+		return particle;
+	}
+}
+final internal class BulletCreator extends SimpleRasterizedObjectCreator
+{
+	protected override function create_impl(color:uint):DisplayObject
+	{
+		return ActorAssetManager.createCircle(color, 6, 6);
+	}
+}
+final internal class LaserCreator extends SimpleRasterizedObjectCreator
+{
+	private static const LASER_LENGTH:Number = 10;
+	protected override function create_impl(color:uint):DisplayObject
+	{
+		var bullet:Shape = new Shape;
+		bullet.graphics.lineStyle(3, color);
+		bullet.graphics.moveTo(0, -LASER_LENGTH/2);
+		bullet.graphics.lineTo(0, LASER_LENGTH/2);
+		return bullet;
+	}
+}
+
