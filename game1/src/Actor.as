@@ -147,6 +147,11 @@ package
 				game.addEffect(actor);
 			}
 		}
+		static public function createRocket():Actor
+		{
+			var rocket:Actor = ActorPool.instance.get(RocketActor) as Actor;
+			return rocket || new RocketActor(3);
+		}
 	}
 }
 import behaviors.ActorAttrs;
@@ -154,13 +159,19 @@ import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
+
+import karnold.utils.Util;
+
+import org.osmf.traits.DownloadableTrait;
 
 class BulletActor extends Actor
 {
 	public function BulletActor(color:uint):void
 	{
 		super(ActorAssetManager.createBullet(color), ActorAttrs.BULLET);
-		behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET_LIFETIME));
+		behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
 	}
 }
 class LaserActor extends Actor
@@ -168,7 +179,7 @@ class LaserActor extends Actor
 	public function LaserActor(color:uint):void
 	{
 		super(ActorAssetManager.createLaser(color), ActorAttrs.LASER);
-		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.LASER_LIFETIME), BehaviorFactory.faceForward);
+		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.LASER.LIFETIME), BehaviorFactory.faceForward);
 	}
 }
 class ExplosionParticleActor extends Actor
@@ -176,7 +187,41 @@ class ExplosionParticleActor extends Actor
 	public function ExplosionParticleActor(color:uint):void
 	{
 		super(ActorAssetManager.createExplosionParticle(color), ActorAttrs.EXPLOSION);
-		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION_LIFETIME), BehaviorFactory.fade);
+		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION.LIFETIME), BehaviorFactory.fade);
+	}
+}
+class RocketActor extends Actor
+{
+	static private function composeRocket(index:uint):DisplayObject
+	{
+		var parent:Sprite = new Sprite;
+		
+		var rocket:DisplayObject = ActorAssetManager.createRocket(index);
+		var plume:DisplayObject = ActorAssetManager.createFlame();
+		
+		Util.centerChild(rocket, parent);
+		Util.centerChild(plume, parent);
+		plume.y = rocket.y + rocket.height;
+		
+		parent.addChild(plume);
+		parent.addChild(rocket);
+		return parent;
+	}
+	
+	private var _plume:DisplayObject;
+	public function RocketActor(rocket:uint)
+	{
+		super(composeRocket(rocket), ActorAttrs.ROCKET);
+		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+		
+		_plume = DisplayObjectContainer(displayObject).getChildAt(0);
+		displayObject.scaleX = 0.5;
+		displayObject.scaleY = 0.5;
+	}
+	public override function onFrame(game:IGame):void
+	{
+		_plume.scaleY = Math.random()*0.7 + 0.3;
+		super.onFrame(game);
 	}
 }
 // We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find

@@ -33,7 +33,7 @@ package
 		{
 			Util.ASSERT(!actor.alive && !actor.displayObject.parent);
 			
-			const type:Object = actor["constructor"];
+			const type:Class = actor["constructor"];
 			if (type != Actor)
 			{
 				var pool:ObjectPool = _pools[type] as ObjectPool;

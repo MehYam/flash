@@ -189,6 +189,32 @@ package
 			return ship;
 		}
 
+		[Embed(source="assets/master.swf", symbol="rocket0")]
+		static private const ROCKET0:Class;
+		[Embed(source="assets/master.swf", symbol="rocket1")]
+		static private const ROCKET1:Class;
+		[Embed(source="assets/master.swf", symbol="rocket2")]
+		static private const ROCKET2:Class;
+		[Embed(source="assets/master.swf", symbol="rocket3")]
+		static private const ROCKET3:Class;
+		static private const ROCKET_TYPES:Array = [ROCKET0, ROCKET1, ROCKET2, ROCKET3];
+		
+		static public function createRocket(index:uint):DisplayObject
+		{
+			return createAssetRasterized(ROCKET_TYPES[index], false, false, 1);
+		}
+		[Embed(source="assets/master.swf", symbol="flame")]
+		static private const FLAME:Class;
+		[Embed(source="assets/master.swf", symbol="blueflame")]
+		static private const BLUEFLAME:Class;
+		static public function createFlame():DisplayObject
+		{
+			return createAssetRasterized(FLAME, false, false);
+		}
+		static public function createBlueFlame():DisplayObject
+		{
+			return createAssetRasterized(BLUEFLAME, false, false);
+		}
 		// end ships /////////////////////////////////////////////////////////////
 		// tanks ////////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="tankhull0")]

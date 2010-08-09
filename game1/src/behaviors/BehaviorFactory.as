@@ -246,6 +246,8 @@ final class AutofireBehavior implements IBehavior
 				case AmmoType.LASER:
 				case AmmoType.HIGHLASER:
 					ammo = Actor.createLaser(0);
+				case AmmoType.ROCKET:
+					ammo = Actor.createRocket();
 					break;
 			}
 			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
