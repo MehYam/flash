@@ -1,6 +1,6 @@
 package scripts
 {
-	import behaviors.BehaviorConsts;
+	import behaviors.ActorAttrs;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -19,7 +19,7 @@ package scripts
 								  leftTrack:DisplayObjectContainer,
 								  rightTrack:DisplayObjectContainer,
 								  turret:DisplayObject,
-								  bc:BehaviorConsts)
+								  bc:ActorAttrs)
 		{
 			super(dobj, bc);
 			
@@ -78,7 +78,7 @@ package scripts
 		//KAI: this is all kinds of ugliness
 		public static function createTankActor( hullIndex:uint,
 												turretIndex:uint,
-												bc:BehaviorConsts):TankActor
+												bc:ActorAttrs):TankActor
 		{
 			var parent:Sprite = new Sprite;
 			

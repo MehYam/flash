@@ -92,7 +92,7 @@ package behaviors
 }
 import behaviors.AmmoFireSource;
 import behaviors.AmmoType;
-import behaviors.BehaviorConsts;
+import behaviors.ActorAttrs;
 import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
@@ -150,14 +150,14 @@ final class GravityPush implements IBehavior
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
-		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
-		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
+		const accelX:Number = Math.sin(radians) * actor.attrs.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * actor.attrs.ACCELERATION;
 		
 		actor.speed.x += accelX;
 		actor.speed.y += accelY;
 		
-		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
-		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
+		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.attrs.MAX_SPEED);
+		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.attrs.MAX_SPEED);
 	}
 };
 
@@ -169,14 +169,14 @@ final class GravityPullBehavior implements IBehavior
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
-		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
-		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
+		const accelX:Number = Math.sin(radians) * actor.attrs.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * actor.attrs.ACCELERATION;
 		
 		actor.speed.x -= accelX;
 		actor.speed.y -= accelY;
 		
-		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
-		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
+		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.attrs.MAX_SPEED);
+		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.attrs.MAX_SPEED);
 	}
 };
 
@@ -188,8 +188,8 @@ final class FollowBehavior implements IBehavior
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
-		actor.speed.x = actor.consts.MAX_SPEED * -Math.sin(radians);
-		actor.speed.y = actor.consts.MAX_SPEED * Math.cos(radians);
+		actor.speed.x = actor.attrs.MAX_SPEED * -Math.sin(radians);
+		actor.speed.y = actor.attrs.MAX_SPEED * Math.cos(radians);
 	}
 }
 
@@ -201,14 +201,14 @@ final class StrafeBehavior implements IBehavior
 		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
 		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
 		
-		const accelX:Number = Math.sin(radians) * actor.consts.ACCELERATION;
-		const accelY:Number = -Math.cos(radians) * actor.consts.ACCELERATION;
+		const accelX:Number = Math.sin(radians) * actor.attrs.ACCELERATION;
+		const accelY:Number = -Math.cos(radians) * actor.attrs.ACCELERATION;
 		
 		actor.speed.x -= accelX;
 		actor.speed.y -= accelY;
 		
-		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.consts.MAX_SPEED);
-		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.consts.MAX_SPEED);
+		actor.speed.x = MathUtil.constrainAbsoluteValue(actor.speed.x, actor.attrs.MAX_SPEED);
+		actor.speed.y = MathUtil.constrainAbsoluteValue(actor.speed.y, actor.attrs.MAX_SPEED);
 		
 		actor.displayObject.rotation = MathUtil.getDegreesRotation(-accelX, -accelY);
 	}
@@ -286,8 +286,8 @@ final class SpeedDecayBehavior implements IBehavior
 	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		actor.speed.x = MathUtil.speedDecay(actor.speed.x, actor.consts.SPEED_DECAY);
-		actor.speed.y = MathUtil.speedDecay(actor.speed.y, actor.consts.SPEED_DECAY);
+		actor.speed.x = MathUtil.speedDecay(actor.speed.x, actor.attrs.SPEED_DECAY);
+		actor.speed.y = MathUtil.speedDecay(actor.speed.y, actor.attrs.SPEED_DECAY);
 	}
 }
 final class ExpireBehavior implements IBehavior, IResettable

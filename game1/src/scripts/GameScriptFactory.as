@@ -19,7 +19,7 @@ package scripts
 import behaviors.AlternatingBehavior;
 import behaviors.AmmoFireSource;
 import behaviors.AmmoType;
-import behaviors.BehaviorConsts;
+import behaviors.ActorAttrs;
 import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
@@ -95,20 +95,20 @@ final class Utils
 	static public function getPlanePlayer():Actor
 	{
 //		var plane:Actor = new Actor(ActorAssetManager.createShip(29), BehaviorConsts.BLUE_SHIP);
-		var plane:Actor = new Actor(ActorAssetManager.createShip(0), BehaviorConsts.BLUE_SHIP);
+		var plane:Actor = new Actor(ActorAssetManager.createShip(0), ActorAttrs.BLUE_SHIP);
 		plane.behavior = BehaviorFactory.faceForward;
 		return plane;
 	}
 	static public function getTankPlayer():Actor
 	{
-		var tank:Actor = TankActor.createTankActor(0, 0, BehaviorConsts.TEST_TANK);
+		var tank:Actor = TankActor.createTankActor(0, 0, ActorAttrs.TEST_TANK);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 		return tank;
 	}
 
 	static public function addEnemyByIndex(game:IGame, index:uint):Actor
 	{
-		var a:Actor = new Actor(ActorAssetManager.createShip(index), BehaviorConsts.RED_SHIP);
+		var a:Actor = new Actor(ActorAssetManager.createShip(index), ActorAttrs.RED_SHIP);
 		a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 
 		placeAtRandomEdge(a, game.worldBounds);
@@ -121,17 +121,17 @@ final class Utils
 		var a:Actor;
 		switch (type) {
 		case Enemy.REDROGUE:
-			a = new Actor(ActorAssetManager.createShip(23, 0.7), BehaviorConsts.RED_SHIP);
+			a = new Actor(ActorAssetManager.createShip(23, 0.7), ActorAttrs.RED_SHIP);
 			a.name = "Red Rogue";
 			a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 			break;
 		case Enemy.GREENK:
-			a = new Actor(ActorAssetManager.createShip(3), BehaviorConsts.GREEN_SHIP);
+			a = new Actor(ActorAssetManager.createShip(3), ActorAttrs.GREEN_SHIP);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
 		case Enemy.GRAYSHOOTER:
-			a = new Actor(ActorAssetManager.createShip(6), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createShip(6), ActorAttrs.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -143,7 +143,7 @@ final class Utils
 			);
 			break;
 		case Enemy.BAT:
-			a = new Actor(ActorAssetManager.createShip(9), BehaviorConsts.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createShip(9), ActorAttrs.GRAY_SHIP);
 			a.name = "Bat";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -339,8 +339,8 @@ private var _wave:uint = 0;
 	// IGameEvents
 	public override function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void
 	{
-		damageActor(game, enemy, game.player.consts.COLLISION_DMG, true);
-		damageActor(game, game.player, enemy.consts.COLLISION_DMG);
+		damageActor(game, enemy, game.player.attrs.COLLISION_DMG, true);
+		damageActor(game, game.player, enemy.attrs.COLLISION_DMG);
 	}
 	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
 	{
@@ -362,7 +362,7 @@ private var _wave:uint = 0;
 		actor.health -= damage;
 		if (isPlayer)
 		{
-			game.scoreBoard.pctHealth = actor.health / BehaviorConsts.MAX_HEALTH;
+			game.scoreBoard.pctHealth = actor.health / ActorAttrs.MAX_HEALTH;
 		}
 		else if (actor.health <= 0)
 		{

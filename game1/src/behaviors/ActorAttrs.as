@@ -1,17 +1,17 @@
 package behaviors
 {
-	final public class BehaviorConsts
+	final public class ActorAttrs
 	{
-		static public const BLUE_SHIP:BehaviorConsts = new BehaviorConsts(6, 1, 0.1);
-		static public const GREEN_SHIP:BehaviorConsts = new BehaviorConsts(1.5, 0.1, 0, 10, 10);
-		static public const RED_SHIP:BehaviorConsts = new BehaviorConsts(3, 0.1, 0, 15, 15);
-		static public const GRAY_SHIP:BehaviorConsts = new BehaviorConsts(2, 0.15, 20);
+		static public const BLUE_SHIP:ActorAttrs = new ActorAttrs(6, 1, 0.1);
+		static public const GREEN_SHIP:ActorAttrs = new ActorAttrs(1.5, 0.1, 0, 10, 10);
+		static public const RED_SHIP:ActorAttrs = new ActorAttrs(3, 0.1, 0, 15, 15);
+		static public const GRAY_SHIP:ActorAttrs = new ActorAttrs(2, 0.15, 20);
 
-		static public const TEST_TANK:BehaviorConsts = new BehaviorConsts(1.5, 1, 0.5);
+		static public const TEST_TANK:ActorAttrs = new ActorAttrs(1.5, 1, 0.5);
 
-		static public const BULLET:BehaviorConsts = new BehaviorConsts(8, 10);
-		static public const LASER:BehaviorConsts = new BehaviorConsts(6, 7);
-		static public const EXPLOSION:BehaviorConsts = new BehaviorConsts(100, 0, 0.1);
+		static public const BULLET:ActorAttrs = new ActorAttrs(8, 10);
+		static public const LASER:ActorAttrs = new ActorAttrs(6, 7);
+		static public const EXPLOSION:ActorAttrs = new ActorAttrs(100, 0, 0.1);
 
 		// these semi-belong here
 		static public const LASER_LIFETIME:uint = 3000;
@@ -26,7 +26,7 @@ package behaviors
 		public var SPEED_DECAY:Number;
 		public var RADIUS:Number;
 		public var COLLISION_DMG:Number;
-		public function BehaviorConsts(speed:Number, 
+		public function ActorAttrs(speed:Number, 
 									   accel:Number, 
 									   decay:Number = 0, 
 									   radius:Number = 20,

@@ -1,7 +1,7 @@
 package
 {
 	import behaviors.AmmoFireSource;
-	import behaviors.BehaviorConsts;
+	import behaviors.ActorAttrs;
 	import behaviors.BehaviorFactory;
 	import behaviors.CompositeBehavior;
 	import behaviors.IBehavior;
@@ -21,14 +21,14 @@ package
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
-		public var consts:BehaviorConsts;
+		public var attrs:ActorAttrs;
 
 		// meta-data that really doesn't belong here
 		public var health:Number;
 		public var name:String;
 		public var value:uint;
 
-		public function Actor(dobj:DisplayObject, consts:BehaviorConsts = null)
+		public function Actor(dobj:DisplayObject, consts:ActorAttrs = null)
 		{
 			displayObject = dobj;
 			if (displayObject is InteractiveObject)
@@ -40,10 +40,10 @@ package
 				}
 			}
 
-			this.consts = consts;
+			this.attrs = consts;
 			
-			health = BehaviorConsts.MAX_HEALTH;
-			value = BehaviorConsts.DEFAULT_VALUE;
+			health = ActorAttrs.MAX_HEALTH;
+			value = ActorAttrs.DEFAULT_VALUE;
 		}
 		
 		private var _behavior:IBehavior;
@@ -91,8 +91,8 @@ package
 		private function launchHelper(start:Point, radians:Number):void
 		{
 			Util.setPoint(worldPos, start);
-			speed.x = Math.sin(radians) * consts.MAX_SPEED;
-			speed.y = -Math.cos(radians) * consts.MAX_SPEED;
+			speed.x = Math.sin(radians) * attrs.MAX_SPEED;
+			speed.y = -Math.cos(radians) * attrs.MAX_SPEED;
 		}
 		public function launchDegrees(start:Point, degrees:Number):void
 		{
@@ -108,7 +108,7 @@ package
 			if (!bullet)
 			{
 				bullet = new BulletActor(ActorAssetManager.createBullet());
-				bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(BehaviorConsts.BULLET_LIFETIME));
+				bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET_LIFETIME));
 			}
 			return bullet;
 		}
@@ -118,7 +118,7 @@ package
 			if (!laser)
 			{
 				laser = new LaserActor(ActorAssetManager.createLaser());
-				laser.behavior = new CompositeBehavior(BehaviorFactory.createExpire(BehaviorConsts.LASER_LIFETIME), BehaviorFactory.faceForward);
+				laser.behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.LASER_LIFETIME), BehaviorFactory.faceForward);
 			}
 			return laser;
 		}
@@ -145,14 +145,14 @@ package
 				Util.setPoint(actor.worldPos, worldPos);
 				actor.speed.x = MathUtil.random(-10, 10);
 				actor.speed.y = MathUtil.random(-10, 10);
-				actor.behavior = new CompositeBehavior(BehaviorFactory.createExpire(BehaviorConsts.EXPLOSION_LIFETIME), BehaviorFactory.fade);
+				actor.behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION_LIFETIME), BehaviorFactory.fade);
 				
 				game.addEffect(actor);
 			}
 		}
 	}
 }
-import behaviors.BehaviorConsts;
+import behaviors.ActorAttrs;
 
 import flash.display.DisplayObject;
 
@@ -160,34 +160,34 @@ final class BulletActor extends Actor
 {
 	public function BulletActor(dobj:DisplayObject)
 	{
-		super(dobj, BehaviorConsts.BULLET);
+		super(dobj, ActorAttrs.BULLET);
 	}
 }
 final class ExplosionParticleActor extends Actor
 {
 	public function ExplosionParticleActor(dobj:DisplayObject):void
 	{
-		super(dobj, BehaviorConsts.EXPLOSION);
+		super(dobj, ActorAttrs.EXPLOSION);
 	}
 }
 final class CriticalExplosionParticleActor extends Actor
 {
 	public function CriticalExplosionParticleActor(dobj:DisplayObject):void
 	{
-		super(dobj, BehaviorConsts.EXPLOSION);
+		super(dobj, ActorAttrs.EXPLOSION);
 	}
 }
 final class LaserActor extends Actor
 {
 	public function LaserActor(dobj:DisplayObject):void
 	{
-		super(dobj, BehaviorConsts.LASER);
+		super(dobj, ActorAttrs.LASER);
 	}
 }
 final class HighLaserActor extends Actor
 {
 	public function HighLaserActor(dobj:DisplayObject):void
 	{
-		super(dobj, BehaviorConsts.LASER);
+		super(dobj, ActorAttrs.LASER);
 	}
 }

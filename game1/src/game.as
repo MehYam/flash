@@ -144,28 +144,28 @@ package
 			var speed:Point = _player.speed;
 			if (_input.isKeyDown(Input.KEY_RIGHT))
 			{
-				speed.x = Math.min(_player.consts.MAX_SPEED, speed.x + _player.consts.ACCELERATION);
+				speed.x = Math.min(_player.attrs.MAX_SPEED, speed.x + _player.attrs.ACCELERATION);
 			}
 			else if (_input.isKeyDown(Input.KEY_LEFT))
 			{
-				speed.x = Math.max(-_player.consts.MAX_SPEED, speed.x - _player.consts.ACCELERATION);
+				speed.x = Math.max(-_player.attrs.MAX_SPEED, speed.x - _player.attrs.ACCELERATION);
 			}
 			else if (speed.x)
 			{
-				speed.x = MathUtil.speedDecay(speed.x, _player.consts.SPEED_DECAY);
+				speed.x = MathUtil.speedDecay(speed.x, _player.attrs.SPEED_DECAY);
 			}
 			
 			if (_input.isKeyDown(Input.KEY_DOWN))
 			{
-				speed.y = Math.min(_player.consts.MAX_SPEED, speed.y + _player.consts.ACCELERATION);
+				speed.y = Math.min(_player.attrs.MAX_SPEED, speed.y + _player.attrs.ACCELERATION);
 			}
 			else if (_input.isKeyDown(Input.KEY_UP))
 			{
-				speed.y = Math.max(-_player.consts.MAX_SPEED, speed.y - _player.consts.ACCELERATION);
+				speed.y = Math.max(-_player.attrs.MAX_SPEED, speed.y - _player.attrs.ACCELERATION);
 			}
 			else if (speed.y)
 			{
-				speed.y = MathUtil.speedDecay(speed.y, _player.consts.SPEED_DECAY);
+				speed.y = MathUtil.speedDecay(speed.y, _player.attrs.SPEED_DECAY);
 			}
 
 			//
@@ -228,7 +228,7 @@ package
 			for each (enemy in _cast.enemies)
 			{
 				if (enemy && enemy.alive && 
-					MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < (_player.consts.RADIUS + enemy.consts.RADIUS))
+					MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < (_player.attrs.RADIUS + enemy.attrs.RADIUS))
 				{
 					_currentScript.onPlayerStruckByEnemy(this, enemy);
 				}
@@ -239,7 +239,7 @@ package
 			for each (ammo in _cast.enemyAmmo)
 			{
 				if (ammo && ammo.alive && 
-					MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < (_player.consts.RADIUS + ammo.consts.RADIUS))
+					MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < (_player.attrs.RADIUS + ammo.attrs.RADIUS))
 				{
 					_currentScript.onPlayerStruckByAmmo(this, ammo);
 				}
@@ -252,7 +252,7 @@ package
 				{
 					for each (enemy in _cast.enemies)
 					{
-						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < (ammo.consts.RADIUS + enemy.consts.RADIUS))
+						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < (ammo.attrs.RADIUS + enemy.attrs.RADIUS))
 						{
 							_currentScript.onEnemyStruckByAmmo(this, enemy, ammo);
 							if (!ammo.alive)

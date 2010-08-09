@@ -1,6 +1,6 @@
 package ui
 {
-	import behaviors.BehaviorConsts;
+	import behaviors.ActorAttrs;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -33,7 +33,7 @@ package ui
 		private var _actor:TankActor;
 		private function addTank():void
 		{
-			_actor = TankActor.createTankActor(0, 0, BehaviorConsts.TEST_TANK);
+			_actor = TankActor.createTankActor(0, 0, ActorAttrs.TEST_TANK);
 			
 			_actor.displayObject.x = width /2;
 			_actor.displayObject.y = height /2;
