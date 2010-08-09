@@ -1,7 +1,7 @@
 package
 {
-	import behaviors.AmmoFireSource;
 	import behaviors.ActorAttrs;
+	import behaviors.AmmoFireSource;
 	import behaviors.BehaviorFactory;
 	import behaviors.CompositeBehavior;
 	import behaviors.IBehavior;
@@ -102,50 +102,47 @@ package
 		{
 			launchHelper(start, MathUtil.getRadiansRotation(deltaX, deltaY));
 		}
-		static public function createBullet():Actor
+		static private var s_bulletLevels:Array; 
+		static public function createBullet(level:uint):Actor
 		{
-			var bullet:Actor = ActorPool.instance.get(BulletActor) as BulletActor;
-			if (!bullet)
+			if (!s_bulletLevels)
 			{
-				bullet = new BulletActor(ActorAssetManager.createBullet());
-				bullet.behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET_LIFETIME));
+				s_bulletLevels = [BulletActor0, BulletActor1, BulletActor2, BulletActor3, BulletActor4];
 			}
-			return bullet;
+			const type:Class = s_bulletLevels[level];
+			var bullet:Actor = ActorPool.instance.get(type) as Actor;
+			return bullet || new type;
 		}
-		static public function createLaser():Actor
+		static private var s_explLevels:Array;
+		static public function createLaser(level:uint):Actor
 		{
-			var laser:Actor = ActorPool.instance.get(LaserActor) as LaserActor
-			if (!laser)
+			if (!s_explLevels)
 			{
-				laser = new LaserActor(ActorAssetManager.createLaser());
-				laser.behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.LASER_LIFETIME), BehaviorFactory.faceForward);
+				s_explLevels = [LaserActor0, LaserActor1, LaserActor2, LaserActor3, LaserActor4]; 
 			}
-			return laser;
+			const type:Class = s_explLevels[level];
+			var laser:Actor = ActorPool.instance.get(type) as Actor;
+			return laser || new type;
 		}
-		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint, color:uint = 0xffff00):void
+		static private var s_levels:Array; 
+		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint, level:uint):void
 		{
-			// yeah this sucks incredibly - it's because of how we pool particles
-			var colorClass:Class;
-			switch(color) {
-			case 0xffff00:
-				colorClass = ExplosionParticleActor;
-				break;
-			default:
-				colorClass = CriticalExplosionParticleActor;
-				break;
+			if (!s_levels)
+			{
+				s_levels = [ExplosionParticleActor0, ExplosionParticleActor1, ExplosionParticleActor2];
 			}
+			const colorClass:Class = s_levels[level];
 			for (var i:uint = 0; i < numParticles; ++i)
 			{
 				var actor:Actor = ActorPool.instance.get(colorClass) as Actor;
 				if (!actor)
 				{
-					actor = new colorClass(ActorAssetManager.createExplosionParticle(color));
+					actor = new colorClass();
 				}
 				actor.displayObject.alpha = Math.random();
 				Util.setPoint(actor.worldPos, worldPos);
 				actor.speed.x = MathUtil.random(-10, 10);
 				actor.speed.y = MathUtil.random(-10, 10);
-				actor.behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION_LIFETIME), BehaviorFactory.fade);
 				
 				game.addEffect(actor);
 			}
@@ -153,41 +150,47 @@ package
 	}
 }
 import behaviors.ActorAttrs;
+import behaviors.BehaviorFactory;
+import behaviors.CompositeBehavior;
 
 import flash.display.DisplayObject;
 
-final class BulletActor extends Actor
+class BulletActor extends Actor
 {
-	public function BulletActor(dobj:DisplayObject)
+	public function BulletActor(color:uint):void
 	{
-		super(dobj, ActorAttrs.BULLET);
+		super(ActorAssetManager.createBullet(color), ActorAttrs.BULLET);
+		behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET_LIFETIME));
 	}
 }
-final class ExplosionParticleActor extends Actor
+class LaserActor extends Actor
 {
-	public function ExplosionParticleActor(dobj:DisplayObject):void
+	public function LaserActor(color:uint):void
 	{
-		super(dobj, ActorAttrs.EXPLOSION);
+		super(ActorAssetManager.createLaser(color), ActorAttrs.LASER);
+		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.LASER_LIFETIME), BehaviorFactory.faceForward);
 	}
 }
-final class CriticalExplosionParticleActor extends Actor
+class ExplosionParticleActor extends Actor
 {
-	public function CriticalExplosionParticleActor(dobj:DisplayObject):void
+	public function ExplosionParticleActor(color:uint):void
 	{
-		super(dobj, ActorAttrs.EXPLOSION);
+		super(ActorAssetManager.createExplosionParticle(color), ActorAttrs.EXPLOSION);
+		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION_LIFETIME), BehaviorFactory.fade);
 	}
 }
-final class LaserActor extends Actor
-{
-	public function LaserActor(dobj:DisplayObject):void
-	{
-		super(dobj, ActorAttrs.LASER);
-	}
-}
-final class HighLaserActor extends Actor
-{
-	public function HighLaserActor(dobj:DisplayObject):void
-	{
-		super(dobj, ActorAttrs.LASER);
-	}
-}
+// We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find
+// a different pooling mechanism (maybe pooling the display objects separately)
+final class BulletActor0 extends BulletActor { public function BulletActor0() { super(0x90ff); } }
+final class BulletActor1 extends BulletActor { public function BulletActor1() { super(0xff5d); } }
+final class BulletActor2 extends BulletActor { public function BulletActor2() { super(0xeeee00); } }
+final class BulletActor3 extends BulletActor { public function BulletActor3() { super(0xff9400); } }
+final class BulletActor4 extends BulletActor { public function BulletActor4() { super(0xffffff); } }
+final class LaserActor0 extends LaserActor { public function LaserActor0() { super(0x90ff); } }
+final class LaserActor1 extends LaserActor { public function LaserActor1() { super(0xff5d); } }
+final class LaserActor2 extends LaserActor { public function LaserActor2() { super(0xeeee00); } }
+final class LaserActor3 extends LaserActor { public function LaserActor3() { super(0xff9400); } }
+final class LaserActor4 extends LaserActor { public function LaserActor4() { super(0xffffff); } }
+final class ExplosionParticleActor0 extends ExplosionParticleActor { public function ExplosionParticleActor0() { super(0xff0000); } }
+final class ExplosionParticleActor1 extends ExplosionParticleActor { public function ExplosionParticleActor1() { super(0xffff00); } }
+final class ExplosionParticleActor2 extends ExplosionParticleActor { public function ExplosionParticleActor2() { super(0xffffff); } }
