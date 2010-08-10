@@ -268,7 +268,7 @@ class WaveBasedGameScript extends BaseScript
 		}
 		else
 		{
-			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 0, -20), 150, 150);
+			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 150, 150);
 			game.showPlayer(Utils.getPlanePlayer());
 		}
 		

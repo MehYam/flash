@@ -12,6 +12,7 @@ package behaviors
 		static public const BULLET:ActorAttrs = new ActorAttrs(8, 10, 0, 20, 100, 3000);
 		static public const ROCKET:ActorAttrs = new ActorAttrs(3, 0.1, 0, 20, 100, 4000);
 		static public const LASER:ActorAttrs = new ActorAttrs(6, 7, 0, 20, 100, 2000);
+		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(5, 10, 0, 20, 100);
 		static public const EXPLOSION:ActorAttrs = new ActorAttrs(100, 0, 0.1, 0, 0, 300);
 
 		static public const INFINITE_LIFETIME:int = -1;

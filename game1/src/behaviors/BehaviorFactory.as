@@ -90,9 +90,9 @@ package behaviors
 		}
 	}
 }
+import behaviors.ActorAttrs;
 import behaviors.AmmoFireSource;
 import behaviors.AmmoType;
-import behaviors.ActorAttrs;
 import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
@@ -246,8 +246,12 @@ final class AutofireBehavior implements IBehavior
 				case AmmoType.LASER:
 				case AmmoType.HIGHLASER:
 					ammo = Actor.createLaser(0);
+					break;
 				case AmmoType.ROCKET:
 					ammo = Actor.createRocket();
+					break;
+				case AmmoType.FUSION:
+					ammo = Actor.createFusionBlast();
 					break;
 			}
 			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;

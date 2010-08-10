@@ -189,6 +189,7 @@ package
 			return ship;
 		}
 
+		// end ships /////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="rocket0")]
 		static private const ROCKET0:Class;
 		[Embed(source="assets/master.swf", symbol="rocket1")]
@@ -215,7 +216,6 @@ package
 		{
 			return createAssetRasterized(BLUEFLAME, false, false);
 		}
-		// end ships /////////////////////////////////////////////////////////////
 		// tanks ////////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="tankhull0")]
 		static private const HULL0:Class;
@@ -272,6 +272,10 @@ package
 		{
 			return SimpleRasterizedObjectCreator.getInstance(LaserCreator).create(color);
 		}
+		static public function createFusionBlast(color:uint = 0xff00ff):DisplayObject
+		{
+			return SimpleRasterizedObjectCreator.getInstance(FusionBlastCreator).create(color);
+		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
 			var wo:Shape = new Shape;
@@ -323,21 +327,26 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Shape;
+import flash.display.Sprite;
 import flash.utils.Dictionary;
 
-// a cleaner way to do this is to pass function objects around.  I want to avoid closures, though
 internal class SimpleRasterizedObjectCreator
 {
 	static private var s_store:Dictionary = new Dictionary;
-	static private var s_keyLookup:Object = {};
 
+	private var _centered:Boolean;
+	public function SimpleRasterizedObjectCreator(centered:Boolean = false)
+	{
+		_centered = centered;
+	}
+	private var _keyLookup:Object = {};
 	protected function create_impl(color:uint):DisplayObject { throw "override me"; } // "abstract" template method, to be overridden by subclass 
 	public function create(color:uint):DisplayObject
 	{
-		var key:Object = s_keyLookup[color];
+		var key:Object = _keyLookup[color];
 		if (!key)
 		{
-			key = s_keyLookup[color] = new Object;
+			key = _keyLookup[color] = new Object;
 		}
 		var bmd:BitmapData = s_store[key] as BitmapData;
 		if (!bmd)
@@ -350,7 +359,18 @@ internal class SimpleRasterizedObjectCreator
 			bmd = ActorAssetManager.rasterize(raw);
 			s_store[key] = bmd;
 		}
-		return new Bitmap(bmd);
+		
+		var retval:DisplayObject = new Bitmap(bmd);
+		if (_centered)
+		{
+			retval.x = -retval.width/2;
+			retval.y = -retval.height/2;
+			
+			var parent:Sprite = new Sprite;
+			parent.addChild(retval);
+			retval = parent;
+		}
+		return retval; 
 	}
 
 	static private var s_instances:Dictionary = new Dictionary;
@@ -382,11 +402,13 @@ final internal class BulletCreator extends SimpleRasterizedObjectCreator
 {
 	protected override function create_impl(color:uint):DisplayObject
 	{
-		return ActorAssetManager.createCircle(color, 6, 6);
+		return ActorAssetManager.createCircle(color, 7, 7);
 	}
 }
 final internal class LaserCreator extends SimpleRasterizedObjectCreator
 {
+	public function LaserCreator() { super(true); }
+
 	private static const LASER_LENGTH:Number = 10;
 	protected override function create_impl(color:uint):DisplayObject
 	{
@@ -395,6 +417,22 @@ final internal class LaserCreator extends SimpleRasterizedObjectCreator
 		bullet.graphics.moveTo(0, -LASER_LENGTH/2);
 		bullet.graphics.lineTo(0, LASER_LENGTH/2);
 		return bullet;
+	}
+}
+final internal class FusionBlastCreator extends SimpleRasterizedObjectCreator
+{
+	public function FusionBlastCreator() { super(true); }
+
+	static private const HEIGHT:Number = 20;
+	static private const WIDTH:Number = 10;
+	protected override function create_impl(color:uint):DisplayObject
+	{
+		var blast:Shape = new Shape;
+		blast.graphics.lineStyle(0, 0, 0);
+		blast.graphics.beginFill(color);
+		blast.graphics.drawRoundRect(-WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT, 4, 4);
+		blast.graphics.endFill();
+		return blast;
 	}
 }
 

@@ -149,8 +149,13 @@ package
 		}
 		static public function createRocket():Actor
 		{
-			var rocket:Actor = ActorPool.instance.get(RocketActor) as Actor;
+			var rocket:Actor = ActorPool.instance.get(RocketActor);
 			return rocket || new RocketActor(3);
+		}
+		static public function createFusionBlast():Actor
+		{
+			var blast:Actor = ActorPool.instance.get(FusionBlastActor);
+			return blast || new FusionBlastActor;
 		}
 	}
 }
@@ -222,6 +227,14 @@ class RocketActor extends Actor
 	{
 		_plume.scaleY = Math.random()*0.7 + 0.3;
 		super.onFrame(game);
+	}
+}
+class FusionBlastActor extends Actor
+{
+	public function FusionBlastActor()
+	{
+		super(ActorAssetManager.createFusionBlast(), ActorAttrs.FUSIONBLAST);
+		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
 	}
 }
 // We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find
