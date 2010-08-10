@@ -16,10 +16,10 @@ package scripts
 		}
 	}
 }
+import behaviors.ActorAttrs;
 import behaviors.AlternatingBehavior;
 import behaviors.AmmoFireSource;
 import behaviors.AmmoType;
-import behaviors.ActorAttrs;
 import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
@@ -94,7 +94,6 @@ final class Utils
 	}
 	static public function getPlanePlayer():Actor
 	{
-//		var plane:Actor = new Actor(ActorAssetManager.createShip(29), BehaviorConsts.BLUE_SHIP);
 		var plane:Actor = new Actor(ActorAssetManager.createShip(0), ActorAttrs.BLUE_SHIP);
 		plane.behavior = BehaviorFactory.faceForward;
 		return plane;
@@ -174,6 +173,7 @@ class BaseScript implements IGameScript
 
 	static protected const TANK:Boolean = false;
 	protected var _weapon:IBehavior;
+	private var _shake:IBehavior = BehaviorFactory.createShake();
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
@@ -181,6 +181,7 @@ class BaseScript implements IGameScript
 		if (_weapon)
 		{
 			_weapon.onFrame(game, game.player);
+			_shake.onFrame(game, game.player);
 		}
 	}
 	public function onPlayerShootToMouse(game:IGame):void
@@ -195,6 +196,14 @@ class BaseScript implements IGameScript
 				dobj.rotation = MathUtil.getDegreesRotation(mouse.x - dobj.x, mouse.y - dobj.y);
 			}
 
+			_weapon.onFrame(game, game.player);
+			_shake.onFrame(game, game.player);
+		}
+	}
+	public function onPlayerStopShooting(game:IGame):void
+	{
+		if (_weapon)
+		{
 			_weapon.onFrame(game, game.player);
 		}
 	}

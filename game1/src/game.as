@@ -116,6 +116,7 @@ package
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
 		private var _lastPurge:int;
+		private var _shooting:Boolean = false;
 		private function onFrame():void
 		{
 			//
@@ -187,10 +188,17 @@ package
 			if (_input.isKeyDown(Input.KEY_SPACE))
 			{
 				_currentScript.onPlayerShootForward(this);
+				_shooting = true;
 			}
 			else if (_input.isKeyDown(Input.MOUSE_BUTTON))
 			{
 				_currentScript.onPlayerShootToMouse(this);
+				_shooting = true;
+			}
+			else if (_shooting)
+			{
+				_currentScript.onPlayerStopShooting(this);
+				_shooting = false;
 			}
 
 			runFrameOnCast(_cast.enemies);

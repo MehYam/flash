@@ -11,11 +11,16 @@ package karnold.utils
 		{
 			_rateMin = msRateMin;
 			_rateMax = msRateMax;
-			_next = calcNext(getTimer());
+
+			reset();
 		}
 		private function calcNext(start:uint):uint
 		{
 			return start + _rateMin + (_rateMax - _rateMin)*Math.random();
+		}
+		public function reset():void
+		{
+			_next = calcNext(getTimer());
 		}
 		public function get now():Boolean
 		{

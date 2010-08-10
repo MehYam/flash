@@ -88,6 +88,10 @@ package behaviors
 		{
 			return new ExpireBehavior(lifetime);
 		}
+		static public function createShake():IBehavior
+		{
+			return new ShakeBehavior;
+		}
 	}
 }
 import behaviors.ActorAttrs;
@@ -235,7 +239,7 @@ final class AutofireBehavior implements IBehavior
 
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		if (_rate.now)
+		if (!_rate || _rate.now)
 		{
 			AssetManager.instance.laserSound();
 			var ammo:Actor;
@@ -275,6 +279,21 @@ final class AutofireBehavior implements IBehavior
 			{
 				game.addEnemyAmmo(ammo);
 			}
+		}
+	}
+}
+
+final class ShakeBehavior implements IBehavior
+{
+	static private const MAGNITUDE:Number = 3;
+
+	private var _offset:Point = new Point;
+	private var _rate:RateLimiter = new RateLimiter(10, 100);
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		if (_rate.now)
+		{
+			actor.worldPos.offset(MathUtil.random(-MAGNITUDE, MAGNITUDE), MathUtil.random(-MAGNITUDE, MAGNITUDE));
 		}
 	}
 }
