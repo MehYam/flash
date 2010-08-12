@@ -355,8 +355,8 @@ private var _wave:uint = 0;
 	// IGameEvents
 	public override function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void
 	{
-		damageActor(game, enemy, game.player.attrs.COLLISION_DMG, true);
-		damageActor(game, game.player, enemy.attrs.COLLISION_DMG);
+		damageActor(game, enemy, game.player.damage, true);
+		damageActor(game, game.player, enemy.damage);
 	}
 	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
 	{
@@ -371,12 +371,12 @@ private var _wave:uint = 0;
 			if (!pa.isActorStruck(enemy))
 			{
 				pa.strikeActor(enemy);
-				damageActor(game, enemy, 34);
+				damageActor(game, enemy, ammo.damage);
 			}
 		}
 		else
 		{
-			damageActor(game, enemy, 34);
+			damageActor(game, enemy, ammo.damage);
 			game.killActor(ammo);
 		}
 	}
@@ -386,7 +386,7 @@ private var _wave:uint = 0;
 		const isPlayer:Boolean = actor == game.player;
 		const particles:uint = isPlayer ? Math.max(2, damage/2) : Math.min(damage/6, 15);
 		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
-
+trace("damaging actor from ", actor.health, "to", actor.health - damage);
 		actor.health -= damage;
 		if (isPlayer)
 		{

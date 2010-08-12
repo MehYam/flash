@@ -23,7 +23,7 @@ package behaviors
 		}
 
 		static private var po_tmp:Point = new Point;
-		public function fire(game:IGame, actor:Actor):void
+		public function fire(game:IGame, actor:Actor, damageMultiplier:Number = 1):void
 		{
 			AssetManager.instance.laserSound();
 			var ammo:Actor;
@@ -42,6 +42,7 @@ package behaviors
 					ammo = Actor.createFusionBlast();
 					break;
 			}
+			ammo.damage *= damageMultiplier;
 			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
 
 			Util.setPoint(po_tmp, actor.worldPos);

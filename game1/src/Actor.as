@@ -25,10 +25,11 @@ package
 
 		// meta-data that really doesn't belong here
 		public var health:Number;
+		public var damage:Number;
 		public var name:String;
 		public var value:uint;
 
-		public function Actor(dobj:DisplayObject, consts:ActorAttrs = null)
+		public function Actor(dobj:DisplayObject, attrs:ActorAttrs = null)
 		{
 			displayObject = dobj;
 			if (displayObject is InteractiveObject)
@@ -40,19 +41,18 @@ package
 				}
 			}
 
-			this.attrs = consts;
-			
-			health = ActorAttrs.MAX_HEALTH;
-			value = ActorAttrs.DEFAULT_VALUE;
-		}
-		
-		private var _behavior:IBehavior;
-		public function set behavior(b:IBehavior):void
-		{
-			_behavior = b;
+			this.attrs = attrs;
+			reset();
 		}
 		public function reset():void  // IResettable
 		{
+			health = ActorAttrs.MAX_HEALTH;
+			value = ActorAttrs.DEFAULT_VALUE;
+			if (attrs)
+			{
+				damage = attrs.DAMAGE;
+			}
+
 			var resettableBehavior:IResettable = _behavior as IResettable;
 			if (resettableBehavior)
 			{
@@ -60,6 +60,12 @@ package
 			}
 			displayObject.alpha = 1;
 			_alive = true;
+		}
+		
+		private var _behavior:IBehavior;
+		public function set behavior(b:IBehavior):void
+		{
+			_behavior = b;
 		}
 		public function get alive():Boolean
 		{
