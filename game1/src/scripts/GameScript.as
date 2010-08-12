@@ -34,6 +34,7 @@ import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
 import scripts.IGameScript;
+import scripts.IPenetratingAmmo;
 import scripts.TankActor;
 
 final class Enemy
@@ -363,8 +364,20 @@ private var _wave:uint = 0;
 	}
 	public override function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void
 	{
-		damageActor(game, enemy, 34);
-		game.killActor(ammo);
+		var pa:IPenetratingAmmo = ammo as IPenetratingAmmo;
+		if (pa)
+		{
+			if (!pa.isActorStruck(enemy))
+			{
+				pa.strikeActor(enemy);
+				damageActor(game, enemy, 34);
+			}
+		}
+		else
+		{
+			damageActor(game, enemy, 34);
+			game.killActor(ammo);
+		}
 	}
 
 	private function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void

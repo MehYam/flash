@@ -294,9 +294,13 @@ final class ChargedFireBehavior implements IBehavior
 		{
 			if (_shooting)
 			{
-				trace("would fire level", Math.min(_chargeSteps-1, _currentStep));
 				_shooting = false;
-				_source.fire(game, actor);
+				
+				if (_currentStep)
+				{
+					trace("would fire level", Math.min(_chargeSteps-1, _currentStep));
+					_source.fire(game, actor);
+				}
 			}
 		}
 	}

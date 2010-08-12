@@ -166,10 +166,13 @@ import behaviors.CompositeBehavior;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.utils.Dictionary;
 
 import karnold.utils.Util;
 
 import org.osmf.traits.DownloadableTrait;
+
+import scripts.IPenetratingAmmo;
 
 class BulletActor extends Actor
 {
@@ -229,14 +232,29 @@ class RocketActor extends Actor
 		super.onFrame(game);
 	}
 }
-class FusionBlastActor extends Actor
+class FusionBlastActor extends Actor implements IPenetratingAmmo
 {
 	public function FusionBlastActor()
 	{
 		super(ActorAssetManager.createFusionBlast(), ActorAttrs.FUSIONBLAST);
 		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
 	}
+	private var _struckActors:Dictionary = new Dictionary(true);
+	public function strikeActor(actor:Actor):void
+	{
+		_struckActors[actor] = true;
+	}
+	public function isActorStruck(actor:Actor):Boolean
+	{
+		return _struckActors[actor];
+	}
+	public override function reset():void
+	{
+		super.reset();
+		_struckActors = new Dictionary(true);
+	}
 }
+
 // We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find
 // a different pooling mechanism (maybe pooling the display objects separately)
 final class BulletActor0 extends BulletActor { public function BulletActor0() { super(0x90ff); } }

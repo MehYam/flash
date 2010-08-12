@@ -260,6 +260,9 @@ package
 				{
 					for each (enemy in _cast.enemies)
 					{
+//KAI: here's a great example of the blurry line between the game script and the game engine;
+// here we could check for IPenetratingAmmo and call it accordingly, but the game script does
+// that instead.  Which is better?  Who really is in charge of what?
 						if (enemy && enemy.alive && MathUtil.distanceBetweenPoints(enemy.worldPos, ammo.worldPos) < (ammo.attrs.RADIUS + enemy.attrs.RADIUS))
 						{
 							_currentScript.onEnemyStruckByAmmo(this, enemy, ammo);
