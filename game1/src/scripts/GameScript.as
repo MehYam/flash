@@ -212,6 +212,7 @@ class BaseScript implements IGameScript
 			_weapon.onFrame(game, game.player);
 		}
 	}
+	public function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void {}
 }
 
 final class TestScript extends BaseScript
@@ -380,10 +381,10 @@ private var _wave:uint = 0;
 		}
 	}
 
-	private function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
+	public override function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
 	{
 		const isPlayer:Boolean = actor == game.player;
-		const particles:uint = isPlayer ? damage/2 : Math.min(damage/6, 15);
+		const particles:uint = isPlayer ? Math.max(2, damage/2) : Math.min(damage/6, 15);
 		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
 
 		actor.health -= damage;

@@ -32,5 +32,13 @@ package karnold.utils
 			}
 			return false;
 		}
+		public function get minRate():uint
+		{
+			return _rateMin;
+		}
+		public function get maxRate():uint
+		{
+			return _rateMax;
+		}
 	}
 }

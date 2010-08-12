@@ -355,6 +355,9 @@ package
 				_radar.remove(actor);
 			}
 		}
+		public function damageActor(actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
+		{
+		}
 		public function get player():Actor
 		{
 			return _player;
@@ -366,6 +369,10 @@ package
 		public function get scoreBoard():ScoreBoard
 		{
 			return _sb;
+		}
+		public function get script():IGameScript
+		{
+			return _currentScript;
 		}
 		private var _radar:Radar;
 		private var _sb:ScoreBoard;

@@ -251,18 +251,19 @@ final class AutofireBehavior implements IBehavior
 final class ChargedFireBehavior implements IBehavior
 {
 	private var _source:AmmoFireSource;
-	private var _rate:RateLimiter;
+	private var _stepRate:RateLimiter;
+	private var _basicFireRate:RateLimiter;
 	private var _chargeSteps:uint;
 	private var _selfDamage:Number;
 	private var _shake:IBehavior;
 	public function ChargedFireBehavior(source:AmmoFireSource, chargeSteps:uint, msStepDuration:uint, selfDamage:Number):void
 	{
 		_source = source;
-		_rate = new RateLimiter(msStepDuration, msStepDuration);
+		_stepRate = new RateLimiter(msStepDuration, msStepDuration);
+		_basicFireRate = new RateLimiter(msStepDuration, msStepDuration);
 		_chargeSteps = chargeSteps;
 		_selfDamage = selfDamage;
 		_shake = BehaviorFactory.createShake();
-		
 	}
 	private var _shooting:Boolean = false;
 	private var _currentStep:uint = 0;
@@ -272,12 +273,12 @@ final class ChargedFireBehavior implements IBehavior
 		{
 			if (!_shooting)
 			{
-				_rate.reset();
+				_stepRate.reset();
 				_currentStep = 0;
 				_shooting = true;
 			}
 
-			if (_rate.now)
+			if (_stepRate.now)
 			{
 				if (_currentStep < _chargeSteps)
 				{
@@ -285,7 +286,7 @@ final class ChargedFireBehavior implements IBehavior
 				}
 				if (_currentStep == _chargeSteps)
 				{
-					trace("would damage the actor for", _selfDamage); 
+					game.script.damageActor(game, game.player, _selfDamage);
 				}
 			}
 			_shake.onFrame(game, actor);
@@ -295,8 +296,8 @@ final class ChargedFireBehavior implements IBehavior
 			if (_shooting)
 			{
 				_shooting = false;
-				
-				if (_currentStep)
+
+				if (_basicFireRate.now)
 				{
 					trace("would fire level", Math.min(_chargeSteps-1, _currentStep));
 					_source.fire(game, actor);

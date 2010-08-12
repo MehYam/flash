@@ -2,6 +2,8 @@ package
 {
 	import karnold.utils.Bounds;
 	import karnold.utils.Input;
+	
+	import scripts.IGameScript;
 
 	public interface IGame
 	{
@@ -24,5 +26,6 @@ package
 		function get player():Actor;
 		function get playerShooting():Boolean;
 		function get scoreBoard():ScoreBoard;
+		function get script():IGameScript;
 	}
 }

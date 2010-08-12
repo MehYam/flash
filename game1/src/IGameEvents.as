@@ -13,5 +13,7 @@ package
 		function onPlayerShootToMouse(game:IGame):void;
 		function onPlayerShootForward(game:IGame):void;
 		function onPlayerStopShooting(game:IGame):void;
+
+		function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void;
 	}
 }
