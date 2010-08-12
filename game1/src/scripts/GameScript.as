@@ -173,7 +173,6 @@ class BaseScript implements IGameScript
 
 	static protected const TANK:Boolean = false;
 	protected var _weapon:IBehavior;
-	private var _shake:IBehavior = BehaviorFactory.createShake();
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
@@ -181,8 +180,14 @@ class BaseScript implements IGameScript
 		if (_weapon)
 		{
 			_weapon.onFrame(game, game.player);
-			_shake.onFrame(game, game.player);
 		}
+	}
+	private function pointPlayerAtMouse(game:IGame):void
+	{
+		// should go in a behavior
+		const mouse:Point = game.input.lastMousePos;
+		var dobj:DisplayObject = game.player.displayObject;
+		dobj.rotation = MathUtil.getDegreesRotation(mouse.x - dobj.x, mouse.y - dobj.y);
 	}
 	public function onPlayerShootToMouse(game:IGame):void
 	{
@@ -190,20 +195,19 @@ class BaseScript implements IGameScript
 		{
 			if (!TANK)
 			{
-				// should go in a behavior
-				const mouse:Point = game.input.lastMousePos;
-				var dobj:DisplayObject = game.player.displayObject;
-				dobj.rotation = MathUtil.getDegreesRotation(mouse.x - dobj.x, mouse.y - dobj.y);
+				pointPlayerAtMouse(game);
 			}
-
 			_weapon.onFrame(game, game.player);
-			_shake.onFrame(game, game.player);
 		}
 	}
 	public function onPlayerStopShooting(game:IGame):void
 	{
 		if (_weapon)
 		{
+			if (!TANK)
+			{
+				pointPlayerAtMouse(game);
+			}
 			_weapon.onFrame(game, game.player);
 		}
 	}
@@ -277,7 +281,8 @@ class WaveBasedGameScript extends BaseScript
 		}
 		else
 		{
-			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 150, 150);
+//			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 150, 150);
+			_weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 6, 250, 1);
 			game.showPlayer(Utils.getPlanePlayer());
 		}
 		

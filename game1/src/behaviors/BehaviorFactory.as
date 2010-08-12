@@ -84,6 +84,10 @@ package behaviors
 		{
 			return new AutofireBehavior(source, new RateLimiter(msRateMin, msRateMax));
 		}
+		static public function createChargedFire(source:AmmoFireSource, chargeSteps:uint, msStepDuration:uint, damageAtFull:Number):IBehavior
+		{
+			return new ChargedFireBehavior(source, chargeSteps, msStepDuration, damageAtFull);
+		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
 			return new ExpireBehavior(lifetime);
@@ -96,7 +100,7 @@ package behaviors
 }
 import behaviors.ActorAttrs;
 import behaviors.AmmoFireSource;
-import behaviors.AmmoType;
+import behaviors.BehaviorFactory;
 import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
@@ -235,49 +239,64 @@ final class AutofireBehavior implements IBehavior
 		_source = source;
 		_rate = rate;
 	}
- 	static private var po_tmp:Point = new Point;
-
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (!_rate || _rate.now)
 		{
-			AssetManager.instance.laserSound();
-			var ammo:Actor;
-			switch(_source.ammoType) {
-				case AmmoType.BULLET:
-					ammo = Actor.createBullet(0);
-					break;
-				case AmmoType.LASER:
-				case AmmoType.HIGHLASER:
-					ammo = Actor.createLaser(0);
-					break;
-				case AmmoType.ROCKET:
-					ammo = Actor.createRocket();
-					break;
-				case AmmoType.FUSION:
-					ammo = Actor.createFusionBlast();
-					break;
-			}
-			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
-			if (_source)
+			_source.fire(game, actor);
+		}
+	}
+}
+
+final class ChargedFireBehavior implements IBehavior
+{
+	private var _source:AmmoFireSource;
+	private var _rate:RateLimiter;
+	private var _chargeSteps:uint;
+	private var _selfDamage:Number;
+	private var _shake:IBehavior;
+	public function ChargedFireBehavior(source:AmmoFireSource, chargeSteps:uint, msStepDuration:uint, selfDamage:Number):void
+	{
+		_source = source;
+		_rate = new RateLimiter(msStepDuration, msStepDuration);
+		_chargeSteps = chargeSteps;
+		_selfDamage = selfDamage;
+		_shake = BehaviorFactory.createShake();
+		
+	}
+	private var _shooting:Boolean = false;
+	private var _currentStep:uint = 0;
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		if (game.playerShooting)
+		{
+			if (!_shooting)
 			{
-				Util.setPoint(po_tmp, actor.worldPos);
-				po_tmp.offset(_source.offsetX, _source.offsetY);
-				
-				MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
-				ammo.launchDegrees(po_tmp, angle);
+				_rate.reset();
+				_currentStep = 0;
+				_shooting = true;
 			}
-			else
+
+			if (_rate.now)
 			{
-				ammo.launchDegrees(actor.worldPos, angle);
+				if (_currentStep < _chargeSteps)
+				{
+					++_currentStep;
+				}
+				if (_currentStep == _chargeSteps)
+				{
+					trace("would damage the actor for", _selfDamage); 
+				}
 			}
-			if (game.player == actor)
+			_shake.onFrame(game, actor);
+		}
+		else
+		{
+			if (_shooting)
 			{
-				game.addPlayerAmmo(ammo);
-			}
-			else
-			{
-				game.addEnemyAmmo(ammo);
+				trace("would fire level", Math.min(_chargeSteps-1, _currentStep));
+				_shooting = false;
+				_source.fire(game, actor);
 			}
 		}
 	}
@@ -287,7 +306,6 @@ final class ShakeBehavior implements IBehavior
 {
 	static private const MAGNITUDE:Number = 3;
 
-	private var _offset:Point = new Point;
 	private var _rate:RateLimiter = new RateLimiter(10, 100);
 	public function onFrame(game:IGame, actor:Actor):void
 	{

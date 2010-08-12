@@ -22,6 +22,7 @@ package
 		function get worldBounds():Bounds;
 		function get input():Input;
 		function get player():Actor;
+		function get playerShooting():Boolean;
 		function get scoreBoard():ScoreBoard;
 	}
 }

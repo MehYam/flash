@@ -187,18 +187,18 @@ package
 
 			if (_input.isKeyDown(Input.KEY_SPACE))
 			{
-				_currentScript.onPlayerShootForward(this);
 				_shooting = true;
+				_currentScript.onPlayerShootForward(this);
 			}
 			else if (_input.isKeyDown(Input.MOUSE_BUTTON))
 			{
-				_currentScript.onPlayerShootToMouse(this);
 				_shooting = true;
+				_currentScript.onPlayerShootToMouse(this);
 			}
 			else if (_shooting)
 			{
-				_currentScript.onPlayerStopShooting(this);
 				_shooting = false;
+				_currentScript.onPlayerStopShooting(this);
 			}
 
 			runFrameOnCast(_cast.enemies);
@@ -355,6 +355,10 @@ package
 		public function get player():Actor
 		{
 			return _player;
+		}
+		public function get playerShooting():Boolean
+		{
+			return _shooting;
 		}
 		public function get scoreBoard():ScoreBoard
 		{
