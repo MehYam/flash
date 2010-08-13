@@ -24,7 +24,7 @@ package
 		//KAI: if this goes in-game, it's better to load it and ditch the loader so that the bitmap data's not duplicated
 		// when we copy it out - OR - see if Bitmap is really smart, and just use the tiled thing.  Worth profiling to
 		// see what the difference is
-		[Embed(source="assets/tiled_sepia_inv.png")]
+		[Embed(source="assets/tiled.png")]
 		private var TiledImages:Class;
 		
 		static private var s_instance:AssetManager;

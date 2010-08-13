@@ -3,10 +3,11 @@ package gameData
 	final public class PlaneData extends VehiclePartData
 	{
 		public var upgrades:uint;
-		
-		public function PlaneData(name:String, index:uint, baseStats:BaseStats, upgrades:uint = 0)
+		public var unlock:uint = 0;  // index of PlaneData that unlocks this one
+
+		public function PlaneData(name:String, aindex:uint, baseStats:BaseStats, upgrades:uint = 0)
 		{
-			super(name, index, baseStats);
+			super(name, aindex, baseStats);
 			this.upgrades = upgrades;
 		}
 		static private var s_entries:Array;
@@ -58,6 +59,21 @@ package gameData
 				new PlaneData("Corvid X", 35, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Death Bird", 36, new BaseStats(0.2, 0.4, 0.3, 0.8, 2000))
 				];
+				
+				s_entries[0].unlock = 0;
+				s_entries[3].unlock = 0;
+				s_entries[6].unlock = 0;
+				s_entries[9].unlock = 8;
+				s_entries[12].unlock = 5;
+				s_entries[15].unlock = 2;
+				s_entries[18].unlock = 8;
+				s_entries[21].unlock = 5;
+				s_entries[24].unlock = 0;
+				s_entries[25].unlock = 8;
+				s_entries[28].unlock = 2;
+				s_entries[31].unlock = 5;
+				s_entries[34].unlock = 2
+				
 			}
 			return s_entries;
 		}

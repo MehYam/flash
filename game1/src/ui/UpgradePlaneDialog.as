@@ -53,7 +53,7 @@ package ui
 		private var _list:GameList;
 		private function addShipList():void
 		{
-			UIUtil.addGroupBox(this, "Ships", LEFT_MARGIN, TOP_MARGIN, LIST_WIDTH, LIST_HEIGHT + LIST_PADDING);
+			UIUtil.addGroupBox(this, "Planes", LEFT_MARGIN, TOP_MARGIN, LIST_WIDTH, LIST_HEIGHT + LIST_PADDING);
 
 			_list = new GameList;
 			
@@ -79,19 +79,27 @@ package ui
 					continue;
 				}
 				const plane:PlaneData = PlaneData.planes[i];
+				const prereq:PlaneData = PlaneData.planes[plane.unlock];
 				upgrades = plane.upgrades;
-		
-				var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(plane.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
-				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(plane));
-				if (plane.purchased)
+
+				if (prereq.purchased)
 				{
-					UIUtil.addCheckmark(item);
-					if (i == userData.currentPlane)
+					var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(plane.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
+					ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(plane));
+					if (plane.purchased)
 					{
-						_list.selectItem(item);
+						UIUtil.addCheckmark(item);
+						if (i == userData.currentPlane)
+						{
+							_list.selectItem(item);
+						}
 					}
+					_list.addItem(item);
 				}
-				_list.addItem(item);
+				else
+				{
+					_list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
+				}
 				
 			}
 			_list.render();

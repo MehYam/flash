@@ -386,7 +386,6 @@ private var _wave:uint = 0;
 		const isPlayer:Boolean = actor == game.player;
 		const particles:uint = isPlayer ? Math.max(2, damage/2) : Math.min(damage/6, 15);
 		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
-trace("damaging actor from ", actor.health, "to", actor.health - damage);
 		actor.health -= damage;
 		if (isPlayer)
 		{
