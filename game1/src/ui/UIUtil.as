@@ -50,8 +50,8 @@ package ui
 			
 			var item:GameListItem = new GameListItem(question, size, size);
 			var lock:DisplayObject = AssetManager.instance.lock();
-			lock.x = item.width - 15;
-			lock.y = item.height - 15;
+			lock.x = item.width - 20;
+			lock.y = item.height - 20;
 			item.addChild(lock);
 			
 			item.mouseChildren = false;
@@ -61,8 +61,8 @@ package ui
 		static public function addCheckmark(item:GameListItem):void
 		{
 			var check:DisplayObject = AssetManager.instance.checkmark();
-			check.x = item.width - check.width/2;
-			check.y = check.height/2 + 5;
+			check.x = item.width - check.width/2 - 10;
+			check.y = check.height/2 + 15;
 			item.addChild(check);
 		}
 		static public var s_tweenInDialogArg:Object;
@@ -115,8 +115,17 @@ package ui
 		static public function formatItemTooltip(part:VehiclePartData, nameHeader:Boolean = true):String
 		{
 			const cost:uint = part.baseStats.cost;
-			const canAfford:Boolean = part.baseStats.cost <= UserData.instance.credits;
-			const costString:String = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");  
+			var costString:String = "";
+			if (part.purchased)
+			{
+				costString = "<i>Purchased</i>";
+			}
+			else
+			{
+				const canAfford:Boolean = part.baseStats.cost <= UserData.instance.credits;
+				costString = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");  
+			}
+
 			var retval:String = nameHeader ? "Name: " : ""; 
 			retval += "<font size='+2'><b>" + part.name + "</b></font><br>Cost: <b>" + costString + "</b><br><br>";
 			retval += "This ship is a pretty cool ship because as far as ship goes, it ship ships shipsss pretty cool ship ship.  ship.";

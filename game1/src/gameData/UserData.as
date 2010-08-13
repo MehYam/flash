@@ -12,8 +12,8 @@ package gameData
 			if (!s_instance)
 			{
 				s_instance = new UserData(new SINGLETONLIMITER);
-				s_instance.credits = 10000;
-				s_instance.currentPlane = 3;
+				s_instance.credits = 100000;
+				s_instance.currentPlane = 0;
 		
 				// priming
 				PlaneData.planes;
@@ -21,11 +21,11 @@ package gameData
 				TankPartData.turrets;
 
 				s_instance.purchasePart(PlaneData.getPlane(0), 0);
-				s_instance.purchasePart(PlaneData.getPlane(1), 0);
-				s_instance.purchasePart(PlaneData.getPlane(3), 0);
-				s_instance.purchasePart(PlaneData.getPlane(9), 0);
-				s_instance.purchasePart(PlaneData.getPlane(10), 0);
-				s_instance.purchasePart(PlaneData.getPlane(11), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(1), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(3), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(9), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(10), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(11), 0);
 
 				s_instance.purchasePart(TankPartData.getHull(0), 0);
 				s_instance.purchasePart(TankPartData.getTurret(0), 0);
