@@ -18,7 +18,7 @@ package behaviors
 		static public const INFINITE_LIFETIME:int = -1;
 		
 		// these semi-belong here
-		static public const MAX_HEALTH:uint = 100;
+		static public const DEFAULT_HEALTH:uint = 100;
 		static public const DEFAULT_VALUE:uint = 10;
 
 		public var MAX_SPEED:Number;

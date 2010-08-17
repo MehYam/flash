@@ -91,7 +91,7 @@ package ui
 
 			if (!s_tweenOutDialogArg)
 			{
-				s_tweenOutDialogArg = {x: 0, y: 0, ease:Back.easeIn, onComplete:removeThyself, onCompleteParams:[]};
+				s_tweenOutDialogArg = {x: 0, y: 0, ease:Back.easeIn, onComplete:tweenOut_removeThyself, onCompleteParams:[]};
 			}
 			
 			s_tweenOutDialogArg.x = dialog.x;
@@ -100,18 +100,30 @@ package ui
 			
 			TweenLite.to(dialog, 0.5, s_tweenOutDialogArg);
 		}
-		
-		static public function removeThyself(thy:DisplayObject):void
+		static private function tweenOut_removeThyself(thy:DisplayObject):void
 		{
 			if (thy.parent)
 			{
 				// release the last remaining references to the dialog
 				s_tweenOutDialogArg.onCompleteParams.length = 0;
-
+				
 				thy.parent.removeChild(thy);
 			}
 		}
-		
+
+		static public var s_fadeDialogArg:Object;
+		static public function fadeAndRemove(removee:DisplayObject):void
+		{
+			TweenLite.to(removee, 3, {alpha:0, onComplete:removeThyself, onCompleteParams:[removee]});
+		}
+		static public function removeThyself(thy:DisplayObject):void
+		{
+			if (thy.parent)
+			{
+				thy.parent.removeChild(thy);
+			}
+		}
+
 		static public function formatItemTooltip(part:VehiclePartData, nameHeader:Boolean = true):String
 		{
 			const cost:uint = part.baseStats.cost;

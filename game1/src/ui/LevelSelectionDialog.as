@@ -7,8 +7,10 @@ package ui
 	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
 	
-	import karnold.utils.Util;
+	import gameData.UserData;
+	
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.Util;
 	
 	public class LevelSelectionDialog extends GameDialog
 	{
@@ -31,13 +33,14 @@ package ui
 			{
 				for (var c:uint = 0; c < 5; ++c)
 				{
-					btn = GameButton.create("Level " + ((r*c) + r), false, 18, 1);
-					
+					var level:uint = (r*c) + r;
+					btn = GameButton.create("Level " + level, false, 18, 1);
+					btn.name = String(level);
 					btn.width = 85;
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
 
-					if (r || c)
+					if (UserData.instance.levelReached < level)
 					{
 						btn.enabled = false;
 						var lock:DisplayObject = AssetManager.instance.lock();
@@ -47,6 +50,10 @@ package ui
 						lock.y = btn.height - lock.height;
 						DisplayObjectContainer(btn).addChild(lock);
 					}
+					else
+					{
+						Util.listen(btn, MouseEvent.CLICK, onLevel);
+					}
 
 					addChild(btn);
 				}
@@ -55,7 +62,7 @@ package ui
 		
 		private function addBottomInterface():void
 		{
-			var hangar:GameButton = GameButton.create("Plane Hangar", true, 20, 1);
+			var hangar:DisplayObject = GameButton.create("Plane Hangar", true, 20, 1);
 			hangar.x = 10;
 			hangar.y = height + 20;
 			
@@ -98,6 +105,11 @@ package ui
 		private function onTankGarage(e:Event):void
 		{
 			UIUtil.openDialog(parent, new UpgradeTankDialog);
+		}
+		private function onLevel(e:Event):void
+		{
+			const level:uint = parseInt(DisplayObject(e.currentTarget).name);
+			
 		}
 	}
 }

@@ -21,9 +21,9 @@ package
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
-		public var attrs:ActorAttrs;
 
-		// meta-data that really doesn't belong here
+		// meta-data that maybe doesn't belong here
+		public var attrs:ActorAttrs;
 		public var health:Number;
 		public var damage:Number;
 		public var name:String;
@@ -46,7 +46,7 @@ package
 		}
 		public function reset():void  // IResettable
 		{
-			health = ActorAttrs.MAX_HEALTH;
+			health = ActorAttrs.DEFAULT_HEALTH;
 			value = ActorAttrs.DEFAULT_VALUE;
 			if (attrs)
 			{

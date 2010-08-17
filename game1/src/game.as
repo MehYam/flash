@@ -39,6 +39,7 @@ package
 	import scripts.TankActor;
 	
 	import ui.GameToolTip;
+	import ui.LevelSelectionDialog;
 	import ui.TestDialog;
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
@@ -63,22 +64,39 @@ package
 
 			toTitleScreen();
 		}
-		
+
+		private var _title:DisplayObject;
 		private function toTitleScreen():void
 		{
 			ToolTipMgr.instance.tooltip = new GameToolTip;			
 
-			var titleScreen:TitleScreen = new TitleScreen;
-			parent.addChild(titleScreen);
+			if (!_title)
+			{
+				_title = new TitleScreen;
+			}
+			_title.alpha = 1;
+			parent.addChild(_title);
 			
-			Util.listen(titleScreen, TitleScreenEvent.NEW_GAME, onNewGame);
+			Util.listen(_title, TitleScreenEvent.NEW_GAME, onNewGame);
 		}
 		private function onNewGame(e:Event):void
 		{
-			IEventDispatcher(e.target).removeEventListener(e.type, arguments.callee);
+			// Logic:
+			//  - if user's never played before, put them right in wave 1
+			//  - else bring up the confirm dialog
+			
+			//UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
 			startGame();
 			
-			TitleScreen(e.target).fadeAndRemoveSelf();
+			UIUtil.fadeAndRemove(_title);
+		}
+		private var _levelSelectionDialog:DisplayObject
+		private function onContinue(e:Event):void
+		{
+			UIUtil.openDialog(DisplayObjectContainer(e.target), new LevelSelectionDialog);
+			//UIUtil.openDialog(this, new UpgradeTankDialog);
+			//UIUtil.openDialog(this, new UpgradePlaneDialog);
+			//UIUtil.openDialog(this, new TestDialog);
 		}
 
 		private var _input:Input;

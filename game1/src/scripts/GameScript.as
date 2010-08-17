@@ -27,6 +27,10 @@ import behaviors.IBehavior;
 import flash.display.DisplayObject;
 import flash.geom.Point;
 
+import gameData.PlaneData;
+import gameData.TankPartData;
+import gameData.UserData;
+
 import karnold.utils.Bounds;
 import karnold.utils.FrameTimer;
 import karnold.utils.MathUtil;
@@ -95,13 +99,17 @@ final class Utils
 	}
 	static public function getPlanePlayer():Actor
 	{
-		var plane:Actor = new Actor(ActorAssetManager.createShip(0), ActorAttrs.BLUE_SHIP);
+		const asset:uint = PlaneData.getPlane(UserData.instance.currentPlane).assetIndex;
+		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), ActorAttrs.BLUE_SHIP);
 		plane.behavior = BehaviorFactory.faceForward;
 		return plane;
 	}
 	static public function getTankPlayer():Actor
 	{
-		var tank:Actor = TankActor.createTankActor(0, 0, ActorAttrs.TEST_TANK);
+		const hull:uint = TankPartData.getHull(UserData.instance.currentHull).assetIndex;
+		const turret:uint = TankPartData.getTurret(UserData.instance.currentTurret).assetIndex;
+		
+		var tank:Actor = TankActor.createTankActor(hull, turret, ActorAttrs.TEST_TANK);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 		return tank;
 	}
@@ -283,8 +291,8 @@ class WaveBasedGameScript extends BaseScript
 		}
 		else
 		{
-//			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 150, 150);
-			_weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 6, 250, 1);
+			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -20), 150, 150);
+//			_weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 6, 250, 1);
 			game.showPlayer(Utils.getPlanePlayer());
 		}
 		
@@ -298,7 +306,7 @@ class WaveBasedGameScript extends BaseScript
 
 	private var _waves:Array = 
 	[
-		new Wave(Enemy.GREENK, 10),
+		new Wave(Enemy.GREENK, 5),
 		new Wave(Enemy.BAT, 10),
 		new Wave(Enemy.GREENK, 15),
 		[new Wave(Enemy.GREENK, 10), new Wave(Enemy.REDROGUE, 2)],
@@ -311,7 +319,6 @@ class WaveBasedGameScript extends BaseScript
 
 	static private const _tmpArray:Array = [];
 	private var _enemies:uint = 0;
-private var _wave:uint = 0;
 	private function addNextWave():void
 	{
 //Utils.addEnemyByIndex(_game, _wave++);
@@ -389,7 +396,7 @@ private var _wave:uint = 0;
 		actor.health -= damage;
 		if (isPlayer)
 		{
-			game.scoreBoard.pctHealth = actor.health / ActorAttrs.MAX_HEALTH;
+			game.scoreBoard.pctHealth = actor.health / ActorAttrs.DEFAULT_HEALTH;
 		}
 		else if (actor.health <= 0)
 		{
