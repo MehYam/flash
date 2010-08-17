@@ -80,8 +80,12 @@ package behaviors
 		}
 
 		// Non-singletons
-		static public function createAutofire(source:AmmoFireSource, msRateMin:uint, msRateMax:uint):IBehavior
+		static public function createAutofire(source:AmmoFireSource, msRateMin:uint, msRateMax:uint = 0):IBehavior
 		{
+			if (msRateMax < msRateMin)
+			{
+				msRateMax = msRateMin;
+			}
 			return new AutofireBehavior(source, new RateLimiter(msRateMin, msRateMax));
 		}
 		static public function createChargedFire(source:AmmoFireSource, chargeSteps:uint, msStepDuration:uint, damageAtFull:Number):IBehavior

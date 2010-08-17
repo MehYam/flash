@@ -10,13 +10,15 @@ package behaviors
 	public class AmmoFireSource
 	{
 		private var _ammoType:AmmoType;
+		private var _damage:Number;
 		private var _offsetX:Number;
 		private var _offsetY:Number;
 		private var _angle:Number;
 		
-		public function AmmoFireSource(type:AmmoType, x:Number, y:Number, angle:Number = 0)
+		public function AmmoFireSource(type:AmmoType, damage:Number, x:Number, y:Number, angle:Number = 0)
 		{
 			_ammoType = type;
+			_damage = damage;
 			_offsetX = x;
 			_offsetY = y;
 			angle = angle;

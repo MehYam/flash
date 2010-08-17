@@ -51,10 +51,18 @@ final class Enemy
 	static public const BAT:Enemy = new Enemy;
 }
 
+final class TestAttrs
+{
+	static public const BLUE_SHIP:ActorAttrs = new ActorAttrs(100, 6, 1, 0.1);
+	static public const GREEN_SHIP:ActorAttrs = new ActorAttrs(100, 1.5, 0.1, 0, 10, 10);
+	static public const RED_SHIP:ActorAttrs = new ActorAttrs(100, 3, 0.1, 0, 15, 15);
+	static public const GRAY_SHIP:ActorAttrs = new ActorAttrs(100, 2, 0.15, 20);
+	static public const TANK:ActorAttrs = new ActorAttrs(100, 1.5, 1, 0.5);
+}
 final class Utils
 {
-	static private const REDROGUE_FIRESOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 0, -20);
-	static private const LASERSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.LASER, 0, -20);
+	static private const REDROGUE_FIRESOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20);
+	static private const LASERSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.LASER, 10, 0, -20);
 
 	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
@@ -97,26 +105,39 @@ final class Utils
 			break;
 		}
 	}
-	static public function getPlanePlayer():Actor
+	static public function getPlayerPlane():PlayerVehicle
 	{
 		const asset:uint = PlaneData.getPlane(UserData.instance.currentPlane).assetIndex;
-		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), ActorAttrs.BLUE_SHIP);
+
+		var weapon:IBehavior;
+		var attrs:ActorAttrs;
+		switch (UserData.instance.currentPlane) {
+			case 0:
+				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -20), 333);
+				attrs = new ActorAttrs(100, 5, 1, 0.1);
+				break;
+//			case 1:
+//				weapon = new CompositeBehavior(BehaviorFactory.createAutoFire(new 
+		}
+		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
 		plane.behavior = BehaviorFactory.faceForward;
-		return plane;
+		var retval:PlayerVehicle = new PlayerVehicle(plane, weapon);
+		
+		return retval;
 	}
-	static public function getTankPlayer():Actor
+	static public function getPlayerTank():PlayerVehicle
 	{
 		const hull:uint = TankPartData.getHull(UserData.instance.currentHull).assetIndex;
 		const turret:uint = TankPartData.getTurret(UserData.instance.currentTurret).assetIndex;
 		
-		var tank:Actor = TankActor.createTankActor(hull, turret, ActorAttrs.TEST_TANK);
+		var tank:Actor = TankActor.createTankActor(hull, turret, TestAttrs.TANK);
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
-		return tank;
+		return null;
 	}
 
 	static public function addEnemyByIndex(game:IGame, index:uint):Actor
 	{
-		var a:Actor = new Actor(ActorAssetManager.createShip(index), ActorAttrs.RED_SHIP);
+		var a:Actor = new Actor(ActorAssetManager.createShip(index), TestAttrs.RED_SHIP);
 		a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 
 		placeAtRandomEdge(a, game.worldBounds);
@@ -129,17 +150,17 @@ final class Utils
 		var a:Actor;
 		switch (type) {
 		case Enemy.REDROGUE:
-			a = new Actor(ActorAssetManager.createShip(23, 0.7), ActorAttrs.RED_SHIP);
+			a = new Actor(ActorAssetManager.createShip(23, 0.7), TestAttrs.RED_SHIP);
 			a.name = "Red Rogue";
 			a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
 			break;
 		case Enemy.GREENK:
-			a = new Actor(ActorAssetManager.createShip(3), ActorAttrs.GREEN_SHIP);
+			a = new Actor(ActorAssetManager.createShip(3), TestAttrs.GREEN_SHIP);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
 		case Enemy.GRAYSHOOTER:
-			a = new Actor(ActorAssetManager.createShip(6), ActorAttrs.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createShip(6), TestAttrs.GRAY_SHIP);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -151,7 +172,7 @@ final class Utils
 			);
 			break;
 		case Enemy.BAT:
-			a = new Actor(ActorAssetManager.createShip(9), ActorAttrs.GRAY_SHIP);
+			a = new Actor(ActorAssetManager.createShip(9), TestAttrs.GRAY_SHIP);
 			a.name = "Bat";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -171,7 +192,24 @@ final class Utils
 class BaseScript implements IGameScript
 {
 	// IGameScript
-	public function begin(game:IGame):void {}
+	protected const TANK:Boolean = false;
+	private var _weapon:IBehavior;
+	public function begin(game:IGame):void 
+	{
+		var player:PlayerVehicle;
+		if (TANK)
+		{
+			player = Utils.getPlayerTank();
+			_weapon = player.weapon;//BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -50), 300, 300);
+			game.showPlayer(player.actor);
+		}
+		else
+		{
+			player = Utils.getPlayerPlane();
+			_weapon = player.weapon;
+			game.showPlayer(player.actor);
+		}
+	}
 
 	// IGameEvents
 	public function onCenterPrintDone():void	{}
@@ -179,9 +217,6 @@ class BaseScript implements IGameScript
 	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
 	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
-
-	static protected const TANK:Boolean = false;
-	protected var _weapon:IBehavior;
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
 	public function onPlayerShootForward(game:IGame):void
@@ -215,6 +250,7 @@ class BaseScript implements IGameScript
 		{
 			if (!TANK)
 			{
+				//KAI: bug to fix here when player shooting w/ keyboard.  I think this was to get fusion to work right
 				pointPlayerAtMouse(game);
 			}
 			_weapon.onFrame(game, game.player);
@@ -236,11 +272,11 @@ final class TestScript extends BaseScript
 		game.tiles = GrassTilesAssets.testLevel;
 		if (TANK)
 		{
-			game.showPlayer(Utils.getTankPlayer());
+			game.showPlayer(Utils.getPlayerTank().actor);
 		}
 		else
 		{
-			game.showPlayer(Utils.getPlanePlayer());
+			game.showPlayer(Utils.getPlayerPlane().actor);
 		}
 		game.start();
 		game.centerPrint("Test Script Begin");
@@ -281,21 +317,10 @@ class WaveBasedGameScript extends BaseScript
 	public override function begin(game:IGame):void
 	{
 		_game = game;
-
 		game.tiles = GrassTilesAssets.smallLevel;
 
-		if (TANK)
-		{
-			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -50), 300, 300);
-			game.showPlayer(Utils.getTankPlayer());
-		}
-		else
-		{
-			_weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -20), 150, 150);
-//			_weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 0, -20), 6, 250, 1);
-			game.showPlayer(Utils.getPlanePlayer());
-		}
-		
+		super.begin(game); //KAI:
+
 		game.start();
 		game.centerPrint("Wave 1");
 
@@ -396,7 +421,7 @@ class WaveBasedGameScript extends BaseScript
 		actor.health -= damage;
 		if (isPlayer)
 		{
-			game.scoreBoard.pctHealth = actor.health / ActorAttrs.DEFAULT_HEALTH;
+			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 		}
 		else if (actor.health <= 0)
 		{
@@ -435,6 +460,18 @@ class WaveBasedGameScript extends BaseScript
 		{
 			_comboTimer.stop();
 		}
+	}
+}
+
+final class PlayerVehicle
+{
+	public var actor:Actor;
+	public var weapon:IBehavior;
+	
+	public function PlayerVehicle(actor:Actor, weapon:IBehavior)
+	{
+		this.actor = actor;
+		this.weapon = weapon;
 	}
 }
 

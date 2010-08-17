@@ -46,11 +46,11 @@ package
 		}
 		public function reset():void  // IResettable
 		{
-			health = ActorAttrs.DEFAULT_HEALTH;
-			value = ActorAttrs.DEFAULT_VALUE;
 			if (attrs)
 			{
+				health = attrs.MAX_HEALTH;
 				damage = attrs.DAMAGE;
+				value = ActorAttrs.DEFAULT_VALUE;
 			}
 
 			var resettableBehavior:IResettable = _behavior as IResettable;

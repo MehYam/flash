@@ -21,6 +21,8 @@ package gameData
 				TankPartData.turrets;
 
 				s_instance.purchasePart(PlaneData.getPlane(0), 0);
+				s_instance.purchasePart(PlaneData.getPlane(1), 0);
+				s_instance.purchasePart(PlaneData.getPlane(2), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(3), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(9), 0);
