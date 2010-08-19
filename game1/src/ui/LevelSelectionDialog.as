@@ -25,14 +25,15 @@ package ui
 
 			render();
 		}
-		
+
+		private var _buttons:Array = [];
 		private function addLevelButtons():void
 		{
 			var btn:GameButton;
 			const ROWS:uint = 7;
-			for (var r:uint = 0; r < ROWS; ++r)
+			for (var c:uint = 0; c < 5; ++c)
 			{
-				for (var c:uint = 0; c < 5; ++c)
+				for (var r:uint = 0; r < ROWS; ++r)
 				{
 					var level:uint = (ROWS*c) + r;
 					btn = GameButton.create("Level " + level, false, 18, 1);
@@ -57,18 +58,31 @@ package ui
 						lock.scaleY = 0.7;
 						lock.x = btn.width - lock.width;
 						lock.y = btn.height - lock.height;
+						lock.name = "tremendoushack";
 						DisplayObjectContainer(btn).addChild(lock);
 					}
-					else
-					{
-						Util.listen(btn, MouseEvent.CLICK, onLevel);
-					}
+					Util.listen(btn, MouseEvent.CLICK, onLevel);
 
 					addChild(btn);
+					_buttons.push(btn);
 				}
 			}
 		}
 		
+		public function unlockLevels(levels:uint):void
+		{
+			for (var i:uint = 0; i < levels; ++i)
+			{
+				var btn:GameButton = GameButton(_buttons[i]);
+				btn.enabled = true;
+				
+				var lock:DisplayObject = btn.getChildAt(btn.numChildren - 1);
+				if (lock.name == "tremendoushack")
+				{
+					btn.removeChild(lock);
+				}
+			}
+		}
 		private function addBottomInterface():void
 		{
 			var hangar:DisplayObject = GameButton.create("Plane Hangar", true, 20, 1);

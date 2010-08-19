@@ -21,6 +21,8 @@ package
 	
 	import flashx.textLayout.debug.assert;
 	
+	import gameData.UserData;
+	
 	import karnold.tile.BitmapTileFactory;
 	import karnold.tile.ITileFactory;
 	import karnold.tile.TiledBackground;
@@ -523,6 +525,12 @@ package
 		public function endLevel(victory:Boolean):void
 		{
 			toTitleScreen(true);
+			
+			if (victory)
+			{
+				UserData.instance.levelReached = Math.min(UserData.instance.levelReached + 1, Consts.LEVELS - 1);
+				_levelSelectionDialog.unlockLevels(UserData.instance.levelReached + 1);
+			}
 		}
 		public function get running():Boolean
 		{
