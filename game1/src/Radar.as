@@ -85,5 +85,16 @@ package
 				delete _dots[actor];
 			}
 		}
+		public function clear():void
+		{
+			for each (var dot:DisplayObject in _dots)
+			{
+				if (dot && dot.parent)
+				{
+					removeChild(dot);
+				}
+			}
+			_dots = new Dictionary(true);
+		}
 	}
 }

@@ -29,16 +29,25 @@ package ui
 		private function addLevelButtons():void
 		{
 			var btn:GameButton;
-			for (var r:uint = 0; r < 7; ++r)
+			const ROWS:uint = 7;
+			for (var r:uint = 0; r < ROWS; ++r)
 			{
 				for (var c:uint = 0; c < 5; ++c)
 				{
-					var level:uint = (r*c) + r;
+					var level:uint = (ROWS*c) + r;
 					btn = GameButton.create("Level " + level, false, 18, 1);
 					btn.name = String(level);
 					btn.width = 85;
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
+
+//					if (!r && !c)
+//					{
+//						var icon:DisplayObject = AssetManager.instance.planeIcon();
+//						icon.x = btn.width - icon.width;
+//						icon.y = icon.height;
+//						btn.addChild(icon);
+//					}
 
 					if (UserData.instance.levelReached < level)
 					{
@@ -106,10 +115,15 @@ package ui
 		{
 			UIUtil.openDialog(parent, new UpgradeTankDialog);
 		}
+		private var _selection:uint = 0;
 		private function onLevel(e:Event):void
 		{
-			const level:uint = parseInt(DisplayObject(e.currentTarget).name);
-			
+			_selection = parseInt(DisplayObject(e.currentTarget).name);
+			dispatchEvent(new Event(Event.SELECT));	
+		}
+		public function get selection():uint
+		{
+			return _selection;
 		}
 	}
 }

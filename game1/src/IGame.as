@@ -15,8 +15,10 @@ package
 		function killActor(actor:Actor):void;
 		function centerPrint(text:String):void;
 
-		function start():void;
-		function stop():void;
+		function unpause():void;
+		function pause():void;
+
+		function endLevel(victory:Boolean):void;
 
 		function set tiles(str:String):void;
 

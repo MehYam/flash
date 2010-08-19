@@ -56,11 +56,11 @@ package
 		{
 			if (_game.running)
 			{
-				_game.stop();
+				_game.pause();
 			}
 			else
 			{
-				_game.start();
+				_game.unpause();
 			}
 		}
 		public function set txt1(i:int):void

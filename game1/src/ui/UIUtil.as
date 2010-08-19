@@ -116,6 +116,11 @@ package ui
 		{
 			TweenLite.to(removee, 3, {alpha:0, onComplete:removeThyself, onCompleteParams:[removee]});
 		}
+		static public function fadeIn(fader:DisplayObject):void
+		{
+			fader.alpha = 0;
+			TweenLite.to(fader, 3, {alpha:1});
+		}
 		static public function removeThyself(thy:DisplayObject):void
 		{
 			if (thy.parent)

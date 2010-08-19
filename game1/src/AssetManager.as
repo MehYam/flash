@@ -145,17 +145,26 @@ package
 			return rect;
 		}
 
-		static private const s_uiStuffDropShadow:Array = [new DropShadowFilter(2, 45, 0, 1, 1, 1)];
 		[Embed(source="assets/master.swf", symbol="checkmark")]
 		static private const CHECKMARK:Class;
+		[Embed(source="assets/master.swf", symbol="arrow")]
+		static private const ARROW:Class;
+		[Embed(source="assets/master.swf", symbol="lock")]
+		static private const LOCK:Class;
+		[Embed(source="assets/master.swf", symbol="question")]
+		static private const QUESTION:Class;
+		[Embed(source="assets/master.swf", symbol="planeIcon")]
+		static private const PLANEICON:Class;
+		[Embed(source="assets/master.swf", symbol="tankIcon")]
+		static private const TANKICON:Class;
+		
+		static private const s_uiStuffDropShadow:Array = [new DropShadowFilter(2, 45, 0, 1, 1, 1)];
 		public function checkmark():DisplayObject
 		{
 			var retval:DisplayObject = new CHECKMARK;
 			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}
-		[Embed(source="assets/master.swf", symbol="arrow")]
-		static private const ARROW:Class;
 		public function arrow():DisplayObject
 		{	
 			var retval:DisplayObject = new ARROW;
@@ -164,19 +173,27 @@ package
 			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}
-		[Embed(source="assets/master.swf", symbol="lock")]
-		static private const LOCK:Class;
 		public function lock():DisplayObject
 		{	
 			var retval:DisplayObject = new LOCK;
 			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}
-		[Embed(source="assets/master.swf", symbol="question")]
-		static private const QUESTION:Class;
 		public function question():DisplayObject
 		{	
 			var retval:DisplayObject = new QUESTION;
+			retval.filters = s_uiStuffDropShadow;
+			return retval; 
+		}
+		public function planeIcon():DisplayObject
+		{
+			var retval:DisplayObject = new PLANEICON;
+			retval.filters = s_uiStuffDropShadow;
+			return retval; 
+		}
+		public function tankIcon():DisplayObject
+		{
+			var retval:DisplayObject = new TANKICON;
 			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}

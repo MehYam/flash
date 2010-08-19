@@ -24,15 +24,15 @@ package scripts
 				case 0:
 					waves = 
 					[
-						new Wave(EnemyEnum.GREENK, 5, GREEN),
-						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
-						new Wave(EnemyEnum.MOTH, 3, MOTH),
-						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
-						new Wave(EnemyEnum.GREENK, 7, GREEN),
-						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-						new Wave(EnemyEnum.MOTH, 4, MOTH),
-						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+//						new Wave(EnemyEnum.GREENK, 5, GREEN),
+//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
+//						new Wave(EnemyEnum.MOTH, 3, MOTH),
+//						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+//						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
+//						new Wave(EnemyEnum.GREENK, 7, GREEN),
+//						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+//						new Wave(EnemyEnum.MOTH, 4, MOTH),
+//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
 						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
 					];
 					break;
@@ -299,7 +299,6 @@ final class TestScript extends BaseScript
 		{
 			game.showPlayer(Utils.getPlayerPlane().actor);
 		}
-		game.start();
 		game.centerPrint("Test Script Begin");
 		
 		for (var i:int = 0; i < _actors; ++i)
@@ -353,7 +352,7 @@ class WaveBasedGameScript extends BaseScript
 
 		super.begin(game); //KAI:
 
-		game.start();
+		game.unpause();
 		game.centerPrint("Wave 1");
 
 		game.scoreBoard.pctHealth = 1;
@@ -396,6 +395,7 @@ class WaveBasedGameScript extends BaseScript
 		else
 		{
 			_game.scoreBoard.pctLevel = 1;
+			_game.endLevel(true);
 		}
 	}
 

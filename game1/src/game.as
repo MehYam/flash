@@ -82,15 +82,24 @@ package
 
 			toTitleScreen();
 		}
-		private var _title:DisplayObject;
-		private function toTitleScreen():void
+		private var _title:DisplayObjectContainer;
+		private function toTitleScreen(fadeIn:Boolean = false):void
 		{
+			pause();
+			
 			if (!_title)
 			{
 				ToolTipMgr.instance.tooltip = new GameToolTip;			
 				_title = new TitleScreen;
 			}
-			_title.alpha = 1;
+			if (fadeIn)
+			{
+				UIUtil.fadeIn(_title);
+			}
+			else
+			{
+				_title.alpha = 1;
+			}
 			parent.addChild(_title);
 			
 			Util.listen(_title, TitleScreenEvent.NEW_GAME, onNewGame);
@@ -102,26 +111,48 @@ package
 			//  - else bring up the confirm dialog
 			
 			//UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
-			startGame();
-			
-			UIUtil.fadeAndRemove(_title);
+//			startGame(0);
+			onContinue(e);
 		}
-		private var _levelSelectionDialog:DisplayObject
 		private function onContinue(e:Event):void
 		{
-			UIUtil.openDialog(DisplayObjectContainer(e.target), new LevelSelectionDialog);
+			toLevelSelectionDialog();
 			//UIUtil.openDialog(this, new UpgradeTankDialog);
 			//UIUtil.openDialog(this, new UpgradePlaneDialog);
 			//UIUtil.openDialog(this, new TestDialog);
 		}
-
-		private var _currentScript:IGameScript;
-		private function startGame():void
+		private var _levelSelectionDialog:LevelSelectionDialog;
+		private function toLevelSelectionDialog():void
 		{
-			
+			if (!_levelSelectionDialog)
+			{
+				_levelSelectionDialog = new LevelSelectionDialog;
+				UIUtil.openDialog(_title, _levelSelectionDialog);
+				
+				Util.listen(_levelSelectionDialog, Event.SELECT, onLevelSelected);
+			}
+		}
+		private function onLevelSelected(e:Event):void
+		{
+			startLevel(_levelSelectionDialog.selection);
+		}
+		private var _currentScript:IGameScript;
+		private function startLevel(level:uint):void
+		{
+			unpause();
+
+			if (_title && _title.parent)
+			{
+				UIUtil.fadeAndRemove(_title);
+			}
+
+			if (_radar)
+			{
+				_radar.clear();
+			}
 //			_currentScript = GameScriptFactory.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
-			_currentScript = GameScript.getLevel(0);
+			_currentScript = GameScript.getLevel(level);
 			_currentScript.begin(this);
 			
 			stage.focus = stage;
@@ -396,8 +427,19 @@ package
 		}
 		private var _radar:Radar;
 		private var _sb:ScoreBoard;
+		private var _lastTilesString:String;
 		public function set tiles(str:String):void
 		{
+			if (str == _lastTilesString)
+			{
+				return;
+			}
+			_lastTilesString = str;
+
+			if (_tiles)
+			{
+				_tiles.deparent();
+			}
 			const factory:ITileFactory = new BitmapTileFactory(AssetManager.instance);
 			_tiles = TiledBackground.createFromString(this, factory, stage.stageWidth, stage.stageHeight, str);
 			_worldBounds =  new Bounds(0, 0, factory.tileSize * _tiles.tilesArray.width, factory.tileSize*_tiles.tilesArray.height);
@@ -413,7 +455,11 @@ package
 			_radar.y = 5;
 
 			_hudLayer.addChild(_radar);
-			
+
+			if (_sb && _sb.parent)
+			{
+				_sb.parent.removeChild(_sb);
+			}
 			_sb = new ScoreBoard;
 			_sb.x = 5;
 			_hudLayer.addChild(_sb);
@@ -466,13 +512,17 @@ package
 //				_input.disableMouseMove(stage);
 //			}
 		}
-		public function start():void
+		public function unpause():void
 		{
 			_frameTimer.startPerFrame();
 		}
-		public function stop():void
+		public function pause():void
 		{
 			_frameTimer.stop();
+		}
+		public function endLevel(victory:Boolean):void
+		{
+			toTitleScreen(true);
 		}
 		public function get running():Boolean
 		{

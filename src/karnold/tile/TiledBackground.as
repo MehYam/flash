@@ -59,6 +59,19 @@ package karnold.tile
 			_tiles.put(null, x, y);
 		}
 
+		public function deparent():void
+		{
+			const width:uint = _tiles.width;
+			const height:uint = _tiles.height;
+			for (var x:uint = 0; x < width; ++x)
+			{
+				for (var y:uint = 0; y < height; ++y)
+				{
+					removeChildAt(x, y);
+				}
+			}
+		}
+
 		private function removeChildAt(x:uint, y:uint):void
 		{
 			var tile:DisplayObject = DisplayObject(_tiles.lookup(x, y));
