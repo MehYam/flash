@@ -12,26 +12,33 @@ package scripts
 		{
 			return new TestScript(10);
 		}
-		static public function get level1():IGameScript
+		
+		static public function getLevel(i:uint):IGameScript
 		{
 			const GREEN:ActorAttrs = new ActorAttrs(20, 1.5, 0.1, 0, 10, 10);
 			const MOTH:ActorAttrs = new ActorAttrs(30, 3, 0.1, 0, 15, 15);
 			const OSPREY:ActorAttrs = new ActorAttrs(100, 1.5, 0.15, 20);
-			
-			var waves:Array =
-			[
-				new Wave(EnemyEnum.GREENK, 5, GREEN),
-				[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
-				new Wave(EnemyEnum.MOTH, 3, MOTH),
-				[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-				new Wave(EnemyEnum.OSPREY, 1, OSPREY),
-				new Wave(EnemyEnum.GREENK, 7, GREEN),
-				[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-				new Wave(EnemyEnum.MOTH, 4, MOTH),
-				[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-				[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
-			];
 
+			var waves:Array;
+			switch(i) {
+				case 0:
+					waves = 
+					[
+						new Wave(EnemyEnum.GREENK, 5, GREEN),
+						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
+						new Wave(EnemyEnum.MOTH, 3, MOTH),
+						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
+						new Wave(EnemyEnum.GREENK, 7, GREEN),
+						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						new Wave(EnemyEnum.MOTH, 4, MOTH),
+						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
+					];
+					break;
+				case 1:
+					break;
+			}
 			return new WaveBasedGameScript(waves);
 		}
 	}
@@ -359,11 +366,6 @@ class WaveBasedGameScript extends BaseScript
 	private var _enemies:uint = 0;
 	private function addNextWave():void
 	{
-//Utils.addEnemyByIndex(_game, _wave++);
-//Utils.addEnemyByIndex(_game, _wave++);
-//Utils.addEnemyByIndex(_game, _wave++);
-//_enemies = 3;
-//return;
 		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
 		if (_waves.length)
 		{
@@ -432,9 +434,7 @@ class WaveBasedGameScript extends BaseScript
 		const particles:uint = Math.max(10, 10 * damage/actor.attrs.MAX_HEALTH);
 		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
 		actor.health -= damage;
-/////////
-//actor.displayObject.filters = [new DropShadowFilter(4, 45, 0xffffff, 0.5, 0, 0)];
-/////////
+
 		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;

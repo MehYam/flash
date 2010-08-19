@@ -2,7 +2,7 @@ package behaviors
 {
 	final public class ActorAttrs
 	{
-		static public const BULLET:ActorAttrs = new ActorAttrs(100, 8, 10, 0, 20, 100, false, 3000);
+		static public const BULLET:ActorAttrs = new ActorAttrs(100, 8, 10, 0, 20, 100, false, 1500);
 		static public const ROCKET:ActorAttrs = new ActorAttrs(100, 3, 0.1, 0, 20, 100, false, 4000);
 		static public const LASER:ActorAttrs = new ActorAttrs(100, 6, 7, 0, 20, 100, false, 2000);
 		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(100, 5, 10, 0, 20, 33);

@@ -49,6 +49,13 @@ package
 	[SWF(backgroundColor="#0")]
 	public final class game extends Sprite implements IGame
 	{
+		private var _input:Input;
+		private var _player:Actor;
+		private var _frameTimer:FrameTimer;
+		private var _frameRate:GameFrameRatePanel;
+		
+		private var _hudLayer:DisplayObjectContainer;
+		private var _actorLayer:DisplayObjectContainer;
 		public function game()
 		{
 			trace("stage", stage.stageWidth, stage.stageHeight);
@@ -60,18 +67,27 @@ package
 			mouseEnabled = false;
 
 			FrameTimer.init(stage);
+			_frameTimer = new FrameTimer(onFrame);
+
 			_input = new Input(stage);
+			_input.enableMouseMove(stage);
+			
+			_actorLayer = new Sprite;
+			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+			_actorLayer.scrollRect = this.scrollRect;
+			parent.addChild(_actorLayer);
+			
+			_hudLayer = new Sprite;
+			parent.addChild(_hudLayer);
 
 			toTitleScreen();
 		}
-
 		private var _title:DisplayObject;
 		private function toTitleScreen():void
 		{
-			ToolTipMgr.instance.tooltip = new GameToolTip;			
-
 			if (!_title)
 			{
+				ToolTipMgr.instance.tooltip = new GameToolTip;			
 				_title = new TitleScreen;
 			}
 			_title.alpha = 1;
@@ -99,30 +115,13 @@ package
 			//UIUtil.openDialog(this, new TestDialog);
 		}
 
-		private var _input:Input;
-		private var _player:Actor;
-		private var _frameTimer:FrameTimer;
-		private var _frameRate:GameFrameRatePanel;
-		
-		private var _hudLayer:DisplayObjectContainer;
-		private var _actorLayer:DisplayObjectContainer;
 		private var _currentScript:IGameScript;
 		private function startGame():void
 		{
-			_frameTimer = new FrameTimer(onFrame);
-			_input.enableMouseMove(stage);
-			
-			_actorLayer = new Sprite;
-			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-			_actorLayer.scrollRect = this.scrollRect;
-			parent.addChild(_actorLayer);
-			
-			_hudLayer = new Sprite;
-			parent.addChild(_hudLayer);
 			
 //			_currentScript = GameScriptFactory.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
-			_currentScript = GameScript.level1;
+			_currentScript = GameScript.getLevel(0);
 			_currentScript.begin(this);
 			
 			stage.focus = stage;
