@@ -27,9 +27,9 @@ package scripts
 				new Wave(EnemyEnum.OSPREY, 1, OSPREY),
 				new Wave(EnemyEnum.GREENK, 7, GREEN),
 				[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-				new Wave(EnemyEnum.MOTH, 6, MOTH),
+				new Wave(EnemyEnum.MOTH, 4, MOTH),
 				[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-				new Wave(EnemyEnum.OSPREY, 3, OSPREY)
+				[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
 			];
 
 			return new WaveBasedGameScript(waves);
@@ -45,6 +45,7 @@ import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
+import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 
 import gameData.PlaneData;
@@ -127,6 +128,7 @@ final class Utils
 		var attrs:ActorAttrs;
 		switch (UserData.instance.currentPlane) {
 			case 0:
+//				weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 10, 0, -20), 5, 1000, 1);
 				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -20), 333);
 				attrs = new ActorAttrs(100, 5, 1, 0.1);
 				break;
@@ -239,10 +241,14 @@ class BaseScript implements IGameScript
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
-	public function onPlayerShootForward(game:IGame):void
+	public function onPlayerShooting(game:IGame, mouse:Boolean):void
 	{
 		if (_weapon)
 		{
+			if (!TANK && mouse)
+			{
+				pointPlayerAtMouse(game);
+			}
 			_weapon.onFrame(game, game.player);
 		}
 	}
@@ -253,24 +259,12 @@ class BaseScript implements IGameScript
 		var dobj:DisplayObject = game.player.displayObject;
 		dobj.rotation = MathUtil.getDegreesRotation(mouse.x - dobj.x, mouse.y - dobj.y);
 	}
-	public function onPlayerShootToMouse(game:IGame):void
+	public function onPlayerStopShooting(game:IGame, mouse:Boolean):void
 	{
 		if (_weapon)
 		{
-			if (!TANK)
+			if (!TANK && mouse)
 			{
-				pointPlayerAtMouse(game);
-			}
-			_weapon.onFrame(game, game.player);
-		}
-	}
-	public function onPlayerStopShooting(game:IGame):void
-	{
-		if (_weapon)
-		{
-			if (!TANK)
-			{
-				//KAI: bug to fix here when player shooting w/ keyboard.  I think this was to get fusion to work right
 				pointPlayerAtMouse(game);
 			}
 			_weapon.onFrame(game, game.player);
@@ -435,9 +429,12 @@ class WaveBasedGameScript extends BaseScript
 	public override function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
 	{
 		const isPlayer:Boolean = actor == game.player;
-		const particles:uint = isPlayer ? Math.max(2, damage/2) : Math.min(damage/6, 15);
+		const particles:uint = Math.max(10, 10 * damage/actor.attrs.MAX_HEALTH);
 		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
 		actor.health -= damage;
+/////////
+//actor.displayObject.filters = [new DropShadowFilter(4, 45, 0xffffff, 0.5, 0, 0)];
+/////////
 		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;

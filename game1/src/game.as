@@ -136,7 +136,7 @@ package
 		private var _cameraPos:Point = new Point;
 		private var _lastCameraPos:Point = new Point;
 		private var _lastPurge:int;
-		private var _shooting:Boolean = false;
+		private var _shooting:ShootState = ShootState.NONE;
 		private function onFrame():void
 		{
 			//
@@ -207,18 +207,19 @@ package
 
 			if (_input.isKeyDown(Input.KEY_SPACE))
 			{
-				_shooting = true;
-				_currentScript.onPlayerShootForward(this);
+				_shooting = ShootState.KEYBOARDSHOOTING;
+				_currentScript.onPlayerShooting(this, false);
 			}
 			else if (_input.isKeyDown(Input.MOUSE_BUTTON))
 			{
-				_shooting = true;
-				_currentScript.onPlayerShootToMouse(this);
+				_shooting = ShootState.MOUSESHOOTING;
+				_currentScript.onPlayerShooting(this, true);
 			}
-			else if (_shooting)
+			else if (_shooting != ShootState.NONE)
 			{
-				_shooting = false;
-				_currentScript.onPlayerStopShooting(this);
+				const mouse:Boolean = _shooting == ShootState.MOUSESHOOTING;
+				_shooting = ShootState.NONE;
+				_currentScript.onPlayerStopShooting(this, mouse);
 			}
 
 			runFrameOnCast(_cast.enemies);
@@ -384,7 +385,7 @@ package
 		}
 		public function get playerShooting():Boolean
 		{
-			return _shooting;
+			return _shooting != ShootState.NONE;
 		}
 		public function get scoreBoard():ScoreBoard
 		{
@@ -590,4 +591,11 @@ final class Cast
 			effects = effects.filter(actorIsAlive);
 		}
 	}
+}
+
+final class ShootState
+{
+	public static const NONE:ShootState = new ShootState;
+	public static const MOUSESHOOTING:ShootState = new ShootState;
+	public static const KEYBOARDSHOOTING:ShootState = new ShootState;
 }
