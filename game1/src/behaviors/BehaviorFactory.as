@@ -80,7 +80,8 @@ package behaviors
 		}
 
 		// Non-singletons
-		static public function createAutofire(source:AmmoFireSource, msRateMin:uint, msRateMax:uint = 0):IBehavior
+		// source - is either an AmmoFireSource or array of them
+		static public function createAutofire(source:*, msRateMin:uint, msRateMax:uint = 0):IBehavior
 		{
 			if (msRateMax < msRateMin)
 			{
@@ -88,7 +89,8 @@ package behaviors
 			}
 			return new AutofireBehavior(source, new RateLimiter(msRateMin, msRateMax));
 		}
-		static public function createChargedFire(source:AmmoFireSource, chargeSteps:uint, msStepDuration:uint, damageAtFull:Number):IBehavior
+		// source - is either an AmmoFireSource or array of them
+		static public function createChargedFire(source:*, chargeSteps:uint, msStepDuration:uint, damageAtFull:Number):IBehavior
 		{
 			return new ChargedFireBehavior(source, chargeSteps, msStepDuration, damageAtFull);
 		}
@@ -236,9 +238,9 @@ final class FadeBehavior implements IBehavior
 
 final class AutofireBehavior implements IBehavior
 {
-	private var _source:AmmoFireSource;
+	private var _source:*;
 	private var _rate:RateLimiter;
-	public function AutofireBehavior(source:AmmoFireSource, rate:RateLimiter):void
+	public function AutofireBehavior(source:*, rate:RateLimiter):void
 	{
 		_source = source;
 		_rate = rate;
@@ -247,20 +249,31 @@ final class AutofireBehavior implements IBehavior
 	{
 		if (!_rate || _rate.now)
 		{
-			_source.fire(game, actor);
+			const sourceAsArray:Array = _source as Array;
+			if (sourceAsArray)
+			{
+				for each (var source:AmmoFireSource in sourceAsArray)
+				{
+					source.fire(game, actor);
+				}
+			}
+			else
+			{
+				AmmoFireSource(_source).fire(game, actor);
+			}
 		}
 	}
 }
 
 final class ChargedFireBehavior implements IBehavior
 {
-	private var _source:AmmoFireSource;
+	private var _source:*;
 	private var _stepRate:RateLimiter;
 	private var _basicFireRate:RateLimiter;
 	private var _chargeSteps:uint;
 	private var _selfDamage:Number;
 	private var _shake:IBehavior;
-	public function ChargedFireBehavior(source:AmmoFireSource, chargeSteps:uint, msStepDuration:uint, selfDamage:Number):void
+	public function ChargedFireBehavior(source:*, chargeSteps:uint, msStepDuration:uint, selfDamage:Number):void
 	{
 		_source = source;
 		_stepRate = new RateLimiter(msStepDuration, msStepDuration);
@@ -304,7 +317,20 @@ final class ChargedFireBehavior implements IBehavior
 				if (_basicFireRate.now)
 				{
 					const level:Number = Math.min(_chargeSteps-1, _currentStep);
-					_source.fire(game, actor, 1 + level/2);
+					const multiplier:Number = 1 + level/2;
+					
+					const sourceAsArray:Array = _source as Array;
+					if (sourceAsArray)
+					{
+						for each (var source:AmmoFireSource in sourceAsArray)
+						{
+							source.fire(game, actor, multiplier);
+						}
+					}
+					else
+					{
+						AmmoFireSource(_source).fire(game, actor, multiplier);
+					}
 				}
 			}
 		}

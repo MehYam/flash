@@ -1,5 +1,7 @@
 package scripts
 {
+	import behaviors.ActorAttrs;
+
 	public class GameScript
 	{
 		static public function get testScript1():IGameScript
@@ -12,21 +14,22 @@ package scripts
 		}
 		static public function get level1():IGameScript
 		{
+			const GREEN:ActorAttrs = new ActorAttrs(20, 1.5, 0.1, 0, 10, 10);
+			const MOTH:ActorAttrs = new ActorAttrs(30, 3, 0.1, 0, 15, 15);
+			const OSPREY:ActorAttrs = new ActorAttrs(100, 1.5, 0.15, 20);
+			
 			var waves:Array =
 			[
-				new Wave(EnemyEnum.OSPREY, 3, 40),
-//				new Wave(EnemyEnum.GREENK, 5, 20),
-//				[new Wave(EnemyEnum.GREENK, 7, 20), new Wave(EnemyEnum.MOTH, 1, 30)],
-//				new Wave(EnemyEnum.MOTH, 5, 30),
-//				[new Wave(EnemyEnum.GREENK, 7, 20), new Wave(EnemyEnum.MOTH, 5, 30)]
-//				new Wave(Enemy.GREENK, 8, 20),
-				
-				//		new Wave(Enemy.GREENK, 15),
-				//		[new Wave(Enemy.GREENK, 10), new Wave(Enemy.MOTH, 2)],
-				//		[new Wave(Enemy.BAT, 10), new Wave(Enemy.MOTH, 3)],
-				//		new Wave(Enemy.GREENK, 20),
-				//		[new Wave(Enemy.MOTH, 5), new Wave(Enemy.GRAYSHOOTER, 3)],
-				//		[new Wave(Enemy.GREENK, 5), new Wave(Enemy.MOTH, 5), new Wave(Enemy.GRAYSHOOTER, 5)]
+				new Wave(EnemyEnum.GREENK, 5, GREEN),
+				[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
+				new Wave(EnemyEnum.MOTH, 3, MOTH),
+				[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+				new Wave(EnemyEnum.OSPREY, 1, OSPREY),
+				new Wave(EnemyEnum.GREENK, 7, GREEN),
+				[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+				new Wave(EnemyEnum.MOTH, 6, MOTH),
+				[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+				new Wave(EnemyEnum.OSPREY, 3, OSPREY)
 			];
 
 			return new WaveBasedGameScript(waves);
@@ -70,9 +73,7 @@ final class EnemyEnum
 
 final class TestAttrs
 {
-	static public const GREEN_SHIP:ActorAttrs = new ActorAttrs(100, 1.5, 0.1, 0, 10, 10);
 	static public const RED_SHIP:ActorAttrs = new ActorAttrs(100, 3, 0.1, 0, 15, 15);
-	static public const OSPREY:ActorAttrs = new ActorAttrs(100, 2, 0.15, 20);
 	static public const TANK:ActorAttrs = new ActorAttrs(100, 1.5, 1, 0.5);
 }
 final class Utils
@@ -87,7 +88,7 @@ final class Utils
 		(
 			msRate,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(source, 300, 1000)),
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(source, 300, 2000)),
 			FLEE
 		);
 	}
@@ -96,7 +97,7 @@ final class Utils
 		return new CompositeBehavior
 		(
 			HOME,
-			BehaviorFactory.createAutofire(LASERSOURCE, msShootRate/2, msShootRate)
+			BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, msShootRate/2, msShootRate)
 		);
 	}
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
@@ -151,34 +152,38 @@ final class Utils
 	static public function addEnemyByIndex(game:IGame, index:uint):Actor
 	{
 		var a:Actor = new Actor(ActorAssetManager.createShip(index), TestAttrs.RED_SHIP);
-		a.behavior = attackAndFlee(MOTH_FIRESOURCE, 5000);
+		a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
 
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
 		return a;
 	}
 	
-	static private const MOTH_FIRESOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
-	static private const LASERSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.LASER, 10, 0, -20);
-	static public function addEnemy(game:IGame, type:EnemyEnum):Actor
+	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
+	static private const OSPREY_LASERSOURCE:Array =
+	[
+		new AmmoFireSource(AmmoType.LASER, 10, -35, -15),
+		new AmmoFireSource(AmmoType.LASER, 10,  35, -15)
+	];
+	static public function addEnemy(game:IGame, type:EnemyEnum, attrs:ActorAttrs):Actor
 	{
 		var a:Actor;
 		switch (type) {
 		case EnemyEnum.MOTH:
-			a = new Actor(ActorAssetManager.createShip(23, 0.7), TestAttrs.RED_SHIP);
+			a = new Actor(ActorAssetManager.createShip(23, 0.7), attrs);
 			a.name = "Red Rogue";
-			a.behavior = attackAndFlee(MOTH_FIRESOURCE, 5000);
+			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
 			break;
 		case EnemyEnum.GREENK:
-			a = new Actor(ActorAssetManager.createShip(3), TestAttrs.GREEN_SHIP);
+			a = new Actor(ActorAssetManager.createShip(3), attrs);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
 		case EnemyEnum.GRAYSHOOTER:
-			a = new Actor(ActorAssetManager.createShip(6), TestAttrs.OSPREY);
+			a = new Actor(ActorAssetManager.createShip(6), attrs);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
+				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
 					3000,
 					HOME,
@@ -187,10 +192,10 @@ final class Utils
 			);
 			break;
 		case EnemyEnum.OSPREY:
-			a = new Actor(ActorAssetManager.createShip(9), TestAttrs.OSPREY);
+			a = new Actor(ActorAssetManager.createShip(9), attrs);
 			a.name = "Osprey";
 			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
+				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
 					3000,
 					HOME,
@@ -304,7 +309,7 @@ final class TestScript extends BaseScript
 	
 	private function addTestActors(game:IGame):void
 	{
-		Utils.addEnemy(game, EnemyEnum.MOTH);
+//		Utils.addEnemy(game, EnemyEnum.MOTH);
 //		Utils.addEnemy(game, Enemy.GREENK);
 //		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
 //		Utils.addEnemy(game, Enemy.FIGHTER5);
@@ -315,12 +320,12 @@ final class Wave
 {
 	public var type:EnemyEnum;
 	public var number:uint;
-	public var health:Number;
-	public function Wave(type:EnemyEnum, number:uint, health:Number)
+	public var attrs:ActorAttrs;
+	public function Wave(type:EnemyEnum, number:uint, attrs:ActorAttrs)
 	{
 		this.type = type;
 		this.number = number;
-		this.health = health;
+		this.attrs = attrs;
 	}
 }
 class WaveBasedGameScript extends BaseScript
@@ -379,8 +384,7 @@ class WaveBasedGameScript extends BaseScript
 			{
 				for (var i:uint = 0; i < wave.number; ++i)
 				{
-					var enemy:Actor = Utils.addEnemy(_game, wave.type);
-					enemy.health = wave.health;
+					Utils.addEnemy(_game, wave.type, wave.attrs);
 					++_enemies;
 				}
 			}
