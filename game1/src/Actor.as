@@ -87,7 +87,10 @@ package
 		public function onFrame(game:IGame):void
 		{
 			worldPos.offset(speed.x, speed.y);
-			MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed);
+			if (attrs.BOUNDED)
+			{	
+				MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed);
+			}
 
 			if (_behavior)
 			{
@@ -185,7 +188,8 @@ class BulletActor extends Actor
 	public function BulletActor(color:uint):void
 	{
 		super(ActorAssetManager.createBullet(color), ActorAttrs.BULLET);
-		behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+//		behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+		behavior = BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME);
 	}
 }
 class LaserActor extends Actor
@@ -263,7 +267,7 @@ class FusionBlastActor extends Actor implements IPenetratingAmmo
 
 // We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find
 // a different pooling mechanism (maybe pooling the display objects separately)
-final class BulletActor0 extends BulletActor { public function BulletActor0() { super(0x90ff); } }
+final class BulletActor0 extends BulletActor { public function BulletActor0() { super(0x8888ff); } }
 final class BulletActor1 extends BulletActor { public function BulletActor1() { super(0xff5d); } }
 final class BulletActor2 extends BulletActor { public function BulletActor2() { super(0xeeee00); } }
 final class BulletActor3 extends BulletActor { public function BulletActor3() { super(0xff9400); } }

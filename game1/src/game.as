@@ -124,6 +124,8 @@ package
 //			_currentScript = GameScriptFactory.testScript2;
 			_currentScript = GameScript.level1;
 			_currentScript.begin(this);
+			
+			stage.focus = stage;
 		}
 
 		private var _tiles:TiledBackground;

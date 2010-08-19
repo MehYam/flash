@@ -14,14 +14,16 @@ package behaviors
 		private var _offsetX:Number;
 		private var _offsetY:Number;
 		private var _angle:Number;
+		private var _level:uint;
 		
-		public function AmmoFireSource(type:AmmoType, damage:Number, x:Number, y:Number, angle:Number = 0)
+		public function AmmoFireSource(type:AmmoType, damage:Number, x:Number, y:Number, angle:Number = 0, level:uint = 0)
 		{
 			_ammoType = type;
 			_damage = damage;
 			_offsetX = x;
 			_offsetY = y;
-			angle = angle;
+			_angle = angle;
+			_level = level;
 		}
 
 		static private var po_tmp:Point = new Point;
@@ -31,11 +33,11 @@ package behaviors
 			var ammo:Actor;
 			switch(_ammoType) {
 				case AmmoType.BULLET:
-					ammo = Actor.createBullet(0);
+					ammo = Actor.createBullet(_level);
 					break;
 				case AmmoType.LASER:
 				case AmmoType.HIGHLASER:
-					ammo = Actor.createLaser(0);
+					ammo = Actor.createLaser(_level);
 					break;
 				case AmmoType.ROCKET:
 					ammo = Actor.createRocket();
@@ -44,7 +46,7 @@ package behaviors
 					ammo = Actor.createFusionBlast();
 					break;
 			}
-			ammo.damage *= damageMultiplier;
+			ammo.damage = _damage * damageMultiplier;
 			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
 
 			Util.setPoint(po_tmp, actor.worldPos);

@@ -12,7 +12,24 @@ package scripts
 		}
 		static public function get level1():IGameScript
 		{
-			return new WaveBasedGameScript();
+			var waves:Array =
+			[
+				new Wave(EnemyEnum.OSPREY, 3, 40),
+//				new Wave(EnemyEnum.GREENK, 5, 20),
+//				[new Wave(EnemyEnum.GREENK, 7, 20), new Wave(EnemyEnum.MOTH, 1, 30)],
+//				new Wave(EnemyEnum.MOTH, 5, 30),
+//				[new Wave(EnemyEnum.GREENK, 7, 20), new Wave(EnemyEnum.MOTH, 5, 30)]
+//				new Wave(Enemy.GREENK, 8, 20),
+				
+				//		new Wave(Enemy.GREENK, 15),
+				//		[new Wave(Enemy.GREENK, 10), new Wave(Enemy.MOTH, 2)],
+				//		[new Wave(Enemy.BAT, 10), new Wave(Enemy.MOTH, 3)],
+				//		new Wave(Enemy.GREENK, 20),
+				//		[new Wave(Enemy.MOTH, 5), new Wave(Enemy.GRAYSHOOTER, 3)],
+				//		[new Wave(Enemy.GREENK, 5), new Wave(Enemy.MOTH, 5), new Wave(Enemy.GRAYSHOOTER, 5)]
+			];
+
+			return new WaveBasedGameScript(waves);
 		}
 	}
 }
@@ -41,29 +58,25 @@ import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
 import scripts.TankActor;
 
-final class Enemy
+final class EnemyEnum
 {
-	static public const REDROGUE:Enemy = new Enemy;
-	static public const GREENK:Enemy = new Enemy;
-	static public const GRAYSHOOTER:Enemy = new Enemy;
-	static public const FUNNEL:Enemy = new Enemy;
-	static public const BLUE:Enemy = new Enemy;
-	static public const BAT:Enemy = new Enemy;
+	static public const MOTH:EnemyEnum = new EnemyEnum;
+	static public const GREENK:EnemyEnum = new EnemyEnum;
+	static public const GRAYSHOOTER:EnemyEnum = new EnemyEnum;
+	static public const FUNNEL:EnemyEnum = new EnemyEnum;
+	static public const BLUE:EnemyEnum = new EnemyEnum;
+	static public const OSPREY:EnemyEnum = new EnemyEnum;
 }
 
 final class TestAttrs
 {
-	static public const BLUE_SHIP:ActorAttrs = new ActorAttrs(100, 6, 1, 0.1);
 	static public const GREEN_SHIP:ActorAttrs = new ActorAttrs(100, 1.5, 0.1, 0, 10, 10);
 	static public const RED_SHIP:ActorAttrs = new ActorAttrs(100, 3, 0.1, 0, 15, 15);
-	static public const GRAY_SHIP:ActorAttrs = new ActorAttrs(100, 2, 0.15, 20);
+	static public const OSPREY:ActorAttrs = new ActorAttrs(100, 2, 0.15, 20);
 	static public const TANK:ActorAttrs = new ActorAttrs(100, 1.5, 1, 0.5);
 }
 final class Utils
 {
-	static private const REDROGUE_FIRESOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20);
-	static private const LASERSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.LASER, 10, 0, -20);
-
 	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
@@ -138,29 +151,31 @@ final class Utils
 	static public function addEnemyByIndex(game:IGame, index:uint):Actor
 	{
 		var a:Actor = new Actor(ActorAssetManager.createShip(index), TestAttrs.RED_SHIP);
-		a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
+		a.behavior = attackAndFlee(MOTH_FIRESOURCE, 5000);
 
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
 		return a;
 	}
 	
-	static public function addEnemy(game:IGame, type:Enemy):Actor
+	static private const MOTH_FIRESOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
+	static private const LASERSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.LASER, 10, 0, -20);
+	static public function addEnemy(game:IGame, type:EnemyEnum):Actor
 	{
 		var a:Actor;
 		switch (type) {
-		case Enemy.REDROGUE:
+		case EnemyEnum.MOTH:
 			a = new Actor(ActorAssetManager.createShip(23, 0.7), TestAttrs.RED_SHIP);
 			a.name = "Red Rogue";
-			a.behavior = attackAndFlee(REDROGUE_FIRESOURCE, 5000);
+			a.behavior = attackAndFlee(MOTH_FIRESOURCE, 5000);
 			break;
-		case Enemy.GREENK:
+		case EnemyEnum.GREENK:
 			a = new Actor(ActorAssetManager.createShip(3), TestAttrs.GREEN_SHIP);
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
-		case Enemy.GRAYSHOOTER:
-			a = new Actor(ActorAssetManager.createShip(6), TestAttrs.GRAY_SHIP);
+		case EnemyEnum.GRAYSHOOTER:
+			a = new Actor(ActorAssetManager.createShip(6), TestAttrs.OSPREY);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
@@ -171,9 +186,9 @@ final class Utils
 				)
 			);
 			break;
-		case Enemy.BAT:
-			a = new Actor(ActorAssetManager.createShip(9), TestAttrs.GRAY_SHIP);
-			a.name = "Bat";
+		case EnemyEnum.OSPREY:
+			a = new Actor(ActorAssetManager.createShip(9), TestAttrs.OSPREY);
+			a.name = "Osprey";
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
@@ -289,7 +304,7 @@ final class TestScript extends BaseScript
 	
 	private function addTestActors(game:IGame):void
 	{
-		Utils.addEnemy(game, Enemy.REDROGUE);
+		Utils.addEnemy(game, EnemyEnum.MOTH);
 //		Utils.addEnemy(game, Enemy.GREENK);
 //		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
 //		Utils.addEnemy(game, Enemy.FIGHTER5);
@@ -298,17 +313,28 @@ final class TestScript extends BaseScript
 
 final class Wave
 {
-	public var type:Enemy;
+	public var type:EnemyEnum;
 	public var number:uint;
-	public function Wave(type:Enemy, number:uint)
+	public var health:Number;
+	public function Wave(type:EnemyEnum, number:uint, health:Number)
 	{
 		this.type = type;
 		this.number = number;
+		this.health = health;
 	}
 }
 class WaveBasedGameScript extends BaseScript
 {
 	static private const COMBO_LAPSE:uint = 2000;
+
+	private var NUMWAVES:uint;
+	private var _waves:Array; 
+	public function WaveBasedGameScript(waves:Array)
+	{
+		super();
+		_waves = waves;
+		NUMWAVES = waves.length;
+	}
 
 	private var _game:IGame;
 	private var _waveDelay:FrameTimer = new FrameTimer(addNextWave);
@@ -329,18 +355,6 @@ class WaveBasedGameScript extends BaseScript
 		game.scoreBoard.earnings = 0;
 	}
 
-	private var _waves:Array = 
-	[
-		new Wave(Enemy.GREENK, 5),
-		new Wave(Enemy.BAT, 10),
-		new Wave(Enemy.GREENK, 15),
-		[new Wave(Enemy.GREENK, 10), new Wave(Enemy.REDROGUE, 2)],
-		[new Wave(Enemy.BAT, 10), new Wave(Enemy.REDROGUE, 3)],
-		new Wave(Enemy.GREENK, 20),
-		[new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 3)],
-		[new Wave(Enemy.GREENK, 5), new Wave(Enemy.REDROGUE, 5), new Wave(Enemy.GRAYSHOOTER, 5)]
-	];
-	private const NUMWAVES:uint = _waves.length;
 
 	static private const _tmpArray:Array = [];
 	private var _enemies:uint = 0;
@@ -365,7 +379,8 @@ class WaveBasedGameScript extends BaseScript
 			{
 				for (var i:uint = 0; i < wave.number; ++i)
 				{
-					Utils.addEnemy(_game, wave.type);
+					var enemy:Actor = Utils.addEnemy(_game, wave.type);
+					enemy.health = wave.health;
 					++_enemies;
 				}
 			}
