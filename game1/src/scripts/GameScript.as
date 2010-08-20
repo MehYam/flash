@@ -25,32 +25,31 @@ package scripts
 				case 0:
 					waves = 
 					[
-						new Wave(EnemyEnum.BAT, 2, BAT)
-//						new Wave(EnemyEnum.GREENK, 5, GREEN),
-//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
-//						new Wave(EnemyEnum.MOTH, 3, MOTH),
-//						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-//						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
-//						new Wave(EnemyEnum.GREENK, 7, GREEN),
-//						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-//						new Wave(EnemyEnum.MOTH, 4, MOTH),
-//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-//						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
+						new Wave(EnemyEnum.GREENK, 5, GREEN),
+						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
+						new Wave(EnemyEnum.MOTH, 3, MOTH),
+						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
+						new Wave(EnemyEnum.GREENK, 7, GREEN),
+						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						new Wave(EnemyEnum.MOTH, 4, MOTH),
+						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
 					];
 					break;
 				case 1:
 					waves = 
 					[
+						new Wave(EnemyEnum.BAT, 2, BAT),
 						new Wave(EnemyEnum.GREENK, 10, GREEN),
 						[new Wave(EnemyEnum.GREENK, 3, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
 						new Wave(EnemyEnum.MOTH, 5, MOTH),
 						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-						new Wave(EnemyEnum.OSPREY, 2, OSPREY),
 						new Wave(EnemyEnum.OSPREY, 3, OSPREY),
 						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
 						new Wave(EnemyEnum.MOTH, 6, MOTH),
-						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 4, MOTH)],
-						[new Wave(EnemyEnum.OSPREY, 4, OSPREY), new Wave(EnemyEnum.MOTH, 4, MOTH)]
+						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.BAT, 2, BAT)],
+						[new Wave(EnemyEnum.GREENK, 3, GREEN), new Wave(EnemyEnum.OSPREY, 4, OSPREY), new Wave(EnemyEnum.MOTH, 4, MOTH)]
 					];
 					break;
 			}

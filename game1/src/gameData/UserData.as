@@ -30,6 +30,7 @@ package gameData
 				// TEST DATA BELOW
 //				s_instance.credits = 100000;
 				s_instance.purchasePart(PlaneData.getPlane(1), 0);
+				s_instance.levelReached = 1;
 //				s_instance.currentPlane = 1;
 //				s_instance.purchasePart(PlaneData.getPlane(2), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
