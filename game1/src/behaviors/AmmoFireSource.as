@@ -40,7 +40,7 @@ package behaviors
 					ammo = Actor.createLaser(_level);
 					break;
 				case AmmoType.ROCKET:
-					ammo = Actor.createRocket();
+					ammo = Actor.createRocket(_level);
 					break;
 				case AmmoType.FUSION:
 					ammo = Actor.createFusionBlast();

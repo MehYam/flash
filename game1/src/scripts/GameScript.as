@@ -20,6 +20,8 @@ package scripts
 				case 0:
 					waves = 
 					[
+						new Wave(EnemyEnum.BAT, 1),
+
 						new Wave(EnemyEnum.GREENK, 5),
 						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.MOTH, 1)],
 						new Wave(EnemyEnum.MOTH, 3),
@@ -181,6 +183,7 @@ final class Utils
 		switch (UserData.instance.currentPlane) {
 			case 0:
 //				weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 10, 0, -20), 5, 1000, 1);
+//				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 10, 0, -10), 400);
 				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
 				attrs = new ActorAttrs(100, 5, 1, 0.2);
 				break;
@@ -189,6 +192,9 @@ final class Utils
 					[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), new AmmoFireSource(AmmoType.BULLET, 10, 15, 0)], 
 					400);
 				attrs = new ActorAttrs(100, 5.5, 1, 0.1);
+				break;
+			case 3:
+				attrs = new ActorAttrs(100, 3, 1, 0.1);
 				break;
 		}
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
@@ -215,8 +221,8 @@ final class Utils
 	];
 	static private const BAT_ROCKETSOURCE:Array = 
 	[
-		new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10),
-		new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10)
+		new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3),
+		new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3)
 	];
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static public function addEnemy(game:IGame, type:EnemyEnum, attrs:ActorAttrs):Actor
@@ -342,14 +348,8 @@ final class TestScript extends BaseScript
 	public override function begin(game:IGame):void
 	{
 		game.tiles = GrassTilesAssets.testLevel;
-		if (TANK)
-		{
-			game.showPlayer(Utils.getPlayerTank().actor);
-		}
-		else
-		{
-			game.showPlayer(Utils.getPlayerPlane().actor);
-		}
+		super.begin(game);
+		
 		game.centerPrint("Test Script Begin");
 		
 		for (var i:int = 0; i < _actors; ++i)

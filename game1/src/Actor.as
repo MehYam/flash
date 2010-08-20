@@ -112,7 +112,7 @@ package
 				displayObject.transform.colorTransform = s_normalTint;
 			}
 		}
-		private function launchHelper(start:Point, radians:Number):void
+		protected function launchHelper(start:Point, radians:Number):void
 		{
 			Util.setPoint(worldPos, start);
 			speed.x = Math.sin(radians) * attrs.MAX_SPEED;
@@ -171,10 +171,10 @@ package
 				game.addEffect(actor);
 			}
 		}
-		static public function createRocket():Actor
+		static public function createRocket(level:uint):Actor
 		{
 			var rocket:Actor = ActorPool.instance.get(RocketActor);
-			return rocket || new RocketActor(3);
+			return rocket || new RocketActor(level);
 		}
 		static public function createFusionBlast():Actor
 		{
@@ -190,6 +190,7 @@ import behaviors.CompositeBehavior;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.utils.Dictionary;
 
 import karnold.utils.Util;
@@ -245,7 +246,7 @@ class RocketActor extends Actor
 	public function RocketActor(rocket:uint)
 	{
 		super(composeRocket(rocket), ActorAttrs.ROCKET);
-		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.ROCKET.LIFETIME));
+		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.accelerator, BehaviorFactory.createExpire(ActorAttrs.ROCKET.LIFETIME));
 		
 		_plume = DisplayObjectContainer(displayObject).getChildAt(0);
 		displayObject.scaleX = 0.5;
@@ -255,6 +256,15 @@ class RocketActor extends Actor
 	{
 		_plume.scaleY = Math.random() + 0.3;
 		super.onFrame(game);
+	}
+	protected override function launchHelper(start:Point, radians:Number):void
+	{
+		super.launchHelper(start, radians);
+		
+		// slow down the rocket to give the accelerator something to work with.  Kinda a hack,
+		// one way to make this cleaner would be to accelerate all objects
+		speed.x /= 25;
+		speed.y /= 25;
 	}
 }
 class FusionBlastActor extends Actor implements IPenetratingAmmo

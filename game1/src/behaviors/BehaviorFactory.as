@@ -14,6 +14,7 @@ package behaviors
 		static private var _strafe:IBehavior;
 		static private var _follow:IBehavior;
 		static private var _fade:IBehavior;
+		static private var _accelerator:IBehavior;
 		static public function get faceForward():IBehavior
 		{
 			if (!_faceForward)
@@ -78,7 +79,14 @@ package behaviors
 			}
 			return _fade;
 		}
-
+		static public function get accelerator():IBehavior
+		{
+			if (!_accelerator)
+			{
+				_accelerator = new Accelerator;
+			}
+			return _accelerator;
+		}
 		// Non-singletons
 		// source - is either an AmmoFireSource or array of them
 		static public function createAutofire(source:*, msRateMin:uint, msRateMax:uint = 0):IBehavior
@@ -118,6 +126,23 @@ import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
 import scripts.TankActor;
+
+final class Accelerator implements IBehavior
+{
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		// get the current rotation, find the speed, and see what the new speed should be
+		var speed:Number = MathUtil.magnitude(actor.speed.x, actor.speed.y);
+		if (speed < actor.attrs.MAX_SPEED)
+		{
+			const radians:Number = MathUtil.getRadiansRotation(actor.speed.x, actor.speed.y);
+
+			speed += actor.attrs.ACCELERATION;
+			actor.speed.x = speed * Math.sin(radians);
+			actor.speed.y = speed * -Math.cos(radians);
+		}
+	}
+}
 
 final class FaceForwardBehavior implements IBehavior
 {

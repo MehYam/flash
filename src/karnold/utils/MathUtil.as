@@ -53,6 +53,10 @@ package karnold.utils
 			
 			return Math.sqrt(x + y);
 		}
+		static public function magnitude(x:Number, y:Number):Number
+		{
+			return Math.sqrt(x*x + y*y);
+		}
 		static private const SPEED_ALPHA:Number = 0.01;
 		static public function speedDecay(speed:Number, decay:Number):Number
 		{

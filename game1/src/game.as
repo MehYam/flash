@@ -19,8 +19,6 @@ package
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	
-	import flashx.textLayout.debug.assert;
-	
 	import gameData.PlayedLevelStats;
 	import gameData.UserData;
 	
@@ -154,7 +152,7 @@ package
 			{
 				_radar.clear();
 			}
-//			_currentScript = GameScriptFactory.testScript1;
+//			_currentScript = GameScript.testScript1;
 //			_currentScript = GameScriptFactory.testScript2;
 			_currentScript = GameScript.getLevel(level);
 			_currentScript.begin(this);
