@@ -102,6 +102,10 @@ package behaviors
 		{
 			return new ChargedFireBehavior(source, chargeSteps, msStepDuration, damageAtFull);
 		}
+		static public function createShieldActivator(source:AmmoFireSource):IBehavior
+		{
+			return new ShieldActivatorBehavior(source);
+		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
 			return new ExpireBehavior(lifetime);
@@ -261,6 +265,37 @@ final class FadeBehavior implements IBehavior
 	}
 }
 
+// KAI: this might be something more generic
+// KAI: this might also be the same thing as the chargedfire, when you think about it
+final class ShieldActivatorBehavior implements IBehavior  
+{
+	private var _source:AmmoFireSource;
+	public function ShieldActivatorBehavior(source:AmmoFireSource):void
+	{
+		_source = source;
+	}
+	private var _shield:Actor;
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
+		// shooting (and once after they stop)
+		if (game.playerShooting)
+		{
+			if (!_shield)
+			{
+				_shield = _source.fire(game, actor); 
+			}
+			Util.setPoint(_shield.worldPos, actor.worldPos);
+			_shield.displayObject.rotation = actor.displayObject.rotation;
+		}
+		else if (_shield)
+		{
+			game.killActor(_shield);
+			_shield = null;
+		}
+	}
+}
+
 final class AutofireBehavior implements IBehavior
 {
 	private var _source:*;
@@ -274,6 +309,8 @@ final class AutofireBehavior implements IBehavior
 	{
 		if (!_rate || _rate.now)
 		{
+			// This sucks a little bit, but the game script must ensure that this only gets called while the player's
+			// shooting
 			const sourceAsArray:Array = _source as Array;
 			if (sourceAsArray)
 			{
@@ -311,6 +348,8 @@ final class ChargedFireBehavior implements IBehavior
 	private var _currentStep:uint = 0;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
+		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
+		// shooting (and once after they stop)
 		if (game.playerShooting)
 		{
 			if (!_shooting)

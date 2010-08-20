@@ -181,6 +181,11 @@ package
 			var blast:Actor = ActorPool.instance.get(FusionBlastActor);
 			return blast || new FusionBlastActor;
 		}
+		static public function createShield():Actor
+		{
+			var shield:Actor = ActorPool.instance.get(ShieldActor);
+			return shield || new ShieldActor();
+		}
 	}
 }
 import behaviors.ActorAttrs;
@@ -224,7 +229,7 @@ class ExplosionParticleActor extends Actor
 		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION.LIFETIME), BehaviorFactory.fade);
 	}
 }
-class RocketActor extends Actor
+final class RocketActor extends Actor
 {
 	static private function composeRocket(index:uint):DisplayObject
 	{
@@ -267,7 +272,7 @@ class RocketActor extends Actor
 		speed.y /= 25;
 	}
 }
-class FusionBlastActor extends Actor implements IPenetratingAmmo
+final class FusionBlastActor extends Actor implements IPenetratingAmmo
 {
 	public function FusionBlastActor()
 	{
@@ -287,6 +292,14 @@ class FusionBlastActor extends Actor implements IPenetratingAmmo
 	{
 		super.reset();
 		_struckActors = new Dictionary(true);
+	}
+}
+
+final class ShieldActor extends Actor
+{
+	public function ShieldActor()
+	{
+		super(ActorAssetManager.createShield(), ActorAttrs.SHIELD);
 	}
 }
 

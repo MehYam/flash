@@ -7,5 +7,6 @@ package behaviors
 		static public const HIGHLASER:AmmoType = new AmmoType;
 		static public const ROCKET:AmmoType = new AmmoType;
 		static public const FUSION:AmmoType = new AmmoType;
+		static public const SHIELD:AmmoType = new AmmoType;
 	}
 }

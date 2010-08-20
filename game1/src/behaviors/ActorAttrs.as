@@ -7,7 +7,8 @@ package behaviors
 		static public const LASER:ActorAttrs = new ActorAttrs(100, 6, 7, 0, 20, 100, false, 2000);
 		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(100, 5, 10, 0, 20, 33);
 		static public const EXPLOSION:ActorAttrs = new ActorAttrs(100, 100, 0, 0.1, 0, 0, false, 300);
-
+		static public const SHIELD:ActorAttrs = new ActorAttrs(100, 0, 0, 0, 50, 100, false);
+			
 		static public const INFINITE_LIFETIME:int = -1;
 		
 		// these semi-belong here

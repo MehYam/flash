@@ -208,6 +208,8 @@ package
 		static private const FLAME:Class;
 		[Embed(source="assets/master.swf", symbol="blueflame")]
 		static private const BLUEFLAME:Class;
+		[Embed(source="assets/master.swf", symbol="shield")]
+		static private const SHIELD:Class;
 		static public function createFlame():DisplayObject
 		{
 			return createAssetRasterized(FLAME, false, false);
@@ -215,6 +217,10 @@ package
 		static public function createBlueFlame():DisplayObject
 		{
 			return createAssetRasterized(BLUEFLAME, false, false);
+		}
+		static public function createShield():DisplayObject
+		{
+			return createAssetRasterized(SHIELD, true, false);
 		}
 		// tanks ////////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="tankhull0")]

@@ -27,7 +27,7 @@ package behaviors
 		}
 
 		static private var po_tmp:Point = new Point;
-		public function fire(game:IGame, actor:Actor, damageMultiplier:Number = 1):void
+		public function fire(game:IGame, actor:Actor, damageMultiplier:Number = 1):Actor
 		{
 			AssetManager.instance.laserSound();
 			var ammo:Actor;
@@ -44,6 +44,9 @@ package behaviors
 					break;
 				case AmmoType.FUSION:
 					ammo = Actor.createFusionBlast();
+					break;
+				case AmmoType.SHIELD:
+					ammo = Actor.createShield();
 					break;
 			}
 			ammo.damage = _damage * damageMultiplier;
@@ -62,6 +65,7 @@ package behaviors
 			{
 				game.addEnemyAmmo(ammo);
 			}
+			return ammo;
 		}
 	}
 }

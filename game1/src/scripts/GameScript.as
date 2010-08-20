@@ -20,8 +20,6 @@ package scripts
 				case 0:
 					waves = 
 					[
-						new Wave(EnemyEnum.BAT, 1),
-
 						new Wave(EnemyEnum.GREENK, 5),
 						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.MOTH, 1)],
 						new Wave(EnemyEnum.MOTH, 3),
@@ -194,6 +192,7 @@ final class Utils
 				attrs = new ActorAttrs(100, 5.5, 1, 0.1);
 				break;
 			case 3:
+				weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10));
 				attrs = new ActorAttrs(100, 3, 1, 0.1);
 				break;
 		}
