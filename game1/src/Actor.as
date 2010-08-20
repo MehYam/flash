@@ -9,18 +9,19 @@ package
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
+	import flash.utils.getTimer;
 	
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
 
 	public class Actor implements IResettable
 	{
-		private var _alive:Boolean = true;
-
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
+
 
 		// meta-data that maybe doesn't belong here
 		public var attrs:ActorAttrs;
@@ -44,6 +45,7 @@ package
 			this.attrs = attrs;
 			reset();
 		}
+		private var _alive:Boolean = true;
 		public function reset():void  // IResettable
 		{
 			if (attrs)
@@ -84,6 +86,15 @@ package
 			}
 			_alive = b;
 		}
+		private var _lastHit:uint;
+		static private var s_normalTint:ColorTransform = new ColorTransform;
+		static private var s_hardHitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 255, 127, 127);
+		static private var s_hitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 127, 0, 0);
+		public function registerHit(hard:Boolean):void
+		{
+			_lastHit = getTimer();
+			displayObject.transform.colorTransform = hard ? s_hardHitTint : s_hitTint; 
+		}
 		public function onFrame(game:IGame):void
 		{
 			worldPos.offset(speed.x, speed.y);
@@ -95,6 +106,10 @@ package
 			if (_behavior)
 			{
 				_behavior.onFrame(game, this);
+			}
+			if (_lastHit && (getTimer() - _lastHit) > 50)
+			{
+				displayObject.transform.colorTransform = s_normalTint;
 			}
 		}
 		private function launchHelper(start:Point, radians:Number):void
