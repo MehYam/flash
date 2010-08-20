@@ -56,6 +56,7 @@ import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 
 import gameData.PlaneData;
+import gameData.PlayedLevelStats;
 import gameData.TankPartData;
 import gameData.UserData;
 
@@ -229,7 +230,7 @@ class BaseScript implements IGameScript
 		if (TANK)
 		{
 			player = Utils.getPlayerTank();
-			_weapon = player.weapon;//BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 0, -50), 300, 300);
+			_weapon = player.weapon;
 			game.showPlayer(player.actor);
 		}
 		else
@@ -344,7 +345,7 @@ class WaveBasedGameScript extends BaseScript
 	private var _game:IGame;
 	private var _waveDelay:FrameTimer = new FrameTimer(addNextWave);
 	private var _comboTimer:FrameTimer = new FrameTimer(decreaseCombo);
-	private var _stats:Stats = new Stats;
+	private var _stats:PlayedLevelStats = new PlayedLevelStats;
 	public override function begin(game:IGame):void
 	{
 		_game = game;
@@ -358,11 +359,25 @@ class WaveBasedGameScript extends BaseScript
 		game.scoreBoard.pctHealth = 1;
 		game.scoreBoard.pctLevel = 0;
 		game.scoreBoard.earnings = 0;
+
+		for each (var stage:* in _waves)
+		{
+			var next:Array = stage as Array;
+			if (!next)
+			{
+				po_tmpArray[0] = stage;
+				next = po_tmpArray;
+			}
+			for each (var wave:Wave in next)
+			{
+				_stats.enemiesTotal += wave.number;
+			}
+		}
+		_stats.begin();
 	}
 
-
-	static private const _tmpArray:Array = [];
-	private var _enemies:uint = 0;
+	private const po_tmpArray:Array = [];
+	private var _liveEnemies:uint = 0;
 	private function addNextWave():void
 	{
 		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
@@ -371,16 +386,15 @@ class WaveBasedGameScript extends BaseScript
 			var next:Object = _waves.shift();
 			if (!(next is Array))
 			{
-				_tmpArray.length = 0;
-				_tmpArray.push(next);
-				next = _tmpArray;
+				po_tmpArray[0] = next;
+				next = po_tmpArray;
 			}
 			for each (var wave:Wave in next)
 			{
 				for (var i:uint = 0; i < wave.number; ++i)
 				{
 					Utils.addEnemy(_game, wave.type, wave.attrs);
-					++_enemies;
+					++_liveEnemies;
 				}
 			}
 		}
@@ -394,8 +408,7 @@ class WaveBasedGameScript extends BaseScript
 		}
 		else
 		{
-			_game.scoreBoard.pctLevel = 1;
-			_game.endLevel(true);
+			_game.endLevel(_stats);
 		}
 	}
 
@@ -438,29 +451,44 @@ class WaveBasedGameScript extends BaseScript
 		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
+			
+			_stats.damageReceived += damage;
 		}
-		else if (actor.health <= 0)
+		else 
 		{
-			AssetManager.instance.crashSound();
 			if (!struckByEnemy)
 			{
-				_stats.earnings += actor.value * (1 + _stats.combo/10);
-				game.scoreBoard.earnings = _stats.earnings;
-				game.scoreBoard.combo = ++_stats.combo;
-				_comboTimer.start(COMBO_LAPSE);
+				_stats.damageDealt += damage;
 			}
-			game.killActor(actor);
-
-			--_enemies;
-			if (!_enemies)
+			if (actor.health <= 0)
 			{
-				if (_waves.length)
+				AssetManager.instance.crashSound();
+				if (!struckByEnemy)
 				{
-					_game.centerPrint("Wave " + (NUMWAVES - _waves.length + 1));	
+					_stats.creditsEarned += actor.value * (1 + _stats.combo/10);
+					++_stats.enemiesKilled;
+					game.scoreBoard.earnings = _stats.creditsEarned;
+					game.scoreBoard.combo = ++_stats.combo;
+					_comboTimer.start(COMBO_LAPSE);
 				}
-				else
+				game.killActor(actor);
+	
+				--_liveEnemies;
+				if (!_liveEnemies)
 				{
-					_game.centerPrint("Level complete - you did it!");
+					if (_waves.length)
+					{
+						_game.centerPrint("Wave " + (NUMWAVES - _waves.length + 1));	
+					}
+					else
+					{
+						_game.centerPrint("Level complete - you did it!");
+
+						_stats.end();
+						_stats.victory = true;
+						
+						_game.scoreBoard.pctLevel = 1;
+					}
 				}
 			}
 		}
@@ -489,14 +517,6 @@ final class PlayerVehicle
 		this.actor = actor;
 		this.weapon = weapon;
 	}
-}
-
-final class Stats
-{
-	public var earnings:uint;
-	public var levelsDone:Object;
-	public var purchasedItems:Object;
-	public var combo:uint;
 }
 
 final class GrassTilesAssets

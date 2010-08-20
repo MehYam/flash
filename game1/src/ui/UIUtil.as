@@ -11,7 +11,7 @@ package ui
 	import flash.text.TextFormat;
 	
 	import gameData.UserData;
-	import gameData.VehiclePartData;
+	import gameData.VehiclePart;
 	
 	import karnold.ui.ShadowTextField;
 	import karnold.utils.Util;
@@ -87,8 +87,6 @@ package ui
 		static public var s_tweenOutDialogArg:Object;
 		static public function closeDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void
 		{
-			parent.mouseChildren = true;
-
 			if (!s_tweenOutDialogArg)
 			{
 				s_tweenOutDialogArg = {x: 0, y: 0, ease:Back.easeIn, onComplete:tweenOut_removeThyself, onCompleteParams:[]};
@@ -129,7 +127,7 @@ package ui
 			}
 		}
 
-		static public function formatItemTooltip(part:VehiclePartData, nameHeader:Boolean = true):String
+		static public function formatItemTooltip(part:VehiclePart, nameHeader:Boolean = true):String
 		{
 			const cost:uint = part.baseStats.cost;
 			var costString:String = "";

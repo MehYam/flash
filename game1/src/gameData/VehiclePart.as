@@ -1,13 +1,13 @@
 package gameData
 {
-	public class VehiclePartData
+	public class VehiclePart
 	{
 		public var name:String;
 		public var assetIndex:uint;
-		public var baseStats:BaseStats;
+		public var baseStats:VehiclePartStats;
 		public var purchased:Boolean;
 
-		public function VehiclePartData(name:String, assetIndex:uint, baseStats:BaseStats)
+		public function VehiclePart(name:String, assetIndex:uint, baseStats:VehiclePartStats)
 		{
 			this.name = name;
 			this.assetIndex = assetIndex;

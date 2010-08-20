@@ -1,32 +1,40 @@
 package ui
 {
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
 	
-	import karnold.utils.Util;
+	import gameData.PlayedLevelStats;
+	
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.MathUtil;
+	import karnold.utils.Util;
 
 	public class LevelCompleteDialog extends GameDialog
 	{
-		public function LevelCompleteDialog()
+		public function LevelCompleteDialog(stats:PlayedLevelStats)
 		{
 			super();
 			
 			title = "STATS";
 			
-			addFields();
+			addFields(stats);
 			addBottomStuff();
 
 			render();
 		}
 		
-		private function addFields():void
+		private function addFields(stats:PlayedLevelStats):void
 		{
-			addField("Enemies Killed", "30/50 (60%)");
-			addField("Credits Earned", "3550", Consts.CREDIT_FIELD_COLOR);
-			addField("Max Combo", "23");
-			addField("Time", "12:34");
-			addField("Damage per second", "35.65");
-			addField("DPS received", "23.23");
+			const pct:Number = 100 * stats.enemiesKilled / stats.enemiesTotal;
+			addField("Enemies Killed", stats.enemiesKilled + "/" + stats.enemiesTotal + "(" + MathUtil.round(pct, 2) + "%)");
+			addField("Credits Earned", String(stats.creditsEarned), Consts.CREDIT_FIELD_COLOR);
+			addField("Max Combo", String(stats.maxCombo));
+			
+			const seconds:Number = stats.elapsed/1000;
+			addField("Time", uint(seconds / 60) + ":" + Math.round(seconds % 60));
+			addField("Damage per second", String(MathUtil.round(stats.damageDealt / seconds, 2)));
+			addField("DPS received", String(MathUtil.round(stats.damageReceived / seconds, 2)));
 		}
 		private var _lastFieldBottom:Number = TOP_MARGIN;
 		private function addField(label:String, value:String, valueColor:uint = 0xffffff):void
@@ -57,6 +65,13 @@ package ui
 			continueButton.y = _lastFieldBottom + 20;
 			
 			addChild(continueButton);
+			
+			Util.listen(continueButton, MouseEvent.CLICK, onNext);
+		}
+		
+		private function onNext(e:Event):void
+		{
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 	}
 }

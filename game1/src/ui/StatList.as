@@ -6,7 +6,7 @@ package ui
 	import flash.filters.DropShadowFilter;
 	import flash.text.TextFormat;
 	
-	import gameData.BaseStats;
+	import gameData.VehiclePartStats;
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.ui.ShadowTextField;
@@ -18,8 +18,8 @@ package ui
 		private var _damage:ProgressMeter;
 		private var _fireRate:ProgressMeter;
 		private var _speed:ProgressMeter;
-		private var _stats:BaseStats;
-		public function StatList(stats:BaseStats, height:Number)
+		private var _stats:VehiclePartStats;
+		public function StatList(stats:VehiclePartStats, height:Number)
 		{
 			super();
 			
@@ -68,7 +68,7 @@ package ui
 			return meter;
 		}
 	
-		public function set stats(stats:BaseStats):void
+		public function set stats(stats:VehiclePartStats):void
 		{
 			_stats = stats;
 			
@@ -79,7 +79,7 @@ package ui
 		}
 
 		// pass in null to turn off the compare
-		public function set compare(vs:BaseStats):void
+		public function set compare(vs:VehiclePartStats):void
 		{
 			if (vs)
 			{
@@ -97,7 +97,7 @@ package ui
 			}
 		}
 		// pass in BaseStats.ZERO to turn off the diff
-		public function set diff(diff:BaseStats):void
+		public function set diff(diff:VehiclePartStats):void
 		{
 			if (diff)
 			{

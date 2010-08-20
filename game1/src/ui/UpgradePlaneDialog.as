@@ -7,7 +7,7 @@ package ui
 	import flash.events.MouseEvent;
 	import flash.media.Video;
 	
-	import gameData.BaseStats;
+	import gameData.VehiclePartStats;
 	import gameData.PlaneData;
 	import gameData.UserData;
 	
@@ -143,7 +143,7 @@ package ui
 		private var _statList:StatList;
 		private function addStats():void
 		{
-			_statList = new StatList(new BaseStats(.5, .1, .2, .8, .3), _upgradeGroup.height);
+			_statList = new StatList(new VehiclePartStats(.5, .1, .2, .8, .3), _upgradeGroup.height);
 			_statList.x = _upgradeGroup.x + _upgradeGroup.width + 10;
 			_statList.y = _upgradeGroup.y;
 			
@@ -286,7 +286,7 @@ package ui
 		private function onItemRoll(e:Event):void
 		{
 			const item:GameListItem = (_list.rolledOverItem || _upgradeList.rolledOverItem) as GameListItem;
-			const stats:BaseStats = item ? PlaneData.getPlane(item.cookie).baseStats : null;
+			const stats:VehiclePartStats = item ? PlaneData.getPlane(item.cookie).baseStats : null;
 			
 			_statList.compare = stats;
 		}
@@ -296,4 +296,4 @@ package ui
 		}
 	}
 }
-import gameData.BaseStats;
+import gameData.VehiclePartStats;

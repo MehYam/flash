@@ -47,7 +47,7 @@ package gameData
 		public var currentHull:uint;
 		public var currentTurret:uint;
 		
-		public function purchasePart(part:VehiclePartData, cost:uint):void
+		public function purchasePart(part:VehiclePart, cost:uint):void
 		{
 			Util.ASSERT(!part.purchased);
 			Util.ASSERT(cost <= credits);

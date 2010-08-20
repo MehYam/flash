@@ -24,6 +24,8 @@ package ui
 			addBottomInterface();
 
 			render();
+			
+			Util.listen(this, Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 
 		private var _buttons:Array = [];
@@ -68,7 +70,13 @@ package ui
 				}
 			}
 		}
-		
+		private function onAddedToStage(e:Event):void
+		{
+			if (e.target == this)
+			{
+				_gold.text = String(UserData.instance.credits);
+			}
+		}
 		public function unlockLevels(levels:uint):void
 		{
 			for (var i:uint = 0; i < levels; ++i)
@@ -83,6 +91,7 @@ package ui
 				}
 			}
 		}
+		private var _gold:ShadowTextField;
 		private function addBottomInterface():void
 		{
 			var hangar:DisplayObject = GameButton.create("Plane Hangar", true, 20, 1);
@@ -111,7 +120,8 @@ package ui
 			var gold:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), Consts.CREDIT_FIELD_COLOR, 0, 1);
 			gold.y = goldReport.y - 2;
 			gold.x = goldReport.x + goldReport.width + 2;
-			gold.text = "230000";
+			gold.text = String(UserData.instance.credits);
+			_gold = gold;
 			
 			goldReportParent.addChild(gold);
 

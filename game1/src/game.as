@@ -21,6 +21,7 @@ package
 	
 	import flashx.textLayout.debug.assert;
 	
+	import gameData.PlayedLevelStats;
 	import gameData.UserData;
 	
 	import karnold.tile.BitmapTileFactory;
@@ -41,6 +42,7 @@ package
 	import scripts.TankActor;
 	
 	import ui.GameToolTip;
+	import ui.LevelCompleteDialog;
 	import ui.LevelSelectionDialog;
 	import ui.TestDialog;
 	import ui.TextFieldTyper;
@@ -87,8 +89,6 @@ package
 		private var _title:DisplayObjectContainer;
 		private function toTitleScreen(fadeIn:Boolean = false):void
 		{
-			pause();
-			
 			if (!_title)
 			{
 				ToolTipMgr.instance.tooltip = new GameToolTip;			
@@ -139,8 +139,10 @@ package
 			startLevel(_levelSelectionDialog.selection);
 		}
 		private var _currentScript:IGameScript;
+		private var _lastStartedLevel:uint;
 		private function startLevel(level:uint):void
 		{
+			_lastStartedLevel = level;
 			unpause();
 
 			if (_title && _title.parent)
@@ -522,15 +524,31 @@ package
 		{
 			_frameTimer.stop();
 		}
-		public function endLevel(victory:Boolean):void
+		public function endLevel(stats:PlayedLevelStats):void
 		{
-			toTitleScreen(true);
+			pause();
 			
-			if (victory)
+			if (stats.victory)
 			{
-				UserData.instance.levelReached = Math.min(UserData.instance.levelReached + 1, Consts.LEVELS - 1);
+				UserData.instance.credits += stats.creditsEarned;
+				UserData.instance.levelReached = Math.min(_lastStartedLevel + 1, Consts.LEVELS - 1);
 				_levelSelectionDialog.unlockLevels(UserData.instance.levelReached + 1);
 			}
+			else
+			{
+				stats.creditsEarned = 0;
+			}
+			var endLvl:LevelCompleteDialog = new LevelCompleteDialog(stats);
+			Util.listen(endLvl, Event.COMPLETE, onLevelCompleteDialogDismissed);
+
+			UIUtil.openDialog(this.parent, endLvl);
+			
+			_currentScript = null;
+		}
+		private function onLevelCompleteDialogDismissed(e:Event):void
+		{
+			UIUtil.closeDialog(this.parent, DisplayObject(e.target));
+			toTitleScreen(true);
 		}
 		public function get running():Boolean
 		{

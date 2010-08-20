@@ -15,7 +15,11 @@ package karnold.utils
 		{
 			return min + (Math.random() * (max - min));
 		}
-
+		static public function round(num:Number, decimalPlaces:uint):Number
+		{
+			const shift:Number = Math.pow(10, decimalPlaces);
+			return Math.round(num * shift) / shift;
+		}
 		static private const RADIANS_TO_DEGREES:Number = 180/Math.PI;
 		static private const DEGREES_TO_RADIANS:Number = Math.PI/180;
 		static public function getDegreesRotation(deltaX:Number, deltaY:Number):Number

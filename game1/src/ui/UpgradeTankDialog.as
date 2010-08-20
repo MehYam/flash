@@ -9,7 +9,7 @@ package ui
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	import gameData.BaseStats;
+	import gameData.VehiclePartStats;
 	import gameData.TankPartData;
 	import gameData.UserData;
 	
@@ -231,7 +231,7 @@ package ui
 		private var _stats:StatList;
 		private function addStatDisplay():void
 		{
-			_stats = new StatList(new BaseStats(0, 0, 0, 0, 0), LIST_HEIGHT);
+			_stats = new StatList(new VehiclePartStats(0, 0, 0, 0, 0), LIST_HEIGHT);
 			_stats.x = 470;
 			_stats.y = LIST_HEIGHT + 50;
 			
@@ -354,8 +354,8 @@ package ui
 		{
 			updateStats();
 		}
-		static private var po_stats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
-		static private var po_compareStats:BaseStats = new BaseStats(0, 0, 0, 0, 0);
+		static private var po_stats:VehiclePartStats = new VehiclePartStats(0, 0, 0, 0, 0);
+		static private var po_compareStats:VehiclePartStats = new VehiclePartStats(0, 0, 0, 0, 0);
 		private function updateStats():void
 		{
 			po_stats.reset();
@@ -386,7 +386,7 @@ package ui
 		}
 		static private function accumulateUpgrade(list:GameList, tankPart:TankPartData, upgradeIndex:uint):void
 		{
-			const upgrade:BaseStats = tankPart.getUpgrade(upgradeIndex).baseStats;
+			const upgrade:VehiclePartStats = tankPart.getUpgrade(upgradeIndex).baseStats;
 			const selectedItem:GameListItem = list.selection as GameListItem;
 			const rolledItem:GameListItem = list.rolledOverItem as GameListItem;
 

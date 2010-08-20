@@ -1,5 +1,7 @@
 package
 {
+	import gameData.PlayedLevelStats;
+	
 	import karnold.utils.Bounds;
 	import karnold.utils.Input;
 	
@@ -18,7 +20,7 @@ package
 		function unpause():void;
 		function pause():void;
 
-		function endLevel(victory:Boolean):void;
+		function endLevel(stats:PlayedLevelStats):void;
 
 		function set tiles(str:String):void;
 

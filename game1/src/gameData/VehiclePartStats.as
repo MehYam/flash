@@ -1,6 +1,6 @@
 package gameData
 {
-	public class BaseStats
+	public class VehiclePartStats
 	{
 		public var ammo:Object;
 		public var armor:Number;
@@ -10,8 +10,8 @@ package gameData
 		
 		public var cost:uint;
 
-		static public const ZERO:BaseStats = new BaseStats(0, 0, 0, 0, 0);
-		public function BaseStats(armor:Number, damage:Number, fireRate:Number, speed:Number, cost:uint)
+		static public const ZERO:VehiclePartStats = new VehiclePartStats(0, 0, 0, 0, 0);
+		public function VehiclePartStats(armor:Number, damage:Number, fireRate:Number, speed:Number, cost:uint)
 		{
 			this.armor = armor;
 			this.damage = damage;
@@ -23,7 +23,7 @@ package gameData
 		{
 			set(ZERO);
 		}
-		public function set(rhs:BaseStats):void
+		public function set(rhs:VehiclePartStats):void
 		{
 			ammo = rhs.ammo;
 			armor = rhs.armor;
@@ -31,7 +31,7 @@ package gameData
 			fireRate = rhs.fireRate;
 			speed = rhs.speed;
 		}
-		public function add(rhs:BaseStats):void
+		public function add(rhs:VehiclePartStats):void
 		{
 			ammo += rhs.ammo;
 			armor += rhs.armor;
