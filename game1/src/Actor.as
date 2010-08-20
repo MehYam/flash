@@ -230,7 +230,7 @@ class RocketActor extends Actor
 	public function RocketActor(rocket:uint)
 	{
 		super(composeRocket(rocket), ActorAttrs.ROCKET);
-		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.ROCKET.LIFETIME));
 		
 		_plume = DisplayObjectContainer(displayObject).getChildAt(0);
 		displayObject.scaleX = 0.5;
@@ -238,7 +238,7 @@ class RocketActor extends Actor
 	}
 	public override function onFrame(game:IGame):void
 	{
-		_plume.scaleY = Math.random()*0.7 + 0.3;
+		_plume.scaleY = Math.random() + 0.3;
 		super.onFrame(game);
 	}
 }

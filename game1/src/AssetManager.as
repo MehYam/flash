@@ -188,13 +188,13 @@ package
 		public function planeIcon():DisplayObject
 		{
 			var retval:DisplayObject = new PLANEICON;
-			retval.filters = s_uiStuffDropShadow;
+//			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}
 		public function tankIcon():DisplayObject
 		{
 			var retval:DisplayObject = new TANKICON;
-			retval.filters = s_uiStuffDropShadow;
+//			retval.filters = s_uiStuffDropShadow;
 			return retval; 
 		}
 	}

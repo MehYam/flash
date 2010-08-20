@@ -46,7 +46,9 @@ package ui
 
 //					if (!r && !c)
 //					{
-//						var icon:DisplayObject = AssetManager.instance.planeIcon();
+//						var icon:DisplayObject = (level % 2) ? AssetManager.instance.planeIcon() : AssetManager.instance.tankIcon();
+//						icon.scaleX = .5;
+//						icon.scaleY = .5;
 //						icon.x = btn.width - icon.width;
 //						icon.y = icon.height;
 //						btn.addChild(icon);

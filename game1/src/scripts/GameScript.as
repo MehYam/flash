@@ -18,25 +18,40 @@ package scripts
 			const GREEN:ActorAttrs =      new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10);
 			const MOTH:ActorAttrs =       new ActorAttrs( 30, 3,   0.1,  0, 15, 15);
 			const OSPREY:ActorAttrs =     new ActorAttrs(100, 1.5, 0.15, 0, 25, 33);
+			const BAT:ActorAttrs =        new ActorAttrs(100, 2,   0.05, 0, 20, 20);
 
 			var waves:Array;
 			switch(i) {
 				case 0:
 					waves = 
 					[
-						new Wave(EnemyEnum.GREENK, 5, GREEN),
-						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
-						new Wave(EnemyEnum.MOTH, 3, MOTH),
-						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
-						new Wave(EnemyEnum.GREENK, 7, GREEN),
-						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-						new Wave(EnemyEnum.MOTH, 4, MOTH),
-						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
+						new Wave(EnemyEnum.BAT, 2, BAT)
+//						new Wave(EnemyEnum.GREENK, 5, GREEN),
+//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
+//						new Wave(EnemyEnum.MOTH, 3, MOTH),
+//						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+//						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
+//						new Wave(EnemyEnum.GREENK, 7, GREEN),
+//						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+//						new Wave(EnemyEnum.MOTH, 4, MOTH),
+//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+//						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
 					];
 					break;
 				case 1:
+					waves = 
+					[
+						new Wave(EnemyEnum.GREENK, 10, GREEN),
+						[new Wave(EnemyEnum.GREENK, 3, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+						new Wave(EnemyEnum.MOTH, 5, MOTH),
+						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+						new Wave(EnemyEnum.OSPREY, 2, OSPREY),
+						new Wave(EnemyEnum.OSPREY, 3, OSPREY),
+						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						new Wave(EnemyEnum.MOTH, 6, MOTH),
+						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 4, MOTH)],
+						[new Wave(EnemyEnum.OSPREY, 4, OSPREY), new Wave(EnemyEnum.MOTH, 4, MOTH)]
+					];
 					break;
 			}
 			return new WaveBasedGameScript(waves);
@@ -74,7 +89,7 @@ final class EnemyEnum
 {
 	static public const MOTH:EnemyEnum = new EnemyEnum;
 	static public const GREENK:EnemyEnum = new EnemyEnum;
-	static public const GRAYSHOOTER:EnemyEnum = new EnemyEnum;
+	static public const BAT:EnemyEnum = new EnemyEnum;
 	static public const FUNNEL:EnemyEnum = new EnemyEnum;
 	static public const BLUE:EnemyEnum = new EnemyEnum;
 	static public const OSPREY:EnemyEnum = new EnemyEnum;
@@ -179,6 +194,11 @@ final class Utils
 		new AmmoFireSource(AmmoType.LASER, 10, -35, -15),
 		new AmmoFireSource(AmmoType.LASER, 10,  35, -15)
 	];
+	static private const BAT_ROCKETSOURCE:Array = 
+	[
+		new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10),
+		new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10)
+	];
 	static public function addEnemy(game:IGame, type:EnemyEnum, attrs:ActorAttrs):Actor
 	{
 		var a:Actor;
@@ -193,11 +213,12 @@ final class Utils
 			a.name = "Greenakazi";
 			a.behavior = HOME;
 			break;
-		case EnemyEnum.GRAYSHOOTER:
+		case EnemyEnum.BAT:
 			a = new Actor(ActorAssetManager.createShip(6), attrs);
 			a.name = "Gray Death";
 			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
+				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[0], 2000, 4000),
+				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[1], 2000, 4000),
 				new AlternatingBehavior( 
 					3000,
 					HOME,
@@ -316,7 +337,7 @@ final class TestScript extends BaseScript
 	{
 //		Utils.addEnemy(game, EnemyEnum.MOTH);
 //		Utils.addEnemy(game, Enemy.GREENK);
-//		Utils.addEnemy(game, Enemy.GRAYSHOOTER);
+//		Utils.addEnemy(game, Enemy.BAT);
 //		Utils.addEnemy(game, Enemy.FIGHTER5);
 	}
 }
