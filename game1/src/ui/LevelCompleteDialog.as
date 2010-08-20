@@ -27,7 +27,7 @@ package ui
 		private function addFields(stats:PlayedLevelStats):void
 		{
 			const pct:Number = 100 * stats.enemiesKilled / stats.enemiesTotal;
-			addField("Enemies Killed", stats.enemiesKilled + "/" + stats.enemiesTotal + "(" + MathUtil.round(pct, 2) + "%)");
+			addField("Clean Kills", stats.enemiesKilled + "/" + stats.enemiesTotal + "(" + MathUtil.round(pct, 2) + "%)");
 			addField("Credits Earned", String(stats.creditsEarned), Consts.CREDIT_FIELD_COLOR);
 			addField("Max Combo", String(stats.maxCombo));
 			

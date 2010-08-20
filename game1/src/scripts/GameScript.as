@@ -497,13 +497,13 @@ class WaveBasedGameScript extends BaseScript
 		const particles:uint = Math.max(10, 10 * damage/actor.attrs.MAX_HEALTH);
 		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
 		actor.health -= damage;
-		actor.registerHit(isPlayer);
 		
 		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 			
 			_stats.damageReceived += damage;
+			actor.registerHit(true);
 		}
 		else 
 		{
@@ -542,6 +542,10 @@ class WaveBasedGameScript extends BaseScript
 						_comboTimer.stop();
 					}
 				}
+			}
+			else
+			{
+				actor.registerHit(false); // don't bother with the color transform if it's dying
 			}
 		}
 	}
