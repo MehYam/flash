@@ -74,7 +74,10 @@ package ui
 		{
 			if (e.target == this)
 			{
+				const prevWidth:Number = _goldParent.width;
+
 				_gold.text = String(UserData.instance.credits);
+				_goldParent.x -= (_goldParent.width - prevWidth);  // my lameness knows no bounds, except when it's calculating bounds
 			}
 		}
 		public function unlockLevels(levels:uint):void
@@ -92,6 +95,7 @@ package ui
 			}
 		}
 		private var _gold:ShadowTextField;
+		private var _goldParent:Sprite;
 		private function addBottomInterface():void
 		{
 			var hangar:DisplayObject = GameButton.create("Plane Hangar", true, 20, 1);
@@ -127,7 +131,8 @@ package ui
 
 			goldReportParent.x = width - goldReportParent.width;
 			goldReportParent.y = height - goldReportParent.height;
-		
+			_goldParent = goldReportParent;
+
 			addChild(goldReportParent);
 		}
 		

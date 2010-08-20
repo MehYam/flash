@@ -12,7 +12,6 @@ package gameData
 			if (!s_instance)
 			{
 				s_instance = new UserData(new SINGLETONLIMITER);
-				s_instance.credits = 100000;
 				s_instance.currentPlane = 0;
 		
 				// priming
@@ -21,22 +20,25 @@ package gameData
 				TankPartData.turrets;
 
 				s_instance.purchasePart(PlaneData.getPlane(0), 0);
+				s_instance.purchasePart(TankPartData.getHull(0), 0);
+				s_instance.purchasePart(TankPartData.getTurret(0), 0);
+
+				s_instance.currentPlane = 0;
+				s_instance.currentHull = 0;
+				s_instance.currentTurret = 0;
+				
+				// TEST DATA BELOW
+//				s_instance.credits = 100000;
 				s_instance.purchasePart(PlaneData.getPlane(1), 0);
-				s_instance.purchasePart(PlaneData.getPlane(2), 0);
+				s_instance.currentPlane = 1;
+//				s_instance.purchasePart(PlaneData.getPlane(2), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(3), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(9), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(10), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(11), 0);
-
-				s_instance.purchasePart(TankPartData.getHull(0), 0);
-				s_instance.purchasePart(TankPartData.getTurret(0), 0);
-				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
-				s_instance.purchasePart(TankPartData.getTurret(0).getUpgrade(1), 0);
-
-				s_instance.currentPlane = 0;
-				s_instance.currentHull = 0;
-				s_instance.currentTurret = 0;
+//				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
+//				s_instance.purchasePart(TankPartData.getTurret(0).getUpgrade(1), 0);
 			}
 			return s_instance;
 		}

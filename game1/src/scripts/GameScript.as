@@ -15,24 +15,24 @@ package scripts
 		
 		static public function getLevel(i:uint):IGameScript
 		{
-			const GREEN:ActorAttrs = new ActorAttrs(20, 1.5, 0.1, 0, 10, 10);
-			const MOTH:ActorAttrs = new ActorAttrs(30, 3, 0.1, 0, 15, 15);
-			const OSPREY:ActorAttrs = new ActorAttrs(100, 1.5, 0.15, 20);
+			const GREEN:ActorAttrs =      new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10);
+			const MOTH:ActorAttrs =       new ActorAttrs( 30, 3,   0.1,  0, 15, 15);
+			const OSPREY:ActorAttrs =     new ActorAttrs(100, 1.5, 0.15, 0, 25, 33);
 
 			var waves:Array;
 			switch(i) {
 				case 0:
 					waves = 
 					[
-//						new Wave(EnemyEnum.GREENK, 5, GREEN),
-//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
-//						new Wave(EnemyEnum.MOTH, 3, MOTH),
-//						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-//						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
-//						new Wave(EnemyEnum.GREENK, 7, GREEN),
-//						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-//						new Wave(EnemyEnum.MOTH, 4, MOTH),
-//						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						new Wave(EnemyEnum.GREENK, 5, GREEN),
+						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
+						new Wave(EnemyEnum.MOTH, 3, MOTH),
+						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
+						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
+						new Wave(EnemyEnum.GREENK, 7, GREEN),
+						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
+						new Wave(EnemyEnum.MOTH, 4, MOTH),
+						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
 						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
 					];
 					break;
@@ -137,11 +137,15 @@ final class Utils
 		switch (UserData.instance.currentPlane) {
 			case 0:
 //				weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 10, 0, -20), 5, 1000, 1);
-				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -20), 333);
-				attrs = new ActorAttrs(100, 5, 1, 0.1);
+				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
+				attrs = new ActorAttrs(100, 5, 1, 0.2);
 				break;
-//			case 1:
-//				weapon = new CompositeBehavior(BehaviorFactory.createAutoFire(new 
+			case 1:
+				weapon = BehaviorFactory.createAutofire(
+					[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), new AmmoFireSource(AmmoType.BULLET, 10, 15, 0)], 
+					400);
+				attrs = new ActorAttrs(100, 5.5, 1, 0.1);
+				break;
 		}
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
 		plane.behavior = BehaviorFactory.faceForward;
@@ -488,6 +492,7 @@ class WaveBasedGameScript extends BaseScript
 						_stats.victory = true;
 						
 						_game.scoreBoard.pctLevel = 1;
+						_comboTimer.stop();
 					}
 				}
 			}
