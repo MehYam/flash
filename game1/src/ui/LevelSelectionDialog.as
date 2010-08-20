@@ -38,7 +38,7 @@ package ui
 				for (var r:uint = 0; r < ROWS; ++r)
 				{
 					var level:uint = (ROWS*c) + r;
-					btn = GameButton.create("Level " + level, false, 18, 1);
+					btn = GameButton.create("Level " + (level + 1), false, 18, 1);
 					btn.name = String(level);
 					btn.width = 85;
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));

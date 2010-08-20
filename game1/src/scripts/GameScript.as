@@ -15,41 +15,67 @@ package scripts
 		
 		static public function getLevel(i:uint):IGameScript
 		{
-			const GREEN:ActorAttrs =      new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10);
-			const MOTH:ActorAttrs =       new ActorAttrs( 30, 3,   0.1,  0, 15, 15);
-			const OSPREY:ActorAttrs =     new ActorAttrs(100, 1.5, 0.15, 0, 25, 33);
-			const BAT:ActorAttrs =        new ActorAttrs(100, 2,   0.05, 0, 20, 20);
-
 			var waves:Array;
 			switch(i) {
 				case 0:
 					waves = 
 					[
-						new Wave(EnemyEnum.GREENK, 5, GREEN),
-						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 1, MOTH)],
-						new Wave(EnemyEnum.MOTH, 3, MOTH),
-						[new Wave(EnemyEnum.GREENK, 7, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-						new Wave(EnemyEnum.OSPREY, 1, OSPREY),
-						new Wave(EnemyEnum.GREENK, 7, GREEN),
-						[new Wave(EnemyEnum.GREENK, 2, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-						new Wave(EnemyEnum.MOTH, 4, MOTH),
-						[new Wave(EnemyEnum.GREENK, 5, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-						[new Wave(EnemyEnum.OSPREY, 2, OSPREY), new Wave(EnemyEnum.MOTH, 2, MOTH)]
+						new Wave(EnemyEnum.GREENK, 5),
+						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.MOTH, 1)],
+						new Wave(EnemyEnum.MOTH, 3),
+						[new Wave(EnemyEnum.GREENK, 7), new Wave(EnemyEnum.MOTH, 2)],
+						new Wave(EnemyEnum.OSPREY, 1),
+						new Wave(EnemyEnum.GREENK, 7),
+						[new Wave(EnemyEnum.GREENK, 2), new Wave(EnemyEnum.MOTH, 3)],
+						new Wave(EnemyEnum.MOTH, 4),
+						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.MOTH, 3)],
+						[new Wave(EnemyEnum.OSPREY, 2), new Wave(EnemyEnum.MOTH, 2)]
 					];
 					break;
 				case 1:
 					waves = 
 					[
-						new Wave(EnemyEnum.BAT, 2, BAT),
-						new Wave(EnemyEnum.GREENK, 10, GREEN),
-						[new Wave(EnemyEnum.GREENK, 3, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-						new Wave(EnemyEnum.MOTH, 5, MOTH),
-						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 2, MOTH)],
-						new Wave(EnemyEnum.OSPREY, 3, OSPREY),
-						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.MOTH, 3, MOTH)],
-						new Wave(EnemyEnum.MOTH, 6, MOTH),
-						[new Wave(EnemyEnum.GREENK, 10, GREEN), new Wave(EnemyEnum.BAT, 2, BAT)],
-						[new Wave(EnemyEnum.GREENK, 3, GREEN), new Wave(EnemyEnum.OSPREY, 4, OSPREY), new Wave(EnemyEnum.MOTH, 4, MOTH)]
+						new Wave(EnemyEnum.BAT, 2),
+						new Wave(EnemyEnum.GREENK, 10),
+						[new Wave(EnemyEnum.GREENK, 3), new Wave(EnemyEnum.MOTH, 2)],
+						new Wave(EnemyEnum.MOTH, 5),
+						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.MOTH, 2)],
+						new Wave(EnemyEnum.OSPREY, 3),
+						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.MOTH, 3)],
+						new Wave(EnemyEnum.MOTH, 6),
+						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.BAT, 2)],
+						[new Wave(EnemyEnum.BAT, 2), new Wave(EnemyEnum.GREENK, 3), new Wave(EnemyEnum.OSPREY, 2), new Wave(EnemyEnum.MOTH, 2)]
+					];
+					break;
+				case 2:
+					waves = 
+					[
+						new Wave(EnemyEnum.GREENK, 6),
+						[new Wave(EnemyEnum.GREENK, 6), new Wave(EnemyEnum.MOTH, 2)],
+						new Wave(EnemyEnum.MOTH, 3),
+						[new Wave(EnemyEnum.GREENK, 7), new Wave(EnemyEnum.MOTH, 2)],
+						new Wave(EnemyEnum.OSPREY, 1),
+						new Wave(EnemyEnum.GREENK, 7),
+						[new Wave(EnemyEnum.GREENK, 3), new Wave(EnemyEnum.MOTH, 4)],
+						new Wave(EnemyEnum.MOTH, 5),
+						[new Wave(EnemyEnum.GREENK, 6), new Wave(EnemyEnum.MOTH, 4)],
+						[new Wave(EnemyEnum.OSPREY, 3), new Wave(EnemyEnum.MOTH, 3)]
+					];
+					break;
+				case 3:
+					waves = 
+					[
+						[new Wave(EnemyEnum.BEE, 1), new Wave(EnemyEnum.OSPREY, 1), new Wave(EnemyEnum.MOTH, 1), new Wave(EnemyEnum.BAT, 1), new Wave(EnemyEnum.GREENK, 2)],
+						new Wave(EnemyEnum.GREENK, 13),
+						new Wave(EnemyEnum.BEE, 3),
+						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.BEE, 4)],
+						new Wave(EnemyEnum.BEE, 5),
+						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.MOTH, 2), new Wave(EnemyEnum.BEE, 2)],
+						new Wave(EnemyEnum.OSPREY, 6),
+						[new Wave(EnemyEnum.GREENK, 8), new Wave(EnemyEnum.MOTH, 4), new Wave(EnemyEnum.BEE, 2)],
+						new Wave(EnemyEnum.BEE, 7),
+						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.BAT, 6)],
+						[new Wave(EnemyEnum.BEE, 3), new Wave(EnemyEnum.OSPREY, 2), new Wave(EnemyEnum.MOTH, 2), new Wave(EnemyEnum.BAT, 2), new Wave(EnemyEnum.GREENK, 2)]
 					];
 					break;
 			}
@@ -86,12 +112,16 @@ import scripts.TankActor;
 
 final class EnemyEnum
 {
-	static public const MOTH:EnemyEnum = new EnemyEnum;
-	static public const GREENK:EnemyEnum = new EnemyEnum;
-	static public const BAT:EnemyEnum = new EnemyEnum;
-	static public const FUNNEL:EnemyEnum = new EnemyEnum;
-	static public const BLUE:EnemyEnum = new EnemyEnum;
-	static public const OSPREY:EnemyEnum = new EnemyEnum;
+	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33));
+	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10));
+	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15));
+	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33));
+	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20));
+	public var attrs:ActorAttrs;
+	public function EnemyEnum(attrs:ActorAttrs)
+	{
+		this.attrs = attrs;
+	}
 }
 
 final class TestAttrs
@@ -105,13 +135,13 @@ final class Utils
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
 	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-	static public function attackAndFlee(source:AmmoFireSource, msRate:uint):IBehavior
+	static public function attackAndFlee(source:AmmoFireSource, msRate:uint, msShootRateMin:uint = 300, msShootRateMax:uint = 2000):IBehavior
 	{
 		return new AlternatingBehavior
 		(
 			msRate,
 			CHASE,
-			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(source, 300, 2000)),
+			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(source, msShootRateMin, msShootRateMax)),
 			FLEE
 		);
 	}
@@ -177,16 +207,6 @@ final class Utils
 		return null;
 	}
 
-	static public function addEnemyByIndex(game:IGame, index:uint):Actor
-	{
-		var a:Actor = new Actor(ActorAssetManager.createShip(index), TestAttrs.RED_SHIP);
-		a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
-
-		placeAtRandomEdge(a, game.worldBounds);
-		game.addEnemy(a);
-		return a;
-	}
-	
 	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
 	static private const OSPREY_LASERSOURCE:Array =
 	[
@@ -198,14 +218,20 @@ final class Utils
 		new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10),
 		new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10)
 	];
+	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static public function addEnemy(game:IGame, type:EnemyEnum, attrs:ActorAttrs):Actor
 	{
 		var a:Actor;
 		switch (type) {
 		case EnemyEnum.MOTH:
 			a = new Actor(ActorAssetManager.createShip(23, 0.7), attrs);
-			a.name = "Red Rogue";
+			a.name = "Moth";
 			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
+			break;
+		case EnemyEnum.BEE:
+			a = new Actor(ActorAssetManager.createShip(0), attrs);
+			a.name = "Bee";
+			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
 			break;
 		case EnemyEnum.GREENK:
 			a = new Actor(ActorAssetManager.createShip(3), attrs);
@@ -346,11 +372,11 @@ final class Wave
 	public var type:EnemyEnum;
 	public var number:uint;
 	public var attrs:ActorAttrs;
-	public function Wave(type:EnemyEnum, number:uint, attrs:ActorAttrs)
+	public function Wave(type:EnemyEnum, number:uint)
 	{
 		this.type = type;
 		this.number = number;
-		this.attrs = attrs;
+		this.attrs = type.attrs; // ... keeping this just in case we want to split them out again
 	}
 }
 class WaveBasedGameScript extends BaseScript
