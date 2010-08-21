@@ -469,7 +469,7 @@ class WaveBasedGameScript extends BaseScript
 	}
 	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
 	{
-		damageActor(game, game.player, 10);
+		damageActor(game, game.player, ammo.damage);
 		game.killActor(ammo);
 	}
 	public override function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void
