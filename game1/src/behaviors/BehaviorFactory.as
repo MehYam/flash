@@ -14,6 +14,7 @@ package behaviors
 		static private var _strafe:IBehavior;
 		static private var _follow:IBehavior;
 		static private var _fade:IBehavior;
+		static private var _fadeIn:IBehavior;
 		static private var _accelerator:IBehavior;
 		static public function get faceForward():IBehavior
 		{
@@ -79,6 +80,14 @@ package behaviors
 			}
 			return _fade;
 		}
+		static public function get fadeIn():IBehavior
+		{
+			if (!_fadeIn)
+			{
+				_fadeIn = new FadeInBehavior;
+			}
+			return _fadeIn;
+		}
 		static public function get accelerator():IBehavior
 		{
 			if (!_accelerator)
@@ -119,6 +128,7 @@ package behaviors
 import behaviors.ActorAttrs;
 import behaviors.AmmoFireSource;
 import behaviors.BehaviorFactory;
+import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
@@ -261,37 +271,19 @@ final class FadeBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		actor.displayObject.alpha -= 0.005;
+		if (actor.displayObject.alpha > 0)
+		{
+			actor.displayObject.alpha -= 0.005;
+		}
 	}
 }
-
-// KAI: this might be something more generic
-// KAI: this might also be the same thing as the chargedfire, when you think about it
-final class ShieldActivatorBehavior implements IBehavior  
+final class FadeInBehavior implements IBehavior
 {
-	private var _source:AmmoFireSource;
-	public function ShieldActivatorBehavior(source:AmmoFireSource):void
-	{
-		_source = source;
-	}
-	private var _shield:Actor;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
-		// shooting (and once after they stop)
-		if (game.playerShooting)
+		if (actor.displayObject.alpha < 1)
 		{
-			if (!_shield)
-			{
-				_shield = _source.fire(game, actor); 
-			}
-			Util.setPoint(_shield.worldPos, actor.worldPos);
-			_shield.displayObject.rotation = actor.displayObject.rotation;
-		}
-		else if (_shield)
-		{
-			game.killActor(_shield);
-			_shield = null;
+			actor.displayObject.alpha += 0.1;
 		}
 	}
 }
@@ -397,6 +389,48 @@ final class ChargedFireBehavior implements IBehavior
 					}
 				}
 			}
+		}
+	}
+}
+
+// KAI: this might be something more generic
+// KAI: this might also be the same thing as the chargedfire, when you think about it
+final class ShieldActivatorBehavior implements IBehavior  
+{
+	private var _limiter:RateLimiter = new RateLimiter(1000, 1000);
+	private var _source:AmmoFireSource;
+	public function ShieldActivatorBehavior(source:AmmoFireSource):void
+	{
+		_source = source;
+	}
+	private var _shield:Actor;
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
+		// shooting (and once after they stop)
+		if (game.playerShooting)
+		{
+			if (!_shield && _limiter.now)
+			{
+				_shield = _source.fire(game, actor); 
+			}
+			if (_shield)
+			{
+				Util.setPoint(_shield.worldPos, actor.worldPos);
+				_shield.displayObject.rotation = actor.displayObject.rotation;
+			}
+		}
+		else if (_shield)
+		{
+			// launch it
+			Util.setPoint(_shield.speed, actor.speed);
+			BehaviorFactory.faceForward.onFrame(game, _shield);
+			
+			_shield.displayObject.alpha = 1;
+			_shield.behavior = new CompositeBehavior(BehaviorFactory.createExpire(1000), BehaviorFactory.fade);
+			_shield = null;
+			
+			_limiter.reset();
 		}
 	}
 }

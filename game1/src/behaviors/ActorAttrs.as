@@ -2,12 +2,12 @@ package behaviors
 {
 	final public class ActorAttrs
 	{
-		static public const BULLET:ActorAttrs = new ActorAttrs(100, 8, 10, 0, 20, 100, false, 1500);
-		static public const ROCKET:ActorAttrs = new ActorAttrs(100, 8, 0.2, 0, 20, 100, false, 4000);
-		static public const LASER:ActorAttrs = new ActorAttrs(100, 6, 7, 0, 20, 100, false, 2000);
-		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(100, 5, 10, 0, 20, 33);
-		static public const EXPLOSION:ActorAttrs = new ActorAttrs(100, 100, 0, 0.1, 0, 0, false, 300);
-		static public const SHIELD:ActorAttrs = new ActorAttrs(100, 0, 0, 0, 50, 100, false);
+		static public const BULLET:ActorAttrs = new ActorAttrs(1, 8, 10, 0, 20, 0, false, 1500);
+		static public const ROCKET:ActorAttrs = new ActorAttrs(1, 8, 0.2, 0, 20, 0, false, 4000);
+		static public const LASER:ActorAttrs = new ActorAttrs(1, 6, 7, 0, 20, 0, false, 2000);
+		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(1, 5, 10);
+		static public const EXPLOSION:ActorAttrs = new ActorAttrs(0, 100, 0, 0.1, 0, 0, false, 300);
+		static public const SHIELD:ActorAttrs = new ActorAttrs(50, 0, 0, 0, 50, 0, false);
 			
 		static public const INFINITE_LIFETIME:int = -1;
 		

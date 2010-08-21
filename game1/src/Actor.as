@@ -272,12 +272,12 @@ final class RocketActor extends Actor
 		speed.y /= 25;
 	}
 }
-final class FusionBlastActor extends Actor implements IPenetratingAmmo
+
+class PiercingAmmoActor extends Actor implements IPenetratingAmmo
 {
-	public function FusionBlastActor()
+	public function PiercingAmmoActor(dobj:DisplayObject, attrs:ActorAttrs)
 	{
-		super(ActorAssetManager.createFusionBlast(), ActorAttrs.FUSIONBLAST);
-		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+		super(dobj, attrs);
 	}
 	private var _struckActors:Dictionary = new Dictionary(true);
 	public function strikeActor(actor:Actor):void
@@ -294,12 +294,26 @@ final class FusionBlastActor extends Actor implements IPenetratingAmmo
 		_struckActors = new Dictionary(true);
 	}
 }
-
-final class ShieldActor extends Actor
+	
+final class FusionBlastActor extends PiercingAmmoActor
+{
+	public function FusionBlastActor()
+	{
+		super(ActorAssetManager.createFusionBlast(), ActorAttrs.FUSIONBLAST);
+		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+	}
+}
+final class ShieldActor extends PiercingAmmoActor
 {
 	public function ShieldActor()
 	{
 		super(ActorAssetManager.createShield(), ActorAttrs.SHIELD);
+	}
+	public override function reset():void
+	{
+		super.reset();
+		displayObject.alpha = 0;
+		behavior = BehaviorFactory.fadeIn;
 	}
 }
 
