@@ -12,74 +12,46 @@ package scripts
 		{
 			return new TestScript(10);
 		}
-		
+
+		static private var s_levels:Array;
 		static public function getLevel(i:uint):IGameScript
 		{
-			var waves:Array;
-			switch(i) {
-				case 0:
-					waves = 
-					[
-						new Wave(EnemyEnum.GREENK, 5),
-						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.MOTH, 1)],
-						new Wave(EnemyEnum.MOTH, 3),
-						[new Wave(EnemyEnum.GREENK, 7), new Wave(EnemyEnum.MOTH, 2)],
-						new Wave(EnemyEnum.OSPREY, 1),
-						new Wave(EnemyEnum.GREENK, 7),
-						[new Wave(EnemyEnum.GREENK, 2), new Wave(EnemyEnum.MOTH, 3)],
-						new Wave(EnemyEnum.MOTH, 4),
-						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.MOTH, 3)],
-						[new Wave(EnemyEnum.OSPREY, 2), new Wave(EnemyEnum.MOTH, 2)]
-					];
-					break;
-				case 1:
-					waves = 
-					[
-						new Wave(EnemyEnum.BAT, 2),
-						new Wave(EnemyEnum.GREENK, 10),
-						[new Wave(EnemyEnum.GREENK, 3), new Wave(EnemyEnum.MOTH, 2)],
-						new Wave(EnemyEnum.MOTH, 5),
-						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.MOTH, 2)],
-						new Wave(EnemyEnum.OSPREY, 3),
-						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.MOTH, 3)],
-						new Wave(EnemyEnum.MOTH, 6),
-						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.BAT, 2)],
-						[new Wave(EnemyEnum.BAT, 2), new Wave(EnemyEnum.GREENK, 3), new Wave(EnemyEnum.OSPREY, 2), new Wave(EnemyEnum.MOTH, 2)]
-					];
-					break;
-				case 2:
-					waves = 
-					[
-						new Wave(EnemyEnum.GREENK, 6),
-						[new Wave(EnemyEnum.GREENK, 6), new Wave(EnemyEnum.MOTH, 2)],
-						new Wave(EnemyEnum.MOTH, 3),
-						[new Wave(EnemyEnum.GREENK, 7), new Wave(EnemyEnum.MOTH, 2)],
-						new Wave(EnemyEnum.OSPREY, 1),
-						new Wave(EnemyEnum.GREENK, 7),
-						[new Wave(EnemyEnum.GREENK, 3), new Wave(EnemyEnum.MOTH, 4)],
-						new Wave(EnemyEnum.MOTH, 5),
-						[new Wave(EnemyEnum.GREENK, 6), new Wave(EnemyEnum.MOTH, 4)],
-						[new Wave(EnemyEnum.OSPREY, 3), new Wave(EnemyEnum.MOTH, 3)]
-					];
-					break;
-				case 3:
-					waves = 
-					[
-						[new Wave(EnemyEnum.BEE, 1), new Wave(EnemyEnum.OSPREY, 1), new Wave(EnemyEnum.MOTH, 1), new Wave(EnemyEnum.BAT, 1), new Wave(EnemyEnum.GREENK, 2)],
-						new Wave(EnemyEnum.GREENK, 13),
-						new Wave(EnemyEnum.BEE, 3),
-						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.BEE, 4)],
-						new Wave(EnemyEnum.BEE, 5),
-						[new Wave(EnemyEnum.GREENK, 10), new Wave(EnemyEnum.MOTH, 2), new Wave(EnemyEnum.BEE, 2)],
-						new Wave(EnemyEnum.OSPREY, 6),
-						[new Wave(EnemyEnum.GREENK, 8), new Wave(EnemyEnum.MOTH, 4), new Wave(EnemyEnum.BEE, 2)],
-						new Wave(EnemyEnum.BEE, 7),
-						[new Wave(EnemyEnum.GREENK, 5), new Wave(EnemyEnum.BAT, 6)],
-						[new Wave(EnemyEnum.BEE, 3), new Wave(EnemyEnum.OSPREY, 2), new Wave(EnemyEnum.MOTH, 2), new Wave(EnemyEnum.BAT, 2), new Wave(EnemyEnum.GREENK, 2)]
-					];
-					break;
+			if (!s_levels)
+			{
+				s_levels = [];
+				
+				const waveStr:String = Levels.planeLevels;
+				
+				var lines:Array = waveStr.split("\n");
+				lines.length;
+				
+				var level:Array;
+				const levelDelimiter:uint = "#".charCodeAt(0);
+				for each (var line:String in lines)
+				{
+					if (line.length < 2) continue;
+					if (line.charCodeAt(0) == levelDelimiter)
+					{
+						if (level)
+						{
+							s_levels.push(level);
+						}
+						level = [];
+					}
+					else
+					{
+						var wave:Array = []
+						var spawns:Array = line.split(";");
+						for each (var spawn:String in spawns)
+						{
+							var spawnArgs:Array = spawn.split(",");
+							wave.push(new Wave(EnemyEnum.LOOKUP[spawnArgs[0]], parseInt(spawnArgs[1])));
+						}
+						level.push(wave);
+					}
+				}
 			}
-			return new WaveBasedGameScript(waves);
+			return new WaveBasedGameScript(s_levels[i]);
 		}
 	}
 }
@@ -112,15 +84,20 @@ import scripts.TankActor;
 
 final class EnemyEnum
 {
-	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33));
-	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10));
-	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15));
-	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33));
-	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20));
+	static public var LOOKUP:Object = {};
+
+	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), "BEE");
+	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), "GREENK");
+	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), "MOTH");
+	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), "OSPREY");
+	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), "BAT");
+	
 	public var attrs:ActorAttrs;
-	public function EnemyEnum(attrs:ActorAttrs)
+	public function EnemyEnum(attrs:ActorAttrs, name:String)
 	{
 		this.attrs = attrs;
+		
+		LOOKUP[name] = this;
 	}
 }
 
@@ -347,7 +324,7 @@ final class TestScript extends BaseScript
 
 	public override function begin(game:IGame):void
 	{
-		game.tiles = GrassTilesAssets.testLevel;
+		game.tiles = GrassTilesLevels.testLevel;
 		super.begin(game);
 		
 		game.centerPrint("Test Script Begin");
@@ -399,7 +376,7 @@ class WaveBasedGameScript extends BaseScript
 	public override function begin(game:IGame):void
 	{
 		_game = game;
-		game.tiles = GrassTilesAssets.smallLevel;
+		game.tiles = GrassTilesLevels.smallLevel;
 
 		super.begin(game); //KAI:
 
@@ -592,7 +569,7 @@ final class PlayerVehicle
 	}
 }
 
-final class GrassTilesAssets
+final class GrassTilesLevels
 {
 	[Embed(source="assets/level1_small.txt", mimeType="application/octet-stream")]
 	static private const SmallLevel:Class;
@@ -606,5 +583,15 @@ final class GrassTilesAssets
 	static public function get testLevel():String
 	{
 		return (new TestLevel).toString();
+	}
+}
+
+final class Levels
+{
+	[Embed(source="assets/planelevels.txt", mimeType="application/octet-stream")]
+	static private const PlaneLevels:Class;
+	static public function get planeLevels():String
+	{
+		return (new PlaneLevels).toString();
 	}
 }
