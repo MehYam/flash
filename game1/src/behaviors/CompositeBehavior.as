@@ -23,7 +23,11 @@ package behaviors
 		}
 		public function onFrameAt(game:IGame, actor:Actor, index:uint):void
 		{
-			IBehavior(_behaviors[index]).onFrame(game, actor);
+			const behavior:IBehavior = _behaviors[index];
+			if (behavior)
+			{
+				behavior.onFrame(game, actor);
+			}
 		}
 		public function get numBehaviors():uint
 		{

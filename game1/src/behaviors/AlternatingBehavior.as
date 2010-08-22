@@ -16,6 +16,7 @@ package behaviors
 			}
 
 			_rate = new RateLimiter(msRate / 2, msRate*3 / 2);
+			_count = Math.random() * _behaviors.numBehaviors;
 		}
 		private var _count:uint;
 		public function onFrame(game:IGame, actor:Actor):void

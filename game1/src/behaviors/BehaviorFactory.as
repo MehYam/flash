@@ -16,7 +16,9 @@ package behaviors
 		static private var _fade:IBehavior;
 		static private var _fadeIn:IBehavior;
 		static private var _accelerator:IBehavior;
+		static private var _speedDecay:IBehavior;
 		static private var _shadowPlayer:IBehavior;
+		static private var _turret:IBehavior;
 		static public function get faceForward():IBehavior
 		{
 			if (!_faceForward)
@@ -97,6 +99,14 @@ package behaviors
 			}
 			return _accelerator;
 		}
+		static public function get speedDecay():IBehavior
+		{
+			if (!_speedDecay)
+			{
+				_speedDecay = new SpeedDecayBehavior;
+			}
+			return _speedDecay;
+		}
 		static public function get shadowPlayer():IBehavior
 		{
 			if (!_shadowPlayer)
@@ -104,6 +114,14 @@ package behaviors
 				_shadowPlayer = new ShadowPlayerBehavior;
 			}
 			return _shadowPlayer;
+		}
+		static public function get turret():IBehavior
+		{
+			if (!_turret)
+			{
+				_turret = new CompositeBehavior(facePlayer, speedDecay);
+			}
+			return _turret;
 		}
 		// Non-singletons
 		// source - is either an AmmoFireSource or array of them
@@ -469,8 +487,14 @@ final class SpeedDecayBehavior implements IBehavior
 	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		actor.speed.x = MathUtil.speedDecay(actor.speed.x, actor.attrs.SPEED_DECAY);
-		actor.speed.y = MathUtil.speedDecay(actor.speed.y, actor.attrs.SPEED_DECAY);
+		if (actor.speed.x)
+		{
+			actor.speed.x = MathUtil.speedDecay(actor.speed.x, actor.attrs.SPEED_DECAY);
+		}
+		if (actor.speed.y)
+		{
+			actor.speed.y = MathUtil.speedDecay(actor.speed.y, actor.attrs.SPEED_DECAY);
+		}
 	}
 }
 final class ExpireBehavior implements IBehavior, IResettable

@@ -96,6 +96,9 @@ package
 		public function onFrame(game:IGame):void
 		{
 			worldPos.offset(speed.x, speed.y);
+			
+			// attrs.SPEED_DECAY would be done here if I were doing this over again
+
 			if (attrs.BOUNDED)
 			{	
 				MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed);
