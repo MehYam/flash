@@ -30,15 +30,15 @@ package gameData
 				// TEST DATA BELOW
 //				s_instance.credits = 100000;
 				s_instance.purchasePart(PlaneData.getPlane(1), 0);
-				s_instance.purchasePart(PlaneData.getPlane(3), 0);
-				s_instance.levelReached = 2;
-				s_instance.currentPlane = 3;
+//				s_instance.purchasePart(PlaneData.getPlane(3), 0);
+//				s_instance.levelReached = 2;
+//				s_instance.currentPlane = 3;
 //				s_instance.purchasePart(PlaneData.getPlane(2), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(3), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(9), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(10), 0);
-//				s_instance.purchasePart(PlaneData.getPlane(11), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(12), 0);
 //				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getTurret(0).getUpgrade(1), 0);
 			}

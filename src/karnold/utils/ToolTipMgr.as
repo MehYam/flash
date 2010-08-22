@@ -2,6 +2,7 @@ package karnold.utils
 {
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
+	import flash.display.Stage;
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
@@ -31,7 +32,8 @@ package karnold.utils
 		private function show(x:Number, y:Number):void
 		{
 			const entry:ToolTipEntry = _hosts[_lastMousedOverItem];
-			if (entry && _lastMousedOverItem.stage)
+			const stage:Stage = _lastMousedOverItem.stage;
+			if (entry && stage)
 			{
 				var dobj:DisplayObject = _tooltip.displayObject;
 
@@ -39,8 +41,9 @@ package karnold.utils
 				{	
 					_tooltip.text = entry.text;
 				}
-				dobj.x = x + 3;
-				dobj.y = y - dobj.height - 3;
+				dobj.x = Math.min(Math.max(0, x + 3), stage.stageWidth - dobj.width);
+				dobj.y = Math.min(Math.max(0, y - dobj.height - 5), stage.stageHeight - dobj.height);
+
 				if (!dobj.parent)
 				{	
 					_tooltip.text = entry.text;

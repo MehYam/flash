@@ -62,7 +62,7 @@ package gameData
 				
 				s_entries[0].unlock = 0;
 				s_entries[3].unlock = 0;
-				s_entries[6].unlock = 0;
+				s_entries[6].unlock = 1;
 				s_entries[9].unlock = 8;
 				s_entries[12].unlock = 5;
 				s_entries[15].unlock = 2;
@@ -72,8 +72,27 @@ package gameData
 				s_entries[25].unlock = 8;
 				s_entries[28].unlock = 2;
 				s_entries[31].unlock = 5;
-				s_entries[34].unlock = 2
+				s_entries[34].unlock = 2;
 				
+				s_entries[0].description = 
+					"The Bee is the basic ship in the Stinger line required by all tournament contestants. " +
+					"Your... 'new Bee' has been fitted with a low-energy cannon, and like all Rogue-class ships, " +
+					"it sacrifices armor for maneuverability.\n\n" +
+					"Purchased upgrades to the Bee increase firepower, movement, and a bit of armor, but most importantly, unlock " +
+					"the purchase of higher level ships and classes.";
+				s_entries[1].description = 
+					"The Wasp is a respectable step up from Bee, adding some movement speed and doubling its " +
+					"firepower with a second cannon.\n\n" +
+					"Purchase of the Wasp also unlocks the Bat, the first in the line of Fighter-class ships.";
+				s_entries[2].description =
+					"Wowawee\n\n" +
+					"Purchasing this vehicle unlocks the Raven, Rocinante, and Cygnus lines Rogue-class ships." 
+				s_entries[3].description =
+					"The first of the class of Melee ships, the Jems are actually mining and drilling vessels " +
+					"repurposed into tournament death machines.  All Melee ships have protective shields that " +
+					"can be creatively used to inflict great harm on opponents.  Some ships include conventional weapons as well.\n\n" +
+					"The Jem's only weapon is a shield that takes some time to recharge, and is relatively weak, but " +
+					"can be flung at opponents at moderate range.  Upgrades to the Jem will unlock other Melee-class ships.";
 			}
 			return s_entries;
 		}

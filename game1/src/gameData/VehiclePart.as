@@ -6,6 +6,7 @@ package gameData
 		public var assetIndex:uint;
 		public var baseStats:VehiclePartStats;
 		public var purchased:Boolean;
+		public var description:String;
 
 		public function VehiclePart(name:String, assetIndex:uint, baseStats:VehiclePartStats)
 		{

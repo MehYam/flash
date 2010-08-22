@@ -143,7 +143,7 @@ package ui
 
 			var retval:String = nameHeader ? "Name: " : ""; 
 			retval += "<font size='+2'><b>" + part.name + "</b></font><br>Cost: <b>" + costString + "</b><br><br>";
-			retval += "This ship is a pretty cool ship because as far as ship goes, it ship ships shipsss pretty cool ship ship.  ship.";
+			retval += "<font size='-1'>" + (part.description || "Ship details unknown.") + "</font>";
 			return retval;
 		}
 	}

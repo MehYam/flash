@@ -26,14 +26,14 @@ package ui
 			_textField.autoSize = TextFieldAutoSize.LEFT;
 			_textField.multiline = true;
 			_textField.wordWrap = true;
-			_textField.width = 150;
+			_textField.width = 300;
 			
 			addChild(_skin);
 			addChild(_textField);
 			
 			filters = [new DropShadowFilter];
 			
-			alpha = 0.9;
+			alpha = 0.95;
 		}
 		public function set text(t:String):void
 		{
