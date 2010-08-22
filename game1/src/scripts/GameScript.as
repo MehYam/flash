@@ -123,7 +123,7 @@ final class EnemyEnum
 
 	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 10, 50), "GHOST");
 	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
-	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 5,   0.1,  0.05, 30, 100), "CYGNUS");
+	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.1,  0.05, 30, 100), "CYGNUS");
 
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);

@@ -97,7 +97,7 @@ package gameData
 					"can be flung at opponents at moderate range.  Upgrades to the Jem will unlock other Melee-class ships.";
 				s_entries[9].description =
 					"Fighter-class ships like those in the Yango line fall in the middle between Rogue and Melee " +
-					"ships.  They're generally nimble than Melees, but slower than Rogues due to added armor and " +
+					"ships.  They're generally nimbler than Melees, but slower than Rogues due to added armor and " +
 					"armament.  These ships are generally military in origin, and so require little modification to " +
 					"be tournament-ready."; 
 			}
