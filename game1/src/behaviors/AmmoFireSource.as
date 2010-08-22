@@ -56,7 +56,7 @@ package behaviors
 			po_tmp.offset(_offsetX, _offsetY);
 			
 			MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
-			ammo.launchDegrees(po_tmp, angle);
+			ammo.launchDegrees(po_tmp, angle + _angle);
 			if (game.player == actor)
 			{
 				if (_ammoType == AmmoType.SHIELD)

@@ -85,29 +85,13 @@ import scripts.TankActor;
 final class EnemyEnum
 {
 	static public var LOOKUP:Object = {};
-
-	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), "BEE");
-	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), "GREENK");
-	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), "MOTH");
-	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), "OSPREY");
-	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), "BAT");
-	
 	public var attrs:ActorAttrs;
 	public function EnemyEnum(attrs:ActorAttrs, name:String)
 	{
 		this.attrs = attrs;
-		
 		LOOKUP[name] = this;
 	}
-}
-
-final class TestAttrs
-{
-	static public const RED_SHIP:ActorAttrs = new ActorAttrs(100, 3, 0.1, 0, 15, 15);
-	static public const TANK:ActorAttrs = new ActorAttrs(100, 1.5, 1, 0.5);
-}
-final class Utils
-{
+	
 	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
@@ -130,47 +114,123 @@ final class Utils
 			BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, msShootRate/2, msShootRate)
 		);
 	}
-	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
+
+	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), "BEE");
+	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), "GREENK");
+	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), "MOTH");
+	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), "OSPREY");
+	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), "BAT");
+	
+	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
+	static private const OSPREY_LASERSOURCE:Array =
+		[
+			new AmmoFireSource(AmmoType.LASER, 10, -35, -15),
+			new AmmoFireSource(AmmoType.LASER, 10,  35, -15)
+		];
+	static private const BAT_ROCKETSOURCE:Array = 
+		[
+			new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3),
+			new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3)
+		];
+	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
+	public function create():Actor
 	{
-		actor.worldPos.x = MathUtil.random(bounds.left, bounds.right);
-		actor.worldPos.y = MathUtil.random(bounds.top, bounds.bottom);
-		switch(int(Math.random() * 4)) {
-		case 0:
-			actor.worldPos.x = bounds.left;
+		var a:Actor;
+		switch (this) {  //KAI: omg i've never seen anything like that, lol, alternative to creating classes
+		case EnemyEnum.MOTH:
+			a = new Actor(ActorAssetManager.createShip(23, 0.7), attrs);
+			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
 			break;
-		case 1:
-			actor.worldPos.x = bounds.right;
+		case EnemyEnum.BEE:
+			a = new Actor(ActorAssetManager.createShip(0), attrs);
+			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
 			break;
-		case 2:
-			actor.worldPos.y = bounds.top;
+		case EnemyEnum.GREENK:
+			a = new Actor(ActorAssetManager.createShip(3), attrs);
+			a.behavior = HOME;
 			break;
-		case 3:
-			actor.worldPos.y = bounds.bottom;
+		case EnemyEnum.BAT:
+			a = new Actor(ActorAssetManager.createShip(6), attrs);
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[0], 2000, 4000),
+				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[1], 2000, 4000),
+				new AlternatingBehavior( 
+					3000,
+					HOME,
+					BehaviorFactory.strafe
+				)
+			);
+			break;
+		case EnemyEnum.OSPREY:
+			a = new Actor(ActorAssetManager.createShip(9), attrs);
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
+				new AlternatingBehavior( 
+					3000,
+					HOME,
+					BehaviorFactory.strafe
+				)
+			);
 			break;
 		}
+		return a;
 	}
+}
+final class Utils
+{
 	static public function getPlayerPlane():PlayerVehicle
 	{
 		const asset:uint = PlaneData.getPlane(UserData.instance.currentPlane).assetIndex;
 
 		var weapon:IBehavior;
 		var attrs:ActorAttrs;
+		// this in order of the general progression of ships
 		switch (UserData.instance.currentPlane) {
 			case 0:
 //				weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 10, 0, -20), 5, 1000, 1);
 //				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 10, 0, -10), 400);
 				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
-				attrs = new ActorAttrs(100, 5, 1, 0.2);
+				attrs = new ActorAttrs(100, 4.5, 0.5, 0.2, EnemyEnum.BEE.attrs.RADIUS);
 				break;
 			case 1:
 				weapon = BehaviorFactory.createAutofire(
 					[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), new AmmoFireSource(AmmoType.BULLET, 10, 15, 0)], 
 					400);
-				attrs = new ActorAttrs(100, 5.5, 1, 0.1);
+				attrs = new ActorAttrs(100, 5, 0.5, 0.1, EnemyEnum.BEE.attrs.RADIUS);
 				break;
 			case 3:
 				weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10));
-				attrs = new ActorAttrs(100, 3, 1, 0.1);
+				attrs = new ActorAttrs(200, 3, 1, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+				break;
+			case 6:
+				weapon = new AlternatingBehavior(
+					1000,
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3), 1000),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3), 1000)
+				);
+				attrs = new ActorAttrs(200, 4, 0.3, 0.1, EnemyEnum.BAT.attrs.RADIUS);
+				break;
+			case 2:
+				weapon = BehaviorFactory.createAutofire(
+					[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
+					 new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
+					 new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
+					400);
+				attrs = new ActorAttrs(100, 5.5, 1, 0.1, EnemyEnum.BEE.attrs.RADIUS);
+				break;
+			case 4:
+				weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10));
+				attrs = new ActorAttrs(300, 3.5, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+				break;
+			case 7:
+				weapon = new AlternatingBehavior(
+					400,
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -20, -10, 0, 3), 1000),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -15,  -5, 0, 3), 1000),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 3), 1000)
+				);
+				attrs = new ActorAttrs(225, 4.5, 0.3, 0.1, EnemyEnum.BAT.attrs.RADIUS+2);
 				break;
 		}
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
@@ -184,68 +244,33 @@ final class Utils
 		const hull:uint = TankPartData.getHull(UserData.instance.currentHull).assetIndex;
 		const turret:uint = TankPartData.getTurret(UserData.instance.currentTurret).assetIndex;
 		
-		var tank:Actor = TankActor.createTankActor(hull, turret, TestAttrs.TANK);
+		var tank:Actor = TankActor.createTankActor(hull, turret, new ActorAttrs(100, 1.5, 1, 0.5));
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 		return null;
 	}
 
-	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
-	static private const OSPREY_LASERSOURCE:Array =
-	[
-		new AmmoFireSource(AmmoType.LASER, 10, -35, -15),
-		new AmmoFireSource(AmmoType.LASER, 10,  35, -15)
-	];
-	static private const BAT_ROCKETSOURCE:Array = 
-	[
-		new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3),
-		new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3)
-	];
-	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
-	static public function addEnemy(game:IGame, type:EnemyEnum, attrs:ActorAttrs):Actor
+	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
 	{
-		var a:Actor;
-		switch (type) {
-		case EnemyEnum.MOTH:
-			a = new Actor(ActorAssetManager.createShip(23, 0.7), attrs);
-			a.name = "Moth";
-			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
-			break;
-		case EnemyEnum.BEE:
-			a = new Actor(ActorAssetManager.createShip(0), attrs);
-			a.name = "Bee";
-			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
-			break;
-		case EnemyEnum.GREENK:
-			a = new Actor(ActorAssetManager.createShip(3), attrs);
-			a.name = "Greenakazi";
-			a.behavior = HOME;
-			break;
-		case EnemyEnum.BAT:
-			a = new Actor(ActorAssetManager.createShip(6), attrs);
-			a.name = "Gray Death";
-			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[0], 2000, 4000),
-				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[1], 2000, 4000),
-				new AlternatingBehavior( 
-					3000,
-					HOME,
-					BehaviorFactory.strafe
-				)
-			);
-			break;
-		case EnemyEnum.OSPREY:
-			a = new Actor(ActorAssetManager.createShip(9), attrs);
-			a.name = "Osprey";
-			a.behavior = new CompositeBehavior(
-				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
-				new AlternatingBehavior( 
-					3000,
-					HOME,
-					BehaviorFactory.strafe
-				)
-			);
-			break;
+		actor.worldPos.x = MathUtil.random(bounds.left, bounds.right);
+		actor.worldPos.y = MathUtil.random(bounds.top, bounds.bottom);
+		switch(int(Math.random() * 4)) {
+			case 0:
+				actor.worldPos.x = bounds.left;
+				break;
+			case 1:
+				actor.worldPos.x = bounds.right;
+				break;
+			case 2:
+				actor.worldPos.y = bounds.top;
+				break;
+			case 3:
+				actor.worldPos.y = bounds.bottom;
+				break;
 		}
+	}
+	static public function addEnemy(game:IGame, type:EnemyEnum):Actor
+	{
+		var a:Actor = type.create();
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
 		return a;
@@ -420,7 +445,7 @@ class WaveBasedGameScript extends BaseScript
 			{
 				for (var i:uint = 0; i < wave.number; ++i)
 				{
-					Utils.addEnemy(_game, wave.type, wave.attrs);
+					Utils.addEnemy(_game, wave.type);
 					++_liveEnemies;
 				}
 			}
