@@ -288,7 +288,7 @@ package
 			collisionCheckFriendly(_player);
 			for each (var friendly:Actor in _cast.friendlies)
 			{
-				if (friendly)
+				if (friendly && friendly.alive)
 				{
 					collisionCheckFriendly(friendly);
 				}

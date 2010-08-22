@@ -283,7 +283,6 @@ final class FadeBehavior implements IBehavior
 		if (actor.displayObject.alpha > 0)
 		{
 			actor.displayObject.alpha -= 0.005;
-trace("fade to", actor.displayObject.alpha);
 		}
 	}
 }

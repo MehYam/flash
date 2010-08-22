@@ -465,7 +465,8 @@ class WaveBasedGameScript extends BaseScript
 	// IGameEvents
 	public override function onOpposingCollision(game:IGame, friendly:Actor, enemy:Actor):void
 	{
-		damageActor(game, enemy, friendly.damage, false, friendly != game.player); // friendly <=> enemy collisions count as ammo damage
+		const shieldCollisionTreatLikeAmmo:Boolean = friendly == game.player;
+		damageActor(game, enemy, friendly.damage, false, shieldCollisionTreatLikeAmmo);
 		damageActor(game, friendly, enemy.damage, true, true);
 	}
 	public override function onFriendlyStruckByAmmo(game:IGame, friendly:Actor, ammo:Actor):void

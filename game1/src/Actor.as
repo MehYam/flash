@@ -318,9 +318,7 @@ final class ShieldActor extends PiercingAmmoActor
 	private var _launched:Boolean = false;
 	public override function onFrame(game:IGame):void
 	{
-		trace("actor alpha 1", displayObject.alpha);
 		super.onFrame(game);
-		trace("actor alpha 2", displayObject.alpha);
 		if (!_launched && !game.playerShooting)
 		{
 			_launched = true;
