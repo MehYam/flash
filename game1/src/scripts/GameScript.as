@@ -232,6 +232,18 @@ final class Utils
 				);
 				attrs = new ActorAttrs(225, 4.5, 0.3, 0.1, EnemyEnum.BAT.attrs.RADIUS+2);
 				break;
+			case 5:
+				weapon = new CompositeBehavior(
+					BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 30, 0, -10)),
+					BehaviorFactory.createAutofire(
+						[new AmmoFireSource(AmmoType.LASER, 5, -10, 0, 0, 1),
+						new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
+						1500, 1500)
+				);	
+				attrs = new ActorAttrs(333, 3.7, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+				break;
+			case 8:
+				break;
 		}
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
 		plane.behavior = BehaviorFactory.faceForward;
