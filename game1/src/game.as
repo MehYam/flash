@@ -254,9 +254,10 @@ package
 				_currentScript.onPlayerStopShooting(this, mouse);
 			}
 
+			runFrameOnCast(_cast.friendlies);
 			runFrameOnCast(_cast.enemies);
 			runFrameOnCast(_cast.enemyAmmo);
-			runFrameOnCast(_cast.playerAmmo);
+			runFrameOnCast(_cast.friendlyAmmo);
 			runFrameOnCast(_cast.effects);
 			collisionCheck();
 
@@ -284,34 +285,21 @@ package
 
 		private function collisionCheck():void
 		{
-			// enemy hits player
-			var enemy:Actor;
-			for each (enemy in _cast.enemies)
+			collisionCheckFriendly(_player);
+			for each (var friendly:Actor in _cast.friendlies)
 			{
-				if (enemy && enemy.alive && 
-					MathUtil.distanceBetweenPoints(_player.worldPos, enemy.worldPos) < (_player.attrs.RADIUS + enemy.attrs.RADIUS))
+				if (friendly)
 				{
-					_currentScript.onPlayerStruckByEnemy(this, enemy);
-				}
-			}
-			
-			// enemy ammo hits player
-			var ammo:Actor;
-			for each (ammo in _cast.enemyAmmo)
-			{
-				if (ammo && ammo.alive && 
-					MathUtil.distanceBetweenPoints(_player.worldPos, ammo.worldPos) < (_player.attrs.RADIUS + ammo.attrs.RADIUS))
-				{
-					_currentScript.onPlayerStruckByAmmo(this, ammo);
+					collisionCheckFriendly(friendly);
 				}
 			}
 			
 			// player ammo hits enemy
-			for each (ammo in _cast.playerAmmo)
+			for each (var ammo:Actor in _cast.friendlyAmmo)
 			{
 				if (ammo && ammo.alive)
 				{
-					for each (enemy in _cast.enemies)
+					for each (var enemy:Actor in _cast.enemies)
 					{
 //KAI: here's a great example of the blurry line between the game script and the game engine;
 // here we could check for IPenetratingAmmo and call it accordingly, but the game script does
@@ -328,6 +316,29 @@ package
 					}
 				}
 			}
+		}
+		private function collisionCheckFriendly(friendly:Actor):void
+		{
+			// enemy hits friendly
+			for each (var enemy:Actor in _cast.enemies)
+			{
+				if (enemy && enemy.alive && 
+					MathUtil.distanceBetweenPoints(friendly.worldPos, enemy.worldPos) < (friendly.attrs.RADIUS + enemy.attrs.RADIUS))
+				{
+					_currentScript.onOpposingCollision(this, friendly, enemy);
+				}
+			}
+			
+			// enemy ammo hits friendly
+			for each (var ammo:Actor in _cast.enemyAmmo)
+			{
+				if (ammo && ammo.alive && 
+					MathUtil.distanceBetweenPoints(friendly.worldPos, ammo.worldPos) < (friendly.attrs.RADIUS + ammo.attrs.RADIUS))
+				{
+					_currentScript.onFriendlyStruckByAmmo(this, friendly, ammo);
+				}
+			}
+			
 		}
 		private function runFrameOnCast(cast:Array):void
 		{
@@ -383,6 +394,10 @@ package
 		}
 
 		// IGame implementation
+		public function addFriendly(actor:Actor):void
+		{
+			_cast.friendlies.push(actor);
+		}
 		public function addEnemy(actor:Actor):void
 		{
 			// up to the caller to ensure enemies aren't added twice
@@ -392,9 +407,9 @@ package
 		{
 			_cast.enemyAmmo.push(actor);
 		}
-		public function addPlayerAmmo(actor:Actor):void
+		public function addFriendlyAmmo(actor:Actor):void
 		{
-			_cast.playerAmmo.push(actor);
+			_cast.friendlyAmmo.push(actor);
 		}
 		public function addEffect(actor:Actor):void
 		{
@@ -407,9 +422,6 @@ package
 			{
 				_radar.remove(actor);
 			}
-		}
-		public function damageActor(actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
-		{
 		}
 		public function get player():Actor
 		{
@@ -493,7 +505,7 @@ package
 
 			_currentScript.onCenterPrintDone();
 		}
-		public function showPlayer(actor:Actor):void
+		public function setPlayer(actor:Actor):void
 		{
 			if (_player && _player.displayObject && _player.displayObject.parent)
 			{
@@ -634,14 +646,15 @@ import karnold.utils.Util;
 
 final class Cast
 {
+	public var friendlies:Array = [];
 	public var enemies:Array = [];
 	public var enemyAmmo:Array = [];
-	public var playerAmmo:Array = [];
+	public var friendlyAmmo:Array = [];
 	public var effects:Array = [];
 	
 	public function get length():uint
 	{
-		return enemies.length + enemyAmmo.length + playerAmmo.length + effects.length;
+		return enemies.length + enemyAmmo.length + friendlyAmmo.length + effects.length + friendlies.length;
 	}
 	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
 	{
@@ -658,9 +671,11 @@ final class Cast
 	{
 		if (length > 800 || _purgeRate.now)
 		{
+			//KAI: could create a utility "collapse" function for arrays
+			friendlies = friendlies.filter(actorIsAlive);
 			enemies = enemies.filter(actorIsAlive);
 			enemyAmmo = enemyAmmo.filter(actorIsAlive);
-			playerAmmo = playerAmmo.filter(actorIsAlive);
+			friendlyAmmo = friendlyAmmo.filter(actorIsAlive);
 			effects = effects.filter(actorIsAlive);
 		}
 	}

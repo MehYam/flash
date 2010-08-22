@@ -16,6 +16,7 @@ package behaviors
 		static private var _fade:IBehavior;
 		static private var _fadeIn:IBehavior;
 		static private var _accelerator:IBehavior;
+		static private var _shadowPlayer:IBehavior;
 		static public function get faceForward():IBehavior
 		{
 			if (!_faceForward)
@@ -95,6 +96,14 @@ package behaviors
 				_accelerator = new Accelerator;
 			}
 			return _accelerator;
+		}
+		static public function get shadowPlayer():IBehavior
+		{
+			if (!_shadowPlayer)
+			{
+				_shadowPlayer = new ShadowPlayerBehavior;
+			}
+			return _shadowPlayer;
 		}
 		// Non-singletons
 		// source - is either an AmmoFireSource or array of them
@@ -274,6 +283,7 @@ final class FadeBehavior implements IBehavior
 		if (actor.displayObject.alpha > 0)
 		{
 			actor.displayObject.alpha -= 0.005;
+trace("fade to", actor.displayObject.alpha);
 		}
 	}
 }
@@ -359,7 +369,7 @@ final class ChargedFireBehavior implements IBehavior
 				}
 				if (_currentStep == _chargeSteps)
 				{
-					game.script.damageActor(game, game.player, _selfDamage);
+					game.script.damageActor(game, game.player, _selfDamage, true, true);
 				}
 			}
 			_shake.onFrame(game, actor);
@@ -403,36 +413,34 @@ final class ShieldActivatorBehavior implements IBehavior
 	{
 		_source = source;
 	}
-	private var _shield:Actor;
+	private var _shieldActivated:Boolean;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
 		// shooting (and once after they stop)
 		if (game.playerShooting)
 		{
-			if (!_shield && _limiter.now)
+			if (!_shieldActivated && _limiter.now)
 			{
-				_shield = _source.fire(game, actor); 
-			}
-			if (_shield)
-			{
-				Util.setPoint(_shield.worldPos, actor.worldPos);
-				_shield.displayObject.rotation = actor.displayObject.rotation;
+				_shieldActivated = true;
+				_source.fire(game, actor);
 			}
 		}
-		else if (_shield)
+		else if (_shieldActivated)
 		{
-			// launch it
-			Util.setPoint(_shield.speed, actor.speed);
-			BehaviorFactory.faceForward.onFrame(game, _shield);
-			
-			_shield.displayObject.alpha = 1;
-			_shield.behavior = new CompositeBehavior(BehaviorFactory.createExpire(1000), BehaviorFactory.fade);
-			_shield = null;
-			
+			_shieldActivated = false;
 			_limiter.reset();
 		}
 	}
+}
+
+final class ShadowPlayerBehavior implements IBehavior
+{
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		Util.setPoint(actor.worldPos, game.player.worldPos);
+		actor.displayObject.rotation = game.player.displayObject.rotation;
+	}	
 }
 
 final class ShakeBehavior implements IBehavior

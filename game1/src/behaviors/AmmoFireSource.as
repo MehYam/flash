@@ -59,7 +59,14 @@ package behaviors
 			ammo.launchDegrees(po_tmp, angle);
 			if (game.player == actor)
 			{
-				game.addPlayerAmmo(ammo);
+				if (_ammoType == AmmoType.SHIELD)
+				{
+					game.addFriendly(ammo);
+				}
+				else
+				{
+					game.addFriendlyAmmo(ammo);
+				}
 			}
 			else
 			{

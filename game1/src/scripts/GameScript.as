@@ -274,6 +274,7 @@ final class Utils
 		return a;
 	}
 }
+
 class BaseScript implements IGameScript
 {
 	// IGameScript
@@ -286,21 +287,21 @@ class BaseScript implements IGameScript
 		{
 			player = Utils.getPlayerTank();
 			_weapon = player.weapon;
-			game.showPlayer(player.actor);
+			game.setPlayer(player.actor);
 		}
 		else
 		{
 			player = Utils.getPlayerPlane();
 			_weapon = player.weapon;
-			game.showPlayer(player.actor);
+			game.setPlayer(player.actor);
 		}
 	}
 
 	// IGameEvents
 	public function onCenterPrintDone():void	{}
 
-	public function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void {}
-	public function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void {}
+	public function onOpposingCollision(game:IGame, friendly:Actor, enemy:Actor):void {}
+	public function onFriendlyStruckByAmmo(game:IGame, friendly:Actor, ammo:Actor):void {}
 	public function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void {}
 
 	private var _fireRate:RateLimiter = new RateLimiter(300, 300);
@@ -333,7 +334,7 @@ class BaseScript implements IGameScript
 			_weapon.onFrame(game, game.player);
 		}
 	}
-	public function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void {}
+	public function damageActor(game:IGame, actor:Actor, damage:Number, actorFriendly:Boolean, wasCollision:Boolean):void {}
 }
 
 final class TestScript extends BaseScript
@@ -462,15 +463,23 @@ class WaveBasedGameScript extends BaseScript
 	}
 
 	// IGameEvents
-	public override function onPlayerStruckByEnemy(game:IGame, enemy:Actor):void
+	public override function onOpposingCollision(game:IGame, friendly:Actor, enemy:Actor):void
 	{
-		damageActor(game, enemy, game.player.damage, true);
-		damageActor(game, game.player, enemy.damage);
+		damageActor(game, enemy, friendly.damage, false, friendly != game.player); // friendly <=> enemy collisions count as ammo damage
+		damageActor(game, friendly, enemy.damage, true, true);
 	}
-	public override function onPlayerStruckByAmmo(game:IGame, ammo:Actor):void
+	public override function onFriendlyStruckByAmmo(game:IGame, friendly:Actor, ammo:Actor):void
 	{
-		damageActor(game, game.player, ammo.damage);
-		game.killActor(ammo);
+		damageActor(game, friendly, ammo.damage, true, false);
+		if (friendly == game.player)
+		{
+			game.killActor(ammo);
+		}
+		else if (friendly.alive)
+		{
+			ammo.speed.x = -ammo.speed.x;
+			ammo.speed.y = -ammo.speed.y;
+		}
 	}
 	public override function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void
 	{
@@ -480,40 +489,54 @@ class WaveBasedGameScript extends BaseScript
 			if (!pa.isActorStruck(enemy))
 			{
 				pa.strikeActor(enemy);
-				damageActor(game, enemy, ammo.damage);
+				damageActor(game, enemy, ammo.damage, false, false);
 			}
 		}
 		else
 		{
-			damageActor(game, enemy, ammo.damage);
+			damageActor(game, enemy, ammo.damage, false, false);
 			game.killActor(ammo);
 		}
 	}
 
-	public override function damageActor(game:IGame, actor:Actor, damage:Number, struckByEnemy:Boolean = false):void
+	// this is a little nutty - seems like we should be using OOP or something
+	public override function damageActor(game:IGame, actor:Actor, damage:Number, isFriendly:Boolean, wasCollision:Boolean):void
 	{
 		const isPlayer:Boolean = actor == game.player;
-		const particles:uint = Math.max(10, 10 * damage/actor.attrs.MAX_HEALTH);
-		Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
+
+		// Deal the damage and cue the visual effect
+		if (!isFriendly || isPlayer)
+		{
+			const particles:uint = Math.max(10, 10 * damage/actor.attrs.MAX_HEALTH);
+			Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
+		}
+
 		actor.health -= damage;
-		
+		if (actor.health > 0)
+		{
+			actor.registerHit(isPlayer);
+		}
+
+		// Maintain player damage and stats
 		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
-			
 			_stats.damageReceived += damage;
-			actor.registerHit(true);
 		}
-		else 
+		if (!isFriendly && !wasCollision)
 		{
-			if (!struckByEnemy)
+			_stats.damageDealt += damage;
+		}
+
+		// handle actor death
+		if (actor.health <= 0 && !isPlayer)
+		{
+			game.killActor(actor);
+
+			if (!isFriendly)
 			{
-				_stats.damageDealt += damage;
-			}
-			if (actor.health <= 0)
-			{
-				AssetManager.instance.crashSound();
-				if (!struckByEnemy)
+				AssetManager.instance.deathSound();
+				if (!wasCollision)
 				{
 					_stats.creditsEarned += actor.value * (1 + _stats.combo/10);
 					++_stats.enemiesKilled;
@@ -521,8 +544,6 @@ class WaveBasedGameScript extends BaseScript
 					game.scoreBoard.combo = ++_stats.combo;
 					_comboTimer.start(COMBO_LAPSE);
 				}
-				game.killActor(actor);
-	
 				--_liveEnemies;
 				if (!_liveEnemies)
 				{
@@ -533,7 +554,7 @@ class WaveBasedGameScript extends BaseScript
 					else
 					{
 						_game.centerPrint("Level complete - you did it!");
-
+						
 						_stats.end();
 						_stats.victory = true;
 						
@@ -541,10 +562,6 @@ class WaveBasedGameScript extends BaseScript
 						_comboTimer.stop();
 					}
 				}
-			}
-			else
-			{
-				actor.registerHit(false); // don't bother with the color transform if it's dying
 			}
 		}
 	}

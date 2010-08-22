@@ -77,8 +77,6 @@ package
 		{
 			if (_alive != b && !b)
 			{
-				Util.stopAllMovieClips(displayObject);
-
 				if (displayObject.parent)
 				{
 					displayObject.parent.removeChild(displayObject);
@@ -110,6 +108,7 @@ package
 			if (_lastHit && (getTimer() - _lastHit) > 50)
 			{
 				displayObject.transform.colorTransform = s_normalTint;
+				_lastHit = 0;
 			}
 		}
 		protected function launchHelper(start:Point, radians:Number):void
@@ -191,6 +190,7 @@ package
 import behaviors.ActorAttrs;
 import behaviors.BehaviorFactory;
 import behaviors.CompositeBehavior;
+import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -305,15 +305,40 @@ final class FusionBlastActor extends PiercingAmmoActor
 }
 final class ShieldActor extends PiercingAmmoActor
 {
+	static private var s_trackingBehavior:IBehavior;
 	public function ShieldActor()
 	{
 		super(ActorAssetManager.createShield(), ActorAttrs.SHIELD);
+		if (!s_trackingBehavior)
+		{
+			s_trackingBehavior = new CompositeBehavior(BehaviorFactory.shadowPlayer, BehaviorFactory.fadeIn);
+		}
+		behavior = s_trackingBehavior;
+	}
+	private var _launched:Boolean = false;
+	public override function onFrame(game:IGame):void
+	{
+		trace("actor alpha 1", displayObject.alpha);
+		super.onFrame(game);
+		trace("actor alpha 2", displayObject.alpha);
+		if (!_launched && !game.playerShooting)
+		{
+			_launched = true;
+			
+			// launch self
+			Util.setPoint(speed, game.player.speed);
+			BehaviorFactory.faceForward.onFrame(game, this);
+			
+			displayObject.alpha = 1;
+			behavior = new CompositeBehavior(BehaviorFactory.createExpire(1000), BehaviorFactory.fade);
+		}
 	}
 	public override function reset():void
 	{
 		super.reset();
+		_launched = false;
 		displayObject.alpha = 0;
-		behavior = BehaviorFactory.fadeIn;
+		behavior = s_trackingBehavior;
 	}
 }
 

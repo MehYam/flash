@@ -67,7 +67,7 @@ package
 		[Embed(source="assets/crash1.mp3")]
 		static private const CrashSound:Class;
 		private var _crashSound:Sound;
-		public function crashSound():void
+		public function deathSound():void
 		{
 			if (!_crashSound)
 			{

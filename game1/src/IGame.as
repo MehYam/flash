@@ -9,11 +9,12 @@ package
 
 	public interface IGame
 	{
+		function setPlayer(actor:Actor):void;
+		function addFriendly(actor:Actor):void;
 		function addEnemy(actor:Actor):void;
 		function addEnemyAmmo(actor:Actor):void;
-		function addPlayerAmmo(actor:Actor):void;
+		function addFriendlyAmmo(actor:Actor):void;
 		function addEffect(actor:Actor):void;
-		function showPlayer(actor:Actor):void;
 		function killActor(actor:Actor):void;
 		function centerPrint(text:String):void;
 
