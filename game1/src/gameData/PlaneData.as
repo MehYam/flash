@@ -21,15 +21,17 @@ package gameData
 			{
 				s_entries = 
 				[
-				new PlaneData("Bee", 0,	new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 1000), 2),
-				new PlaneData("Wasp", 1,		new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Hornet", 2,		new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Jem", 3,		new VehiclePartStats(0.2, 0, 0, 0.8, 2000), 2),
-				new PlaneData("Jem II", 4,		new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Jem VSBL", 5,		new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Yango", 6,	new VehiclePartStats(0.3, 0.4, 0.3, 0.2, 3000), 2),
-				new PlaneData("Yango II", 7,		new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Yango III", 8,		new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+					//KAI: the vehiclepartstats should really be shared with gamescript, somehow
+					// ...time for a data refactor?
+				new PlaneData("Bee", 0,         new VehiclePartStats(0.05, 0.05, 0.3, 0.4, 1000), 2),
+				new PlaneData("Wasp", 1,        new VehiclePartStats(0.05, 0.10, 0.3, 0.5, 2000)),
+				new PlaneData("Hornet", 2,      new VehiclePartStats(0.10, 0.15, 0.3, 0.6, 2000)),
+				new PlaneData("Jem", 3,         new VehiclePartStats(0.20, 0.10, 0.1, 0.1, 2000), 2),
+				new PlaneData("Jem II", 4,      new VehiclePartStats(0.20, 0.15, 0.2, 0.2, 2000)),
+				new PlaneData("Jem VSBL", 5,    new VehiclePartStats(0.20, 0.20, 0.3, 0.2, 2000)),
+				new PlaneData("Yango", 6,       new VehiclePartStats(0.30, 0.4, 0.3, 0.2, 3000), 2),
+				new PlaneData("Yango II", 7,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Yango III", 8,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Osprey", 9,	new VehiclePartStats(0.4, 0.4, 0.3, 0.8, 4000), 2),
 				new PlaneData("Osprey II", 10, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Osprey III", 11, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
@@ -93,6 +95,11 @@ package gameData
 					"can be creatively used to inflict great harm on opponents.  Some ships include conventional weapons as well.\n\n" +
 					"The Jem's only weapon is a shield that takes some time to recharge, and is relatively weak, but " +
 					"can be flung at opponents at moderate range.  Upgrades to the Jem will unlock other Melee-class ships.";
+				s_entries[9].description =
+					"Fighter-class ships like those in the Yango line fall in the middle between Rogue and Melee " +
+					"ships.  They're generally nimble than Melees, but slower than Rogues due to added armor and " +
+					"armament.  These ships are generally military in origin, and so require little modification to " +
+					"be tournament-ready."; 
 			}
 			return s_entries;
 		}

@@ -41,7 +41,7 @@ package karnold.utils
 				{	
 					_tooltip.text = entry.text;
 				}
-				dobj.x = Math.min(Math.max(0, x + 3), stage.stageWidth - dobj.width);
+				dobj.x = Math.min(Math.max(0, x + 5), stage.stageWidth - dobj.width);
 				dobj.y = Math.min(Math.max(0, y - dobj.height - 5), stage.stageHeight - dobj.height);
 
 				if (!dobj.parent)
