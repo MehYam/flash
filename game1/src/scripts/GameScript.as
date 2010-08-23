@@ -247,8 +247,6 @@ final class Utils
 		var weapon:IBehavior;
 		var attrs:ActorAttrs;
 		// this in order of the general progression of ships
-//		weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 10, 0, -20), 5, 1000, 1);
-//		weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 10, 0, -10), 400);
 		switch (UserData.instance.currentPlane) {
 		case 0:
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
@@ -337,6 +335,53 @@ final class Utils
 					new AmmoFireSource(AmmoType.FUSION, 100,  22, 0, 0)],
 				5, 300, 1);
 			attrs = new ActorAttrs(800, 5.5, 1, 0.1, 20);
+			break;
+		case 17:
+			weapon = BehaviorFactory.createAutofire(
+				[	new AmmoFireSource(AmmoType.LASER, 100, -30, 5, 0, 4),
+					new AmmoFireSource(AmmoType.LASER, 100, -24, 0, 0, 4),
+					new AmmoFireSource(AmmoType.LASER, 100, -19, -5, 0, 4),
+					new AmmoFireSource(AmmoType.LASER, 100,  19, -5, 0, 4),
+					new AmmoFireSource(AmmoType.LASER, 100,  24, 0, 0, 4),
+					new AmmoFireSource(AmmoType.LASER, 100,  30, 5, 0, 4)],
+				1000, 1000);
+			attrs = new ActorAttrs(700, 6, 1, 0.1, 20);
+		case 14:
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10));
+			attrs = new ActorAttrs(4000, 3.5, 0.1, 0.1, EnemyEnum.GREENK.attrs.RADIUS+5);
+			break;
+		case 23:
+			weapon = new CompositeBehavior(
+				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10)),
+				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
+			);
+			attrs = new ActorAttrs(3000, 4, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
+			break;
+		case 33:
+			weapon = new CompositeBehavior(
+				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10)),
+				BehaviorFactory.createAutofire(
+					[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33, -5, -10, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33,  5, -10, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33,  20, 0, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33,  30, 10, 0, 2)],
+					2000, 2000)
+			);
+			attrs = new ActorAttrs(3000, 3.75, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
+		case 11:
+			weapon = BehaviorFactory.createAutofire(
+				[	new AmmoFireSource(AmmoType.LASER, 40, -63, -35, 0, 1),
+					new AmmoFireSource(AmmoType.LASER, 40, -43, -35, 0, 1),
+					new AmmoFireSource(AmmoType.LASER, 40, -23, -35, 0, 1),
+					new AmmoFireSource(AmmoType.LASER, 40,  23, -35, 0, 1),
+					new AmmoFireSource(AmmoType.LASER, 40,  43, -35, 0, 1),
+					new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 1)],
+				333
+			);
+				
+			attrs = new ActorAttrs(3700, 4, 0.2, 0.1, 40);
 			break;
 		}
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);

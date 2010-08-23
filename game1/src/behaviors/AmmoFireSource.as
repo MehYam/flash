@@ -29,7 +29,6 @@ package behaviors
 		static private var po_tmp:Point = new Point;
 		public function fire(game:IGame, actor:Actor, damageMultiplier:Number = 1):Actor
 		{
-			AssetManager.instance.laserSound();
 			var ammo:Actor;
 			switch(_ammoType) {
 				case AmmoType.BULLET:

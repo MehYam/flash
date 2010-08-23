@@ -328,6 +328,8 @@ final class AutofireBehavior implements IBehavior
 	{
 		if (!_rate || _rate.now)
 		{
+			AssetManager.instance.laserSound();
+			
 			// This sucks a little bit, but the game script must ensure that this only gets called while the player's
 			// shooting
 			const sourceAsArray:Array = _source as Array;
