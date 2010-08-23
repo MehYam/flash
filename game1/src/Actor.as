@@ -108,10 +108,19 @@ package
 			{
 				_behavior.onFrame(game, this);
 			}
-			if (_lastHit && (getTimer() - _lastHit) > 50)
+			if (_lastHit)
 			{
-				displayObject.transform.colorTransform = s_normalTint;
-				_lastHit = 0;
+				if ((getTimer() - _lastHit) > 50)
+				{
+					displayObject.transform.colorTransform = s_normalTint;
+					_lastHit = 0;
+				}
+				else
+				{
+					const rnd:Number = MathUtil.random(-1, 1);
+					worldPos.x += rnd;
+					worldPos.y += rnd;
+				}
 			}
 		}
 		protected function launchHelper(start:Point, radians:Number):void
@@ -303,11 +312,12 @@ final class FusionBlastActor extends PiercingAmmoActor
 	public function FusionBlastActor()
 	{
 		super(ActorAssetManager.createFusionBlast(), ActorAttrs.FUSIONBLAST);
-		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
+		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.FUSIONBLAST.LIFETIME));
 	}
 }
 final class ShieldActor extends PiercingAmmoActor
 {
+	// sucks the way this is done.  Half is in BehaviorFactory and the other half here.  Totally un-reusable for enemies
 	static private var s_trackingBehavior:IBehavior;
 	public function ShieldActor()
 	{
