@@ -177,9 +177,27 @@ package
 
 		static private const SHIP_TYPES:Array = 
 			[SHIP0, SHIP0_0, SHIP0_1, SHIP1, SHIP1_0, SHIP1_1, SHIP2, SHIP2_0, SHIP2_1, SHIP3, SHIP3_0, SHIP3_1, SHIP4, SHIP4_0, SHIP4_1, SHIP5, SHIP5_0, SHIP5_1, SHIP6, SHIP6_0, SHIP6_1, SHIP7, SHIP7_0, SHIP7_1, SHIP8, SHIP9, SHIP9_1, SHIP9_2, SHIP10, SHIP10_1, SHIP10_2, SHIP11, SHIP11_1, SHIP11_2, SHIP12, SHIP12_0, SHIP12_1];
-
-		static public function createShip(index:uint, scale:Number = 1):DisplayObject
+		static private var SHIP_SCALES:Array;
+	
+		static public function createShip(index:uint):DisplayObject
 		{
+			if (!SHIP_SCALES)
+			{
+				SHIP_SCALES = [];
+				SHIP_SCALES[21] = 0.7;
+				SHIP_SCALES[22] = 0.7;
+				SHIP_SCALES[23] = 0.7;
+				SHIP_SCALES[34] = 0.8;
+				SHIP_SCALES[35] = 0.8;
+				SHIP_SCALES[36] = 0.8;
+				SHIP_SCALES[28] = 0.8;
+				SHIP_SCALES[29] = 0.8;
+				SHIP_SCALES[30] = 0.8;
+				SHIP_SCALES[15] = 0.9;
+				SHIP_SCALES[16] = 0.9;
+				SHIP_SCALES[17] = 0.9;
+			}
+			const scale:Number = SHIP_SCALES[index] || 1;
 			return createAssetRasterized(SHIP_TYPES[index], true, true, scale);
 		}
 		static public function createShipRaw(index:uint):DisplayObject

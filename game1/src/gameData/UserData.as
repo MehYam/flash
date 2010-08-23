@@ -38,8 +38,11 @@ package gameData
 				s_instance.purchasePart(PlaneData.getPlane(5), 0);
 				s_instance.purchasePart(PlaneData.getPlane(8), 0);
 				s_instance.purchasePart(PlaneData.getPlane(34), 0);
-				s_instance.levelReached = 5;
-				s_instance.currentPlane = 34;
+				
+				s_instance.purchasePart(PlaneData.getPlane(36), 0);
+				s_instance.purchasePart(PlaneData.getPlane(30), 0);
+				s_instance.levelReached = 6;
+				s_instance.currentPlane = 30;
 //				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getTurret(0).getUpgrade(1), 0);
 			}

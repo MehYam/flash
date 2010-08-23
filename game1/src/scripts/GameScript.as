@@ -96,7 +96,7 @@ final class EnemyEnum
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
 	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
-	static public function attackAndFlee(source:AmmoFireSource, msRate:uint, msShootRateMin:uint = 300, msShootRateMax:uint = 2000):IBehavior
+	static public function attackAndFlee(source:*, msRate:uint, msShootRateMin:uint = 300, msShootRateMax:uint = 2000):IBehavior
 	{
 		return new AlternatingBehavior
 		(
@@ -106,27 +106,32 @@ final class EnemyEnum
 			FLEE
 		);
 	}
-	static public function homeAndShoot(msShootRate:uint, ammoType:AmmoType):IBehavior
-	{
-		return new CompositeBehavior
-		(
-			HOME,
-			BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, msShootRate/2, msShootRate)
-		);
-	}
 
+	// first tier cast
 	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), "BEE");
 	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), "GREENK");
 	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), "MOTH");
 	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), "OSPREY");
 	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), "BAT");
 
+	// second tier
 	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 10, 50), "GHOST");
 	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
 	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 30, 100), "CYGNUS");
 	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 30, 100), "ROCINANTE");
 // switch BLUEK with FLY - more of a progression.  Make it shoot infrequently
 //	static public const BLUEK:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
+
+	// third tier
+
+	// final tier cast
+	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs(500, 5,  0.05, 0, 10, 100), "BEE3");
+//	static public const FLY3:EnemyEnum;  // heavy homer + shoot
+//	static public const BLUEK:EnemyEnum; // heavy homer
+//	static public const ESOX:EnemyEnum;  // heavy homer + shoot
+//	static public const OSPREY3:EnemyEnum; // boss...would be neat to make it a spawner!  spawn need to be killed to make it vulnerable
+//	static public const STEALTH:EnemyEnum; // stealth behavior (enemy only) + rockets
+//	static public const GHOST3:EnemyEnum; // a better GHOST, semi-fast fighter
 	
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
@@ -145,10 +150,16 @@ final class EnemyEnum
 	static private const ROCINANTE_FUSION:Array = 
 		[	new AmmoFireSource(AmmoType.FUSION, 30, -25, 0, 0),
 			new AmmoFireSource(AmmoType.FUSION, 30,  25, 0, 0)];
+	
+	static private const BEE3_BULLETSOURCE:Array =
+		[	new AmmoFireSource(AmmoType.BULLET, 30, -15, 0, -10, 4), 
+			new AmmoFireSource(AmmoType.BULLET, 30,  15, 0,  10, 4),
+			new AmmoFireSource(AmmoType.BULLET, 30,   0, -10, 0, 4)]; 
+	
 	public function create():Actor
 	{
 		var a:Actor;
-		switch (this) {  //KAI: omg i've never seen anything like that, lol, alternative to creating classes
+		switch (this) {  //KAI: omg i've never seen anything like this, lol, alternative to creating classes
 		case EnemyEnum.BEE:
 			a = new Actor(ActorAssetManager.createShip(0), attrs);
 			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
@@ -158,7 +169,7 @@ final class EnemyEnum
 			a.behavior = HOME;
 			break;
 		case EnemyEnum.MOTH:
-			a = new Actor(ActorAssetManager.createShip(23, 0.7), attrs);
+			a = new Actor(ActorAssetManager.createShip(23), attrs);
 			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
 			break;
 		case EnemyEnum.OSPREY:
@@ -218,6 +229,11 @@ final class EnemyEnum
 					BehaviorFactory.createAutofire(ROCINANTE_FUSION, 1000, 4000))
 			);
 			break;
+		///////////// final tier ////////////////////
+		case EnemyEnum.BEE3:
+			a = new Actor(ActorAssetManager.createShip(2), attrs);
+			a.behavior = attackAndFlee(BEE3_BULLETSOURCE, 3000, 1000, 1000);
+			break;
 		}
 		return a;
 	}
@@ -230,7 +246,6 @@ final class Utils
 
 		var weapon:IBehavior;
 		var attrs:ActorAttrs;
-		var scale:Number = 1;
 		// this in order of the general progression of ships
 //		weapon = BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 10, 0, -20), 5, 1000, 1);
 //		weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 10, 0, -10), 400);
@@ -306,9 +321,25 @@ final class Utils
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 1), 300);
 			attrs = new ActorAttrs(100, 5, 1, 0.1, 15);
-			scale = .8;
+			break;
+		
+		case 36:
+			weapon = BehaviorFactory.createAutofire(
+				[	new AmmoFireSource(AmmoType.BULLET, 33, -20, 0), 
+					new AmmoFireSource(AmmoType.BULLET, 33,  20, 0),
+					new AmmoFireSource(AmmoType.BULLET, 33,   0, -10)], 
+				400);
+			attrs = new ActorAttrs(600, 8, 1, 0.1, 15);
+			break;
+		case 30:
+			weapon = BehaviorFactory.createChargedFire(
+				[	new AmmoFireSource(AmmoType.FUSION, 100, -22, 0, 0),
+					new AmmoFireSource(AmmoType.FUSION, 100,  22, 0, 0)],
+				5, 300, 1);
+			attrs = new ActorAttrs(800, 5.5, 1, 0.1, 20);
+			break;
 		}
-		var plane:Actor = new Actor(ActorAssetManager.createShip(asset, scale), attrs);
+		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
 		plane.behavior = BehaviorFactory.faceForward;
 		var retval:PlayerVehicle = new PlayerVehicle(plane, weapon);
 		
@@ -600,7 +631,13 @@ class WaveBasedGameScript extends BaseScript
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 			_stats.damageReceived += damage;
+trace("PLAYER HIT FOR", damage, "TO", actor.health); 
 		}
+else
+{
+trace("ENEMY HIT FOR", damage, "TO", actor.health); 
+}
+			
 		if (!isFriendly && !wasCollision)
 		{
 			_stats.damageDealt += damage;
