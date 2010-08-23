@@ -8,24 +8,24 @@ package behaviors
 	{
 		private var _behaviors:CompositeBehavior = new CompositeBehavior;
 		private var _rate:RateLimiter;
-		public function AlternatingBehavior(msRate:uint, ...args)
+		public function AlternatingBehavior(msRateMin:uint, msRateMax:uint, ...args)
 		{
 			for each (var behavior:IBehavior in args)
 			{
 				_behaviors.push(behavior);
 			}
 
-			_rate = new RateLimiter(msRate / 2, msRate*3 / 2);
+			_rate = new RateLimiter(msRateMin, msRateMax);
 			_count = Math.random() * _behaviors.numBehaviors;
 		}
 		private var _count:uint;
 		public function onFrame(game:IGame, actor:Actor):void
 		{
-			_behaviors.onFrameAt(game, actor, _count % _behaviors.numBehaviors);
 			if (_rate.now)
 			{
 				++_count;
 			}
+			_behaviors.onFrameAt(game, actor, _count % _behaviors.numBehaviors);
 		}
 	}
 }

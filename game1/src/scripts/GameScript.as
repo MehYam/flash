@@ -100,7 +100,7 @@ final class EnemyEnum
 	{
 		return new AlternatingBehavior
 		(
-			msRate,
+			msRate/2, msRate*3/2,
 			CHASE,
 			new CompositeBehavior(BehaviorFactory.strafe, BehaviorFactory.createAutofire(source, msShootRateMin, msShootRateMax)),
 			FLEE
@@ -177,7 +177,7 @@ final class EnemyEnum
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
-					3000,
+					1500,4500,
 					HOME,
 					BehaviorFactory.strafe
 				)
@@ -189,7 +189,7 @@ final class EnemyEnum
 				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[0], 2000, 4000),
 				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[1], 2000, 4000),
 				new AlternatingBehavior( 
-					3000,
+					1500, 4500,
 					HOME,
 					BehaviorFactory.strafe
 				)
@@ -202,7 +202,7 @@ final class EnemyEnum
 		case EnemyEnum.GHOST:
 			a = new Actor(ActorAssetManager.createShip(18), attrs);
 			a.behavior = new AlternatingBehavior( 
-					3000,
+					1500, 4500,
 					HOME,
 					BehaviorFactory.strafe,
 					new CompositeBehavior(BehaviorFactory.facePlayer, BehaviorFactory.speedDecay,
@@ -212,17 +212,17 @@ final class EnemyEnum
 		case EnemyEnum.CYGNUS:
 			a = new Actor(ActorAssetManager.createShip(15), attrs);
 			a.behavior = new AlternatingBehavior(
-				4000,
+				2000, 6000,
 				new CompositeBehavior(
 					BehaviorFactory.createAutofire(CYGNUS_LASERSOURCE, 500, 500),
-					new AlternatingBehavior(2000, BehaviorFactory.turret, BehaviorFactory.strafe)),
+					new AlternatingBehavior(1000,3000, BehaviorFactory.turret, BehaviorFactory.strafe)),
 				BehaviorFactory.facePlayer
 			);
 			break;
 		case EnemyEnum.ROCINANTE:
 			a = new Actor(ActorAssetManager.createShip(28), attrs);
 			a.behavior = new AlternatingBehavior(
-				2000,
+				1000, 3000,
 				FLEE,
 				new CompositeBehavior(
 					HOME,
@@ -265,7 +265,7 @@ final class Utils
 		case 6:
 			// desc: model has problems with its firing, occasionally stop firing to have more predictability
 			weapon = new AlternatingBehavior(
-				1000,
+				500, 1500,
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3), 1000)
 			);
@@ -285,7 +285,7 @@ final class Utils
 			break;
 		case 7:
 			weapon = new AlternatingBehavior(
-				400,
+				200, 600,
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -20, -10, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -15,  -5, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
@@ -307,7 +307,7 @@ final class Utils
 		case 8:
 			// desc: slightly more predictable firing
 			weapon = new AlternatingBehavior(
-				300,
+				250, 350,
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -20, -10, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -15,  -5, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
@@ -382,6 +382,22 @@ final class Utils
 			);
 				
 			attrs = new ActorAttrs(3700, 4, 0.2, 0.1, 40);
+			break;
+		case 20:
+			weapon = new AlternatingBehavior(333, 333,
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 0), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 0), 400, 400)
+			);
+			attrs = new ActorAttrs(1000, 4.5, 0.4, 0.1, 40);
+			break;
+		case 27:
+			weapon = new AlternatingBehavior(333, 333,
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -30, -10, 0, 3), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  30, -10, 0, 2), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -15, -20, 0, 2), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  15, -20, 0, 3), 400, 400)
+			);
+			attrs = new ActorAttrs(4000, 3.5, 0.8, 0.1, 40);
 			break;
 		}
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
