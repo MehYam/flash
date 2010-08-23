@@ -769,7 +769,8 @@ final class PlayerVehicle
 
 final class GrassTilesLevels
 {
-	[Embed(source="assets/level1_small.txt", mimeType="application/octet-stream")]
+//	[Embed(source="assets/level1_small.txt", mimeType="application/octet-stream")]
+	[Embed(source="assets/level2_small.txt", mimeType="application/octet-stream")]
 	static private const SmallLevel:Class;
 	static public function get smallLevel():String
 	{
