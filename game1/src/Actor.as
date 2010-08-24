@@ -87,7 +87,7 @@ package
 		static private var s_normalTint:ColorTransform = new ColorTransform;
 		static private var s_hardHitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 255, 127, 127);
 		static private var s_hitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 127, 0, 0);
-		public function registerHit(hard:Boolean):void
+		public function registerHit(game:IGame, hard:Boolean):void
 		{
 			_lastHit = getTimer();
 			displayObject.transform.colorTransform = hard ? s_hardHitTint : s_hitTint; 
@@ -357,6 +357,14 @@ final class ShieldActor extends PiercingAmmoActor
 			
 			displayObject.alpha = 1;
 			behavior = new CompositeBehavior(BehaviorFactory.createExpire(1000), BehaviorFactory.fade);
+		}
+	}
+	public override function registerHit(game:IGame, hard:Boolean):void
+	{
+		super.registerHit(game, hard);
+		if (!_launched)
+		{
+			game.scoreBoard.pctShield = health / attrs.MAX_HEALTH;
 		}
 	}
 	public override function reset():void

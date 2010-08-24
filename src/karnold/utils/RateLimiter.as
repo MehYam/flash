@@ -32,6 +32,10 @@ package karnold.utils
 			}
 			return false;
 		}
+		public function get remaining():uint
+		{
+			return Math.max(0, _next - getTimer());
+		}
 		public function get minRate():uint
 		{
 			return _rateMin;

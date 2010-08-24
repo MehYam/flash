@@ -336,7 +336,7 @@ final class Utils
 			attrs = new ActorAttrs(100, 5, 0.5, 0.1, EnemyEnum.BEE.attrs.RADIUS);
 			break;
 		case 3:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10));
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10), 1000);
 			attrs = new ActorAttrs(200, 3, 1, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
 			scoreBoard.showShield = true;
 			break;
@@ -358,7 +358,7 @@ final class Utils
 			attrs = new ActorAttrs(100, 5.5, 1, 0.1, EnemyEnum.BEE.attrs.RADIUS);
 			break;
 		case 4:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10));
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10), 1000);
 			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
 			scoreBoard.showShield = true;
 			break;
@@ -375,7 +375,7 @@ final class Utils
 		case 5:
 			// desc: has shield + weak lasers
 			weapon = new CompositeBehavior(
-				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 30, 0, -10)),
+				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 30, 0, -10), 1000),
 				BehaviorFactory.createAutofire(
 					[new AmmoFireSource(AmmoType.LASER, 5, -10, 0, 0, 1),
 					new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
@@ -468,13 +468,13 @@ final class Utils
 			attrs = new ActorAttrs(800, 6, 1, 0.1, 20);
 			break;
 		case 14:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10));
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000);
 			attrs = new ActorAttrs(4000, 3.5, 0.1, 0.1, EnemyEnum.GREENK.attrs.RADIUS+5);
 			scoreBoard.showShield = true;
 			break;
 		case 23:
 			weapon = new CompositeBehavior(
-				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10)),
+				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000),
 				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 			);
 			attrs = new ActorAttrs(3000, 4, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
@@ -483,7 +483,7 @@ final class Utils
 			break;
 		case 33:
 			weapon = new CompositeBehavior(
-				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10)),
+				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000),
 				BehaviorFactory.createAutofire(
 					[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 2),
 						new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),
@@ -776,6 +776,8 @@ class WaveBasedGameScript extends BaseScript
 		{
 			ammo.speed.x = -ammo.speed.x;
 			ammo.speed.y = -ammo.speed.y;
+			
+			game.convertToFriendlyAmmo(ammo);
 		}
 	}
 	public override function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void
@@ -811,7 +813,7 @@ class WaveBasedGameScript extends BaseScript
 		actor.health -= damage;
 		if (actor.health > 0)
 		{
-			actor.registerHit(isPlayer);
+			actor.registerHit(game, isPlayer);
 		}
 
 		// Maintain player damage and stats

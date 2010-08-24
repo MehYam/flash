@@ -1,5 +1,7 @@
 package
 {
+	import behaviors.IBehavior;
+	
 	import gameData.PlayedLevelStats;
 	
 	import karnold.utils.Bounds;
@@ -15,6 +17,7 @@ package
 		function addEnemyAmmo(actor:Actor):void;
 		function addFriendlyAmmo(actor:Actor):void;
 		function addEffect(actor:Actor):void;
+		function convertToFriendlyAmmo(actor:Actor):void;
 		function killActor(actor:Actor):void;
 		function centerPrint(text:String):void;
 
@@ -24,6 +27,8 @@ package
 		function endLevel(stats:PlayedLevelStats):void;
 
 		function set tiles(str:String):void;
+		// meh - this is added just for the shield charging indicator...
+		function set globalBehavior(b:IBehavior):void;
 
 		function get running():Boolean;
 		function get worldBounds():Bounds;

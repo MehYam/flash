@@ -138,9 +138,9 @@ package behaviors
 		{
 			return new ChargedFireBehavior(source, chargeSteps, msStepDuration, damageAtFull);
 		}
-		static public function createShieldActivator(source:AmmoFireSource):IBehavior
+		static public function createShieldActivator(source:AmmoFireSource, msRecharge:uint):IBehavior
 		{
-			return new ShieldActivatorBehavior(source);
+			return new ShieldActivatorBehavior(source, msRecharge);
 		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
@@ -431,29 +431,43 @@ final class ChargedFireBehavior implements IBehavior
 // KAI: this might also be the same thing as the chargedfire, when you think about it
 final class ShieldActivatorBehavior implements IBehavior  
 {
-	private var _limiter:RateLimiter = new RateLimiter(1000, 1000);
+	private var _limiter:RateLimiter;
 	private var _source:AmmoFireSource;
-	public function ShieldActivatorBehavior(source:AmmoFireSource):void
+	public function ShieldActivatorBehavior(source:AmmoFireSource, msRecharge:uint):void
 	{
+		_limiter = new RateLimiter(msRecharge, msRecharge);
 		_source = source;
 	}
 	private var _shieldActivated:Boolean;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
-		// shooting (and once after they stop)
-		if (game.playerShooting)
+		if (actor)
 		{
-			if (!_shieldActivated && _limiter.now)
+			if (game.playerShooting)
 			{
-				_shieldActivated = true;
-				_source.fire(game, actor);
+				if (!_shieldActivated && _limiter.now)
+				{
+					_shieldActivated = true;
+					_source.fire(game, actor);
+				}
+			}
+			else if (_shieldActivated)
+			{
+				_shieldActivated = false;
+				_limiter.reset();
+				
+				game.scoreBoard.pctShield = 0.01;
+				game.globalBehavior = this;
 			}
 		}
-		else if (_shieldActivated)
+		else
 		{
-			_shieldActivated = false;
-			_limiter.reset();
+			const charge:Number = 1 - _limiter.remaining / _limiter.minRate;
+			game.scoreBoard.pctShield = charge;
+			if (charge == 1)
+			{
+				game.globalBehavior = null;
+			}
 		}
 	}
 }

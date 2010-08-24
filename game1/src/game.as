@@ -1,6 +1,7 @@
 package 
 {
 	import behaviors.BehaviorFactory;
+	import behaviors.IBehavior;
 	
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
@@ -171,6 +172,11 @@ package
 		private var _shooting:ShootState = ShootState.NONE;
 		private function onFrame():void
 		{
+			if (_globalBehavior)
+			{
+				_globalBehavior.onFrame(this, null);
+			}
+
 			//
 			// Toggle framerate panel
 			if (_input.checkKeyHistoryAndClear(Input.KEY_TILDE))
@@ -415,6 +421,19 @@ package
 		{
 			_cast.effects.push(actor);
 		}
+		public function convertToFriendlyAmmo(actor:Actor):void
+		{
+			for (var i:uint = 0; i < _cast.enemyAmmo.length; ++i)
+			{
+				if (_cast.enemyAmmo[i] == actor)
+				{
+					_cast.enemyAmmo[i] = null;
+					addFriendlyAmmo(actor);
+					break;
+				}
+			}
+			Util.ASSERT(i < _cast.enemyAmmo.length);
+		}
 		public function killActor(actor:Actor):void
 		{
 			actor.alive = false;
@@ -478,7 +497,11 @@ package
 			_sb.x = 5;
 			_hudLayer.addChild(_sb);
 		}
-
+		private var _globalBehavior:IBehavior;
+		public function set globalBehavior(b:IBehavior):void
+		{
+			_globalBehavior = b;
+		}
 		private var _centerPrint:ShadowTextField;
 		private var _textFieldTyper:TextFieldTyper;
 		public function centerPrint(text:String):void
@@ -658,7 +681,7 @@ final class Cast
 	}
 	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
 	{
-		var actor:Actor = element as Actor
+		var actor:Actor = element as Actor;
 		if (actor && !actor.alive )
 		{
 			ActorPool.instance.recycle(actor);
