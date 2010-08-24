@@ -3,12 +3,14 @@ package gameData
 	final public class PlaneData extends VehiclePart
 	{
 		public var upgrades:uint;
+		public var purchasable:Boolean;
 		public var unlock:uint = 0;  // index of PlaneData that unlocks this one
 
-		public function PlaneData(name:String, aindex:uint, baseStats:VehiclePartStats, upgrades:uint = 0)
+		public function PlaneData(name:String, aindex:uint, baseStats:VehiclePartStats, upgrades:uint = 0, purchasable:Boolean = true)
 		{
 			super(name, aindex, baseStats);
 			this.upgrades = upgrades;
+			this.purchasable = purchasable;
 		}
 		static private var s_entries:Array;
 		static public function getPlane(i:uint):PlaneData
@@ -32,8 +34,8 @@ package gameData
 				new PlaneData("Yango", 6,       new VehiclePartStats(0.30, 0.4, 0.3, 0.2, 3000), 2),
 				new PlaneData("Yango II", 7,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Yango III", 8,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Osprey", 9,	new VehiclePartStats(0.4, 0.4, 0.3, 0.8, 4000), 2),
-				new PlaneData("Osprey II", 10, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Osprey", 9,	    new VehiclePartStats(0.4, 0.4, 0.3, 0.8, 4000), 2),
+				new PlaneData("Osprey II", 10,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Osprey III", 11, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Diptera", 12, 	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 5000), 2),
 				new PlaneData("Diptera X", 13, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
@@ -42,15 +44,15 @@ package gameData
 				new PlaneData("Cygnus X-2", 16, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Cygnus X-3", 17, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Ghost", 18, 		new VehiclePartStats(0.6, 0.4, 0.3, 0.8, 7000), 2),
-				new PlaneData("Phantom", 19, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Spectre", 20, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Phantom", 19,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Spectre", 20,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Attacus", 21, 	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 8000), 2),
-				new PlaneData("Attacus 2", 22, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Attacus 3", 23, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("???", 24, 		new VehiclePartStats(0.1, 0.4, 0.3, 0.8, 9000)),
+				new PlaneData("Attacus 2", 22,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Attacus 3", 23,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("???", 24, 		new VehiclePartStats(0.1, 0.4, 0.3, 0.8, 9000), 0, false),
 				new PlaneData("XStealth", 25, 	new VehiclePartStats(0.02, 0.4, 0.3, 0.8, 10000), 2),
-				new PlaneData("YStealth", 26, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("ZStealth", 27, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("YStealth", 26,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("ZStealth", 27,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Rocinante", 28, 	new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 11000), 2),
 				new PlaneData("Rocinante I", 29, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
 				new PlaneData("Rocinante II", 30, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),

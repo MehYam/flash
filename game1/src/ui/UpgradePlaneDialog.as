@@ -79,6 +79,10 @@ package ui
 					continue;
 				}
 				const plane:PlaneData = PlaneData.planes[i];
+				if (!plane.purchasable)
+				{
+					continue;
+				}
 				const prereq:PlaneData = PlaneData.planes[plane.unlock];
 				upgrades = plane.upgrades;
 

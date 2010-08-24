@@ -86,13 +86,14 @@ final class EnemyEnum
 {
 	static public var LOOKUP:Object = {};
 	public var attrs:ActorAttrs;
-	public function EnemyEnum(attrs:ActorAttrs, name:String)
+	public var assetIndex:uint;
+	public function EnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String)
 	{
 		this.attrs = attrs;
+		this.assetIndex = assetIndex;
 		LOOKUP[name] = this;
 	}
 	
-	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
 	static private const FLEEFACING:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.facePlayer);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
@@ -109,33 +110,32 @@ final class EnemyEnum
 	}
 
 	// first tier cast
-	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), "BEE");
-	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), "GREENK");
-	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), "MOTH");
-	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), "OSPREY");
-	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), "BAT");
+	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), 0, "BEE");
+	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), 3, "GREENK");
+	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), 23, "MOTH");
+	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), 9, "OSPREY");
+	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), 6, "BAT");
 
 	// second tier
-	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 10, 50), "GHOST");
-	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
-	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 30, 100), "CYGNUS");
-	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 30, 100), "ROCINANTE");
+	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 10, 50), 18, "GHOST");
+	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), 12, "FLY");
+	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 30, 100), 15, "CYGNUS");
+	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 30, 100), 28, "ROCINANTE");
 // switch BLUEK with FLY - more of a progression.  Make it shoot infrequently
 //	static public const BLUEK:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
-
 	// third tier
-
 	// final tier cast
-	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs(500, 5,  0.05, 0, 10, 100), "BEE3");
-	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1, 0, 20, 100), "FLY3");
-	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2, 0.1, 0, 20, 100), "ESOX");
-	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4, 0.1, 0, 30, 150), "STEALTH");
-	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3, 0.05, 0.1, 10, 150), "GHOST3");
-	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), "OSPREY3");
+	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs(500, 5,  0.05, 0, 10, 100), 2, "BEE3");
+	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1, 0, 20, 100), 14, "FLY3");
+	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2, 0.1, 0, 20, 100), 33, "ESOX");
+	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4, 0.1, 0, 30, 150), 26, "STEALTH");
+	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3, 0.05, 0.1, 10, 150), 20, "GHOST3");
+	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), 11, "OSPREY3");
 	static public const OSPREY3_CLOAK:EnemyEnum 
-											= new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), "OSPREY3_CLOAK");
+											= new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), 11, "OSPREY3_CLOAK");
 //	static public const BLUEK:EnemyEnum; // pure heavy homer
-	
+
+	// enemy weapons //////////////////////////////////////////////////////////
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
 	static private const OSPREY_LASERSOURCE:Array =
@@ -190,24 +190,20 @@ final class EnemyEnum
 			new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 4)];
 	public function create():Actor
 	{
-		var a:Actor;
+		var a:Actor = new Actor(ActorAssetManager.createShip(assetIndex), attrs);
 		switch (this) {  
 			//KAI: omg i've never seen anything like this, lol, alternative to creating classes
 			// how about a map of functors or function objects instead?
 		case EnemyEnum.BEE:
-			a = new Actor(ActorAssetManager.createShip(0), attrs);
 			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
 			break;
 		case EnemyEnum.GREENK:
-			a = new Actor(ActorAssetManager.createShip(3), attrs);
 			a.behavior = HOME;
 			break;
 		case EnemyEnum.MOTH:
-			a = new Actor(ActorAssetManager.createShip(23), attrs);
 			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
 			break;
 		case EnemyEnum.OSPREY:
-			a = new Actor(ActorAssetManager.createShip(9), attrs);
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
@@ -218,7 +214,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.BAT:
-			a = new Actor(ActorAssetManager.createShip(6), attrs);
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[0], 2000, 4000),
 				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[1], 2000, 4000),
@@ -229,11 +224,9 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.FLY:
-			a = new Actor(ActorAssetManager.createShip(12), attrs);
 			a.behavior = HOME;
 			break;
 		case EnemyEnum.GHOST:
-			a = new Actor(ActorAssetManager.createShip(18), attrs);
 			a.behavior = new AlternatingBehavior( 
 					1500, 4500,
 					HOME,
@@ -243,7 +236,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.CYGNUS:
-			a = new Actor(ActorAssetManager.createShip(15), attrs);
 			a.behavior = new AlternatingBehavior(
 				2000, 6000,
 				new CompositeBehavior(
@@ -253,7 +245,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.ROCINANTE:
-			a = new Actor(ActorAssetManager.createShip(28), attrs);
 			a.behavior = new AlternatingBehavior(
 				1000, 3000,
 				FLEE,
@@ -264,15 +255,12 @@ final class EnemyEnum
 			break;
 		///////////// final tier ////////////////////
 		case EnemyEnum.BEE3:
-			a = new Actor(ActorAssetManager.createShip(2), attrs);
 			a.behavior = attackAndFlee(BEE3_BULLETSOURCE, 3000, 1000, 1000);
 			break;
 		case EnemyEnum.FLY3:
-			a = new Actor(ActorAssetManager.createShip(14), attrs);
 			a.behavior = new CompositeBehavior(HOME, BehaviorFactory.createAutofire(FLY3_ROCKETSOURCE, 5000, 10000));
 			break;
 		case EnemyEnum.ESOX:
-			a = new Actor(ActorAssetManager.createShip(33), attrs);
 			a.behavior = new AlternatingBehavior(
 				1000, 8000,
 				new CompositeBehavior(HOME, BehaviorFactory.createAutofire((Math.random() > .5) ? ESOX_SOURCE : ESOX_SOURCE2, 500, 10000)),
@@ -280,7 +268,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.STEALTH:
-			a = new Actor(ActorAssetManager.createShip(26), attrs);
 			a.behavior = new AlternatingBehavior(
 				1000, 8000,
 				new CompositeBehavior(BehaviorFactory.fadeIn, BehaviorFactory.strafe,
@@ -294,7 +281,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.GHOST3:
-			a = new Actor(ActorAssetManager.createShip(19), attrs);
 			a.behavior = new AlternatingBehavior( 
 				1500, 4500,
 				HOME,
@@ -304,7 +290,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.OSPREY3:
-			a = new Actor(ActorAssetManager.createShip(11), attrs);
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY3_SOURCE, 1000, 2000),
 				new AlternatingBehavior( 
@@ -315,7 +300,6 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.OSPREY3_CLOAK:
-			a = new Actor(ActorAssetManager.createShip(11), attrs);
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY3_SOURCE, 1000, 4000),
 				BehaviorFactory.fade,
@@ -408,12 +392,30 @@ final class Utils
 			);
 			attrs = new ActorAttrs(250, 4.25, 0.7, 0.2, EnemyEnum.BAT.attrs.RADIUS+2);
 			break;
+		
+		// second tier //////////////////////////////////////////////
 		case 34:
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 1), 300);
 			attrs = new ActorAttrs(100, 5, 1, 0.1, 15);
 			break;
-		
+		case 28:
+			break;
+		case 15:
+			break;
+		case 12:
+			break;
+		case 21:
+			break;
+		case 31:
+			break;
+		case 9:
+			break;
+		case 25:
+			break;
+		case 18:
+			break;
+		/////// Top Tier //////////////////////////////////////////////////////////
 		case 36:
 			weapon = BehaviorFactory.createAutofire(
 				[	new AmmoFireSource(AmmoType.BULLET, 33, -20, 0), 
@@ -473,7 +475,6 @@ final class Utils
 					new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 1)],
 				333
 			);
-				
 			attrs = new ActorAttrs(3700, 4, 0.2, 0.1, 40);
 			break;
 		case 20:
@@ -785,11 +786,11 @@ class WaveBasedGameScript extends BaseScript
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 			_stats.damageReceived += damage;
-trace("PLAYER HIT FOR", damage, "TO", actor.health); 
+//trace("PLAYER HIT FOR", damage, "TO", actor.health); 
 		}
 else
 {
-trace("ENEMY HIT FOR", damage, "TO", actor.health); 
+//trace("ENEMY HIT FOR", damage, "TO", actor.health); 
 }
 			
 		if (!isFriendly && !wasCollision)
