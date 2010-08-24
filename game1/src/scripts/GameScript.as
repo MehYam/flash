@@ -317,7 +317,7 @@ final class EnemyEnum
 }
 final class Utils
 {
-	static public function getPlayerPlane():PlayerVehicle
+	static public function getPlayerPlane(scoreBoard:ScoreBoard):PlayerVehicle
 	{
 		const asset:uint = PlaneData.getPlane(UserData.instance.currentPlane).assetIndex;
 
@@ -338,6 +338,7 @@ final class Utils
 		case 3:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10));
 			attrs = new ActorAttrs(200, 3, 1, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+			scoreBoard.showShield = true;
 			break;
 		case 6:
 			// desc: model has problems with its firing, occasionally stop firing to have more predictability
@@ -359,6 +360,7 @@ final class Utils
 		case 4:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10));
 			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+			scoreBoard.showShield = true;
 			break;
 		case 7:
 			weapon = new AlternatingBehavior(
@@ -380,6 +382,7 @@ final class Utils
 					1500, 1500)
 			);	
 			attrs = new ActorAttrs(333, 3.7, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+			scoreBoard.showShield = true;
 			break;
 		case 8:
 			// desc: slightly more predictable firing
@@ -451,6 +454,7 @@ final class Utils
 					new AmmoFireSource(AmmoType.FUSION, 225,  22, 0, 0)],
 				5, 1000, 1);
 			attrs = new ActorAttrs(900, 7, 1, 0.1, 20);
+			scoreBoard.showFusion = true;
 			break;
 		case 17:
 			weapon = BehaviorFactory.createAutofire(
@@ -466,6 +470,7 @@ final class Utils
 		case 14:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10));
 			attrs = new ActorAttrs(4000, 3.5, 0.1, 0.1, EnemyEnum.GREENK.attrs.RADIUS+5);
+			scoreBoard.showShield = true;
 			break;
 		case 23:
 			weapon = new CompositeBehavior(
@@ -473,6 +478,8 @@ final class Utils
 				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 			);
 			attrs = new ActorAttrs(3000, 4, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
+			scoreBoard.showShield = true;
+			scoreBoard.showFusion = true;
 			break;
 		case 33:
 			weapon = new CompositeBehavior(
@@ -487,6 +494,8 @@ final class Utils
 					2000, 2000)
 			);
 			attrs = new ActorAttrs(3000, 3.75, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
+			scoreBoard.showShield = true;
+			break;
 		case 11:
 			weapon = BehaviorFactory.createAutofire(
 				[	new AmmoFireSource(AmmoType.LASER, 40, -63, -35, 0, 1),
@@ -567,6 +576,9 @@ class BaseScript implements IGameScript
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 
 	{
+		game.scoreBoard.showFusion = false;
+		game.scoreBoard.showShield = false;
+		
 		var player:PlayerVehicle;
 		if (TANK)
 		{
@@ -576,7 +588,7 @@ class BaseScript implements IGameScript
 		}
 		else
 		{
-			player = Utils.getPlayerPlane();
+			player = Utils.getPlayerPlane(game.scoreBoard);
 			_weapon = player.weapon;
 			game.setPlayer(player.actor);
 		}

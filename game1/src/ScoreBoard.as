@@ -16,6 +16,8 @@ package
 		private var _wave:ProgressMeter;
 		private var _earnings:ShadowTextField;
 		private var _comboIndicator:ShadowTextField;
+		private var _fusionIndicator:LabelAndMeter;
+		private var _shieldIndicator:LabelAndMeter;
 		public function ScoreBoard()
 		{
 			super();
@@ -23,7 +25,7 @@ package
 			mouseEnabled = false;
 			mouseChildren = false;
 			
-			var labelFormat:TextFormat = new TextFormat("Radio Stars", 24, null);
+			const labelFormat:TextFormat = new TextFormat("Radio Stars", 24, null);
 			var labelField:ShadowTextField = new ShadowTextField(labelFormat);
 			labelField.text = "Health:";
 			labelField.cacheAsBitmap = true;
@@ -64,13 +66,73 @@ package
 			_wave.y = labelField.y + GAP/2 + 1;
 			addChild(_wave);
 
-			_comboIndicator = new ShadowTextField(new TextFormat("SF TransRobotics", 20));
-			_comboIndicator.x = _earnings.x + GAP;
+			const indicatorTextFormat:TextFormat = new TextFormat("SF TransRobotics", 20);
+			
+			_comboIndicator = new ShadowTextField(indicatorTextFormat);
+			_comboIndicator.x = _earnings.x -100;
 			_comboIndicator.y = _earnings.y + _earnings.height - 9;
 			combo = 1;
 			addChild(_comboIndicator);
+
+			vert = labelField.y + labelField.height;
+			labelField = new ShadowTextField(indicatorTextFormat);
+			labelField.text = "FUSION:";
+			labelField.fgColor = 0xff00ff;
+			var meter:ProgressMeter = new ProgressMeter(80, 10, 0, 0xff00ff);
+			_fusionIndicator = new LabelAndMeter(labelField, meter);
+			_fusionIndicator.y = vert;
+
+			labelField = new ShadowTextField(indicatorTextFormat);
+			labelField.text = "SHIELD:";
+			labelField.fgColor = 0x0000ff;
+			meter = new ProgressMeter(80, 10, 0, 0x0000ff);
+			_shieldIndicator = new LabelAndMeter(labelField, meter);
+			_shieldIndicator.y = _fusionIndicator.y;
+			
+			_fusionIndicator.pct = .01;
+			_shieldIndicator.pct = .01;
 		}
 		
+		public function set showFusion(b:Boolean):void
+		{
+			if (!b && _fusionIndicator.parent)
+			{
+				_fusionIndicator.parent.removeChild(_fusionIndicator);
+				_fusionIndicator.x = 0;
+			}
+			else if (b && !_fusionIndicator.parent)
+			{
+				if (_shieldIndicator.parent)
+				{
+					_fusionIndicator.x = _shieldIndicator.width + 5;
+				}
+				addChild(_fusionIndicator);
+			}
+		}
+		public function set showShield(b:Boolean):void
+		{
+			if (!b && _shieldIndicator.parent)
+			{
+				_shieldIndicator.parent.removeChild(_shieldIndicator);
+				_shieldIndicator.x = 0;
+			}
+			else if (b && !_shieldIndicator.parent)
+			{
+				if (_fusionIndicator.parent)
+				{
+					_shieldIndicator.x = _fusionIndicator.width + 5;
+				}
+				addChild(_shieldIndicator);
+			}
+		}
+		public function set pctFusion(p:Number):void
+		{
+			_fusionIndicator.pct = p;
+		}
+		public function set pctShield(p:Number):void
+		{
+			_shieldIndicator.pct = p;
+		}
 		public function set pctLevel(p:Number):void
 		{
 			_wave.pct = p;
@@ -129,5 +191,31 @@ package
 				_comboAnimate.stop();
 			}
 		}
+	}
+}
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+
+import karnold.ui.ProgressMeter;
+
+final internal class LabelAndMeter extends Sprite
+{
+	private var _label:DisplayObject;
+	private var _meter:ProgressMeter;
+	
+	public function LabelAndMeter(label:DisplayObject, meter:ProgressMeter)
+	{
+		super();
+		_label = label;
+		_meter = meter;
+		_meter.x = _label.x + _label.width + 5;
+		_meter.y = _label.y + (_label.height - _meter.height)/2;
+		
+		addChild(_label);
+		addChild(_meter);
+	}
+	public function set pct(p:Number):void
+	{
+		_meter.pct = p;
 	}
 }

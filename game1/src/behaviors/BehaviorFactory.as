@@ -352,7 +352,6 @@ final class ChargedFireBehavior implements IBehavior
 {
 	private var _source:*;
 	private var _stepRate:RateLimiter;
-	private var _basicFireRate:RateLimiter;
 	private var _chargeSteps:uint;
 	private var _selfDamage:Number;
 	private var _shake:IBehavior;
@@ -360,62 +359,69 @@ final class ChargedFireBehavior implements IBehavior
 	{
 		_source = source;
 		_stepRate = new RateLimiter(msStepDuration, msStepDuration);
-		_basicFireRate = new RateLimiter(msStepDuration, msStepDuration);
 		_chargeSteps = chargeSteps;
 		_selfDamage = selfDamage;
 		_shake = BehaviorFactory.createShake();
 	}
-	private var _shooting:Boolean = false;
+	private var _charging:Boolean = false;
 	private var _currentStep:uint = 0;
+	private function incStep(scoreBoard:ScoreBoard):void
+	{
+		Util.ASSERT(_charging);
+		Util.ASSERT(_currentStep <= _chargeSteps);
+		++_currentStep;
+		scoreBoard.pctFusion = _currentStep/_chargeSteps;
+	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		// This sucks a little bit, but the game script must ensure that this only gets called while the player's
 		// shooting (and once after they stop)
 		if (game.playerShooting)
 		{
-			if (!_shooting)
-			{
-				_stepRate.reset();
-				_currentStep = 0;
-				_shooting = true;
-			}
-
 			if (_stepRate.now)
 			{
-				if (_currentStep < _chargeSteps)
+				if (!_charging)
 				{
-					++_currentStep;
+					_charging = true;
+					incStep(game.scoreBoard);
 				}
-				if (_currentStep == _chargeSteps)
+				else
 				{
-					game.script.damageActor(game, game.player, _selfDamage, true, true);
+					if (_currentStep < _chargeSteps)
+					{
+						incStep(game.scoreBoard);
+					}
+					else if (_currentStep == _chargeSteps)
+					{
+						game.script.damageActor(game, game.player, _selfDamage, true, true);
+					}
 				}
 			}
-			_shake.onFrame(game, actor);
+			if (_charging)
+			{
+				_shake.onFrame(game, actor);
+			}
 		}
 		else
 		{
-			if (_shooting)
+			if (_charging)
 			{
-				_shooting = false;
-
-				if (_basicFireRate.now)
+				_charging = false;
+				_stepRate.reset();
+				const sourceAsArray:Array = _source as Array;
+				if (sourceAsArray)
 				{
-					const level:Number = Math.min(_chargeSteps-1, _currentStep);
-					const multiplier:Number = 1 + level;
-					const sourceAsArray:Array = _source as Array;
-					if (sourceAsArray)
+					for each (var source:AmmoFireSource in sourceAsArray)
 					{
-						for each (var source:AmmoFireSource in sourceAsArray)
-						{
-							source.fire(game, actor, multiplier);
-						}
-					}
-					else
-					{
-						AmmoFireSource(_source).fire(game, actor, multiplier);
+						source.fire(game, actor, _currentStep);
 					}
 				}
+				else
+				{
+					AmmoFireSource(_source).fire(game, actor, _currentStep);
+				}
+				_currentStep = 0;
+				game.scoreBoard.pctFusion = .01;
 			}
 		}
 	}
