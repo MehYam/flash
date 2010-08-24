@@ -22,7 +22,6 @@ package
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
 
-
 		// meta-data that maybe doesn't belong here
 		public var attrs:ActorAttrs;
 		public var health:Number;
@@ -182,10 +181,11 @@ package
 				game.addEffect(actor);
 			}
 		}
-		static public function createRocket(level:uint):Actor
+		static public function createRocket(level:uint, homing:Boolean):Actor
 		{
-			var rocket:Actor = ActorPool.instance.get(RocketActor);
-			return rocket || new RocketActor(level);
+			var rocket:RocketActor = RocketActor(ActorPool.instance.get(RocketActor) || new RocketActor(level));
+			rocket.homing = homing;
+			return rocket;
 		}
 		static public function createFusionBlast():Actor
 		{
@@ -260,6 +260,7 @@ final class RocketActor extends Actor
 	}
 	
 	private var _plume:DisplayObject;
+	private var _homing:Boolean;
 	public function RocketActor(rocket:uint)
 	{
 		super(composeRocket(rocket), ActorAttrs.ROCKET);
@@ -273,6 +274,20 @@ final class RocketActor extends Actor
 	{
 		_plume.scaleY = Math.random() + 0.3;
 		super.onFrame(game);
+
+		if (_homing)
+		{
+			BehaviorFactory.strafe.onFrame(game, this);
+		}
+	}
+	public function set homing(b:Boolean):void
+	{
+		_homing = b;
+	}
+	public override function reset():void
+	{
+		super.reset();
+		_homing = false;
 	}
 	protected override function launchHelper(start:Point, radians:Number):void
 	{

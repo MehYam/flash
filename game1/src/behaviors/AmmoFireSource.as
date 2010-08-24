@@ -29,6 +29,7 @@ package behaviors
 		static private var po_tmp:Point = new Point;
 		public function fire(game:IGame, actor:Actor, damageMultiplier:Number = 1):Actor
 		{
+			const isPlayer:Boolean = actor == game.player;
 			var ammo:Actor;
 			switch(_ammoType) {
 				case AmmoType.BULLET:
@@ -39,7 +40,7 @@ package behaviors
 					ammo = Actor.createLaser(_level);
 					break;
 				case AmmoType.ROCKET:
-					ammo = Actor.createRocket(_level);
+					ammo = Actor.createRocket(_level, false);// no homing missiles for now !isPlayer && _level==2);
 					break;
 				case AmmoType.FUSION:
 					ammo = Actor.createFusionBlast();
@@ -56,7 +57,7 @@ package behaviors
 			
 			MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
 			ammo.launchDegrees(po_tmp, angle + _angle);
-			if (game.player == actor)
+			if (isPlayer)
 			{
 				if (_ammoType == AmmoType.SHIELD)
 				{

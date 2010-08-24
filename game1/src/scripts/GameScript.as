@@ -94,6 +94,7 @@ final class EnemyEnum
 	
 	//KAI: Doing this here leaks the creation policy knowledge out of the factory
 	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
+	static private const FLEEFACING:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.facePlayer);
 	static private const CHASE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
 	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
 	static public function attackAndFlee(source:*, msRate:uint, msShootRateMin:uint = 300, msShootRateMax:uint = 2000):IBehavior
@@ -126,12 +127,14 @@ final class EnemyEnum
 
 	// final tier cast
 	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs(500, 5,  0.05, 0, 10, 100), "BEE3");
-//	static public const FLY3:EnemyEnum;  // heavy homer + shoot
-//	static public const BLUEK:EnemyEnum; // heavy homer
-//	static public const ESOX:EnemyEnum;  // heavy homer + shoot
-//	static public const OSPREY3:EnemyEnum; // boss...would be neat to make it a spawner!  spawn need to be killed to make it vulnerable
-//	static public const STEALTH:EnemyEnum; // stealth behavior (enemy only) + rockets
-//	static public const GHOST3:EnemyEnum; // a better GHOST, semi-fast fighter
+	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1, 0, 20, 100), "FLY3");
+	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2, 0.1, 0, 20, 100), "ESOX");
+	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4, 0.1, 0, 30, 150), "STEALTH");
+	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3, 0.05, 0.1, 10, 150), "GHOST3");
+	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), "OSPREY3");
+	static public const OSPREY3_CLOAK:EnemyEnum 
+											= new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), "OSPREY3_CLOAK");
+//	static public const BLUEK:EnemyEnum; // pure heavy homer
 	
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 4);
@@ -155,11 +158,42 @@ final class EnemyEnum
 		[	new AmmoFireSource(AmmoType.BULLET, 30, -15, 0, -10, 4), 
 			new AmmoFireSource(AmmoType.BULLET, 30,  15, 0,  10, 4),
 			new AmmoFireSource(AmmoType.BULLET, 30,   0, -10, 0, 4)]; 
-	
+	static private const FLY3_ROCKETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.ROCKET, 100, 0, -15, 0, 0);
+	static private const ESOX_SOURCE:Array =
+		[	new AmmoFireSource(AmmoType.LASER, 10, -30, 10, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 20, -20, 0, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 30, -5, -10, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 30,  5, -10, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 20,  20, 0, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 10,  30, 10, 0, 0)];
+	static private const ESOX_SOURCE2:Array =
+		[	new AmmoFireSource(AmmoType.LASER, 15, -30, 10, 0, 1),
+			new AmmoFireSource(AmmoType.LASER, 30, -20, 0, 0, 1),
+			new AmmoFireSource(AmmoType.LASER, 45, -5, -10, 0, 1),
+			new AmmoFireSource(AmmoType.LASER, 45,  5, -10, 0, 1),
+			new AmmoFireSource(AmmoType.LASER, 30,  20, 0, 0, 1),
+			new AmmoFireSource(AmmoType.LASER, 15,  30, 10, 0, 1)];
+	static private const STEALTH_SOURCE:Array =
+		[	new AmmoFireSource(AmmoType.ROCKET, 150, -30, -10, 0, 0),
+			new AmmoFireSource(AmmoType.ROCKET, 150,  30, -10, 0, 0),
+			new AmmoFireSource(AmmoType.ROCKET, 150, -15, -20, 0, 0),
+			new AmmoFireSource(AmmoType.ROCKET, 150,  15, -20, 0, 0)];
+	static private const GHOST3_SOURCE:Array = 
+		[	new AmmoFireSource(AmmoType.LASER, 120, -10, -5),
+			new AmmoFireSource(AmmoType.LASER, 120,  10, -5)];
+	static private const OSPREY3_SOURCE:Array = 
+		[	new AmmoFireSource(AmmoType.LASER, 40, -63, -35, 0, 4),
+			new AmmoFireSource(AmmoType.LASER, 40, -43, -35, 0, 4),
+			new AmmoFireSource(AmmoType.LASER, 40, -23, -35, 0, 4),
+			new AmmoFireSource(AmmoType.LASER, 40,  23, -35, 0, 4),
+			new AmmoFireSource(AmmoType.LASER, 40,  43, -35, 0, 4),
+			new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 4)];
 	public function create():Actor
 	{
 		var a:Actor;
-		switch (this) {  //KAI: omg i've never seen anything like this, lol, alternative to creating classes
+		switch (this) {  
+			//KAI: omg i've never seen anything like this, lol, alternative to creating classes
+			// how about a map of functors or function objects instead?
 		case EnemyEnum.BEE:
 			a = new Actor(ActorAssetManager.createShip(0), attrs);
 			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
@@ -191,8 +225,7 @@ final class EnemyEnum
 				new AlternatingBehavior( 
 					1500, 4500,
 					HOME,
-					BehaviorFactory.strafe
-				)
+					BehaviorFactory.strafe)
 			);
 			break;
 		case EnemyEnum.FLY:
@@ -233,6 +266,66 @@ final class EnemyEnum
 		case EnemyEnum.BEE3:
 			a = new Actor(ActorAssetManager.createShip(2), attrs);
 			a.behavior = attackAndFlee(BEE3_BULLETSOURCE, 3000, 1000, 1000);
+			break;
+		case EnemyEnum.FLY3:
+			a = new Actor(ActorAssetManager.createShip(14), attrs);
+			a.behavior = new CompositeBehavior(HOME, BehaviorFactory.createAutofire(FLY3_ROCKETSOURCE, 5000, 10000));
+			break;
+		case EnemyEnum.ESOX:
+			a = new Actor(ActorAssetManager.createShip(33), attrs);
+			a.behavior = new AlternatingBehavior(
+				1000, 8000,
+				new CompositeBehavior(HOME, BehaviorFactory.createAutofire((Math.random() > .5) ? ESOX_SOURCE : ESOX_SOURCE2, 500, 10000)),
+				FLEEFACING
+			);
+			break;
+		case EnemyEnum.STEALTH:
+			a = new Actor(ActorAssetManager.createShip(26), attrs);
+			a.behavior = new AlternatingBehavior(
+				1000, 8000,
+				new CompositeBehavior(BehaviorFactory.fadeIn, BehaviorFactory.strafe,
+					new AlternatingBehavior(1000, 1000, 
+						BehaviorFactory.createAutofire(STEALTH_SOURCE[0], 1000, 1000),
+						BehaviorFactory.createAutofire(STEALTH_SOURCE[1], 1000, 1000),
+						BehaviorFactory.createAutofire(STEALTH_SOURCE[2], 1000, 1000),
+						BehaviorFactory.createAutofire(STEALTH_SOURCE[3], 1000, 1000))
+				),
+				new CompositeBehavior(BehaviorFactory.fade, FLEEFACING)
+			);
+			break;
+		case EnemyEnum.GHOST3:
+			a = new Actor(ActorAssetManager.createShip(19), attrs);
+			a.behavior = new AlternatingBehavior( 
+				1500, 4500,
+				HOME,
+				BehaviorFactory.strafe,
+				new CompositeBehavior(BehaviorFactory.facePlayer, BehaviorFactory.speedDecay,
+					BehaviorFactory.createAutofire(GHOST3_SOURCE, 1000, 1000))
+			);
+			break;
+		case EnemyEnum.OSPREY3:
+			a = new Actor(ActorAssetManager.createShip(11), attrs);
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(OSPREY3_SOURCE, 1000, 2000),
+				new AlternatingBehavior( 
+					1500,4500,
+					BehaviorFactory.strafe,
+					BehaviorFactory.facePlayer
+				)
+			);
+			break;
+		case EnemyEnum.OSPREY3_CLOAK:
+			a = new Actor(ActorAssetManager.createShip(11), attrs);
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(OSPREY3_SOURCE, 1000, 4000),
+				BehaviorFactory.fade,
+				new AlternatingBehavior( 
+					1000, 6000,
+					BehaviorFactory.strafe,
+					BehaviorFactory.facePlayer,
+					new CompositeBehavior(BehaviorFactory.fade, FLEEFACING)
+				)
+			);
 			break;
 		}
 		return a;
