@@ -415,20 +415,41 @@ final class Utils
 			break;
 		case 18:
 			break;
+		
+		/////// third tier ////////////////////////////////////////////////////////
+		case 35:
+			break;
+		case 29:
+			break;
+		case 16:
+			break;
+		case 13:
+			break;
+		case 22:
+			break;
+		case 32:
+			break;
+		case 10:
+			break;
+		case 26:
+			break;
+		case 19:
+			break;
+
 		/////// Top Tier //////////////////////////////////////////////////////////
 		case 36:
 			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.BULLET, 33, -20, 0), 
-					new AmmoFireSource(AmmoType.BULLET, 33,  20, 0),
-					new AmmoFireSource(AmmoType.BULLET, 33,   0, -10)], 
+				[	new AmmoFireSource(AmmoType.BULLET, 66, -20, 0), 
+					new AmmoFireSource(AmmoType.BULLET, 66,  20, 0),
+					new AmmoFireSource(AmmoType.BULLET, 66,   0, -10)], 
 				400);
-			attrs = new ActorAttrs(600, 8, 1, 0.1, 15);
+			attrs = new ActorAttrs(700, 8, 1, 0.1, 15);
 			break;
 		case 30:
 			weapon = BehaviorFactory.createChargedFire(
-				[	new AmmoFireSource(AmmoType.FUSION, 100, -22, 0, 0),
-					new AmmoFireSource(AmmoType.FUSION, 100,  22, 0, 0)],
-				5, 300, 1);
+				[	new AmmoFireSource(AmmoType.FUSION, 300, -22, 0, 0),
+					new AmmoFireSource(AmmoType.FUSION, 300,  22, 0, 0)],
+				3, 100, 1);
 			attrs = new ActorAttrs(800, 5.5, 1, 0.1, 20);
 			break;
 		case 17:
