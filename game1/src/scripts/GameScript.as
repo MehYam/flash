@@ -447,10 +447,10 @@ final class Utils
 			break;
 		case 30:
 			weapon = BehaviorFactory.createChargedFire(
-				[	new AmmoFireSource(AmmoType.FUSION, 300, -22, 0, 0),
-					new AmmoFireSource(AmmoType.FUSION, 300,  22, 0, 0)],
-				3, 100, 1);
-			attrs = new ActorAttrs(800, 5.5, 1, 0.1, 20);
+				[	new AmmoFireSource(AmmoType.FUSION, 200, -22, 0, 0),
+					new AmmoFireSource(AmmoType.FUSION, 200,  22, 0, 0)],
+				5, 1000, 1);
+			attrs = new ActorAttrs(900, 7, 1, 0.1, 20);
 			break;
 		case 17:
 			weapon = BehaviorFactory.createAutofire(
@@ -461,7 +461,8 @@ final class Utils
 					new AmmoFireSource(AmmoType.LASER, 100,  24, 0, 0, 4),
 					new AmmoFireSource(AmmoType.LASER, 100,  30, 5, 0, 4)],
 				1000, 1000);
-			attrs = new ActorAttrs(700, 6, 1, 0.1, 20);
+			attrs = new ActorAttrs(800, 6, 1, 0.1, 20);
+			break;
 		case 14:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10));
 			attrs = new ActorAttrs(4000, 3.5, 0.1, 0.1, EnemyEnum.GREENK.attrs.RADIUS+5);

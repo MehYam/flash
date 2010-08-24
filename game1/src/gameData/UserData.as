@@ -49,7 +49,7 @@ package gameData
 				s_instance.purchasePart(PlaneData.getPlane(11), 0);
 				s_instance.purchasePart(PlaneData.getPlane(20), 0);
 				s_instance.purchasePart(PlaneData.getPlane(27), 0);
-				s_instance.currentPlane = 36;
+				s_instance.currentPlane = 17;
 
 				s_instance.levelReached = 6;
 //				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
