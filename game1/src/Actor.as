@@ -192,11 +192,6 @@ package
 			var blast:Actor = ActorPool.instance.get(FusionBlastActor);
 			return blast || new FusionBlastActor;
 		}
-		static public function createShield():Actor
-		{
-			var shield:Actor = ActorPool.instance.get(ShieldActor);
-			return shield || new ShieldActor();
-		}
 	}
 }
 import behaviors.ActorAttrs;
@@ -328,51 +323,6 @@ final class FusionBlastActor extends PiercingAmmoActor
 	{
 		super(ActorAssetManager.createFusionBlast(), ActorAttrs.FUSIONBLAST);
 		behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.createExpire(ActorAttrs.FUSIONBLAST.LIFETIME));
-	}
-}
-final class ShieldActor extends PiercingAmmoActor
-{
-	// sucks the way this is done.  Half is in BehaviorFactory and the other half here.  Totally un-reusable for enemies
-	static private var s_trackingBehavior:IBehavior;
-	public function ShieldActor()
-	{
-		super(ActorAssetManager.createShield(), ActorAttrs.SHIELD);
-		if (!s_trackingBehavior)
-		{
-			s_trackingBehavior = new CompositeBehavior(BehaviorFactory.shadowPlayer, BehaviorFactory.fadeIn);
-		}
-		behavior = s_trackingBehavior;
-	}
-	private var _launched:Boolean = false;
-	public override function onFrame(game:IGame):void
-	{
-		super.onFrame(game);
-		if (!_launched && !game.playerShooting)
-		{
-			_launched = true;
-			
-			// launch self
-			Util.setPoint(speed, game.player.speed);
-			BehaviorFactory.faceForward.onFrame(game, this);
-			
-			displayObject.alpha = 1;
-			behavior = new CompositeBehavior(BehaviorFactory.createExpire(1000), BehaviorFactory.fade);
-		}
-	}
-	public override function registerHit(game:IGame, hard:Boolean):void
-	{
-		super.registerHit(game, hard);
-		if (!_launched)
-		{
-			game.scoreBoard.pctShield = health / attrs.MAX_HEALTH;
-		}
-	}
-	public override function reset():void
-	{
-		super.reset();
-		_launched = false;
-		displayObject.alpha = 0;
-		behavior = s_trackingBehavior;
 	}
 }
 

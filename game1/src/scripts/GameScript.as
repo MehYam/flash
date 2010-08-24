@@ -469,7 +469,7 @@ final class Utils
 			break;
 		case 14:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000);
-			attrs = new ActorAttrs(4000, 3.5, 0.1, 0.1, EnemyEnum.GREENK.attrs.RADIUS+5);
+			attrs = new ActorAttrs(4000, 3.5, 0.8, 1, EnemyEnum.GREENK.attrs.RADIUS+5);
 			scoreBoard.showShield = true;
 			break;
 		case 23:

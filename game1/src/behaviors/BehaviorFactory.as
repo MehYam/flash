@@ -166,6 +166,7 @@ import karnold.utils.MathUtil;
 import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
+import scripts.ShieldActor;
 import scripts.TankActor;
 
 final class Accelerator implements IBehavior
@@ -438,30 +439,29 @@ final class ShieldActivatorBehavior implements IBehavior
 		_limiter = new RateLimiter(msRecharge, msRecharge);
 		_source = source;
 	}
-	private var _shieldActivated:Boolean;
+	private var _shield:ShieldActor;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (actor)
 		{
-			if (game.playerShooting)
+			if (_shield && (!_shield.alive || !game.playerShooting))
 			{
-				if (!_shieldActivated && _limiter.now)
-				{
-					_shieldActivated = true;
-					_source.fire(game, actor);
-				}
-			}
-			else if (_shieldActivated)
-			{
-				_shieldActivated = false;
+				// launch if the user's launched a ready shield, or if a ready shield has died
+				_shield.release(game);
+				_shield = null;
 				_limiter.reset();
 				
 				game.scoreBoard.pctShield = 0.01;
 				game.globalBehavior = this;
 			}
+			else if (!_shield && game.playerShooting && _limiter.now)
+			{
+				_shield = ShieldActor(_source.fire(game, actor));
+			}
 		}
 		else
 		{
+			// UI code....
 			const charge:Number = 1 - _limiter.remaining / _limiter.minRate;
 			game.scoreBoard.pctShield = charge;
 			if (charge == 1)

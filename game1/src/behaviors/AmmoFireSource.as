@@ -5,6 +5,7 @@ package behaviors
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
 	
+	import scripts.ShieldActor;
 	import scripts.TankActor;
 
 	public class AmmoFireSource
@@ -46,7 +47,7 @@ package behaviors
 					ammo = Actor.createFusionBlast();
 					break;
 				case AmmoType.SHIELD:
-					ammo = Actor.createShield();
+					ammo = ShieldActor.create();
 					break;
 			}
 			ammo.damage = _damage * damageMultiplier;
