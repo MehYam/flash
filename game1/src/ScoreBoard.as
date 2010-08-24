@@ -5,15 +5,15 @@ package
 	import flash.text.TextFormat;
 	
 	import karnold.ui.ProgressMeter;
-	import karnold.utils.FrameTimer;
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.FrameTimer;
 	
 	public class ScoreBoard extends Sprite
 	{
 		static private const GAP:Number = 10;
 		
 		private var _health:ProgressMeter;
-		private var _level:ProgressMeter;
+		private var _wave:ProgressMeter;
 		private var _earnings:ShadowTextField;
 		private var _comboIndicator:ShadowTextField;
 		public function ScoreBoard()
@@ -38,43 +38,42 @@ package
 			var horz:Number = _health.x + _health.width + GAP;
 
 			labelField = new ShadowTextField(labelFormat);
-			labelField.text = "Level:";
-			labelField.x = horz;
-			labelField.cacheAsBitmap = true;
-			addChild(labelField);
-			
-			_level = new ProgressMeter(120, 18, 0, 0x0033ff);
-			_level.pct = .5;
-			_level.x = labelField.x + labelField.width + GAP/2;
-			_level.y = _health.y;
-			addChild(_level);
-
-			var vert:Number = labelField.y + labelField.height;
-			addChild(labelField);
-			
-			labelField = new ShadowTextField(labelFormat);
 			labelField.text = "Earnings:";
 			labelField.cacheAsBitmap = true;
-			labelField.y = vert;
-			horz = labelField.x + labelField.width + GAP/2;
+			labelField.x = horz;
 			addChild(labelField);
 			
 			_earnings = new ShadowTextField(new TextFormat("SF TransRobotics", 26));
 			_earnings.text = "0";
-			_earnings.x = horz;
-			_earnings.y = vert - 3;
+			_earnings.x = labelField.x + labelField.width + GAP/2;
+			_earnings.y = -4;
 			addChild(_earnings);
+
+			var vert:Number = labelField.y + labelField.height - 6;
+
+			labelField = new ShadowTextField(labelFormat);
+			labelField.text = "Wave:";
+			labelField.x = 0;
+			labelField.y = vert;
+			labelField.cacheAsBitmap = true;
+			addChild(labelField);
 			
+			_wave = new ProgressMeter(120, 18, 0, 0x0033ff);
+			_wave.pct = .5;
+			_wave.x = _health.x;
+			_wave.y = labelField.y + GAP/2 + 1;
+			addChild(_wave);
+
 			_comboIndicator = new ShadowTextField(new TextFormat("SF TransRobotics", 20));
-			_comboIndicator.x = _earnings.x;
-			_comboIndicator.y = _earnings.y + _earnings.height - 5;
+			_comboIndicator.x = _earnings.x + GAP;
+			_comboIndicator.y = _earnings.y + _earnings.height - 9;
 			combo = 1;
 			addChild(_comboIndicator);
 		}
 		
 		public function set pctLevel(p:Number):void
 		{
-			_level.pct = p;
+			_wave.pct = p;
 		}
 		public function set pctHealth(p:Number):void
 		{

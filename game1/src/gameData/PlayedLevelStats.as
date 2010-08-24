@@ -5,8 +5,9 @@ package gameData
 	final public class PlayedLevelStats
 	{
 		public var creditsEarned:uint;
-		public var enemiesKilled:uint;
 		public var enemiesTotal:uint;
+		public var enemiesKilled:uint;
+		public var enemiesKilledCleanly:uint;
 		public var maxCombo:uint;
 		public var damageDealt:Number = 0;
 		public var damageReceived:Number = 0;

@@ -403,7 +403,6 @@ final class ChargedFireBehavior implements IBehavior
 				{
 					const level:Number = Math.min(_chargeSteps-1, _currentStep);
 					const multiplier:Number = 1 + level;
-trace("fusion multiplier", multiplier);					
 					const sourceAsArray:Array = _source as Array;
 					if (sourceAsArray)
 					{

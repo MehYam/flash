@@ -447,8 +447,8 @@ final class Utils
 			break;
 		case 30:
 			weapon = BehaviorFactory.createChargedFire(
-				[	new AmmoFireSource(AmmoType.FUSION, 200, -22, 0, 0),
-					new AmmoFireSource(AmmoType.FUSION, 200,  22, 0, 0)],
+				[	new AmmoFireSource(AmmoType.FUSION, 225, -22, 0, 0),
+					new AmmoFireSource(AmmoType.FUSION, 225,  22, 0, 0)],
 				5, 1000, 1);
 			attrs = new ActorAttrs(900, 7, 1, 0.1, 20);
 			break;
@@ -715,7 +715,6 @@ class WaveBasedGameScript extends BaseScript
 	private var _liveEnemies:uint = 0;
 	private function addNextWave():void
 	{
-		_game.scoreBoard.pctLevel = 1 - _waves.length/NUMWAVES;
 		if (_waves.length)
 		{
 			var next:Object = _waves.shift();
@@ -828,10 +827,13 @@ else
 			if (!isFriendly)
 			{
 				AssetManager.instance.deathSound();
+				++_stats.enemiesKilled;
+
+				_game.scoreBoard.pctLevel = _stats.enemiesKilled / _stats.enemiesTotal;
 				if (!wasCollision)
 				{
 					_stats.creditsEarned += actor.value * (1 + _stats.combo/10);
-					++_stats.enemiesKilled;
+					++_stats.enemiesKilledCleanly;
 					game.scoreBoard.earnings = _stats.creditsEarned;
 					game.scoreBoard.combo = ++_stats.combo;
 					_comboTimer.start(COMBO_LAPSE);
@@ -849,8 +851,6 @@ else
 						
 						_stats.end();
 						_stats.victory = true;
-						
-						_game.scoreBoard.pctLevel = 1;
 						_comboTimer.stop();
 					}
 				}
