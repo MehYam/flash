@@ -13,7 +13,7 @@ package
 		static private const GAP:Number = 10;
 		
 		private var _health:ProgressMeter;
-		private var _wave:ProgressMeter;
+		private var _progress:ProgressMeter;
 		private var _earnings:ShadowTextField;
 		private var _comboIndicator:ShadowTextField;
 		private var _fusionIndicator:LabelAndMeter;
@@ -54,17 +54,17 @@ package
 			var vert:Number = labelField.y + labelField.height - 6;
 
 			labelField = new ShadowTextField(labelFormat);
-			labelField.text = "Wave:";
+			labelField.text = "Level:";
 			labelField.x = 0;
 			labelField.y = vert;
 			labelField.cacheAsBitmap = true;
 			addChild(labelField);
 			
-			_wave = new ProgressMeter(120, 18, 0, 0x0033ff);
-			_wave.pct = .5;
-			_wave.x = _health.x;
-			_wave.y = labelField.y + GAP/2 + 1;
-			addChild(_wave);
+			_progress = new ProgressMeter(120, 18, 0, 0x0033ff);
+			_progress.pct = .5;
+			_progress.x = _health.x;
+			_progress.y = labelField.y + GAP/2 + 1;
+			addChild(_progress);
 
 			const indicatorTextFormat:TextFormat = new TextFormat("SF TransRobotics", 20);
 			
@@ -90,7 +90,7 @@ package
 			_shieldIndicator.y = _fusionIndicator.y;
 			
 			_fusionIndicator.pct = .01;
-			_shieldIndicator.pct = .01;
+			_shieldIndicator.pct = 1; //lame
 		}
 		
 		public function set showFusion(b:Boolean):void
@@ -123,6 +123,7 @@ package
 					_shieldIndicator.x = _fusionIndicator.width + 5;
 				}
 				addChild(_shieldIndicator);
+				pctShield = 1;
 			}
 		}
 		public function set pctFusion(p:Number):void
@@ -135,7 +136,7 @@ package
 		}
 		public function set pctLevel(p:Number):void
 		{
-			_wave.pct = p;
+			_progress.pct = p;
 		}
 		public function set pctHealth(p:Number):void
 		{

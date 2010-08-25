@@ -124,8 +124,8 @@ final class EnemyEnum
 	// second tier
 	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 0, 50), 18, "GHOST");
 	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   0, 50), 12, "FLY");
-	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 0, 100), 15, "CYGNUS");
-	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 0, 100), 28, "ROCINANTE");
+	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 0, 66), 15, "CYGNUS");
+	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 0, 66), 28, "ROCINANTE");
 // switch BLUEK with FLY - more of a progression.  Make it shoot infrequently
 //	static public const BLUEK:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
 	// third tier
@@ -150,11 +150,11 @@ final class EnemyEnum
 		[	new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3),
 			new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3)];
 	static private const GHOST_SOURCE:Array = 
-		[	new AmmoFireSource(AmmoType.LASER, 20, -10, -5),
-			new AmmoFireSource(AmmoType.LASER, 20,  10, -5)];
+		[	new AmmoFireSource(AmmoType.LASER, 15, -10, -5),
+			new AmmoFireSource(AmmoType.LASER, 15,  10, -5)];
 	static private const CYGNUS_LASERSOURCE:Array = 
-		[	new AmmoFireSource(AmmoType.LASER, 30, -25,  0, 0, 3),
-			new AmmoFireSource(AmmoType.LASER, 30,  25,  0, 0, 3)];
+		[	new AmmoFireSource(AmmoType.LASER, 20, -25,  0, 0, 3),
+			new AmmoFireSource(AmmoType.LASER, 20,  25,  0, 0, 3)];
 	static private const ROCINANTE_FUSION:Array = 
 		[	new AmmoFireSource(AmmoType.FUSION, 30, -25, 0, 0),
 			new AmmoFireSource(AmmoType.FUSION, 30,  25, 0, 0)];
@@ -345,15 +345,15 @@ final class Utils
 			weapon = BehaviorFactory.createAutofire(
 				[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), new AmmoFireSource(AmmoType.BULLET, 10, 15, 0)], 
 				400);
-			attrs = new ActorAttrs(100, 5, 0.5, 0.1);
+			attrs = new ActorAttrs(117, 5, 0.5, 0.1);
 			break;
 		case 2:
 			weapon = BehaviorFactory.createAutofire(
-				[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
+				[	new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
 					new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
 					new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
 				400);
-			attrs = new ActorAttrs(125, 5.5, 1, 0.1);
+			attrs = new ActorAttrs(133, 5.5, 1, 0.1);
 			break;
 		
 		case 3:
@@ -362,20 +362,22 @@ final class Utils
 			scoreBoard.showShield = true;
 			break;
 		case 4:
-			weapon = createShieldActivator(33, 200, -10); 
-			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1);
+			weapon = createShieldActivator(20, 100, -10); 
+			attrs = new ActorAttrs(250, 3.5, 0.7, 0.1);
 			scoreBoard.showShield = true;
 			break;
 		case 5:
 			// desc: has shield + weak lasers
 			weapon = new CompositeBehavior(
-				createShieldActivator(66, 300, -10),
+				createShieldActivator(30, 150, -10),
 				BehaviorFactory.createAutofire(
-					[new AmmoFireSource(AmmoType.LASER, 5, -10, 0, 0, 1),
-						new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
+					[	new AmmoFireSource(AmmoType.LASER, 3, -12, 0, 0, 1),
+						new AmmoFireSource(AmmoType.LASER, 3,  12, 0, 0, 1),
+						new AmmoFireSource(AmmoType.LASER, 1, -8, 5, -180, 0),
+						new AmmoFireSource(AmmoType.LASER, 1,  8, 5, -180, 0)	], 
 					1500, 1500)
 			);	
-			attrs = new ActorAttrs(333, 3.7, 0.7, 0.1);
+			attrs = new ActorAttrs(300, 3.7, 0.7, 0.1);
 			scoreBoard.showShield = true;
 			break;
 		
@@ -402,12 +404,12 @@ final class Utils
 			// desc: slightly more predictable firing
 			weapon = new AlternatingBehavior(
 				250, 350,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -20, -10, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -15,  -5, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 3), 1000)
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -30, 0, 3), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -15, -25, 0, 3), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  15, -25, 0, 3), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -30, 0, 3), 1000)
 			);
-			attrs = new ActorAttrs(250, 4.25, 0.7, 0.2);
+			attrs = new ActorAttrs(300, 4.25, 0.7, 0.2);
 			break;
 		
 		// upper tiers ///////////////////////////////////////////
