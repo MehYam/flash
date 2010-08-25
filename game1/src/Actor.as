@@ -89,24 +89,24 @@ package
 		static private var s_hardHitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 255, 127, 127);
 		static private var s_hitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 127, 0, 0);
 
-static private var s_dmg:ProgressMeter = new ProgressMeter(50, 5, 0, 0xff0000);
+		static private var s_dmg:ProgressMeter = new ProgressMeter(50, 5, 0, 0xff0000);
 		public function registerHit(game:IGame, hard:Boolean):void
 		{
 			_lastHit = getTimer();
 			displayObject.transform.colorTransform = hard ? s_hardHitTint : s_hitTint;
-if (s_dmg)
-{
-if (s_dmg.parent != displayObject)
-{
-	if (s_dmg.parent)
-	{	
-		s_dmg.parent.removeChild(s_dmg);
-	}
-	DisplayObjectContainer(displayObject).addChild(s_dmg);
-}
-s_dmg.pct = health / attrs.MAX_HEALTH;
-s_dmg.rotation = -displayObject.rotation;
-}
+			if (s_dmg)
+			{
+				if (s_dmg.parent != displayObject)
+				{
+					if (s_dmg.parent)
+					{	
+						s_dmg.parent.removeChild(s_dmg);
+					}
+					DisplayObjectContainer(displayObject).addChild(s_dmg);
+				}
+				s_dmg.pct = health / attrs.MAX_HEALTH;
+				s_dmg.rotation = -displayObject.rotation;
+			}
 		}
 		public function onFrame(game:IGame):void
 		{

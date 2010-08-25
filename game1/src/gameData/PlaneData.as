@@ -5,12 +5,14 @@ package gameData
 		public var upgrades:uint;
 		public var purchasable:Boolean;
 		public var unlock:uint = 0;  // index of PlaneData that unlocks this one
+		public var radius:Number;
 
-		public function PlaneData(name:String, aindex:uint, baseStats:VehiclePartStats, upgrades:uint = 0, purchasable:Boolean = true)
+		public function PlaneData(name:String, aindex:uint, radius:Number, baseStats:VehiclePartStats, upgrades:uint = 0, purchasable:Boolean = true)
 		{
 			super(name, aindex, baseStats);
 			this.upgrades = upgrades;
 			this.purchasable = purchasable;
+			this.radius = radius;
 		}
 		static private var s_entries:Array;
 		static public function getPlane(i:uint):PlaneData
@@ -25,43 +27,43 @@ package gameData
 				[
 					//KAI: the vehiclepartstats should really be shared with gamescript, somehow
 					// ...time for a data refactor?
-				new PlaneData("Bee", 0,         new VehiclePartStats(0.05, 0.05, 0.3, 0.4, 1000), 2),
-				new PlaneData("Wasp", 1,        new VehiclePartStats(0.05, 0.10, 0.3, 0.5, 2000)),
-				new PlaneData("Hornet", 2,      new VehiclePartStats(0.10, 0.15, 0.3, 0.6, 2000)),
-				new PlaneData("Jem", 3,         new VehiclePartStats(0.20, 0.10, 0.1, 0.1, 2000), 2),
-				new PlaneData("Jem II", 4,      new VehiclePartStats(0.20, 0.15, 0.2, 0.2, 2000)),
-				new PlaneData("Jem VSBL", 5,    new VehiclePartStats(0.20, 0.20, 0.3, 0.2, 2000)),
-				new PlaneData("Yango", 6,       new VehiclePartStats(0.30, 0.4, 0.3, 0.2, 3000), 2),
-				new PlaneData("Yango II", 7,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Yango III", 8,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Osprey", 9,	    new VehiclePartStats(0.4, 0.4, 0.3, 0.8, 4000), 2),
-				new PlaneData("Osprey II", 10,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Osprey III", 11, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Diptera", 12, 	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 5000), 2),
-				new PlaneData("Diptera X", 13, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Diptera XI", 14, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Cygnus X-1", 15, new VehiclePartStats(0.3, 0.4, 0.3, 0.8, 6000), 2),
-				new PlaneData("Cygnus X-2", 16, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Cygnus X-3", 17, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Ghost", 18, 		new VehiclePartStats(0.6, 0.4, 0.3, 0.8, 7000), 2),
-				new PlaneData("Phantom", 19,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Spectre", 20,    new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Attacus", 21, 	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 8000), 2),
-				new PlaneData("Attacus 2", 22,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Attacus 3", 23,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("???", 24, 		new VehiclePartStats(0.1, 0.4, 0.3, 0.8, 9000), 0, false),
-				new PlaneData("XStealth", 25, 	new VehiclePartStats(0.02, 0.4, 0.3, 0.8, 10000), 2),
-				new PlaneData("YStealth", 26,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("ZStealth", 27,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Rocinante", 28, 	new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 11000), 2),
-				new PlaneData("Rocinante I", 29, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Rocinante II", 30, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Esox", 31, 	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 12000), 2),
-				new PlaneData("Pike", 32, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Musky", 33, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Corvid", 34, 	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 12000), 2),
-				new PlaneData("Corvid X", 35, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
-				new PlaneData("Death Bird", 36, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000))
+				new PlaneData("Bee", 0, 12,     new VehiclePartStats(0.05, 0.05, 0.3, 0.4, 1000), 2),
+				new PlaneData("Wasp", 1, 12,    new VehiclePartStats(0.05, 0.10, 0.3, 0.5, 2000)),
+				new PlaneData("Hornet", 2, 12,  new VehiclePartStats(0.10, 0.15, 0.3, 0.6, 2000)),
+				new PlaneData("Jem", 3, 12,     new VehiclePartStats(0.20, 0.10, 0.1, 0.1, 2000), 2),
+				new PlaneData("Jem II", 4, 12,  new VehiclePartStats(0.20, 0.15, 0.2, 0.2, 2000)),
+				new PlaneData("Jem VSBL", 5, 12,new VehiclePartStats(0.20, 0.20, 0.3, 0.2, 2000)),
+				new PlaneData("Yango", 6, 20,   new VehiclePartStats(0.30, 0.4, 0.3, 0.2, 3000), 2),
+				new PlaneData("Yango II", 7, 20,new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Yango III", 8,23,new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Osprey", 9,35,  new VehiclePartStats(0.4, 0.4, 0.3, 0.8, 4000), 2),
+				new PlaneData("Osprey II", 10,35, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Osprey III", 11, 38,new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Diptera", 12, 20,	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 5000), 2),
+				new PlaneData("Diptera X", 13, 20, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Diptera XI", 14, 20, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Cygnus X-1", 15, 27, new VehiclePartStats(0.3, 0.4, 0.3, 0.8, 6000), 2),
+				new PlaneData("Cygnus X-2", 16, 27, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Cygnus X-3", 17, 27, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Ghost", 18, 18,		new VehiclePartStats(0.6, 0.4, 0.3, 0.8, 7000), 2),
+				new PlaneData("Phantom", 19, 20,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Spectre", 20, 20,   new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Attacus", 21, 20,	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 8000), 2),
+				new PlaneData("Attacus 2", 22, 18, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Attacus 3", 23, 18, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("???", 24, 20,		new VehiclePartStats(0.1, 0.4, 0.3, 0.8, 9000), 0, false),
+				new PlaneData("XStealth", 25, 30,	new VehiclePartStats(0.02, 0.4, 0.3, 0.8, 10000), 2),
+				new PlaneData("YStealth", 26, 30,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("ZStealth", 27, 27,  new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Rocinante", 28, 21,	new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 11000), 2),
+				new PlaneData("Rocinante I", 29, 21, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Rocinante II", 30, 22, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Esox", 31, 21, new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 12000), 2),
+				new PlaneData("Pike", 32, 22, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Musky", 33, 24, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Corvid", 34, 16,	new VehiclePartStats(0.5, 0.4, 0.3, 0.8, 12000), 2),
+				new PlaneData("Corvid X", 35, 18, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000)),
+				new PlaneData("Death Bird", 36, 20, new VehiclePartStats(0.2, 0.4, 0.3, 0.8, 2000))
 				];
 				
 				s_entries[0].unlock = 0;

@@ -51,7 +51,7 @@ package scripts
 					}
 				}
 			}
-			return new WaveBasedGameScript(s_levels[i]);
+			return new WaveBasedGameScript(s_levels[i].slice());
 		}
 	}
 }
@@ -64,8 +64,10 @@ import behaviors.CompositeBehavior;
 import behaviors.IBehavior;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import gameData.PlaneData;
 import gameData.PlayedLevelStats;
@@ -80,6 +82,7 @@ import karnold.utils.Util;
 
 import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
+import scripts.ShieldActor;
 import scripts.TankActor;
 
 final class EnemyEnum
@@ -91,6 +94,8 @@ final class EnemyEnum
 	{
 		this.attrs = attrs;
 		this.assetIndex = assetIndex;
+		this.attrs.RADIUS = PlaneData.getPlane(assetIndex).radius;
+
 		LOOKUP[name] = this;
 	}
 	
@@ -110,29 +115,29 @@ final class EnemyEnum
 	}
 
 	// first tier cast
-	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 10, 33), 0, "BEE");
-	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 10, 10), 3, "GREENK");
-	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 15, 15), 23, "MOTH");
-	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 25, 33), 9, "OSPREY");
-	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 20, 20), 6, "BAT");
+	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs( 40, 5,   0.05, 0, 0, 33), 0, "BEE");
+	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs( 20, 1.5, 0.1,  0, 0, 10), 3, "GREENK");
+	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs( 30, 3,   0.1,  0, 0, 15), 23, "MOTH");
+	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 1.5, 0.15, 0, 0, 33), 9, "OSPREY");
+	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs(100, 2,   0.05, 0, 0, 20), 6, "BAT");
 
 	// second tier
-	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 10, 50), 18, "GHOST");
-	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), 12, "FLY");
-	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 30, 100), 15, "CYGNUS");
-	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 30, 100), 28, "ROCINANTE");
+	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs( 50, 3,   0.05, 0.1, 0, 50), 18, "GHOST");
+	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   0, 50), 12, "FLY");
+	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs(100, 6,   0.25, 0.05, 0, 100), 15, "CYGNUS");
+	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs(200, 3,   0.25, 0.05, 0, 100), 28, "ROCINANTE");
 // switch BLUEK with FLY - more of a progression.  Make it shoot infrequently
 //	static public const BLUEK:EnemyEnum =       new EnemyEnum(new ActorAttrs( 80, 1.5, 0.1,  0,   20, 50), "FLY");
 	// third tier
 	// final tier cast
-	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs(500, 5,  0.05, 0, 10, 100), 2, "BEE3");
-	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1, 0, 20, 100), 14, "FLY3");
-	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2, 0.1, 0, 20, 100), 33, "ESOX");
-	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4, 0.1, 0, 30, 150), 26, "STEALTH");
-	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3, 0.05, 0.1, 10, 150), 20, "GHOST3");
-	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), 11, "OSPREY3");
+	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs(500, 5,  0.05, 0, 0, 100), 2, "BEE3");
+	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1, 0, 0, 100), 14, "FLY3");
+	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2, 0.1, 0, 0, 100), 33, "ESOX");
+	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4, 0.1, 0, 0, 150), 26, "STEALTH");
+	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3, 0.05, 0.1, 0, 150), 20, "GHOST3");
+	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 0, 200), 11, "OSPREY3");
 	static public const OSPREY3_CLOAK:EnemyEnum 
-											= new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 25, 200), 11, "OSPREY3_CLOAK");
+											= new EnemyEnum(new ActorAttrs(2000, 2, 1, 0, 0, 200), 11, "OSPREY3_CLOAK");
 //	static public const BLUEK:EnemyEnum; // pure heavy homer
 
 	// enemy weapons //////////////////////////////////////////////////////////
@@ -325,19 +330,20 @@ final class Utils
 		var attrs:ActorAttrs;
 		// this in order of the general progression of ships
 		switch (UserData.instance.currentPlane) {
+		/// bottom tier/////////////////////////////////////////////////////////////////
 		case 0:
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
-			attrs = new ActorAttrs(100, 4.5, 0.5, 0.2, EnemyEnum.BEE.attrs.RADIUS);
+			attrs = new ActorAttrs(100, 4.5, 0.5, 0.2);
 			break;
 		case 1:
 			weapon = BehaviorFactory.createAutofire(
 				[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), new AmmoFireSource(AmmoType.BULLET, 10, 15, 0)], 
 				400);
-			attrs = new ActorAttrs(100, 5, 0.5, 0.1, EnemyEnum.BEE.attrs.RADIUS);
+			attrs = new ActorAttrs(100, 5, 0.5, 0.1);
 			break;
 		case 3:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10, 0, 0), 1000);
-			attrs = new ActorAttrs(200, 3, 1, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+			attrs = new ActorAttrs(200, 3, 1, 0.1);
 			scoreBoard.showShield = true;
 			break;
 		case 6:
@@ -347,7 +353,7 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3), 1000)
 			);
-			attrs = new ActorAttrs(200, 4, 0.3, 0.1, EnemyEnum.BAT.attrs.RADIUS);
+			attrs = new ActorAttrs(200, 4, 0.3, 0.1);
 			break;
 		case 2:
 			weapon = BehaviorFactory.createAutofire(
@@ -355,11 +361,11 @@ final class Utils
 				 new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
 				 new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
 				400);
-			attrs = new ActorAttrs(100, 5.5, 1, 0.1, EnemyEnum.BEE.attrs.RADIUS);
+			attrs = new ActorAttrs(100, 5.5, 1, 0.1);
 			break;
 		case 4:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10, 0), 1000);
-			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1);
 			scoreBoard.showShield = true;
 			break;
 		case 7:
@@ -370,7 +376,7 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 3), 1000)
 			);
-			attrs = new ActorAttrs(225, 4.25, 0.3, 0.1, EnemyEnum.BAT.attrs.RADIUS+2);
+			attrs = new ActorAttrs(225, 4.25, 0.3, 0.1);
 			break;
 		case 5:
 			// desc: has shield + weak lasers
@@ -381,7 +387,7 @@ final class Utils
 					new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
 					1500, 1500)
 			);	
-			attrs = new ActorAttrs(333, 3.7, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
+			attrs = new ActorAttrs(333, 3.7, 0.7, 0.1);
 			scoreBoard.showShield = true;
 			break;
 		case 8:
@@ -393,14 +399,14 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 3), 1000)
 			);
-			attrs = new ActorAttrs(250, 4.25, 0.7, 0.2, EnemyEnum.BAT.attrs.RADIUS+2);
+			attrs = new ActorAttrs(250, 4.25, 0.7, 0.2);
 			break;
 		
 		// second tier //////////////////////////////////////////////
 		case 34:
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 1), 300);
-			attrs = new ActorAttrs(100, 5, 1, 0.1, 15);
+			attrs = new ActorAttrs(100, 5, 1, 0.1);
 			break;
 		case 28:
 			break;
@@ -446,14 +452,14 @@ final class Utils
 					new AmmoFireSource(AmmoType.BULLET, 66,  20, 0),
 					new AmmoFireSource(AmmoType.BULLET, 66,   0, -10)], 
 				400);
-			attrs = new ActorAttrs(700, 8, 1, 0.1, 15);
+			attrs = new ActorAttrs(700, 8, 1, 0.1);
 			break;
 		case 30:
 			weapon = BehaviorFactory.createChargedFire(
 				[	new AmmoFireSource(AmmoType.FUSION, 225, -22, 0, 0),
 					new AmmoFireSource(AmmoType.FUSION, 225,  22, 0, 0)],
 				5, 1000, 1);
-			attrs = new ActorAttrs(900, 7, 1, 0.1, 20);
+			attrs = new ActorAttrs(900, 7, 1, 0.1);
 			scoreBoard.showFusion = true;
 			break;
 		case 17:
@@ -465,11 +471,11 @@ final class Utils
 					new AmmoFireSource(AmmoType.LASER, 100,  24, 0, 0, 4),
 					new AmmoFireSource(AmmoType.LASER, 100,  30, 5, 0, 4)],
 				1000, 1000);
-			attrs = new ActorAttrs(800, 6, 1, 0.1, 20);
+			attrs = new ActorAttrs(800, 6, 1, 0.1);
 			break;
 		case 14:
 			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 150, 0, -10, 0, 2), 1000);
-			attrs = new ActorAttrs(4000, 3.5, 0.8, 1, EnemyEnum.GREENK.attrs.RADIUS+5);
+			attrs = new ActorAttrs(4000, 3.5, 0.8, 1);
 			scoreBoard.showShield = true;
 			break;
 		case 23:
@@ -477,7 +483,7 @@ final class Utils
 				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000),
 				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 			);
-			attrs = new ActorAttrs(3000, 4, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
+			attrs = new ActorAttrs(3000, 4, 0.1, 0.1);
 			scoreBoard.showShield = true;
 			scoreBoard.showFusion = true;
 			break;
@@ -493,7 +499,7 @@ final class Utils
 						new AmmoFireSource(AmmoType.LASER, 33,  30, 10, 0, 2)],
 					2000, 2000)
 			);
-			attrs = new ActorAttrs(3000, 3.75, 0.1, 0.1, EnemyEnum.MOTH.attrs.RADIUS);
+			attrs = new ActorAttrs(3000, 3.75, 0.1, 0.1);
 			scoreBoard.showShield = true;
 			break;
 		case 11:
@@ -506,14 +512,14 @@ final class Utils
 					new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 1)],
 				333
 			);
-			attrs = new ActorAttrs(3700, 4, 0.2, 0.1, 40);
+			attrs = new ActorAttrs(3700, 4, 0.2, 0.1);
 			break;
 		case 20:
 			weapon = new AlternatingBehavior(333, 333,
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 4), 400, 400),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 4), 400, 400)
 			);
-			attrs = new ActorAttrs(1500, 4.5, 0.4, 0.1, 40);
+			attrs = new ActorAttrs(1500, 4.5, 0.4, 0.1);
 			break;
 		case 27:
 			weapon = new AlternatingBehavior(333, 333,
@@ -522,14 +528,15 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -15, -20, 0, 2), 400, 400),
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  15, -20, 0, 3), 400, 400)
 			);
-			attrs = new ActorAttrs(4000, 3.5, 0.8, 0.1, 40);
+			attrs = new ActorAttrs(4000, 3.5, 0.8, 0.1);
 			break;
 		}
+		attrs.RADIUS = PlaneData.getPlane(asset).radius;
+		
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
 		plane.behavior = BehaviorFactory.faceForward;
-		var retval:PlayerVehicle = new PlayerVehicle(plane, weapon);
 		
-		return retval;
+		return new PlayerVehicle(plane, weapon);
 	}
 	static public function getPlayerTank():PlayerVehicle
 	{
@@ -761,8 +768,19 @@ class WaveBasedGameScript extends BaseScript
 	// IGameEvents
 	public override function onOpposingCollision(game:IGame, friendly:Actor, enemy:Actor):void
 	{
-		const shieldCollisionTreatLikeAmmo:Boolean = friendly == game.player;
-		damageActor(game, enemy, friendly.damage, false, shieldCollisionTreatLikeAmmo);
+		const friendlyIsShield:Boolean = friendly is ShieldActor;
+		if (friendlyIsShield)
+		{
+			// treat it like ammo
+			damageActor(game, enemy, friendly.damage, false, false);
+		}
+		else
+		{
+			Util.ASSERT(friendly == game.player);
+			
+			// kill the enemy outright
+			damageActor(game, enemy, 100000, false, true);
+		}
 		damageActor(game, friendly, enemy.damage, true, true);
 	}
 	public override function onFriendlyStruckByAmmo(game:IGame, friendly:Actor, ammo:Actor):void
@@ -806,7 +824,7 @@ class WaveBasedGameScript extends BaseScript
 		// Deal the damage and cue the visual effect
 		if (!isFriendly || isPlayer)
 		{
-			const particles:uint = Math.max(10, 10 * damage/actor.attrs.MAX_HEALTH);
+			const particles:uint = Math.min(15, 10 * damage/actor.attrs.MAX_HEALTH);
 			Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
 		}
 
@@ -821,12 +839,12 @@ class WaveBasedGameScript extends BaseScript
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 			_stats.damageReceived += damage;
-//trace("PLAYER HIT FOR", damage, "TO", actor.health); 
+		//trace("PLAYER HIT FOR", damage, "TO", actor.health); 
 		}
-else
-{
-//trace("ENEMY HIT FOR", damage, "TO", actor.health); 
-}
+		else
+		{
+		//trace("ENEMY HIT FOR", damage, "TO", actor.health); 
+		}
 			
 		if (!isFriendly && !wasCollision)
 		{
