@@ -47,7 +47,7 @@ package behaviors
 					ammo = Actor.createFusionBlast();
 					break;
 				case AmmoType.SHIELD:
-					ammo = ShieldActor.create(ActorAttrs.SHIELDS[_level]);
+					ammo = ShieldActor.create();
 					break;
 			}
 			ammo.damage = _damage * damageMultiplier;
@@ -55,9 +55,14 @@ package behaviors
 
 			Util.setPoint(po_tmp, actor.worldPos);
 			po_tmp.offset(_offsetX, _offsetY);
-			
+
 			MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
-			ammo.launchDegrees(po_tmp, angle + _angle);
+			
+			if (_ammoType != AmmoType.SHIELD)
+			{
+				// only because shield doesn't have an actorattr yet
+				ammo.launchDegrees(po_tmp, angle + _angle);
+			}
 			if (isPlayer)
 			{
 				if (_ammoType == AmmoType.SHIELD)
@@ -74,6 +79,10 @@ package behaviors
 				game.addEnemyAmmo(ammo);
 			}
 			return ammo;
+		}
+		public function get damage():Number  // exists just for ShieldActivator.....
+		{
+			return _damage;
 		}
 	}
 }

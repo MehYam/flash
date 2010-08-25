@@ -11,11 +11,9 @@ package scripts
 	
 	public final class ShieldActor extends Actor
 	{
-		static public function create(attrs:ActorAttrs):Actor
+		static public function create():Actor
 		{
 			var shield:Actor = ActorPool.instance.get(ShieldActor) || new ShieldActor();
-			shield.attrs = attrs;
-			shield.reset(); // hack hack hack hack hack..... this to get recycled ShieldActors to have the right stats
 			return shield;
 		}
 
@@ -24,7 +22,7 @@ package scripts
 		public function ShieldActor()
 		{
 			//KAI: hide constructor
-			super(ActorAssetManager.createShield(), null); // hack ahckka hkshadchakhck
+			super(ActorAssetManager.createShield(), null); // hack - behavior's going to plug this in for us
 			if (!s_trackingBehavior)
 			{
 				s_trackingBehavior = new CompositeBehavior(BehaviorFactory.shadowPlayer, BehaviorFactory.fadeIn);

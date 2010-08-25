@@ -322,6 +322,12 @@ final class EnemyEnum
 }
 final class Utils
 {
+	static private function createShieldActivator(shieldDamage:Number, shieldArmor:Number, yOffset:Number):IBehavior
+	{
+		return BehaviorFactory.createShieldActivator(
+				new AmmoFireSource(AmmoType.SHIELD, shieldDamage, 0, yOffset, 0),
+				new ActorAttrs(shieldArmor, 0, 0, 0, 50));
+	}
 	static public function getPlayerPlane(scoreBoard:ScoreBoard):PlayerVehicle
 	{
 		const asset:uint = PlaneData.getPlane(UserData.instance.currentPlane).assetIndex;
@@ -342,7 +348,7 @@ final class Utils
 			attrs = new ActorAttrs(100, 5, 0.5, 0.1);
 			break;
 		case 3:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10, 0, 0), 1000);
+			weapon = createShieldActivator(10, 50, -10); 
 			attrs = new ActorAttrs(200, 3, 1, 0.1);
 			scoreBoard.showShield = true;
 			break;
@@ -364,7 +370,7 @@ final class Utils
 			attrs = new ActorAttrs(100, 5.5, 1, 0.1);
 			break;
 		case 4:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10, 0), 1000);
+			weapon = createShieldActivator(33, 200, -10); 
 			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1);
 			scoreBoard.showShield = true;
 			break;
@@ -381,7 +387,7 @@ final class Utils
 		case 5:
 			// desc: has shield + weak lasers
 			weapon = new CompositeBehavior(
-				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 30, 0, -10), 1000),
+				createShieldActivator(66, 300, -10),
 				BehaviorFactory.createAutofire(
 					[new AmmoFireSource(AmmoType.LASER, 5, -10, 0, 0, 1),
 					new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
@@ -474,13 +480,13 @@ final class Utils
 			attrs = new ActorAttrs(800, 6, 1, 0.1);
 			break;
 		case 14:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 150, 0, -10, 0, 2), 1000);
+			weapon = createShieldActivator(150, 750, -15);
 			attrs = new ActorAttrs(4000, 3.5, 0.8, 1);
 			scoreBoard.showShield = true;
 			break;
 		case 23:
 			weapon = new CompositeBehavior(
-				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000),
+				createShieldActivator(100, 300, -15),
 				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 			);
 			attrs = new ActorAttrs(3000, 4, 0.1, 0.1);
@@ -489,7 +495,7 @@ final class Utils
 			break;
 		case 33:
 			weapon = new CompositeBehavior(
-				BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000),
+				createShieldActivator(250, 700, -15),
 				BehaviorFactory.createAutofire(
 					[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 2),
 						new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),

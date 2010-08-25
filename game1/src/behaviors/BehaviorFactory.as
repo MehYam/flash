@@ -138,9 +138,9 @@ package behaviors
 		{
 			return new ChargedFireBehavior(source, chargeSteps, msStepDuration, damageAtFull);
 		}
-		static public function createShieldActivator(source:AmmoFireSource, msRecharge:uint):IBehavior
+		static public function createShieldActivator(source:AmmoFireSource, attrs:ActorAttrs):IBehavior
 		{
-			return new ShieldActivatorBehavior(source, msRecharge);
+			return new ShieldActivatorBehavior(source, attrs, 1000);
 		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
@@ -432,12 +432,14 @@ final class ChargedFireBehavior implements IBehavior
 // KAI: this might also be the same thing as the chargedfire, when you think about it
 final class ShieldActivatorBehavior implements IBehavior  
 {
-	private var _limiter:RateLimiter;
 	private var _source:AmmoFireSource;
-	public function ShieldActivatorBehavior(source:AmmoFireSource, msRecharge:uint):void
+	private var _attrs:ActorAttrs;
+	private var _limiter:RateLimiter;
+	public function ShieldActivatorBehavior(source:AmmoFireSource, attrs:ActorAttrs, msRecharge:uint):void
 	{
-		_limiter = new RateLimiter(msRecharge, msRecharge);
 		_source = source;
+		_limiter = new RateLimiter(msRecharge, msRecharge);
+		_attrs = attrs;
 	}
 	private var _shield:ShieldActor;
 	public function onFrame(game:IGame, actor:Actor):void
@@ -457,6 +459,11 @@ final class ShieldActivatorBehavior implements IBehavior
 			else if (!_shield && game.playerShooting && _limiter.now)
 			{
 				_shield = ShieldActor(_source.fire(game, actor));
+				
+				// this seriously needs a redesign
+				_shield.attrs = _attrs;
+				_shield.reset();
+				_shield.damage = _source.damage;
 			}
 		}
 		else
