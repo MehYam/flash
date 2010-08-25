@@ -334,7 +334,7 @@ final class Utils
 
 		var weapon:IBehavior;
 		var attrs:ActorAttrs;
-		// this in order of the general progression of ships
+
 		switch (UserData.instance.currentPlane) {
 		/// bottom tier/////////////////////////////////////////////////////////////////
 		case 0:
@@ -347,11 +347,38 @@ final class Utils
 				400);
 			attrs = new ActorAttrs(100, 5, 0.5, 0.1);
 			break;
+		case 2:
+			weapon = BehaviorFactory.createAutofire(
+				[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
+					new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
+					new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
+				400);
+			attrs = new ActorAttrs(125, 5.5, 1, 0.1);
+			break;
+		
 		case 3:
 			weapon = createShieldActivator(10, 50, -10); 
 			attrs = new ActorAttrs(200, 3, 1, 0.1);
 			scoreBoard.showShield = true;
 			break;
+		case 4:
+			weapon = createShieldActivator(33, 200, -10); 
+			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1);
+			scoreBoard.showShield = true;
+			break;
+		case 5:
+			// desc: has shield + weak lasers
+			weapon = new CompositeBehavior(
+				createShieldActivator(66, 300, -10),
+				BehaviorFactory.createAutofire(
+					[new AmmoFireSource(AmmoType.LASER, 5, -10, 0, 0, 1),
+						new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
+					1500, 1500)
+			);	
+			attrs = new ActorAttrs(333, 3.7, 0.7, 0.1);
+			scoreBoard.showShield = true;
+			break;
+		
 		case 6:
 			// desc: model has problems with its firing, occasionally stop firing to have more predictability
 			weapon = new AlternatingBehavior(
@@ -360,19 +387,6 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3), 1000)
 			);
 			attrs = new ActorAttrs(200, 4, 0.3, 0.1);
-			break;
-		case 2:
-			weapon = BehaviorFactory.createAutofire(
-				[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
-				 new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
-				 new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
-				400);
-			attrs = new ActorAttrs(100, 5.5, 1, 0.1);
-			break;
-		case 4:
-			weapon = createShieldActivator(33, 200, -10); 
-			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1);
-			scoreBoard.showShield = true;
 			break;
 		case 7:
 			weapon = new AlternatingBehavior(
@@ -383,18 +397,6 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 3), 1000)
 			);
 			attrs = new ActorAttrs(225, 4.25, 0.3, 0.1);
-			break;
-		case 5:
-			// desc: has shield + weak lasers
-			weapon = new CompositeBehavior(
-				createShieldActivator(66, 300, -10),
-				BehaviorFactory.createAutofire(
-					[new AmmoFireSource(AmmoType.LASER, 5, -10, 0, 0, 1),
-					new AmmoFireSource(AmmoType.LASER, 5,   10, 0, 0, 1)], 
-					1500, 1500)
-			);	
-			attrs = new ActorAttrs(333, 3.7, 0.7, 0.1);
-			scoreBoard.showShield = true;
 			break;
 		case 8:
 			// desc: slightly more predictable firing
@@ -408,50 +410,14 @@ final class Utils
 			attrs = new ActorAttrs(250, 4.25, 0.7, 0.2);
 			break;
 		
-		// second tier //////////////////////////////////////////////
+		// upper tiers ///////////////////////////////////////////
 		case 34:
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 1), 300);
 			attrs = new ActorAttrs(100, 5, 1, 0.1);
 			break;
-		case 28:
-			break;
-		case 15:
-			break;
-		case 12:
-			break;
-		case 21:
-			break;
-		case 31:
-			break;
-		case 9:
-			break;
-		case 25:
-			break;
-		case 18:
-			break;
-		
-		/////// third tier ////////////////////////////////////////////////////////
 		case 35:
 			break;
-		case 29:
-			break;
-		case 16:
-			break;
-		case 13:
-			break;
-		case 22:
-			break;
-		case 32:
-			break;
-		case 10:
-			break;
-		case 26:
-			break;
-		case 19:
-			break;
-
-		/////// Top Tier //////////////////////////////////////////////////////////
 		case 36:
 			weapon = BehaviorFactory.createAutofire(
 				[	new AmmoFireSource(AmmoType.BULLET, 66, -20, 0), 
@@ -460,6 +426,11 @@ final class Utils
 				400);
 			attrs = new ActorAttrs(700, 8, 1, 0.1);
 			break;
+
+		case 28:
+			break;
+		case 29:
+			break;
 		case 30:
 			weapon = BehaviorFactory.createChargedFire(
 				[	new AmmoFireSource(AmmoType.FUSION, 225, -22, 0, 0),
@@ -467,6 +438,11 @@ final class Utils
 				5, 1000, 1);
 			attrs = new ActorAttrs(900, 7, 1, 0.1);
 			scoreBoard.showFusion = true;
+			break;
+
+		case 15:
+			break;
+		case 16:
 			break;
 		case 17:
 			weapon = BehaviorFactory.createAutofire(
@@ -479,10 +455,20 @@ final class Utils
 				1000, 1000);
 			attrs = new ActorAttrs(800, 6, 1, 0.1);
 			break;
+		
+		case 12:
+			break;
+		case 13:
+			break;
 		case 14:
 			weapon = createShieldActivator(150, 750, -15);
 			attrs = new ActorAttrs(4000, 3.5, 0.8, 1);
 			scoreBoard.showShield = true;
+			break;
+
+		case 21:
+			break;
+		case 22:
 			break;
 		case 23:
 			weapon = new CompositeBehavior(
@@ -492,6 +478,11 @@ final class Utils
 			attrs = new ActorAttrs(3000, 4, 0.1, 0.1);
 			scoreBoard.showShield = true;
 			scoreBoard.showFusion = true;
+			break;
+
+		case 31:
+			break;
+		case 32:
 			break;
 		case 33:
 			weapon = new CompositeBehavior(
@@ -508,6 +499,11 @@ final class Utils
 			attrs = new ActorAttrs(3000, 3.75, 0.1, 0.1);
 			scoreBoard.showShield = true;
 			break;
+
+		case 9:
+			break;
+		case 10:
+			break;
 		case 11:
 			weapon = BehaviorFactory.createAutofire(
 				[	new AmmoFireSource(AmmoType.LASER, 40, -63, -35, 0, 1),
@@ -520,12 +516,10 @@ final class Utils
 			);
 			attrs = new ActorAttrs(3700, 4, 0.2, 0.1);
 			break;
-		case 20:
-			weapon = new AlternatingBehavior(333, 333,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 4), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 4), 400, 400)
-			);
-			attrs = new ActorAttrs(1500, 4.5, 0.4, 0.1);
+
+		case 25:
+			break;
+		case 26:
 			break;
 		case 27:
 			weapon = new AlternatingBehavior(333, 333,
@@ -535,6 +529,18 @@ final class Utils
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  15, -20, 0, 3), 400, 400)
 			);
 			attrs = new ActorAttrs(4000, 3.5, 0.8, 0.1);
+			break;
+
+		case 18:
+			break;
+		case 19:
+			break;
+		case 20:
+			weapon = new AlternatingBehavior(333, 333,
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 4), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 4), 400, 400)
+			);
+			attrs = new ActorAttrs(1500, 4.5, 0.4, 0.1);
 			break;
 		}
 		attrs.RADIUS = PlaneData.getPlane(asset).radius;
