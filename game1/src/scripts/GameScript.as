@@ -336,7 +336,7 @@ final class Utils
 			attrs = new ActorAttrs(100, 5, 0.5, 0.1, EnemyEnum.BEE.attrs.RADIUS);
 			break;
 		case 3:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10), 1000);
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 10, 0, -10, 0, 0), 1000);
 			attrs = new ActorAttrs(200, 3, 1, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
 			scoreBoard.showShield = true;
 			break;
@@ -358,7 +358,7 @@ final class Utils
 			attrs = new ActorAttrs(100, 5.5, 1, 0.1, EnemyEnum.BEE.attrs.RADIUS);
 			break;
 		case 4:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10), 1000);
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 20, 0, -10, 0), 1000);
 			attrs = new ActorAttrs(300, 3.5, 0.7, 0.1, EnemyEnum.GREENK.attrs.RADIUS);
 			scoreBoard.showShield = true;
 			break;
@@ -468,7 +468,7 @@ final class Utils
 			attrs = new ActorAttrs(800, 6, 1, 0.1, 20);
 			break;
 		case 14:
-			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 100, 0, -10), 1000);
+			weapon = BehaviorFactory.createShieldActivator(new AmmoFireSource(AmmoType.SHIELD, 150, 0, -10, 0, 2), 1000);
 			attrs = new ActorAttrs(4000, 3.5, 0.8, 1, EnemyEnum.GREENK.attrs.RADIUS+5);
 			scoreBoard.showShield = true;
 			break;
@@ -510,10 +510,10 @@ final class Utils
 			break;
 		case 20:
 			weapon = new AlternatingBehavior(333, 333,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 0), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 0), 400, 400)
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 4), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 4), 400, 400)
 			);
-			attrs = new ActorAttrs(1000, 4.5, 0.4, 0.1, 40);
+			attrs = new ActorAttrs(1500, 4.5, 0.4, 0.1, 40);
 			break;
 		case 27:
 			weapon = new AlternatingBehavior(333, 333,

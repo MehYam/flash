@@ -47,7 +47,7 @@ package behaviors
 					ammo = Actor.createFusionBlast();
 					break;
 				case AmmoType.SHIELD:
-					ammo = ShieldActor.create();
+					ammo = ShieldActor.create(ActorAttrs.SHIELDS[_level]);
 					break;
 			}
 			ammo.damage = _damage * damageMultiplier;

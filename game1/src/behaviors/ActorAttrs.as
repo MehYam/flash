@@ -7,7 +7,13 @@ package behaviors
 		static public const LASER:ActorAttrs = new ActorAttrs(1, 6, 7, 0, 20, 0, false, 2000);
 		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(1, 5, 10, 0, 20, 0, true, 4000);
 		static public const EXPLOSION:ActorAttrs = new ActorAttrs(0, 100, 0, 0.1, 0, 0, false, 300);
-		static public const SHIELD:ActorAttrs = new ActorAttrs(50, 0, 0, 0, 50, 0, false);
+
+		// Shield's value is partly determined by its max life....
+		//KAI: this totally suxorz
+		static public const SHIELDS:Array = 
+			[	new ActorAttrs(50, 0, 0, 0, 50, 0, false),
+				new ActorAttrs(200, 0, 0, 0, 50, 0, false),
+				new ActorAttrs(500, 0, 0, 0, 50, 0, false)];
 			
 		static public const INFINITE_LIFETIME:int = -1;
 		
