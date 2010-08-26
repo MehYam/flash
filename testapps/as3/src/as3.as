@@ -18,6 +18,7 @@ package {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
 	import karnold.ui.ProgressMeter;
@@ -54,7 +55,11 @@ package {
 			
 //			testProgrammaticSkin();
 			
-			testHtmlText();
+//			testHtmlText();
+			
+//			testEmbeddedXML();
+			
+			testEmbeddedText();
 		}
 	
 		private function testTextField():void
@@ -375,6 +380,49 @@ package {
 			html += "<font size='-4'>";
 			html += "This ship is a pretty cool ship because as far as ship goes, it ship ships shipsss pretty cool ship ship.  ship.";
 			tf.htmlText = html;
+			addChild(tf);
+		}
+		
+		[Embed(source="test.xml", mimeType="application/octet-stream")]
+		static private const XMLDATA:Class;
+		private function testEmbeddedXML():void
+		{
+			var byteArray:ByteArray = new XMLDATA;
+			
+			var data:XML = new XML(byteArray.readUTFBytes(byteArray.length));
+			var str:String = data.children()[0];
+			
+			var tf:TextField = new TextField;
+			tf.autoSize = TextFieldAutoSize.LEFT;
+			tf.multiline = true;
+			tf.wordWrap = true;
+			tf.border = true;
+			tf.width = 200;
+			tf.defaultTextFormat = new TextFormat("Arial", 18);
+			tf.x = 20;
+			tf.y = 20;
+			
+			tf.text = str; 
+			addChild(tf);
+		}
+		
+		[Embed(source="test.txt", mimeType="application/octet-stream")]
+		static private const TXTDATA:Class;
+		private function testEmbeddedText():void
+		{
+			const str:String = (new TXTDATA).toString();
+			
+			var tf:TextField = new TextField;
+			tf.autoSize = TextFieldAutoSize.LEFT;
+			tf.multiline = true;
+			tf.wordWrap = true;
+			tf.border = true;
+			tf.width = 200;
+			tf.defaultTextFormat = new TextFormat("Arial", 18);
+			tf.x = 20;
+			tf.y = 20;
+			
+			tf.text = str; 
 			addChild(tf);
 		}
 	}

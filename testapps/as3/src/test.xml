@@ -1,0 +1,14 @@
+<root>
+	<sometag>
+This is a description.  What happens to carriage returns?
+Do these work?
+	What about tabs?
+	</sometag>
+	<sometag>
+This is a 2222222description.  What happens to carriage returns?
+
+Do these work?
+
+	What about tabs?
+	</sometag>
+</root>
