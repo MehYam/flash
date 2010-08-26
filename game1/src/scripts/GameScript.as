@@ -441,7 +441,6 @@ final class Utils
 			scoreBoard.showShield = true;
 			break;
 		case 5:
-			// desc: has shield + weak lasers
 			weapon = new CompositeBehavior(
 				createShieldActivator(30, 150, -10),
 				BehaviorFactory.createAutofire(
@@ -456,7 +455,6 @@ final class Utils
 			break;
 		
 		case 6:
-			// desc: model has problems with its firing, occasionally stop firing to have more predictability
 			weapon = new AlternatingBehavior(
 				500, 1500,
 				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3), 1000),

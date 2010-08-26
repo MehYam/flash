@@ -22,8 +22,8 @@
 <plane n='Phantom'      a='19' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Spectre'      a='20' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Attacus'      a='21' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='8000'   unl='5' up='2'/>
-<plane n='Attacus 2'    a='22' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
-<plane n='Attacus 3'    a='23' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Attacus II'   a='22' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Attacus III'  a='23' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='???'          a='24' rad='20' dmg='0.4'  rate='0.3'  arm='0.1'  speed='0.8'  cost='9000'   unl='0' up='0' nosale='true'/>
 <plane n='XStealth'     a='25' rad='30' dmg='0.4'  rate='0.3'  arm='0.02' speed='0.8'  cost='10000'  unl='8' up='2'/>
 <plane n='YStealth'     a='26' rad='30' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
@@ -36,22 +36,32 @@
 <plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Corvid'       a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'/>
 <plane n='Corvid X'     a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
-<plane n='Death Bird'   a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Deathwing'    a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 </planes>
 <descs>
-<desc plane="0">The Bee is the basic ship in the Stinger line required by all tournament contestants.  Your... 'new Bee' has been fitted with a low-energy cannon, and like all Rogue-class ships, it sacrifices armor for maneuverability and moderate firepower.
+<desc plane="0">The Bee is the basic ship in the Stinger line required by all tournament contestants.  Your... "new Bee" has been fitted with a low-energy cannon, and like all Rogue-class ships, it sacrifices armor for maneuverability and moderate firepower.
 Purchased upgrades to the Bee increase firepower, movement, and a bit of armor, but most importantly, unlock the purchase of higher level ships and classes.</desc>
 
 <desc plane="1">The Wasp is a respectable step up from Bee, adding some movement speed and doubling its firepower with a second cannon.
-Purchase of the Wasp also unlocks the Bat, the first in the line of Fighter-class ships.</desc>
+Purchase of the Wasp also unlocks the Bat, the first in the line of the larger, more powerful Fighter-class ships.</desc>
 
-<desc plane="2">Wowawee!
-Purchasing this vehicle unlocks the Raven, Rocinante, and Cygnus lines Rogue-class ships</desc>
+<desc plane="2">All contestants serious about winning the tournament in a Rogue-class ship will spend time flying the Hornet.  The fastest of the Stinger line, the Hornet decimates low to mid-level opponents with its speed, and serves as a good training ship for the later Rogue-class ships.
+Purchasing this unlocks the Raven, Rocinante, and Cygnus lines of Rogues.</desc>
 
-<desc plane="3">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have protective shields that can be creatively used to inflict great harm on opponents.  Some ships include conventional weapons as well.
+<desc plane="3">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have high armor and protective shields that can be creatively used to inflict great harm on opponents.  Some ships include conventional weapons as well.
 The Jem's only weapon is a shield that takes some time to recharge, and is relatively weak, but can be flung at opponents at moderate range.  Upgrades to the Jem will unlock other Melee-class ships.</desc>
 
-<desc plane="9">Fighter-class ships like those in the Yango line fall in the middle between Rogue and Melee vessels.  They're generally nimbler than Melees, but slower than Rogues due to added armor and armament.  These ships are generally military in origin, and so require little modification to be tournament-ready.</desc>
+<desc plane="4">This upgrade to the Jem line beefs up speed, armor and shields somewhat.
+Contestants flying the Jem line (and all Melee ships) soon learn the art of timing - it's a good idea to use quiet moments to ditch a damaged shield, or throw it at enemies.</desc>
+
+<desc plane="5">The final Jem ship adds some weak fore and aft lasers to its stronger shield, giving opponents more things to worry about, and giving the pilot something else to do while shields recharge.  
+Aside from boosting stats all around, purchase of this Jem unlocks the three advanced Melee lines of ships, Attacus, Esox, and Diptera.</desc>
+
+<desc plane="6">Fighter-class ships like those in the Yango line fall in the middle between Rogue and Melee vessels.  They're generally nimbler than Melees, but slower than Rogues due to added armor and weapons.  These ships are mostly military in origin, and so require little modification to be tournament-ready.
+This entry-level Yango fires powerful rockets, but has a quirk in its firing system that causes an unpredictable launch rate.  Halting fire for a moment and restarting will temporarily improve system responsiveness.</desc>
+
+<desc plane="7">The middle Yango upgrade adds two more rocket launchers and a little more speed for a brutal attack from the back line.
+Although Fighter-class ships are often heavily armored, it's still a good idea to keep distance from opponents, and let the ranged weapons do their work.</desc>
 
 </descs>
 </data>
