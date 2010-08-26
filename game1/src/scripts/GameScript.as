@@ -468,11 +468,17 @@ final class Utils
 			attrs = new ActorAttrs(300, 4.25, 0.7, 0.2);
 			break;
 		
-		// upper tiers ///////////////////////////////////////////
+		// level 9 ///////////////////////////////////////////
+//		weapon = BehaviorFactory.createAutofire(
+//			[	new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
+//				new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
+//				new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
+//			400);
+//		attrs = new ActorAttrs(133, 5.5, 1, 0.1);
 		case 34:
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
-			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 1), 300);
-			attrs = new ActorAttrs(100, 5, 1, 0.1);
+			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 0), 150);
+			attrs = new ActorAttrs(400, 5.5, 0.7, 0.1);
 			break;
 		case 35:
 			break;
