@@ -469,12 +469,6 @@ final class Utils
 			break;
 		
 		// level 9 ///////////////////////////////////////////
-//		weapon = BehaviorFactory.createAutofire(
-//			[	new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
-//				new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
-//				new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
-//			400);
-//		attrs = new ActorAttrs(133, 5.5, 1, 0.1);
 		case 34:
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 0), 150);
@@ -492,6 +486,12 @@ final class Utils
 			break;
 
 		case 28:
+			weapon = BehaviorFactory.createChargedFire(
+				[	new AmmoFireSource(AmmoType.FUSION, 40, -22, 0, 0),
+					new AmmoFireSource(AmmoType.FUSION, 40,  22, 0, 0)],
+				5, 1000, 1);
+			attrs = new ActorAttrs(450, 5, 1, 0.1);
+			scoreBoard.showFusion = true;
 			break;
 		case 29:
 			break;
@@ -915,11 +915,11 @@ class WaveBasedGameScript extends BaseScript
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 			_stats.damageReceived += damage;
-		//trace("PLAYER HIT FOR", damage, "TO", actor.health); 
+		trace("PLAYER HIT FOR", damage, "TO", actor.health, "/", actor.attrs.MAX_HEALTH); 
 		}
 		else
 		{
-		//trace("ENEMY HIT FOR", damage, "TO", actor.health); 
+		trace("ENEMY HIT FOR", damage, "TO", actor.health, "/", actor.attrs.MAX_HEALTH); 
 		}
 			
 		if (!isFriendly && !wasCollision)
