@@ -153,9 +153,9 @@ package
 			{
 				_radar.clear();
 			}
-			_currentScript = GameScript.testScript1;
+//			_currentScript = GameScript.testScript1;
 //			_currentScript = GameScript.testScript2;
-//			_currentScript = GameScript.getLevel(level);
+			_currentScript = GameScript.getLevel(level);
 			_currentScript.begin(this);
 			
 			stage.focus = stage;

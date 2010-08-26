@@ -530,18 +530,26 @@ final class Utils
 		case 12:
 			//desc: designed to intimidate opponents as it gets close
 			weapon = createShieldActivator(40, 225, -15);
-			attrs = new ActorAttrs(1000, 3.5, 0.8, 1);
+			attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
 			scoreBoard.showShield = true;
 			break;
 		case 13:
 			break;
 		case 14:
 			weapon = createShieldActivator(150, 750, -15);
-			attrs = new ActorAttrs(4000, 3.5, 0.8, 1);
+			attrs = new ActorAttrs(4000, 3.5, 0.8, 0.5);
 			scoreBoard.showShield = true;
 			break;
 
 		case 21:
+			weapon = new CompositeBehavior(
+				createShieldActivator(25, 150, -15),
+				BehaviorFactory.createAutofire(
+					[ new AmmoFireSource(AmmoType.BULLET, 20, -20, -20),
+					  new AmmoFireSource(AmmoType.BULLET, 20,  20, -20)], 500)
+			);
+			attrs = new ActorAttrs(750, 4, 0.7, 0.1);
+			scoreBoard.showShield = true;
 			break;
 		case 22:
 			break;
@@ -550,12 +558,21 @@ final class Utils
 				createShieldActivator(100, 300, -15),
 				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 			);
-			attrs = new ActorAttrs(3000, 4, 0.1, 0.1);
+			attrs = new ActorAttrs(3000, 4, 0.7, 0.1);
 			scoreBoard.showShield = true;
 			scoreBoard.showFusion = true;
 			break;
 
 		case 31:
+			weapon = new CompositeBehavior(
+				createShieldActivator(75, 350, -15),
+				BehaviorFactory.createAutofire(
+					[	new AmmoFireSource(AmmoType.LASER, 25, -20, 0, 0, 1),
+						new AmmoFireSource(AmmoType.LASER, 25,  20, 0, 0, 1)],
+					1000, 1000)
+			);
+			attrs = new ActorAttrs(750, 3.75, 0.6, 0.1);
+			scoreBoard.showShield = true;
 			break;
 		case 32:
 			break;
@@ -569,9 +586,9 @@ final class Utils
 						new AmmoFireSource(AmmoType.LASER, 33,  5, -10, 0, 2),
 						new AmmoFireSource(AmmoType.LASER, 33,  20, 0, 0, 2),
 						new AmmoFireSource(AmmoType.LASER, 33,  30, 10, 0, 2)],
-					2000, 2000)
+					1500, 1500)
 			);
-			attrs = new ActorAttrs(3000, 3.75, 0.1, 0.1);
+			attrs = new ActorAttrs(3000, 3.75, 0.6, 0.1);
 			scoreBoard.showShield = true;
 			break;
 
