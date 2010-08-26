@@ -6,9 +6,9 @@
 <plane n='Jem'          a='3'  rad='12' dmg='0.1'  rate='0.1'  arm='0.2'  speed='0.1'  cost='2000'   unl='0' up='2'/>
 <plane n='Jem II'       a='4'  rad='12' dmg='0.15' rate='0.2'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'/>
 <plane n='Jem VSBL'     a='5'  rad='12' dmg='0.2'  rate='0.3'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'/>
-<plane n='Yango'        a='6'  rad='20' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.2'  cost='3000'   unl='1' up='2'/>
-<plane n='Yango II'     a='7'  rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
-<plane n='Yango III'    a='8'  rad='23' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Bat'          a='6'  rad='20' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.2'  cost='3000'   unl='1' up='2'/>
+<plane n='Bat II'       a='7'  rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Bat III'      a='8'  rad='23' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Osprey'       a='9'  rad='35' dmg='0.4'  rate='0.3'  arm='0.4'  speed='0.8'  cost='4000'   unl='8' up='2'/>
 <plane n='Osprey II'    a='10' rad='35' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Osprey III'   a='11' rad='38' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
@@ -34,8 +34,8 @@
 <plane n='Esox'         a='31' rad='21' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='5' up='2'/>
 <plane n='Pike'         a='32' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
-<plane n='Corvid'       a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'/>
-<plane n='Corvid X'     a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Raven'        a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'/>
+<plane n='Corvid'       a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Deathwing'    a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 </planes>
 <descs>
@@ -49,19 +49,42 @@ Purchase of the Wasp also unlocks the Bat, the first in the line of the larger, 
 Purchasing this unlocks the Raven, Rocinante, and Cygnus lines of Rogues.</desc>
 
 <desc plane="3">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have high armor and protective shields that can be creatively used to inflict great harm on opponents.  Some ships include conventional weapons as well.
-The Jem's only weapon is a shield that takes some time to recharge, and is relatively weak, but can be flung at opponents at moderate range.  Upgrades to the Jem will unlock other Melee-class ships.</desc>
+The Jem's only weapon is a shield that takes some time to recharge, and is relatively weak, but can be flung at opponents at moderate range.
+Upgrades to the Jem will unlock other Melee-class ships.</desc>
 
 <desc plane="4">This upgrade to the Jem line beefs up speed, armor and shields somewhat.
-Contestants flying the Jem line (and all Melee ships) soon learn the art of timing - it's a good idea to use quiet moments to ditch a damaged shield, or throw it at enemies.</desc>
+Contestants flying the Jem line (and all Melee ships) soon learn the art of timing - it's a good idea to use quiet moments to ditch a damaged shield, or throw it at enemies.
+Jem pilots also learn the art of reflecting high-powered enemy fire back where it came from.  This is especially deadly when reflecting back fusion, or high-velocity rockets.</desc>
 
 <desc plane="5">The final Jem ship adds some weak fore and aft lasers to its stronger shield, giving opponents more things to worry about, and giving the pilot something else to do while shields recharge.  
 Aside from boosting stats all around, purchase of this Jem unlocks the three advanced Melee lines of ships, Attacus, Esox, and Diptera.</desc>
 
-<desc plane="6">Fighter-class ships like those in the Yango line fall in the middle between Rogue and Melee vessels.  They're generally nimbler than Melees, but slower than Rogues due to added armor and weapons.  These ships are mostly military in origin, and so require little modification to be tournament-ready.
-This entry-level Yango fires powerful rockets, but has a quirk in its firing system that causes an unpredictable launch rate.  Halting fire for a moment and restarting will temporarily improve system responsiveness.</desc>
+<desc plane="6">Fighter-class ships like those in the Bat line fall in the middle between Rogue and Melee vessels.  They're generally nimbler than Melees, but slower than Rogues due to added armor and weapons.  These ships are mostly military in origin, and so require little modification to be tournament-ready.
+This entry-level Bat fires powerful rockets, but has a quirk in its firing system that causes an unpredictable launch rate.  Halting fire for a moment and restarting will temporarily improve system responsiveness.</desc>
 
-<desc plane="7">The middle Yango upgrade adds two more rocket launchers and a little more speed for a brutal attack from the back line.
+<desc plane="7">The middle Bat upgrade adds two more rocket launchers and a little more speed for a brutal attack from the back line.
 Although Fighter-class ships are often heavily armored, it's still a good idea to keep distance from opponents, and let the ranged weapons do their work.</desc>
+
+<desc plane="8">Aside more armor, damage, and better cornering, the top Bat ship also seems to have fixed the firing problem.
+Owners of Bat III will have access to the three top-level Fighter-class lines, Osprey, Stealth, and Ghost.</desc>
+
+<desc plane="34">Fans of the Stinger ships will usually want to upgrade to the Raven line, built for agility and targeting.  The fastest ships in the tournament, they were built to strafe around opponents, sniping them from all angles.  The speed comes at the price of armor - so enjoy melting your foes with this ship, just don't take damage like you dish it out.</desc>
+
+<desc plane="28">You will assume control in the Rocinante.  This ship line uses devastating twin fusion cannons, and is relatively heavy armored for a Rogue-class.  As such, it's the slowest of the Rogues, which is to say still pretty nimble.
+The key to using fusion effectively is to charge it as much as possible before firing it.  Watch the charge indicator and don't hold it for too long, however, as an overloading cannon will damage the ship over time.
+This ship takes a little practice to master, but nothing matches the pleasure of destroying an entire cluster of enemies with a well-charge fusion blast.</desc>
+
+<desc plane="15">Give your enemies a world of doubt and fear in a Cygnus ship.  These ships walk the middle ground between the speed of the Ravens and the firepower and armor of the Rocinantes.</desc>
+
+<desc plane="12">The Diptera line, a pure-Melee class, was designed to intimidate from close range.  It's got the most armor available on any ship, and can withstand brutal hits even without its shield up.</desc>
+
+<desc plane="21">Attacus ships are Melee/Rogue hybrids.  They sacrifice armor, stability, and shields for more maneuverability and some moderate ranged weapons.  Shooting from a distance while shielded is a pretty compelling combination.</desc>
+
+<desc plane="31">The Esox line of ships most closely resemble their lower-level Jem cousins.  Fitted with strong shields, armor, and brutal multiple lasers, they can cut through easily at short and medium range.</desc>
+
+<!--
+<desc plane="34"></desc>
+-->
 
 </descs>
 </data>

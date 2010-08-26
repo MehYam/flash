@@ -457,29 +457,28 @@ final class Utils
 		case 6:
 			weapon = new AlternatingBehavior(
 				500, 1500,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3), 1000)
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 0), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 0), 1000)
 			);
 			attrs = new ActorAttrs(200, 4, 0.3, 0.1);
 			break;
 		case 7:
 			weapon = new AlternatingBehavior(
 				200, 600,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -20, -10, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -15,  -5, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 3), 1000)
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -20, -10, 0, 1), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15, -15,  -5, 0, 1), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20,   5, 0, 1), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 15,  20, -10, 0, 1), 1000)
 			);
 			attrs = new ActorAttrs(225, 4.25, 0.3, 0.1);
 			break;
 		case 8:
-			// desc: slightly more predictable firing
 			weapon = new AlternatingBehavior(
 				250, 350,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -30, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -15, -25, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  15, -25, 0, 3), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -30, 0, 3), 1000)
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -20, -30, 0, 2), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -15, -25, 0, 2), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  15, -25, 0, 2), 1000),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  20, -30, 0, 2), 1000)
 			);
 			attrs = new ActorAttrs(300, 4.25, 0.7, 0.2);
 			break;
@@ -544,7 +543,6 @@ final class Utils
 			break;
 		
 		case 12:
-			//desc: designed to intimidate opponents as it gets close
 			weapon = createShieldActivator(40, 225, -15);
 			attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
 			scoreBoard.showShield = true;

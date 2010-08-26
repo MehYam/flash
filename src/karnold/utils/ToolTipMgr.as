@@ -116,10 +116,13 @@ package karnold.utils
 		}
 		private function onMouseOut(evt:MouseEvent):void
 		{
-			_timer.stop();
-			hide();
-			
-			IEventDispatcher(evt.currentTarget).removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			if (evt.relatedObject != _tooltip.displayObject)
+			{
+				_timer.stop();
+				hide();
+				
+				IEventDispatcher(evt.currentTarget).removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			}
 		}
 		
 		private function onTimer():void

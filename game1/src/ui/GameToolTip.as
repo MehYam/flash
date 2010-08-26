@@ -34,6 +34,9 @@ package ui
 			filters = [new DropShadowFilter];
 			
 			alpha = 0.95;
+			
+			mouseEnabled = false;
+			mouseChildren = false;
 		}
 		public function set text(t:String):void
 		{
