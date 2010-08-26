@@ -72,7 +72,7 @@ package gameData
 
 //				s_instance.currentPlane = 33;
 
-				s_instance.levelReached = 9;
+				s_instance.levelReached = 11;
 //				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getTurret(0).getUpgrade(1), 0);
 			}

@@ -134,7 +134,7 @@ final class EnemyEnum
 	static public const BAT2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2");
 	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0,100), 5,  "BLUEK");
 
-//	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0, 66), 15, "CYGNUS2");
+	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0,125), 16, "CYGNUS2");
 
 	// third tier
 	// final tier cast
@@ -181,6 +181,13 @@ final class EnemyEnum
 			new AmmoFireSource(AmmoType.ROCKET, 40,  20,   5, 0, 3),
 			new AmmoFireSource(AmmoType.ROCKET, 40,  20, -10, 0, 3)];
 	static private const BLUEK_FUSIONSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.FUSION, 66, 0, -15);
+
+	static private const CYGNUS2_LASERSOURCE:Array = 
+		[	new AmmoFireSource(AmmoType.LASER, 40, -25,  0, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 40,  25,  0, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 40, -19, -5, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 40,  19, -5, 0, 0)
+		];
 
 	// top tier
 	static private const BEE3_BULLETSOURCE:Array =
@@ -302,8 +309,9 @@ final class EnemyEnum
 				new AlternatingBehavior( 
 					1500, 4500,
 					HOME,
-					null,
-					BehaviorFactory.strafe
+					BehaviorFactory.turret,
+					BehaviorFactory.strafe,
+					BehaviorFactory.gravityPush
 				)
 			);
 			break;
@@ -315,7 +323,15 @@ final class EnemyEnum
 				FLEE
 			);
 			break;
-
+		case EnemyEnum.CYGNUS2:
+			a.behavior = new AlternatingBehavior(
+				2000, 6000,
+				new CompositeBehavior(
+					BehaviorFactory.createAutofire(CYGNUS2_LASERSOURCE, 750, 750),
+					new AlternatingBehavior(1000,3000, BehaviorFactory.turret, BehaviorFactory.strafe)),
+				FLEE
+			);
+			break;
 		///////////// final tier ////////////////////
 		case EnemyEnum.BEE3:
 			a.behavior = attackAndFlee(BEE3_BULLETSOURCE, 3000, 1000, 1000);
@@ -473,12 +489,14 @@ final class Utils
 		// level 9 ///////////////////////////////////////////
 		case 34:
 			// desc: people outgrowing the Stingers but wanting the speed go this line etc
+			// dps: 233
 			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 0), 150);
 			attrs = new ActorAttrs(400, 5.5, 0.7, 0.1);
 			break;
 		case 35:
 			break;
 		case 36:
+			// dps: 600
 			weapon = BehaviorFactory.createAutofire(
 				[	new AmmoFireSource(AmmoType.BULLET, 66, -20, 0), 
 					new AmmoFireSource(AmmoType.BULLET, 66,  20, 0),
@@ -593,6 +611,12 @@ final class Utils
 			break;
 
 		case 9:
+			weapon = BehaviorFactory.createAutofire(
+				[	new AmmoFireSource(AmmoType.LASER, 70, -35, -15),
+					new AmmoFireSource(AmmoType.LASER, 70,  35, -15)],
+				500
+			);
+			attrs = new ActorAttrs(1000, 4, 0.2, 0.1);
 			break;
 		case 10:
 			break;
@@ -610,6 +634,17 @@ final class Utils
 			break;
 
 		case 25:
+			weapon = new AlternatingBehavior(666, 666,
+				new CompositeBehavior(
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75, -35, -15, 0, 0), 700, 700),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75,  35, -15, 0, 0), 700, 700)
+				),
+				new CompositeBehavior(
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75,  20, -25, 0, 0), 700, 700),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75, -20, -25, 0, 0), 700, 700)
+				)
+			);
+			attrs = new ActorAttrs(1000, 3.5, 0.8, 0.1);
 			break;
 		case 26:
 			break;
@@ -624,6 +659,11 @@ final class Utils
 			break;
 
 		case 18:
+			weapon = new AlternatingBehavior(333, 333,
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50, -20, -15, 0, 1), 400, 400),
+				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50,  20, -15, 0, 1), 400, 400)
+			);
+			attrs = new ActorAttrs(600, 4.1, 0.4, 0.1);
 			break;
 		case 19:
 			break;

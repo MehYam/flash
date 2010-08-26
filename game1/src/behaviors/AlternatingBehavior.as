@@ -27,5 +27,10 @@ package behaviors
 			}
 			_behaviors.onFrameAt(game, actor, _count % _behaviors.numBehaviors);
 		}
+		public function zero():IBehavior
+		{
+			_count = 0;
+			return this;
+		}
 	}
 }
