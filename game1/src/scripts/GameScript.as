@@ -134,6 +134,8 @@ final class EnemyEnum
 	static public const BAT2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2");
 	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0,100), 5,  "BLUEK");
 
+//	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0, 66), 15, "CYGNUS2");
+
 	// third tier
 	// final tier cast
 	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs( 500, 5,   0.05, 0,   0, 100), 2,  "BEE3");
@@ -378,11 +380,11 @@ final class EnemyEnum
 }
 final class Utils
 {
-	static private function createShieldActivator(shieldDamage:Number, shieldArmor:Number, yOffset:Number):IBehavior
+	static private function createShieldActivator(shieldDamage:Number, shieldArmor:Number, yOffset:Number, lifetime:Number = 1400):IBehavior
 	{
 		return BehaviorFactory.createShieldActivator(
 				new AmmoFireSource(AmmoType.SHIELD, shieldDamage, 0, yOffset, 0),
-				new ActorAttrs(shieldArmor, 0, 0, 0, 50));
+				new ActorAttrs(shieldArmor, 0, 0, 0.01, 50, 0, false, lifetime));
 	}
 	static public function getPlayerPlane(scoreBoard:ScoreBoard):PlayerVehicle
 	{
@@ -526,6 +528,10 @@ final class Utils
 			break;
 		
 		case 12:
+			//desc: designed to intimidate opponents as it gets close
+			weapon = createShieldActivator(40, 225, -15);
+			attrs = new ActorAttrs(1000, 3.5, 0.8, 1);
+			scoreBoard.showShield = true;
 			break;
 		case 13:
 			break;

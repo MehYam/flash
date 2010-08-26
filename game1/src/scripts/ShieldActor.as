@@ -39,7 +39,7 @@ package scripts
 			BehaviorFactory.faceForward.onFrame(game, this);
 			
 			displayObject.alpha = 1;
-			behavior = new CompositeBehavior(BehaviorFactory.createExpire(1000), BehaviorFactory.fade);
+			behavior = new CompositeBehavior(BehaviorFactory.createExpire(attrs.LIFETIME), BehaviorFactory.fade, BehaviorFactory.speedDecay);
 		}
 		public override function registerHit(game:IGame, hard:Boolean):void
 		{
