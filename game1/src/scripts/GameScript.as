@@ -490,7 +490,7 @@ final class Utils
 				[	new AmmoFireSource(AmmoType.FUSION, 40, -22, 0, 0),
 					new AmmoFireSource(AmmoType.FUSION, 40,  22, 0, 0)],
 				5, 1000, 1);
-			attrs = new ActorAttrs(450, 5, 1, 0.1);
+			attrs = new ActorAttrs(450, 5.2, 1, 0.1);
 			scoreBoard.showFusion = true;
 			break;
 		case 29:
@@ -505,6 +505,11 @@ final class Utils
 			break;
 
 		case 15:
+			weapon = BehaviorFactory.createAutofire(
+				[	new AmmoFireSource(AmmoType.LASER, 110, -24, 0, 0, 1),
+					new AmmoFireSource(AmmoType.LASER, 110,  24, 0, 0, 1)],
+				1000, 1000);
+			attrs = new ActorAttrs(425, 5, 0.8, 0.1);
 			break;
 		case 16:
 			break;
