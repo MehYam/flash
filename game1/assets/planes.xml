@@ -1,0 +1,57 @@
+<data>
+<planes>
+<plane n='Bee'          a='0'  rad='12' dmg='0.05' rate='0.3'  arm='0.05' speed='0.4'  cost='1000'   unl='0' up='2'/>
+<plane n='Wasp'         a='1'  rad='12' dmg='0.1'  rate='0.3'  arm='0.05' speed='0.5'  cost='2000'   unl='0' up='0'/>
+<plane n='Hornet'       a='2'  rad='12' dmg='0.15' rate='0.3'  arm='0.1'  speed='0.6'  cost='2000'   unl='0' up='0'/>
+<plane n='Jem'          a='3'  rad='12' dmg='0.1'  rate='0.1'  arm='0.2'  speed='0.1'  cost='2000'   unl='0' up='2'/>
+<plane n='Jem II'       a='4'  rad='12' dmg='0.15' rate='0.2'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'/>
+<plane n='Jem VSBL'     a='5'  rad='12' dmg='0.2'  rate='0.3'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'/>
+<plane n='Yango'        a='6'  rad='20' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.2'  cost='3000'   unl='1' up='2'/>
+<plane n='Yango II'     a='7'  rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Yango III'    a='8'  rad='23' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Osprey'       a='9'  rad='35' dmg='0.4'  rate='0.3'  arm='0.4'  speed='0.8'  cost='4000'   unl='8' up='2'/>
+<plane n='Osprey II'    a='10' rad='35' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Osprey III'   a='11' rad='38' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Diptera'      a='12' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='5000'   unl='5' up='2'/>
+<plane n='Diptera X'    a='13' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Diptera XI'   a='14' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Cygnus X-1'   a='15' rad='27' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.8'  cost='6000'   unl='2' up='2'/>
+<plane n='Cygnus X-2'   a='16' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Cygnus X-3'   a='17' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Ghost'        a='18' rad='18' dmg='0.4'  rate='0.3'  arm='0.6'  speed='0.8'  cost='7000'   unl='8' up='2'/>
+<plane n='Phantom'      a='19' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Spectre'      a='20' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Attacus'      a='21' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='8000'   unl='5' up='2'/>
+<plane n='Attacus 2'    a='22' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Attacus 3'    a='23' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='???'          a='24' rad='20' dmg='0.4'  rate='0.3'  arm='0.1'  speed='0.8'  cost='9000'   unl='0' up='0' nosale='true'/>
+<plane n='XStealth'     a='25' rad='30' dmg='0.4'  rate='0.3'  arm='0.02' speed='0.8'  cost='10000'  unl='8' up='2'/>
+<plane n='YStealth'     a='26' rad='30' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='ZStealth'     a='27' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Rocinante'    a='28' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='11000'  unl='2' up='2'/>
+<plane n='Rocinante I'  a='29' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Rocinante II' a='30' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Esox'         a='31' rad='21' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='5' up='2'/>
+<plane n='Pike'         a='32' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Corvid'       a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'/>
+<plane n='Corvid X'     a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Death Bird'   a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+</planes>
+<descs>
+<desc plane="0">The Bee is the basic ship in the Stinger line required by all tournament contestants.  Your... 'new Bee' has been fitted with a low-energy cannon, and like all Rogue-class ships, it sacrifices armor for maneuverability and moderate firepower.
+Purchased upgrades to the Bee increase firepower, movement, and a bit of armor, but most importantly, unlock the purchase of higher level ships and classes.</desc>
+
+<desc plane="1">The Wasp is a respectable step up from Bee, adding some movement speed and doubling its firepower with a second cannon.
+Purchase of the Wasp also unlocks the Bat, the first in the line of Fighter-class ships.</desc>
+
+<desc plane="2">Wowawee!
+Purchasing this vehicle unlocks the Raven, Rocinante, and Cygnus lines Rogue-class ships</desc>
+
+<desc plane="3">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have protective shields that can be creatively used to inflict great harm on opponents.  Some ships include conventional weapons as well.
+The Jem's only weapon is a shield that takes some time to recharge, and is relatively weak, but can be flung at opponents at moderate range.  Upgrades to the Jem will unlock other Melee-class ships.</desc>
+
+<desc plane="9">Fighter-class ships like those in the Yango line fall in the middle between Rogue and Melee vessels.  They're generally nimbler than Melees, but slower than Rogues due to added armor and armament.  These ships are generally military in origin, and so require little modification to be tournament-ready.</desc>
+
+</descs>
+</data>
