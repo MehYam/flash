@@ -80,6 +80,7 @@ import karnold.utils.MathUtil;
 import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
+import scripts.BlingActor;
 import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
 import scripts.ShieldActor;
@@ -1005,11 +1006,15 @@ class WaveBasedGameScript extends BaseScript
 				_game.scoreBoard.pctLevel = _stats.enemiesKilled / _stats.enemiesTotal;
 				if (!wasCollision)
 				{
-					_stats.creditsEarned += actor.value * (1 + _stats.combo/10);
+					const credits:uint = actor.value * (1 + _stats.combo/10);
+
+					_stats.creditsEarned += credits;
 					++_stats.enemiesKilledCleanly;
 					game.scoreBoard.earnings = _stats.creditsEarned;
 					game.scoreBoard.combo = ++_stats.combo;
 					_comboTimer.start(COMBO_LAPSE);
+					
+					BlingActor.launch(game, actor.worldPos.x, actor.worldPos.y, credits);
 				}
 				--_liveEnemies;
 				if (!_liveEnemies)

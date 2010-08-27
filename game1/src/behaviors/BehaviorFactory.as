@@ -3,6 +3,8 @@ package behaviors
 	import flash.geom.Point;
 	
 	import karnold.utils.RateLimiter;
+	
+	import spark.effects.Fade;
 
 	final public class BehaviorFactory
 	{
@@ -15,6 +17,7 @@ package behaviors
 		static private var _follow:IBehavior;
 		static private var _fade:IBehavior;
 		static private var _fadeIn:IBehavior;
+		static private var _fadeFast:IBehavior;
 		static private var _accelerator:IBehavior;
 		static private var _speedDecay:IBehavior;
 		static private var _shadowPlayer:IBehavior;
@@ -79,9 +82,17 @@ package behaviors
 		{
 			if (!_fade)
 			{
-				_fade = new FadeBehavior;
+				_fade = new FadeBehavior(0.005);
 			}
 			return _fade;
+		}
+		static public function get fadeFast():IBehavior
+		{
+			if (!_fadeFast)
+			{
+				_fadeFast = new FadeBehavior(0.01);
+			}
+			return _fadeFast;
 		}
 		static public function get fadeIn():IBehavior
 		{
@@ -297,15 +308,20 @@ final class StrafeBehavior implements IBehavior
 
 final class FadeBehavior implements IBehavior
 {
+	private var _rate:Number;
+	public function FadeBehavior(rate:Number):void
+	{
+		_rate = rate;
+	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (actor.displayObject.alpha > 0)
 		{
-			actor.displayObject.alpha -= 0.005;
+			actor.displayObject.alpha -= _rate;
 		}
 	}
 }
-final class FadeInBehavior implements IBehavior
+final class FadeInBehavior implements IBehavior  //KAI: unnecessary and dumb
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
