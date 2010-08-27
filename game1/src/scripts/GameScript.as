@@ -507,7 +507,7 @@ final class Utils
 			weapon = BehaviorFactory.createChargedFire(
 				[	new AmmoFireSource(AmmoType.FUSION, 40, -22, 0, 0),
 					new AmmoFireSource(AmmoType.FUSION, 40,  22, 0, 0)],
-				5, 1000, 1);
+				5, 1000, 5);
 			attrs = new ActorAttrs(450, 5.2, 1, 0.1);
 			scoreBoard.showFusion = true;
 			break;
@@ -517,7 +517,7 @@ final class Utils
 			weapon = BehaviorFactory.createChargedFire(
 				[	new AmmoFireSource(AmmoType.FUSION, 225, -22, 0, 0),
 					new AmmoFireSource(AmmoType.FUSION, 225,  22, 0, 0)],
-				5, 1000, 1);
+				5, 1000, 10);
 			attrs = new ActorAttrs(900, 7, 1, 0.1);
 			scoreBoard.showFusion = true;
 			break;

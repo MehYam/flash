@@ -15,12 +15,10 @@ package scripts
 		static private const s_attrs:ActorAttrs = new ActorAttrs(0, 2, 0, 0.05);
 		static private const s_fmt:TextFormat = new TextFormat("Courier New", 10, null, true);
 		static private const s_behavior:IBehavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.speedDecay);
-static private var _instances:uint;
 		public function BlingActor()
 		{
 			super(new ShadowTextField(s_fmt, 0xffff00, 0, 2), s_attrs);
 			behavior = s_behavior;
-trace("BlingActor", ++_instances);
 		}
 		public override function onFrame(game:IGame):void
 		{
