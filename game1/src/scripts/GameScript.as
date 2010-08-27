@@ -49,6 +49,10 @@ package scripts
 							{
 								wave.push(new Wave(EnemyEnum.LOOKUP[spawnArgs[0]], parseInt(spawnArgs[1])));
 							}
+							else
+							{
+								throw "Bad level data";
+							}
 						}
 						level.push(wave);
 					}
@@ -160,7 +164,7 @@ final class EnemyEnum
 	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3,   0.05, 0.1, 0, 150), 20, "GHOST3", 400);
 	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3", 600);
 	static public const OSPREY3_CLOAK:EnemyEnum 
-											= new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3_CLOAK", 800);
+											= new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3_C", 800);
 
 	// enemy weapons //////////////////////////////////////////////////////////
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
@@ -420,13 +424,16 @@ final class EnemyEnum
 			);
 			break;
 		case EnemyEnum.PIKE:
-			a.behavior = new AlternatingBehavior(
-				2000, 2500,
-				HOME,
-				null,
-				BehaviorFactory.turret,
-				BehaviorFactory.createAutofire(PIKE_SOURCE, 1000, 1000)
-			);
+			a.behavior = new CompositeBehavior( 
+				new AlternatingBehavior(
+					1000, 2500,
+					HOME,
+					HOME,
+					HOME,
+					BehaviorFactory.turret
+				),
+				BehaviorFactory.createAutofire(PIKE_SOURCE, 1000, 15000)
+			)
 			break;
 		case EnemyEnum.CYGNUS3:
 			a.behavior = new AlternatingBehavior(
