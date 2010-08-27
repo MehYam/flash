@@ -464,6 +464,7 @@ final class ShieldActivatorBehavior implements IBehavior
 				_shield.attrs = _attrs;
 				_shield.reset();
 				_shield.damage = _source.damage;
+				_shield.healthMeterEnabled = false;
 			}
 		}
 		else

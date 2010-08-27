@@ -15,6 +15,7 @@ package
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.utils.MathUtil;
+	import karnold.utils.ObjectPool;
 	import karnold.utils.Util;
 
 	public class Actor implements IResettable
@@ -30,6 +31,7 @@ package
 		public var name:String;
 		public var value:uint;
 
+		public var healthMeterEnabled:Boolean = true;
 		public function Actor(dobj:DisplayObject, attrs:ActorAttrs = null)
 		{
 			displayObject = dobj;
@@ -81,57 +83,88 @@ package
 				{
 					displayObject.parent.removeChild(displayObject);
 				}
+				cleanupHealthMeter();
 			}
 			_alive = b;
 		}
-		private var _lastHit:uint;
+		private function cleanupHealthMeter():void
+		{
+			if (_healthMeter)
+			{
+				_healthMeter.parent.removeChild(_healthMeter);
+				s_meterPool.put(_healthMeter);
+				
+				_healthMeter = null;
+				_lastHealth = 0;
+			}
+		}
 		static private var s_normalTint:ColorTransform = new ColorTransform;
 		static private var s_hardHitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 255, 127, 127);
 		static private var s_hitTint:ColorTransform = new ColorTransform(1, 1, 1, 1, 127, 0, 0);
+		static private var s_meterPool:ObjectPool = new ObjectPool;
 
-		static private var s_dmg:ProgressMeter = new ProgressMeter(50, 5, 0, 0xff0000);
+		private var _lastFlash:uint;
+		private var _lastHealth:uint;
+		private var _healthMeter:ProgressMeter;
 		public function registerHit(game:IGame, hard:Boolean):void
 		{
-			_lastHit = getTimer();
-			displayObject.transform.colorTransform = hard ? s_hardHitTint : s_hitTint;
-			if (s_dmg)
+			if (!_lastFlash)
 			{
-				if (s_dmg.parent != displayObject)
-				{
-					if (s_dmg.parent)
-					{	
-						s_dmg.parent.removeChild(s_dmg);
-					}
-					DisplayObjectContainer(displayObject).addChild(s_dmg);
-				}
-				s_dmg.pct = health / attrs.MAX_HEALTH;
-				s_dmg.rotation = -displayObject.rotation;
+				displayObject.transform.colorTransform = hard ? s_hardHitTint : s_hitTint;
+			}
+			if (healthMeterEnabled && !_lastHealth && displayObject is DisplayObjectContainer)
+			{
+				Util.ASSERT(!_healthMeter);
+				
+				_healthMeter = (s_meterPool.get() as ProgressMeter) || new ProgressMeter(40, 4, 0, 0xff0000, true);
+				DisplayObjectContainer(displayObject).addChild(_healthMeter);
+				_healthMeter.rotation = -displayObject.rotation;
+			}
+			const now:uint = getTimer();
+			_lastFlash = now;
+			
+			if (healthMeterEnabled)
+			{
+				_lastHealth = now;
+				_healthMeter.pct = health / attrs.MAX_HEALTH;
 			}
 		}
 		public function onFrame(game:IGame):void
 		{
 			worldPos.offset(speed.x, speed.y);
 			
-			// attrs.SPEED_DECAY would be done here if I were doing this over again
+			// attrs.SPEED_DECAY would be done here too if I were doing this over again.  Would have to rebalance all the numbers....
 
 			if (attrs.BOUNDED)
 			{	
 				MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed);
 			}
-
 			if (_behavior)
 			{
 				_behavior.onFrame(game, this);
 			}
-			if (_lastHit)
+			if (_lastHealth)
 			{
-				if ((getTimer() - _lastHit) > 50)
+				Util.ASSERT(_healthMeter && _healthMeter.parent);
+				if (getTimer() - _lastHealth > 1500)
 				{
-					displayObject.transform.colorTransform = s_normalTint;
-					_lastHit = 0;
+					cleanupHealthMeter();
 				}
 				else
 				{
+					_healthMeter.rotation = -displayObject.rotation;
+				}
+			}
+			if (_lastFlash)
+			{
+				if (getTimer() - _lastFlash > 50)
+				{
+					displayObject.transform.colorTransform = s_normalTint;
+					_lastFlash = 0;
+				}
+				else
+				{
+					// minor tremble, should be a behavior
 					const rnd:Number = MathUtil.random(-1, 1);
 					worldPos.x += rnd;
 					worldPos.y += rnd;
@@ -157,7 +190,7 @@ package
 		{
 			if (!s_bulletLevels)
 			{
-				s_bulletLevels = [BulletActor0, BulletActor1, BulletActor2, BulletActor3, BulletActor4];
+				s_bulletLevels = [BulletActor0, BulletActor1, BulletActor2, BulletActor3, BulletActor4, BulletActor5];
 			}
 			const type:Class = s_bulletLevels[level];
 			var bullet:Actor = ActorPool.instance.get(type) as Actor;
@@ -168,7 +201,7 @@ package
 		{
 			if (!s_explLevels)
 			{
-				s_explLevels = [LaserActor0, LaserActor1, LaserActor2, LaserActor3, LaserActor4]; 
+				s_explLevels = [LaserActor0, LaserActor1, LaserActor2, LaserActor3, LaserActor4, LaserActor5]; 
 			}
 			const type:Class = s_explLevels[level];
 			var laser:Actor = ActorPool.instance.get(type) as Actor;
@@ -345,15 +378,17 @@ final class FusionBlastActor extends PiercingAmmoActor
 // We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find
 // a different pooling mechanism (maybe pooling the display objects separately)
 final class BulletActor0 extends BulletActor { public function BulletActor0() { super(0x8888ff); } }
-final class BulletActor1 extends BulletActor { public function BulletActor1() { super(0xff5d); } }
+final class BulletActor1 extends BulletActor { public function BulletActor1() { super(0x00ff5d); } }
 final class BulletActor2 extends BulletActor { public function BulletActor2() { super(0xeeee00); } }
 final class BulletActor3 extends BulletActor { public function BulletActor3() { super(0xff9400); } }
-final class BulletActor4 extends BulletActor { public function BulletActor4() { super(0xffffff); } }
+final class BulletActor4 extends BulletActor { public function BulletActor4() { super(0xffecaa); } }
+final class BulletActor5 extends BulletActor { public function BulletActor5() { super(0xff0000); } }
 final class LaserActor0 extends LaserActor { public function LaserActor0() { super(0x90ff); } }
 final class LaserActor1 extends LaserActor { public function LaserActor1() { super(0xff5d); } }
 final class LaserActor2 extends LaserActor { public function LaserActor2() { super(0xeeee00); } }
 final class LaserActor3 extends LaserActor { public function LaserActor3() { super(0xff9400); } }
-final class LaserActor4 extends LaserActor { public function LaserActor4() { super(0xffffff); } }
+final class LaserActor4 extends LaserActor { public function LaserActor4() { super(0xffecaa); } }
+final class LaserActor5 extends LaserActor { public function LaserActor5() { super(0xff0000); } }
 final class ExplosionParticleActor0 extends ExplosionParticleActor { public function ExplosionParticleActor0() { super(0xcccccc); } }
 final class ExplosionParticleActor1 extends ExplosionParticleActor { public function ExplosionParticleActor1() { super(0xffff00); } }
 final class ExplosionParticleActor2 extends ExplosionParticleActor { public function ExplosionParticleActor2() { super(0xffffff); } }

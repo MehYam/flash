@@ -11,7 +11,7 @@ package karnold.ui
 	{
 		private var _meter:Bitmap;
 		private var _width:Number;
-		public function ProgressMeter(width:Number, height:Number, bgColor:uint, fgColor:uint)
+		public function ProgressMeter(width:Number, height:Number, bgColor:uint, fgColor:uint, centered:Boolean = false)
 		{
 			_width = width;
 
@@ -23,12 +23,22 @@ package karnold.ui
 			var bmp:Bitmap = new Bitmap(bmd);
 			bmp.scaleX = width;
 			bmp.scaleY = height;
+			if (centered)
+			{
+				bmp.x = -width/2;
+				bmp.y = -height/2;
+			}
 			addChild(bmp);
 			
 			bmd = new BitmapData(1, 1);
 			bmd.setPixel(0, 0, fgColor);
 			_meter = new Bitmap(bmd);
 			_meter.scaleY = height;
+			if (centered)
+			{
+				_meter.x = -width/2;
+				_meter.y = -height/2;
+			}
 			addChild(_meter);
 		}
 		
@@ -59,7 +69,7 @@ package karnold.ui
 					_diff.scaleY = height;
 				}
 
-				_diff.x = _meter.scaleX;
+				_diff.x = _meter.x + _meter.scaleX;
 				_diff.scaleX = _width * d;
 				bmd.setPixel(0, 0, (d > 0) ? 0x00ff00 : 0xff0000);
 				if (!_diff.parent)
@@ -72,6 +82,5 @@ package karnold.ui
 				_diff.parent.removeChild(_diff);
 			}
 		}
-			
 	}
 }

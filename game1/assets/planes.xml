@@ -29,8 +29,8 @@
 <plane n='YStealth'     a='26' rad='30' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='ZStealth'     a='27' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Rocinante'    a='28' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='11000'  unl='2' up='2'/>
-<plane n='Rocinante I'  a='29' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
-<plane n='Rocinante II' a='30' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Rocinante II' a='29' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
+<plane n='Rocinante III' a='30' rad='22' dmg='0.4' rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Esox'         a='31' rad='21' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='5' up='2'/>
 <plane n='Pike'         a='32' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>
 <plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'/>

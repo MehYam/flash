@@ -495,9 +495,9 @@ final class Utils
 		case 36:
 			// dps: 600
 			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.BULLET, 66, -20, 0), 
-					new AmmoFireSource(AmmoType.BULLET, 66,  20, 0),
-					new AmmoFireSource(AmmoType.BULLET, 66,   0, -10)], 
+				[	new AmmoFireSource(AmmoType.BULLET, 66, -20, 0, 0, 5), 
+					new AmmoFireSource(AmmoType.BULLET, 66,  20, 0, 0, 5),
+					new AmmoFireSource(AmmoType.BULLET, 66,   0, -10, 0, 5)], 
 				400);
 			attrs = new ActorAttrs(700, 8, 1, 0.1);
 			break;
@@ -675,6 +675,7 @@ final class Utils
 		
 		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
 		plane.behavior = BehaviorFactory.faceForward;
+		plane.healthMeterEnabled = false;
 		
 		return new PlayerVehicle(plane, weapon);
 	}
