@@ -45,7 +45,10 @@ package scripts
 						for each (var spawn:String in spawns)
 						{
 							var spawnArgs:Array = spawn.split(",");
-							wave.push(new Wave(EnemyEnum.LOOKUP[spawnArgs[0]], parseInt(spawnArgs[1])));
+							if (spawnArgs.length == 2)
+							{
+								wave.push(new Wave(EnemyEnum.LOOKUP[spawnArgs[0]], parseInt(spawnArgs[1])));
+							}
 						}
 						level.push(wave);
 					}
@@ -134,24 +137,30 @@ final class EnemyEnum
 
 	// next tier - level 9
 	static public const BEE2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 120, 5,   0.05, 0.02,0, 50), 1,  "BEE2", 50);
-	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 180, 1.5, 0.2,  0,   0,100), 12, "FLY", 20); 
+	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 180, 1.5, 0.2,  0,   0, 75), 12, "FLY", 20); 
 	static public const MOTH2:EnemyEnum =     new EnemyEnum(new ActorAttrs( 180, 4,   0.1,  0,   0, 66), 22, "MOTH2", 45);
 	static public const BAT2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2", 65);
-	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0,100), 5,  "BLUEK", 30);
+	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0, 75), 5,  "BLUEK", 30);
 
 	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0,125), 16, "CYGNUS2", 100);
 
-	// third tier
+	// tier level 14 -> final
+	static public const OSPREY2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 1.5, 0.15, 0.05,0,100), 10, "OSPREY2", 100);
+	static public const ROCINANTE2:EnemyEnum =new EnemyEnum(new ActorAttrs( 600, 3,   0.25, 0.05,0,125), 29, "ROCINANTE2", 125);
+	static public const BAT3:EnemyEnum =      new EnemyEnum(new ActorAttrs( 600, 2,   0.05, 0,   0, 20),  8, "BAT3", 125);
+	static public const GHOST2:EnemyEnum =    new EnemyEnum(new ActorAttrs( 500, 3,   0.05, 0.1, 0, 50), 19, "GHOST2", 110);
+	static public const PIKE:EnemyEnum =      new EnemyEnum(new ActorAttrs( 500, 2,   0.1,  0,   0, 100),32, "PIKE", 80);
+	static public const CYGNUS3:EnemyEnum =   new EnemyEnum(new ActorAttrs( 800, 6,   0.25, 0.05,0,125), 17, "CYGNUS3", 150);
+	
 	// final tier cast
-	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs( 500, 5,   0.05, 0,   0, 100), 2,  "BEE3");
-	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1,  0,   0, 100), 14, "FLY3");
-	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2,   0.1,  0,   0, 100), 33, "ESOX");
-	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4,   0.1,  0,   0, 150), 26, "STEALTH");
-	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3,   0.05, 0.1, 0, 150), 20, "GHOST3");
-	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3");
+	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs( 500, 5,   0.05, 0,   0, 100), 2,  "BEE3", 400);
+	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1,  0,   0, 100), 14, "FLY3", 200);
+	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2,   0.1,  0,   0, 100), 33, "ESOX", 400);
+	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4,   0.1,  0,   0, 150), 26, "STEALTH", 500);
+	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3,   0.05, 0.1, 0, 150), 20, "GHOST3", 400);
+	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3", 600);
 	static public const OSPREY3_CLOAK:EnemyEnum 
-											= new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3_CLOAK");
-//	static public const GREENK2:EnemyEnum; // pure heavy homer
+											= new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3_CLOAK", 800);
 
 	// enemy weapons //////////////////////////////////////////////////////////
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
@@ -194,6 +203,36 @@ final class EnemyEnum
 			new AmmoFireSource(AmmoType.LASER, 40,  19, -5, 0, 0)
 		];
 
+	// level 14 ///////////////////////////////////////////////////////////////////////////
+	static private const OSPREY2_SOURCE:Array =
+		[	new AmmoFireSource(AmmoType.LASER, 33, -37, -32, 0, 5),
+			new AmmoFireSource(AmmoType.LASER, 33, -16, -32, 0, 5),
+			new AmmoFireSource(AmmoType.LASER, 33,  16, -32, 0, 5),
+			new AmmoFireSource(AmmoType.LASER, 33,  37, -32, 0, 5)];
+	static private const ROCINANTE2_FUSION:Array = 
+		[	new AmmoFireSource(AmmoType.FUSION, 55, -25, 0, 0),
+			new AmmoFireSource(AmmoType.FUSION, 55,  25, 0, 0)];
+	static private const BAT3_BULLETSOURCE:Array = 
+		[	new AmmoFireSource(AmmoType.BULLET, 50, -20, -10, 0, 3),
+			new AmmoFireSource(AmmoType.BULLET, 50, -15,  -5, 0, 3),
+			new AmmoFireSource(AmmoType.BULLET, 50,  20,   5, 0, 3),
+			new AmmoFireSource(AmmoType.BULLET, 50,  20, -10, 0, 3)];
+	static private const GHOST2_SOURCE:Array = 
+		[	new AmmoFireSource(AmmoType.LASER, 80, -10, -5, 0, 1),
+			new AmmoFireSource(AmmoType.LASER, 80,  10, -5, 0, 1)];
+	static private const PIKE_SOURCE:Array =
+		[	new AmmoFireSource(AmmoType.LASER, 10, -30, 10, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 20, -20, 0, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 20,  20, 0, 0, 0),
+			new AmmoFireSource(AmmoType.LASER, 10,  30, 10, 0, 0)];
+	static private const CYGNUS3_SOURCE:Array = 
+		[	new AmmoFireSource(AmmoType.LASER, 20, -30, 5, 0, 3),
+			new AmmoFireSource(AmmoType.LASER, 20, -24, 0, 0, 3),
+			new AmmoFireSource(AmmoType.LASER, 20, -19, -5, 0, 3),
+			new AmmoFireSource(AmmoType.LASER, 20,  19, -5, 0, 3),
+			new AmmoFireSource(AmmoType.LASER, 20,  24, 0, 0, 3),
+			new AmmoFireSource(AmmoType.LASER, 20,  30, 5, 0, 3)];
+
 	// top tier
 	static private const BEE3_BULLETSOURCE:Array =
 		[	new AmmoFireSource(AmmoType.BULLET, 30, -15, 0, -10, 4), 
@@ -232,6 +271,7 @@ final class EnemyEnum
 	public function create():Actor
 	{
 		var a:Actor = new Actor(ActorAssetManager.createShip(assetIndex), attrs);
+		var tmp:IBehavior;
 		switch (this) {  
 			//KAI: omg i've never seen anything like this, lol, alternative to creating classes
 			// how about a map of functors or function objects instead?
@@ -333,6 +373,66 @@ final class EnemyEnum
 				2000, 6000,
 				new CompositeBehavior(
 					BehaviorFactory.createAutofire(CYGNUS2_LASERSOURCE, 750, 750),
+					new AlternatingBehavior(1000,3000, BehaviorFactory.turret, BehaviorFactory.strafe)),
+				FLEE
+			);
+			break;
+		///////////// level 14 //////////////////////
+		case EnemyEnum.OSPREY2:
+			tmp = BehaviorFactory.createAutofire(OSPREY2_SOURCE, 1000, 1000);
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.facePlayer,
+				new AlternatingBehavior(
+						1000,1500,
+						new CompositeBehavior(BehaviorFactory.speedDecay, tmp),
+						HOME
+				)
+			);
+			break;
+		case EnemyEnum.ROCINANTE2:
+			a.behavior = new AlternatingBehavior(
+				1000, 3000,
+				FLEE,
+				new CompositeBehavior(
+					BehaviorFactory.strafe,
+					BehaviorFactory.createAutofire(ROCINANTE_FUSION, 1000, 4000))
+			);
+			break;
+		case EnemyEnum.BAT3:
+			a.behavior = new CompositeBehavior(
+				BehaviorFactory.createAutofire(BAT3_BULLETSOURCE[0], 2000, 4000),
+				BehaviorFactory.createAutofire(BAT3_BULLETSOURCE[1], 2000, 4000),
+				BehaviorFactory.createAutofire(BAT3_BULLETSOURCE[2], 2000, 4000),
+				BehaviorFactory.createAutofire(BAT3_BULLETSOURCE[3], 2000, 4000),
+				new AlternatingBehavior( 
+					1500, 4500,
+					HOME,
+					BehaviorFactory.turret,
+					BehaviorFactory.strafe,
+					BehaviorFactory.gravityPush
+				)
+			);
+			break;
+		case EnemyEnum.GHOST2:
+			a.behavior = new CompositeBehavior( 
+				BehaviorFactory.strafe,
+				BehaviorFactory.createAutofire(GHOST2_SOURCE, 1000, 4000)
+			);
+			break;
+		case EnemyEnum.PIKE:
+			a.behavior = new AlternatingBehavior(
+				2000, 2500,
+				HOME,
+				null,
+				BehaviorFactory.turret,
+				BehaviorFactory.createAutofire(PIKE_SOURCE, 1000, 1000)
+			);
+			break;
+		case EnemyEnum.CYGNUS3:
+			a.behavior = new AlternatingBehavior(
+				2000, 6000,
+				new CompositeBehavior(
+					BehaviorFactory.createAutofire(CYGNUS3_SOURCE, 750, 750),
 					new AlternatingBehavior(1000,3000, BehaviorFactory.turret, BehaviorFactory.strafe)),
 				FLEE
 			);
