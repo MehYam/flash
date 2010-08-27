@@ -12,7 +12,6 @@ package gameData
 			if (!s_instance)
 			{
 				s_instance = new UserData(new SINGLETONLIMITER);
-				s_instance.currentPlane = 0;
 		
 				// priming
 				PlaneData.planes;
@@ -70,7 +69,7 @@ package gameData
 				s_instance.purchasePart(PlaneData.getPlane(20), 0);
 				s_instance.purchasePart(PlaneData.getPlane(27), 0);
 
-//				s_instance.currentPlane = 33;
+				s_instance.currentPlane = 10;
 
 				s_instance.levelReached = 11;
 //				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);

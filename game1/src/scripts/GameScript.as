@@ -629,10 +629,10 @@ final class Utils
 			weapon = new CompositeBehavior(
 				createShieldActivator(160, 500, -15),
 				BehaviorFactory.createAutofire(
-					[	new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),
-						new AmmoFireSource(AmmoType.LASER, 33, -5, -10, 0, 2),
-						new AmmoFireSource(AmmoType.LASER, 33,  5, -10, 0, 2),
-						new AmmoFireSource(AmmoType.LASER, 33,  20, 0, 0, 2)],
+					[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33,  20, 0, 0, 2),
+						new AmmoFireSource(AmmoType.LASER, 33,  30, 10, 0, 2)],
 					1500, 1500)
 			);
 			attrs = new ActorAttrs(1800, 3.75, 0.6, 0.1);
@@ -664,10 +664,10 @@ final class Utils
 			break;
 		case 10:
 			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 40, -43, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40, -23, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  23, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  43, -35, 0, 5)],
+				[	new AmmoFireSource(AmmoType.LASER, 40, -37, -32, 0, 5),
+					new AmmoFireSource(AmmoType.LASER, 40, -16, -32, 0, 5),
+					new AmmoFireSource(AmmoType.LASER, 40,  16, -32, 0, 5),
+					new AmmoFireSource(AmmoType.LASER, 40,  37, -32, 0, 5)],
 				400
 			);
 			attrs = new ActorAttrs(2500, 4, 0.2, 0.1);
@@ -748,7 +748,7 @@ final class Utils
 		plane.behavior = BehaviorFactory.faceForward;
 		plane.healthMeterEnabled = false;
 		
-		return new PlayerVehicle(plane, weapon);
+		return new PlayerVehicle(plane, weapon, shield, fusion);
 	}
 	static public function getPlayerTank():PlayerVehicle
 	{
@@ -1129,10 +1129,12 @@ final class PlayerVehicle
 	public var weapon:IBehavior;
 	public var usingShield:Boolean;
 	public var usingFusion:Boolean;
-	public function PlayerVehicle(actor:Actor, weapon:IBehavior, shield:Boolean = false, fusion:Boolean = false)
+	public function PlayerVehicle(actor:Actor, weapon:IBehavior, shield:Boolean, fusion:Boolean)
 	{
 		this.actor = actor;
 		this.weapon = weapon;
+		this.usingShield = shield;
+		this.usingFusion = fusion;
 	}
 }
 

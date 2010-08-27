@@ -4,6 +4,7 @@ package
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.InteractiveObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.filters.BevelFilter;
@@ -171,6 +172,7 @@ package
 			retval.scaleX = .5;
 			retval.scaleY = .5;
 			retval.filters = s_uiStuffDropShadow;
+			InteractiveObject(retval).mouseEnabled = false;
 			return retval; 
 		}
 		public function lock():DisplayObject
