@@ -5,6 +5,7 @@ package ui
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
 	import flash.text.TextFormat;
 	
 	import gameData.UserData;
@@ -28,6 +29,10 @@ package ui
 			Util.listen(this, Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 
+		static private const LOCK_NAME:String = "lock";
+		static private const CHECK_NAME:String = "check";
+		static private const ICON_NAME:String = "icon";
+		static private const ICON_DROP:Array = [ new DropShadowFilter(1, 45, 0xffffff) ];
 		private var _buttons:Array = [];
 		private function addLevelButtons():void
 		{
@@ -40,21 +45,11 @@ package ui
 					var level:uint = (ROWS*c) + r;
 					btn = GameButton.create("Level " + (level + 1), false, 18, 1);
 					btn.name = String(level);
-					btn.width = 85;
+					btn.width = 95;
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
 
-//					if (!r && !c)
-//					{
-//						var icon:DisplayObject = (level % 2) ? AssetManager.instance.planeIcon() : AssetManager.instance.tankIcon();
-//						icon.scaleX = .5;
-//						icon.scaleY = .5;
-//						icon.x = btn.width - icon.width;
-//						icon.y = icon.height;
-//						btn.addChild(icon);
-//					}
-
-					if (UserData.instance.levelReached < level)
+					if (level > UserData.instance.levelReached)
 					{
 						btn.enabled = false;
 						var lock:DisplayObject = AssetManager.instance.lock();
@@ -62,8 +57,16 @@ package ui
 						lock.scaleY = 0.7;
 						lock.x = btn.width - lock.width;
 						lock.y = btn.height - lock.height;
-						lock.name = "tremendoushack";
+						lock.name = LOCK_NAME;
 						DisplayObjectContainer(btn).addChild(lock);
+					}
+					else if (level <= UserData.instance.levelReached)
+					{
+						addIcon(btn, (level % 2) != 0);
+						if (level < UserData.instance.levelReached)
+						{
+							addCheck(btn);
+						}
 					}
 					Util.listen(btn, MouseEvent.CLICK, onLevel);
 
@@ -84,6 +87,24 @@ package ui
 				enabled = true;
 			}
 		}
+		private function addIcon(btn:DisplayObjectContainer, tank:Boolean):void
+		{
+			var icon:DisplayObject = tank ? AssetManager.instance.tankIcon() : AssetManager.instance.planeIcon();
+			icon.scaleX = .5;
+			icon.scaleY = .5;
+			icon.x = 84;
+			icon.y = btn.height /2 - 2;
+			icon.filters = ICON_DROP;
+			btn.addChild(icon);
+		}
+		private function addCheck(btn:DisplayObjectContainer):void
+		{
+			Util.ASSERT(!btn.getChildByName(CHECK_NAME));
+			
+			var check:DisplayObject = AssetManager.instance.checkmark();
+			check.scaleX = check.scaleY = 0.5;
+			btn.addChild(check);
+		}
 		public function unlockLevels(levels:uint):void
 		{
 			for (var i:uint = 0; i < levels; ++i)
@@ -91,10 +112,20 @@ package ui
 				var btn:GameButton = GameButton(_buttons[i]);
 				btn.enabled = true;
 				
-				var lock:DisplayObject = btn.getChildAt(btn.numChildren - 1);
-				if (lock.name == "tremendoushack")
+				var lock:DisplayObject = btn.getChildByName(LOCK_NAME);
+				if (lock)
 				{
 					btn.removeChild(lock);
+				}
+				var check:DisplayObject = btn.getChildByName(CHECK_NAME);
+				if (!check)
+				{
+					addCheck(btn);
+				}
+				var icon:DisplayObject = btn.getChildByName(ICON_NAME);
+				if (!icon)
+				{
+					addIcon(btn, (i % 2) != 0);
 				}
 			}
 		}
