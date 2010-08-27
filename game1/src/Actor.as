@@ -29,7 +29,6 @@ package
 		public var health:Number;
 		public var damage:Number;
 		public var name:String;
-		public var value:uint;
 
 		public var healthMeterEnabled:Boolean = true;
 		public function Actor(dobj:DisplayObject, attrs:ActorAttrs = null)
@@ -54,7 +53,6 @@ package
 			{
 				health = attrs.MAX_HEALTH;
 				damage = attrs.DAMAGE;
-				value = ActorAttrs.DEFAULT_VALUE;
 			}
 
 			var resettableBehavior:IResettable = _behavior as IResettable;

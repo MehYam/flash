@@ -20,6 +20,7 @@ package behaviors
 		public var RADIUS:Number;
 		public var DAMAGE:Number;
 		public var BOUNDED:Boolean;  // to be kept within world coordinates
+		public var VALUE:uint;
 		public var LIFETIME:Number = -1;
 		public function ActorAttrs(
 								maxHealth:Number,

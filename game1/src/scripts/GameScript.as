@@ -91,11 +91,13 @@ final class EnemyEnum
 	static public var LOOKUP:Object = {};
 	public var attrs:ActorAttrs;
 	public var assetIndex:uint;
-	public function EnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String)
+	public var value:uint;
+	public function EnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String, value:uint = 5)
 	{
 		this.attrs = attrs;
 		this.assetIndex = assetIndex;
 		this.attrs.RADIUS = PlaneData.getPlane(assetIndex).radius;
+		this.attrs.VALUE = value;
 
 		LOOKUP[name] = this;
 	}
@@ -116,26 +118,26 @@ final class EnemyEnum
 	}
 
 	// first tier cast
-	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs(  40, 5,   0.05, 0,   0, 33), 0, "BEE");
-	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs(  20, 1.5, 0.1,  0,   0, 10), 3, "GREENK");
-	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs(  30, 3,   0.1,  0,   0, 15), 21, "MOTH");
-	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs( 100, 1.5, 0.15, 0,   0, 33), 9, "OSPREY");
-	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs( 100, 2,   0.05, 0,   0, 20), 6, "BAT");
+	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs(  40, 5,   0.05, 0,   0, 33), 0, "BEE", 5);
+	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs(  20, 1.5, 0.1,  0,   0, 10), 3, "GREENK", 5);
+	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs(  30, 3,   0.1,  0,   0, 15), 21, "MOTH", 10);
+	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs( 100, 1.5, 0.15, 0,   0, 33), 9, "OSPREY", 15);
+	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs( 100, 2,   0.05, 0,   0, 20), 6, "BAT", 15);
 
 	// second tier - level 6
-	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs(  65, 3,   0.05, 0.1, 0, 50), 18, "GHOST");
-	static public const GREENK2:EnemyEnum =   new EnemyEnum(new ActorAttrs(  80, 1.5, 0.1,  0,   0, 50),  4, "GREENK2");
-	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs( 125, 6,   0.25, 0.05,0, 66), 15, "CYGNUS");
-	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs( 180, 3,   0.25, 0.05,0, 66), 28, "ROCINANTE");
+	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs(  65, 3,   0.05, 0.1, 0, 50), 18, "GHOST", 25);
+	static public const GREENK2:EnemyEnum =   new EnemyEnum(new ActorAttrs(  80, 1.5, 0.1,  0,   0, 50),  4, "GREENK2", 15);
+	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs( 125, 6,   0.25, 0.05,0, 66), 15, "CYGNUS", 30);
+	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs( 180, 3,   0.25, 0.05,0, 66), 28, "ROCINANTE", 35);
 
 	// next tier - level 9
-	static public const BEE2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 120, 5,   0.05, 0.02,0, 50), 1,  "BEE2");
-	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 180, 1.5, 0.2,  0,   0,100), 12, "FLY"); 
-	static public const MOTH2:EnemyEnum =     new EnemyEnum(new ActorAttrs( 180, 4,   0.1,  0,   0, 66), 22, "MOTH2");
-	static public const BAT2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2");
-	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0,100), 5,  "BLUEK");
+	static public const BEE2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 120, 5,   0.05, 0.02,0, 50), 1,  "BEE2", 50);
+	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 180, 1.5, 0.2,  0,   0,100), 12, "FLY", 20); 
+	static public const MOTH2:EnemyEnum =     new EnemyEnum(new ActorAttrs( 180, 4,   0.1,  0,   0, 66), 22, "MOTH2", 45);
+	static public const BAT2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2", 65);
+	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0,100), 5,  "BLUEK", 30);
 
-	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0,125), 16, "CYGNUS2");
+	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0,125), 16, "CYGNUS2", 100);
 
 	// third tier
 	// final tier cast
@@ -1006,7 +1008,7 @@ class WaveBasedGameScript extends BaseScript
 				_game.scoreBoard.pctLevel = _stats.enemiesKilled / _stats.enemiesTotal;
 				if (!wasCollision)
 				{
-					const credits:uint = actor.value * (1 + _stats.combo/10);
+					const credits:uint = actor.attrs.VALUE * (1 + _stats.combo/10);
 
 					_stats.creditsEarned += credits;
 					++_stats.enemiesKilledCleanly;
