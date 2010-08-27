@@ -9,9 +9,9 @@ package ui
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	import gameData.VehiclePartStats;
 	import gameData.TankPartData;
 	import gameData.UserData;
+	import gameData.VehiclePartStats;
 	
 	import karnold.ui.ProgressMeter;
 	import karnold.ui.ShadowTextField;
@@ -489,6 +489,8 @@ package ui
 		private function onDone(e:Event):void
 		{
 			UIUtil.closeDialog(parent, this);
+			
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 	}
 }

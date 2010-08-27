@@ -7,9 +7,9 @@ package ui
 	import flash.events.MouseEvent;
 	import flash.media.Video;
 	
-	import gameData.VehiclePartStats;
 	import gameData.PlaneData;
 	import gameData.UserData;
+	import gameData.VehiclePartStats;
 	
 	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
@@ -297,6 +297,8 @@ package ui
 		private function onDone(e:Event):void
 		{
 			UIUtil.closeDialog(parent, this);
+			
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 	}
 }

@@ -79,7 +79,9 @@ package ui
 				const prevWidth:Number = _goldParent.width;
 
 				_gold.text = String(UserData.instance.credits);
-				_goldParent.x -= (_goldParent.width - prevWidth);  // my lameness knows no bounds, except when it's calculating bounds
+				_goldParent.x -= (_goldParent.width - prevWidth);  // haxorZ
+				
+				enabled = true;
 			}
 		}
 		public function unlockLevels(levels:uint):void
@@ -137,18 +139,34 @@ package ui
 
 			addChild(goldReportParent);
 		}
-		
+		private function set enabled(b:Boolean):void
+		{
+			mouseEnabled = b;
+			mouseChildren = b;
+		}
 		private function onPlaneHangar(e:Event):void
 		{
-			UIUtil.openDialog(parent, new UpgradePlaneDialog);
+			openDialog(new UpgradePlaneDialog);
 		}
 		private function onTankGarage(e:Event):void
 		{
-			UIUtil.openDialog(parent, new UpgradeTankDialog);
+			openDialog(new UpgradeTankDialog);
+		}
+		private function openDialog(dlg:DisplayObject):void
+		{
+			enabled = false;
+			Util.listen(dlg, Event.COMPLETE, onDialogComplete);
+			UIUtil.openDialog(parent, dlg);
+		}
+		private function onDialogComplete(e:Event):void
+		{
+			enabled = true;
 		}
 		private var _selection:uint = 0;
 		private function onLevel(e:Event):void
 		{
+			enabled = false;
+
 			_selection = parseInt(DisplayObject(e.currentTarget).name);
 			dispatchEvent(new Event(Event.SELECT));	
 		}
