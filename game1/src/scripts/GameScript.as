@@ -75,6 +75,7 @@ import flash.display.Sprite;
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.utils.getTimer;
 
 import gameData.PlaneData;
 import gameData.PlayedLevelStats;
@@ -1175,8 +1176,19 @@ class WaveBasedGameScript extends BaseScript
 		}
 
 		// handle actor death
-		if (actor.health <= 0 && !isPlayer)
+		if (actor.health <= 0)
 		{
+			if (isPlayer && actor.alive)
+			{
+				game.stunMobs();
+				actor.behavior = new DeathAnimationBehavior;
+
+				_game.centerPrint("Level lost - you must try again.");
+				
+				_stats.end();
+				_stats.victory = false;
+				_waves.length = 0;
+			}
 			game.killActor(actor);
 
 			if (!isFriendly)
@@ -1216,7 +1228,6 @@ class WaveBasedGameScript extends BaseScript
 			}
 		}
 	}
-	
 	private function decreaseCombo():void
 	{
 		if (_stats.combo)
@@ -1230,6 +1241,17 @@ class WaveBasedGameScript extends BaseScript
 	}
 }
 
+final class DeathAnimationBehavior implements IBehavior
+{
+	private var _start:uint = getTimer();
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		if (getTimer() - _start < 1500)
+		{
+			Actor.createExplosion(game, actor.worldPos, 2, Math.random()*3);
+		}
+	}
+}
 final class PlayerVehicle
 {
 	public var actor:Actor;

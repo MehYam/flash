@@ -87,12 +87,9 @@ package
 		}
 		public function clear():void
 		{
-			for each (var dot:DisplayObject in _dots)
+			while (numChildren > 1)
 			{
-				if (dot && dot.parent)
-				{
-					removeChild(dot);
-				}
+				removeChildAt(numChildren - 1);
 			}
 			_dots = new Dictionary(true);
 		}

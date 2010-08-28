@@ -23,13 +23,13 @@ package
 
 		function unpause():void;
 		function pause():void;
+		function stunMobs():void;  // this is for the death animation, it's undone by the next setPlayer() call
+		function hidePlayer():void;
 
 		function endLevel(stats:PlayedLevelStats):void;
 
 		function set tiles(str:String):void;
-		// meh - this is added just for the shield charging indicator...
-		function set globalBehavior(b:IBehavior):void;
-
+		function set globalBehavior(b:IBehavior):void; // meh - neat, but this is added just for the shield charging indicator...
 		function get running():Boolean;
 		function get worldBounds():Bounds;
 		function get input():Input;

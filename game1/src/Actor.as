@@ -389,4 +389,4 @@ final class LaserActor4 extends LaserActor { public function LaserActor4() { sup
 final class LaserActor5 extends LaserActor { public function LaserActor5() { super(0xff0000); } }
 final class ExplosionParticleActor0 extends ExplosionParticleActor { public function ExplosionParticleActor0() { super(0xcccccc); } }
 final class ExplosionParticleActor1 extends ExplosionParticleActor { public function ExplosionParticleActor1() { super(0xffff00); } }
-final class ExplosionParticleActor2 extends ExplosionParticleActor { public function ExplosionParticleActor2() { super(0xffffff); } }
+final class ExplosionParticleActor2 extends ExplosionParticleActor { public function ExplosionParticleActor2() { super(0); } }

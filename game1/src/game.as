@@ -142,6 +142,7 @@ package
 		private function startLevel(level:uint):void
 		{
 			_lastStartedLevel = level;
+			_mobsStunned = false;
 			unpause();
 
 			if (_title && _title.parent)
@@ -201,30 +202,32 @@ package
 			//
 			// Apply user input to the player object
 			var speed:Point = _player.speed;
-			if (_input.isKeyDown(Input.KEY_RIGHT))
+			if (!_mobsStunned)
 			{
-				speed.x = Math.min(_player.attrs.MAX_SPEED, speed.x + _player.attrs.ACCELERATION);
-			}
-			else if (_input.isKeyDown(Input.KEY_LEFT))
-			{
-				speed.x = Math.max(-_player.attrs.MAX_SPEED, speed.x - _player.attrs.ACCELERATION);
-			}
-			else if (speed.x)
-			{
-				speed.x = MathUtil.speedDecay(speed.x, _player.attrs.SPEED_DECAY);
-			}
-			
-			if (_input.isKeyDown(Input.KEY_DOWN))
-			{
-				speed.y = Math.min(_player.attrs.MAX_SPEED, speed.y + _player.attrs.ACCELERATION);
-			}
-			else if (_input.isKeyDown(Input.KEY_UP))
-			{
-				speed.y = Math.max(-_player.attrs.MAX_SPEED, speed.y - _player.attrs.ACCELERATION);
-			}
-			else if (speed.y)
-			{
-				speed.y = MathUtil.speedDecay(speed.y, _player.attrs.SPEED_DECAY);
+				if (_input.isKeyDown(Input.KEY_RIGHT))
+				{
+					speed.x = Math.min(_player.attrs.MAX_SPEED, speed.x + _player.attrs.ACCELERATION);
+				}
+				else if (_input.isKeyDown(Input.KEY_LEFT))
+				{
+					speed.x = Math.max(-_player.attrs.MAX_SPEED, speed.x - _player.attrs.ACCELERATION);
+				}
+				else if (speed.x)
+				{
+					speed.x = MathUtil.speedDecay(speed.x, _player.attrs.SPEED_DECAY);
+				}
+				if (_input.isKeyDown(Input.KEY_DOWN))
+				{
+					speed.y = Math.min(_player.attrs.MAX_SPEED, speed.y + _player.attrs.ACCELERATION);
+				}
+				else if (_input.isKeyDown(Input.KEY_UP))
+				{
+					speed.y = Math.max(-_player.attrs.MAX_SPEED, speed.y - _player.attrs.ACCELERATION);
+				}
+				else if (speed.y)
+				{
+					speed.y = MathUtil.speedDecay(speed.y, _player.attrs.SPEED_DECAY);
+				}
 			}
 
 			//
@@ -243,29 +246,32 @@ package
 				_radar.plot(_player, 0x87DDFF);
 			}
 
-			if (_input.isKeyDown(Input.KEY_SPACE))
+			if (!_mobsStunned)
 			{
-				_shooting = ShootState.KEYBOARDSHOOTING;
-				_currentScript.onPlayerShooting(this, false);
-			}
-			else if (_input.isKeyDown(Input.MOUSE_BUTTON))
-			{
-				_shooting = ShootState.MOUSESHOOTING;
-				_currentScript.onPlayerShooting(this, true);
-			}
-			else if (_shooting != ShootState.NONE)
-			{
-				const mouse:Boolean = _shooting == ShootState.MOUSESHOOTING;
-				_shooting = ShootState.NONE;
-				_currentScript.onPlayerStopShooting(this, mouse);
-			}
+				if (_input.isKeyDown(Input.KEY_SPACE))
+				{
+					_shooting = ShootState.KEYBOARDSHOOTING;
+					_currentScript.onPlayerShooting(this, false);
+				}
+				else if (_input.isKeyDown(Input.MOUSE_BUTTON))
+				{
+					_shooting = ShootState.MOUSESHOOTING;
+					_currentScript.onPlayerShooting(this, true);
+				}
+				else if (_shooting != ShootState.NONE)
+				{
+					const mouse:Boolean = _shooting == ShootState.MOUSESHOOTING;
+					_shooting = ShootState.NONE;
+					_currentScript.onPlayerStopShooting(this, mouse);
+				}
 
-			runFrameOnCast(_cast.friendlies);
-			runFrameOnCast(_cast.enemies);
-			runFrameOnCast(_cast.enemyAmmo);
-			runFrameOnCast(_cast.friendlyAmmo);
+				runFrameOnCast(_cast.friendlies);
+				runFrameOnCast(_cast.enemies);
+				runFrameOnCast(_cast.enemyAmmo);
+				runFrameOnCast(_cast.friendlyAmmo);
+				collisionCheck();
+			}
 			runFrameOnCast(_cast.effects);
-			collisionCheck();
 
 			if (_radar)
 			{
@@ -557,6 +563,21 @@ package
 		{
 			_frameTimer.stop();
 		}
+		private var _mobsStunned:Boolean;
+		public function stunMobs():void
+		{
+			_mobsStunned = true;
+			_player.speed.x = 0;
+			_player.speed.y = 0;
+		}
+		public function hidePlayer():void
+		{
+			var dobj:DisplayObject = _player.displayObject;
+			if (dobj.parent)
+			{
+				dobj.parent.removeChild(dobj);
+			}
+		}
 		public function endLevel(stats:PlayedLevelStats):void
 		{
 			pause();
@@ -571,6 +592,8 @@ package
 			{
 				stats.creditsEarned = 0;
 			}
+			_cast.removeAll();
+			
 			var endLvl:LevelCompleteDialog = new LevelCompleteDialog(stats);
 			Util.listen(endLvl, Event.COMPLETE, onLevelCompleteDialogDismissed);
 
@@ -701,6 +724,28 @@ final class Cast
 			friendlyAmmo = friendlyAmmo.filter(actorIsAlive);
 			effects = effects.filter(actorIsAlive);
 		}
+	}
+	
+	public function removeAll():void
+	{
+		remove(friendlies);
+		remove(enemies);
+		remove(enemyAmmo);
+		remove(friendlyAmmo);
+		remove(effects);
+	}
+	private function remove(cast:Array):void
+	{
+		for each (var actor:Actor in cast)
+		{
+			if (actor && actor.displayObject.parent)
+			{
+				actor.displayObject.parent.removeChild(actor.displayObject);
+			}
+		}
+		cast.length = 0;
+
+		// we may losing some pooled actors here - no matter 
 	}
 }
 
