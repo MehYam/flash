@@ -51,7 +51,7 @@ package gameData
 							item.@nosale != "true"
 						);
 					pd.unlock = item.@unl;
-					pd.subType = item.@c;
+					pd.subType = CLASSNAMES[uint(item.@c)];
 					s_entries.push(pd);
 				}
 

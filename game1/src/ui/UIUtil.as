@@ -127,6 +127,10 @@ package ui
 			}
 		}
 
+		static private function formatLabel(txt:String, size:uint = 2):String
+		{
+			return "<font size='+" + size + "'><b>" + txt + "</b></font>";
+		}
 		static public function formatItemTooltip(part:VehiclePart, nameHeader:Boolean = true):String
 		{
 			const cost:uint = part.baseStats.cost;
@@ -142,11 +146,12 @@ package ui
 			}
 
 			var retval:String = nameHeader ? "Name: " : "";
+			retval += formatLabel(part.name);
 			if (part.subType)
 			{
-				retval += " Class: " + part.subType;
+				retval += "<br>Class: " + formatLabel(part.subType, 0);
 			}
-			retval += "<font size='+2'><b>" + part.name + "</b></font><br>Cost: <b>" + costString + "</b><br><br>";
+			retval += "<br>Cost: <b>" + costString + "</b><br><br>";
 			retval += "<font size='-1'>" + (part.description || "Ship details unknown.") + "</font>";
 			return retval;
 		}
