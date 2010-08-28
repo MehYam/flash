@@ -372,23 +372,12 @@ package scripts
 			const hull:TankPartData = TankPartData.getHull(UserData.instance.currentHull);
 			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
 			
-			var attrs:ActorAttrs = new ActorAttrs(250, 1.5, 0.2, 0.2, hull.radius);
+			var attrs:ActorAttrs = new ActorAttrs(250, 1.5, 0.2, 0.2, hull.radius * Consts.TANK_SCALE);
 			var tank:Actor = TankActor.createTankActor(hull.assetIndex, turret.assetIndex, attrs);
 			tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 			
 			var weapon:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -67), 400);
 
-var foo:Shape = new Shape;
-foo.graphics.lineStyle(1);
-foo.graphics.beginFill(0xff0000, .7);
-foo.graphics.drawCircle(0, 0, tank.attrs.RADIUS);
-foo.graphics.moveTo(10, 0);
-foo.graphics.lineTo(-10, 0);
-foo.graphics.moveTo(0, 10);
-foo.graphics.lineTo(0, -10);
-foo.graphics.endFill();
-//var rect:Rectangle = tank.displayObject.getBounds(tank.displayObject);
-//DisplayObjectContainer(tank.displayObject).addChild(foo);
 			return new GameScriptPlayerVehicle(tank, weapon, false, false);
 		}
 	}

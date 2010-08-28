@@ -42,11 +42,11 @@ package gameData
 			{
 				s_hulls =
 				[
-					new TankPartData("Hunter", 0,		new VehiclePartStats(.1, 0, 0, .1, 1000), 35, 0, 1),
-					new TankPartData("Hunter X", 1,		new VehiclePartStats(.3, 0, 0, .1, 2000), 30, 1, 2),
+					new TankPartData("Hunter", 0,		new VehiclePartStats(.1, 0, 0, .1, 1000), 38, 0, 1),
+					new TankPartData("Hunter X", 1,		new VehiclePartStats(.3, 0, 0, .1, 2000), 42, 1, 2),
 					new TankPartData("Wreckingball", 2,	new VehiclePartStats(.5, 0, 0, .2, 4000), 30, 2, 3),
 					new TankPartData("Seeker", 3,		new VehiclePartStats(.6, 0, 0, .3, 7000), 30, 0, 1),
-					new TankPartData("Rhino", 4,		new VehiclePartStats(.8, 0, 0, .2, 20000),30, 0, 1)
+					new TankPartData("Rhino", 4,		new VehiclePartStats(.8, 0, 0, .2, 20000),35, 0, 1)
 				];
 			}
 			return s_hulls;

@@ -91,20 +91,18 @@ package scripts
 			const height:Number = hull.height;
 			const spec:HullSpec = HullSpec.LIST[hullIndex];
 			
-			track.scaleX *= spec.trackScaleX;
-			track2.scaleX *= spec.trackScaleX; 
+			track.scaleX = track2.scaleX = spec.trackScaleX;
 			track.x = -width/2 + spec.trackOffsetX;
 			hull.x  = -hull.width/2;
 			track2.x = hull.x + hull.width - track.width/2 - spec.trackOffsetX;
 			
-			track.scaleY *= spec.trackScaleY;
-			track2.scaleY *= spec.trackScaleY;
-			hull.y = -height/2;
+			track.scaleY = track2.scaleY = spec.trackScaleY;
+			hull.y = spec.hullOffsetY - height/2;
 			track.y = track2.y = hull.y + spec.trackOffsetY;
 			
 			var turretParent:Sprite = new Sprite;
 			turret.x = -turret.width/2;
-			turret.y = -TurretSpec(TurretSpec.LIST[turretIndex]).turretOffsetY * Consts.TANK_SCALE;
+			turret.y = -TurretSpec(TurretSpec.LIST[turretIndex]).turretOffsetY;
 			turretParent.addChild(turret);
 
 			parent.addChild(track);
@@ -131,7 +129,7 @@ final class TurretSpec
 	public var turretOffsetY:Number;
 	public function TurretSpec(turretOffsetY:Number)
 	{
-		this.turretOffsetY = turretOffsetY;
+		this.turretOffsetY = turretOffsetY * Consts.TANK_SCALE;
 	}
 }
 final class HullSpec
@@ -141,7 +139,7 @@ final class HullSpec
 		new HullSpec(1.6, 1.3, 0, 12),
 		new HullSpec(1.3, 1, 5, 10),
 		new HullSpec(1.3),
-		new HullSpec(1.5, 1, 5, 10)
+		new HullSpec(1.5, 1, 5, 10, -10)
 	];
 	
 	public var turretOffsetY:Number;
@@ -149,13 +147,18 @@ final class HullSpec
 	public var trackScaleY:Number;
 	public var trackOffsetX:Number;
 	public var trackOffsetY:Number;
+	public var hullOffsetY:Number;
 	
-	public function HullSpec(trackScaleX:Number = 1, trackScaleY:Number = 1, trackOffsetX:Number = 0, trackOffsetY:Number = 0)
+	public function HullSpec(trackScaleX:Number = 1, trackScaleY:Number = 1, trackOffsetX:Number = 0, trackOffsetY:Number = 0, hullOffsetY:Number = 0)
 	{
-		this.turretOffsetY = turretOffsetY;
-		this.trackScaleX = trackScaleX;
-		this.trackScaleY = trackScaleY;
-		this.trackOffsetX = trackOffsetX;
-		this.trackOffsetY = trackOffsetY;
+		// Because of rasterization, we'll scale the bitmaps beforehand... unfortunately that means we
+		// have to apply the scale to everything else after the fact instead of just scaling the tank
+		// Sprite container.
+		this.turretOffsetY = turretOffsetY * Consts.TANK_SCALE;
+		this.trackScaleX = trackScaleX * Consts.TANK_SCALE;
+		this.trackScaleY = trackScaleY * Consts.TANK_SCALE;
+		this.trackOffsetX = trackOffsetX * Consts.TANK_SCALE;
+		this.trackOffsetY = trackOffsetY * Consts.TANK_SCALE;
+		this.hullOffsetY = hullOffsetY * Consts.TANK_SCALE;
 	}
 }

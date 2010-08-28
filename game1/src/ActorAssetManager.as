@@ -281,7 +281,6 @@ package
 		{
 			var base:DisplayObjectContainer = new TANKTREAD;
 			base.addChild(new TANKTREADTOP);
-			base.scaleX = base.scaleY = Consts.TANK_SCALE;
 			return base;
 		}
 
@@ -345,6 +344,20 @@ package
 			graphics.lineTo(5, 0);
 			graphics.moveTo(0, 0);
 			graphics.lineTo(0, 5);
+		}
+		
+		public static function createReticle(radius:Number):DisplayObject
+		{
+			var foo:Shape = new Shape;
+			foo.graphics.lineStyle(1);
+			foo.graphics.beginFill(0xff0000, .7);
+			foo.graphics.drawCircle(0, 0, radius);
+			foo.graphics.moveTo(10, 0);
+			foo.graphics.lineTo(-10, 0);
+			foo.graphics.moveTo(0, 10);
+			foo.graphics.lineTo(0, -10);
+			foo.graphics.endFill();
+			return foo;
 		}
 	}
 }
