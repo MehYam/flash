@@ -106,7 +106,7 @@ package karnold.utils
 		}
 		private function onMouseMove(evt:MouseEvent):void
 		{
-			Util.ASSERT(evt.target == _lastMousedOverItem);
+//			Util.ASSERT(evt.target == _lastMousedOverItem);
 			_lastMouseOverSpot.x = evt.stageX;
 			_lastMouseOverSpot.y = evt.stageY;
 			if (_tooltip.displayObject.parent)

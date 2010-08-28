@@ -11,6 +11,7 @@ package ui
 	import gameData.UserData;
 	
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
 	
 	public class LevelSelectionDialog extends GameDialog
@@ -90,6 +91,7 @@ package ui
 		private function addIcon(btn:DisplayObjectContainer, tank:Boolean):void
 		{
 			var icon:DisplayObject = tank ? AssetManager.instance.tankIcon() : AssetManager.instance.planeIcon();
+			icon.name = ICON_NAME;
 			icon.scaleX = .5;
 			icon.scaleY = .5;
 			icon.x = 84;
@@ -104,6 +106,8 @@ package ui
 			var check:DisplayObject = AssetManager.instance.checkmark();
 			check.scaleX = check.scaleY = 0.5;
 			btn.addChild(check);
+			
+			ToolTipMgr.instance.addToolTip(btn, "Here's a completed level");
 		}
 		public function unlockLevels(levels:uint):void
 		{
@@ -117,10 +121,13 @@ package ui
 				{
 					btn.removeChild(lock);
 				}
-				var check:DisplayObject = btn.getChildByName(CHECK_NAME);
-				if (!check)
+				if (i == (levels-2))
 				{
-					addCheck(btn);
+					var check:DisplayObject = btn.getChildByName(CHECK_NAME);
+					if (!check)
+					{
+						addCheck(btn);
+					}
 				}
 				var icon:DisplayObject = btn.getChildByName(ICON_NAME);
 				if (!icon)
