@@ -70,21 +70,42 @@ Owners of Bat III will have access to the three top-level Fighter-class lines: t
 
 <desc plane="34">Fans of the Stinger ships usually upgrade to the Raven line, built for agility and targeting.  The fastest ships in the tournament, they were built to strafe around opponents, sniping them from all angles.  The speed comes at the price of armor;  so enjoy melting hulls with this ship, just don't take damage like you dish it out.</desc>
 
+<desc plane="35">The second in the Raven line is the Corvid, with upgraded speed and dual cannon fittings.</desc>
+
+<desc plane="36">Deathwing was a nickname that stuck and became the official title for the final Raven ship.  The ultimate vehicle for speed freaks and adrenaline junkies, this plane will take them down before they know you've fired.  Armor is lacking, by request of the skilled pilots who don't need it.</desc>
+
 <desc plane="28">You will assume control in the Rocinante.  This ship line uses devastating twin fusion cannons, and is relatively heavy armored for a Rogue-class.  This makes it the slowest of the Rogues, although it's still pretty nimble.
 The key to using fusion effectively is to charge it as much as possible before firing it.  Watch the charge indicator and don't hold it for too long, however, as an overloading cannon will damage the ship over time.
 This ship takes a little practice to master, but nothing matches the pleasure of destroying an entire cluster of enemies with a well-charge fusion blast.</desc>
 
+<desc plane="29">No surprises here, the Rocinante II is a slightly faster, stronger, and more deadly version of the first model.</desc>
+
+<desc plane="30">No surprises here either, the Rocinante III is a slightly faster, stronger, and more deadly version of the second model, by exactly "I" amount.  Seriously, the brochure says that.</desc>
+
 <desc plane="15">Give your enemies a world of doubt and fear in a Cygnus ship.  These ships walk the middle ground between the speed of the Ravens and the firepower and armor of the Rocinantes.</desc>
+
+<desc plane="16">Upgraded and more lasers - your foes' ships cannot resist her long.</desc>
+
+<desc plane="17">Six lasers, we couldn't believe it either.  But there they are, melting your face.</desc>
 
 <desc plane="12">The strange design of the Diptera line, the only pure-Melee class, was aimed at intimidating other pilots at close range.  It's the most armored ship in the tournament, and so can withstand brutal hits even while shields are recharging.</desc>
 
+<desc plane="13">What kind of twisted individual flies around in a ship that looks like a deer fly?  You, you're that kind of twisted, because you like shields and messing people up.</desc>
+
+<desc plane="14">The third Diptera is the toughest ship, with the strongest shields in the tournament.</desc>
+
 <desc plane="21">Attacus ships are Melee/Rogue hybrids.  They compromise armor, stability, and shield strength for more maneuverability and light ranged weaponry.  Being able to fire from a distance while shielded is a pretty compelling combination for many tournament contestants.</desc>
+
+<desc plane="22">The second Attacus demonstrates the line's reputation for versatility, given its powerful long range rockets and decent shield.</desc>
+
+<desc plane="23">They said it couldn't be done, but the pinnacle of the Attacus line features a powerful mono fusion cannon in addition to other upgrades.  Weight of the fusion weaponry has limited the shield strength and armor, but this is still the most versatile ship in the field.  It's the only flying vessel that allows the pilot to aim in two directions at once.
+However, pilots have to constantly manage the decision between powering up a fusion shot vs. refreshing a battered shield.</desc>
 
 <desc plane="31">The Esox line of ships most closely resemble their cheaper Jem cousins.  Fitted with strong shields, armor, and up to six multiple lasers, they're built to cut through foes easily at short and medium range.</desc>
 
-<!--
-<desc plane="34"></desc>
--->
+<desc plane="32">Moar lasors!</desc>
+
+<desc plane="33">The top Esox is the ultimate expression of the original Jem intent.  You could probably mine with this ship, but make sure the other miners have cleared out first.</desc>
 
 </descs>
 </data>

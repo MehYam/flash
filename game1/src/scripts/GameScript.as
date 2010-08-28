@@ -542,7 +542,7 @@ final class Utils
 class BaseScript implements IGameScript
 {
 	// IGameScript
-	protected const TANK:Boolean = true;
+	protected const TANK:Boolean = false;
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 
 	{
