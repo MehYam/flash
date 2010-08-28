@@ -266,11 +266,11 @@ package
 		static private const TURRET_TYPES:Array = [TURRET0, TURRET1, TURRET2, TURRET3, TURRET4];
 		static public function createHull(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, false) : new HULL_TYPES[index];
+			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, false, Consts.TANK_SCALE) : new HULL_TYPES[index];
 		}
 		static public function createTurret(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, false, 1.1) : new TURRET_TYPES[index];
+			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, false, Consts.TANK_SCALE * 1.1) : new TURRET_TYPES[index];
 		}
 
 		[Embed(source="assets/master.swf", symbol="tanktread")]
@@ -281,6 +281,7 @@ package
 		{
 			var base:DisplayObjectContainer = new TANKTREAD;
 			base.addChild(new TANKTREADTOP);
+			base.scaleX = base.scaleY = Consts.TANK_SCALE;
 			return base;
 		}
 

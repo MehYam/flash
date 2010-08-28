@@ -91,21 +91,20 @@ package scripts
 			const height:Number = hull.height;
 			const spec:HullSpec = HullSpec.LIST[hullIndex];
 			
-			track.scaleX = track2.scaleX = spec.trackScaleX; 
+			track.scaleX *= spec.trackScaleX;
+			track2.scaleX *= spec.trackScaleX; 
 			track.x = -width/2 + spec.trackOffsetX;
 			hull.x  = -hull.width/2;
 			track2.x = hull.x + hull.width - track.width/2 - spec.trackOffsetX;
 			
-			track.scaleY = track2.scaleY = spec.trackScaleY;
+			track.scaleY *= spec.trackScaleY;
+			track2.scaleY *= spec.trackScaleY;
 			hull.y = -height/2;
 			track.y = track2.y = hull.y + spec.trackOffsetY;
 			
 			var turretParent:Sprite = new Sprite;
 			turret.x = -turret.width/2;
-			turret.y = -TurretSpec(TurretSpec.LIST[turretIndex]).turretOffsetY;
-//			turretParent.y = spec.turretOffsetY;
-// shooting logic currently expects turret to be at 0, 0
-//    - would be easier to deal with if we split the tank into two separate actors
+			turret.y = -TurretSpec(TurretSpec.LIST[turretIndex]).turretOffsetY * Consts.TANK_SCALE;
 			turretParent.addChild(turret);
 
 			parent.addChild(track);

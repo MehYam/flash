@@ -15,5 +15,7 @@ package
 		static public const CREDIT_FIELD_COLOR:uint = 0xffcc33;
 		
 		static public const LEVELS:uint = 35;
+		
+		static public const TANK_SCALE:Number = 0.8;
 	}
 }
