@@ -33,6 +33,10 @@ package scripts
 			
 			var shield:Boolean;
 			var fusion:Boolean;
+			
+			// Not ideal - this would be better if it were completely data driven, which could be done
+			// with XML.  Note that we create the AmmoFireSources here instead of sharing them like we
+			// do for enemies.  No biggy since we don't create a lot of these
 			switch (UserData.instance.currentPlane) {
 				/// bottom tier/////////////////////////////////////////////////////////////////
 				case 0:
@@ -369,10 +373,44 @@ package scripts
 		}
 		static public function getPlayerTank():GameScriptPlayerVehicle
 		{
+			var attrs:ActorAttrs;
+			var hullWeapon:IBehavior;
+			switch(UserData.instance.currentHull) {
+			case 0:
+				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				
+				// will have to account for each upgrade here
+				break;
+			case 1:
+				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				break;
+			case 2:
+				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				break;
+			case 3:
+				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				break;
+			case 4:
+				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				break;
+			}
+			switch (turret) {
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			}
+			
 			const hull:TankPartData = TankPartData.getHull(UserData.instance.currentHull);
 			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
-			
-			var attrs:ActorAttrs = new ActorAttrs(250, 1.5, 0.2, 0.2, hull.radius * Consts.TANK_SCALE);
+			attrs.RADIUS = hull.radius * Consts.TANK_SCALE;
+
 			var tank:Actor = TankActor.createTankActor(hull.assetIndex, turret.assetIndex, attrs);
 			tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 			

@@ -262,7 +262,7 @@ package
 		[Embed(source="assets/master.swf", symbol="tankturret4")]
 		static private const TURRET4:Class;
 
-		static private const HULL_TYPES:Array =	[HULL0, HULL1, HULL2, HULL3, HULL4];
+		static private const HULL_TYPES:Array =	[HULL0, HULL2, HULL3, HULL4, HULL1];
 		static private const TURRET_TYPES:Array = [TURRET0, TURRET1, TURRET2, TURRET3, TURRET4];
 		static public function createHull(index:uint, rasterized:Boolean = true):DisplayObject
 		{

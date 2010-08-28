@@ -136,10 +136,10 @@ final class HullSpec
 {
 	static public const LIST:Array = [
 		new HullSpec(1.3, 1.36),
-		new HullSpec(1.6, 1.3, 0, 12),
 		new HullSpec(1.3, 1, 5, 10),
 		new HullSpec(1.3),
-		new HullSpec(1.5, 1, 5, 10, -10)
+		new HullSpec(1.5, 1, 5, 10, -10),
+		new HullSpec(1.6, 1.3, 0, 12)
 	];
 	
 	public var turretOffsetY:Number;
