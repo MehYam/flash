@@ -24,6 +24,7 @@ package gameData
 		[Embed(source="assets/planes.xml", mimeType="application/octet-stream")]
 		static private const PLANEXML:Class;
 
+		static private const CLASSNAMES:Array = ["Rogue", "Melee", "Melee/Hybrid", "Fighter"];
 		static public function get planes():Array
 		{
 			if (!s_entries)
@@ -50,6 +51,7 @@ package gameData
 							item.@nosale != "true"
 						);
 					pd.unlock = item.@unl;
+					pd.subType = item.@c;
 					s_entries.push(pd);
 				}
 

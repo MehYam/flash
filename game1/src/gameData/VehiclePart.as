@@ -3,6 +3,7 @@ package gameData
 	public class VehiclePart
 	{
 		public var name:String;
+		public var subType:String;
 		public var assetIndex:uint;
 		public var baseStats:VehiclePartStats;
 		public var purchased:Boolean;

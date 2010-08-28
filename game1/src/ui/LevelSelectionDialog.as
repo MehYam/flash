@@ -92,9 +92,9 @@ package ui
 		{
 			var icon:DisplayObject = tank ? AssetManager.instance.tankIcon() : AssetManager.instance.planeIcon();
 			icon.name = ICON_NAME;
-			icon.scaleX = .5;
-			icon.scaleY = .5;
-			icon.x = 84;
+			icon.scaleX = .7;
+			icon.scaleY = .7;
+			icon.x = 80;
 			icon.y = btn.height /2 - 2;
 			icon.filters = ICON_DROP;
 			btn.addChild(icon);

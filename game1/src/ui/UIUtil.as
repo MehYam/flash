@@ -141,7 +141,11 @@ package ui
 				costString = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");  
 			}
 
-			var retval:String = nameHeader ? "Name: " : ""; 
+			var retval:String = nameHeader ? "Name: " : "";
+			if (part.subType)
+			{
+				retval += " Class: " + part.subType;
+			}
 			retval += "<font size='+2'><b>" + part.name + "</b></font><br>Cost: <b>" + costString + "</b><br><br>";
 			retval += "<font size='-1'>" + (part.description || "Ship details unknown.") + "</font>";
 			return retval;
