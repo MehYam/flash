@@ -511,19 +511,6 @@ final class EnemyEnum
 }
 final class Utils
 {
-	static public function getPlayerTank():GameScriptPlayerVehicle
-	{
-		const hull:uint = TankPartData.getHull(UserData.instance.currentHull).assetIndex;
-		const turret:uint = TankPartData.getTurret(UserData.instance.currentTurret).assetIndex;
-		
-		var tank:Actor = TankActor.createTankActor(hull, turret, new ActorAttrs(100, 1.5, 1, 0.5));
-		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
-		
-		var weapon:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -67), 400);
-		
-		return new GameScriptPlayerVehicle(tank, weapon, false, false);
-	}
-
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
 	{
 		actor.worldPos.x = MathUtil.random(bounds.left, bounds.right);
@@ -555,7 +542,7 @@ final class Utils
 class BaseScript implements IGameScript
 {
 	// IGameScript
-	protected const TANK:Boolean = false;
+	protected const TANK:Boolean = true;
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 
 	{
@@ -565,7 +552,7 @@ class BaseScript implements IGameScript
 		var player:GameScriptPlayerVehicle;
 		if (TANK)
 		{
-			player = Utils.getPlayerTank();
+			player = GameScriptPlayerFactory.getPlayerTank();
 			_weapon = player.weapon;
 			game.setPlayer(player.actor);
 		}

@@ -8,7 +8,12 @@ package scripts
 	import behaviors.CompositeBehavior;
 	import behaviors.IBehavior;
 	
+	import flash.display.DisplayObjectContainer;
+	import flash.display.Shape;
+	import flash.geom.Rectangle;
+	
 	import gameData.PlaneData;
+	import gameData.TankPartData;
 	import gameData.UserData;
 
 	public class GameScriptPlayerFactory
@@ -361,6 +366,29 @@ package scripts
 			plane.healthMeterEnabled = false;
 			
 			return new GameScriptPlayerVehicle(plane, weapon, shield, fusion);
+		}
+		static public function getPlayerTank():GameScriptPlayerVehicle
+		{
+			const hull:uint = TankPartData.getHull(UserData.instance.currentHull).assetIndex;
+			const turret:uint = TankPartData.getTurret(UserData.instance.currentTurret).assetIndex;
+			
+			var tank:Actor = TankActor.createTankActor(hull, turret, new ActorAttrs(100, 1.5, 1, 0.5));
+			tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
+			
+			var weapon:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -67), 400);
+
+var foo:Shape = new Shape;
+foo.graphics.lineStyle(1);
+foo.graphics.beginFill(0xff0000, .7);
+foo.graphics.drawCircle(0, 0, tank.attrs.RADIUS);
+foo.graphics.moveTo(10, 0);
+foo.graphics.lineTo(-10, 0);
+foo.graphics.moveTo(0, 10);
+foo.graphics.lineTo(0, -10);
+foo.graphics.endFill();
+//var rect:Rectangle = tank.displayObject.getBounds(tank.displayObject);
+DisplayObjectContainer(tank.displayObject).addChild(foo);
+			return new GameScriptPlayerVehicle(tank, weapon, false, false);
 		}
 	}
 }

@@ -105,6 +105,8 @@ package ui
 			
 			var check:DisplayObject = AssetManager.instance.checkmark();
 			check.scaleX = check.scaleY = 0.5;
+			check.x = 5;
+			check.y = 5;
 			btn.addChild(check);
 			
 			ToolTipMgr.instance.addToolTip(btn, "Here's a completed level");
