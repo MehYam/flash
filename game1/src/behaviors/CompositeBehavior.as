@@ -18,7 +18,10 @@ package behaviors
 		{
 			for each (var behavior:IBehavior in _behaviors)
 			{
-				behavior.onFrame(game, actor);
+				if (behavior)
+				{
+					behavior.onFrame(game, actor);
+				}
 			}
 		}
 		public function onFrameAt(game:IGame, actor:Actor, index:uint):void

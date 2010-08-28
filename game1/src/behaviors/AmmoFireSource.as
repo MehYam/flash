@@ -16,8 +16,9 @@ package behaviors
 		private var _offsetY:Number;
 		private var _angle:Number;
 		private var _level:uint;
-		
-		public function AmmoFireSource(type:AmmoType, damage:Number, x:Number, y:Number, angle:Number = 0, level:uint = 0)
+		private var _turret:Boolean;
+
+		public function AmmoFireSource(type:AmmoType, damage:Number, x:Number, y:Number, angle:Number = 0, level:uint = 0, turret:Boolean = false)
 		{
 			_ammoType = type;
 			_damage = damage;
@@ -25,6 +26,7 @@ package behaviors
 			_offsetY = y;
 			_angle = angle;
 			_level = level;
+			_turret = turret;
 		}
 
 		static private var po_tmp:Point = new Point;
@@ -51,7 +53,7 @@ package behaviors
 					break;
 			}
 			ammo.damage = _damage * damageMultiplier;
-			const angle:Number = actor is TankActor ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
+			const angle:Number = (_turret && actor is TankActor) ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
 
 			Util.setPoint(po_tmp, actor.worldPos);
 			po_tmp.offset(_offsetX, _offsetY);

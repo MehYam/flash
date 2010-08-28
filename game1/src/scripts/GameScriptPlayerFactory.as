@@ -85,8 +85,10 @@ package scripts
 				case 6:
 					weapon = new AlternatingBehavior(
 						500, 1500,
-						BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -18, -30, 0, 0), 1000),
-						BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  18, -30, 0, 0), 1000)
+						BehaviorFactory.createAutofire(
+							[	new AmmoFireSource(AmmoType.ROCKET, 20, -18, -30, 0, 0), 
+								new AmmoFireSource(AmmoType.ROCKET, 20,  18, -30, 0, 0)],
+						1000)
 					);
 					attrs = new ActorAttrs(200, 4, 0.3, 0.1);
 					break;
@@ -209,7 +211,7 @@ package scripts
 					weapon = new CompositeBehavior(
 						createShieldActivator(25, 150, -15),
 						BehaviorFactory.createAutofire(
-							[ new AmmoFireSource(AmmoType.BULLET, 20, -20, -20),
+							[	new AmmoFireSource(AmmoType.BULLET, 20, -20, -20),
 								new AmmoFireSource(AmmoType.BULLET, 20,  20, -20)], 500)
 					);
 					attrs = new ActorAttrs(750, 4, 0.7, 0.1);
@@ -308,14 +310,14 @@ package scripts
 				
 				case 25:
 					weapon = new AlternatingBehavior(666, 666,
-						new CompositeBehavior(
-							BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75, -35, -15, 0, 0), 700, 700),
-							BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75,  35, -15, 0, 0), 700, 700)
-						),
-						new CompositeBehavior(
-							BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75,  20, -25, 0, 0), 700, 700),
-							BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75, -20, -25, 0, 0), 700, 700)
-						)
+						BehaviorFactory.createAutofire(
+							[	new AmmoFireSource(AmmoType.ROCKET, 75, -35, -15, 0, 0),
+								new AmmoFireSource(AmmoType.ROCKET, 75,  35, -15, 0, 0)],
+							700, 700),
+						BehaviorFactory.createAutofire(
+							[	new AmmoFireSource(AmmoType.ROCKET, 75,  20, -25, 0, 0),
+								new AmmoFireSource(AmmoType.ROCKET, 75, -20, -25, 0, 0)],
+							700, 700)
 					);
 					attrs = new ActorAttrs(1000, 3.5, 0.8, 0.1);
 					break;
@@ -371,15 +373,32 @@ package scripts
 			
 			return new GameScriptPlayerVehicle(plane, weapon, shield, fusion);
 		}
+		static public function tankScale(x:Number):Number { return x*Consts.TANK_SCALE; }
 		static public function getPlayerTank():GameScriptPlayerVehicle
 		{
 			var attrs:ActorAttrs;
 			var hullWeapon:IBehavior;
+			var upgrade:TankPartData;
+			const hull:TankPartData = TankPartData.getHull(UserData.instance.currentHull);
+			
 			switch(UserData.instance.currentHull) {
 			case 0:
 				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
 				
-				// will have to account for each upgrade here
+				upgrade = hull.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					attrs.MAX_HEALTH += 250;
+				}
+				upgrade = hull.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					hullWeapon = BehaviorFactory.createAutofire(
+						[	new AmmoFireSource(AmmoType.BULLET, 10, tankScale(-15), tankScale(-50), 180, 5),
+							new AmmoFireSource(AmmoType.BULLET, 10, tankScale( 15), tankScale(-50), 180, 5)],
+						1000
+					);
+				}
 				break;
 			case 1:
 				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
@@ -394,8 +413,21 @@ package scripts
 				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
 				break;
 			}
-			switch (turret) {
+			var turretWeapon:IBehavior;
+			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
+			switch (UserData.instance.currentTurret) {
 			case 0:
+				turretWeapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, tankScale(-67), 0, 5, true), 400);
+				upgrade = turret.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+//					
+				}
+				upgrade = turret.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+//					
+				}
 				break;
 			case 1:
 				break;
@@ -407,16 +439,12 @@ package scripts
 				break;
 			}
 			
-			const hull:TankPartData = TankPartData.getHull(UserData.instance.currentHull);
-			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
 			attrs.RADIUS = hull.radius * Consts.TANK_SCALE;
 
 			var tank:Actor = TankActor.createTankActor(hull.assetIndex, turret.assetIndex, attrs);
 			tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
-			
-			var weapon:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -67), 400);
 
-			return new GameScriptPlayerVehicle(tank, weapon, false, false);
+			return new GameScriptPlayerVehicle(tank, new CompositeBehavior(hullWeapon, turretWeapon), false, false);
 		}
 	}
 }

@@ -88,15 +88,12 @@ import karnold.utils.MathUtil;
 import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
-import org.osmf.layout.AbsoluteLayoutFacet;
-
 import scripts.BlingActor;
 import scripts.GameScriptPlayerFactory;
 import scripts.GameScriptPlayerVehicle;
 import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
 import scripts.ShieldActor;
-import scripts.TankActor;
 
 final class EnemyEnum
 {
@@ -542,7 +539,7 @@ final class Utils
 class BaseScript implements IGameScript
 {
 	// IGameScript
-	protected const TANK:Boolean = false;
+	protected const TANK:Boolean = true;
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 
 	{
