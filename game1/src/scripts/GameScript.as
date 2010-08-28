@@ -91,6 +91,8 @@ import karnold.utils.Util;
 import org.osmf.layout.AbsoluteLayoutFacet;
 
 import scripts.BlingActor;
+import scripts.GameScriptPlayerFactory;
+import scripts.GameScriptPlayerVehicle;
 import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
 import scripts.ShieldActor;
@@ -509,363 +511,17 @@ final class EnemyEnum
 }
 final class Utils
 {
-	static private function createShieldActivator(shieldDamage:Number, shieldArmor:Number, yOffset:Number, lifetime:Number = 1400):IBehavior
-	{
-		return BehaviorFactory.createShieldActivator(
-				new AmmoFireSource(AmmoType.SHIELD, shieldDamage, 0, yOffset, 0),
-				new ActorAttrs(shieldArmor, 0, 0, 0.01, 50, 0, false, lifetime));
-	}
-	static public function getPlayerPlane():PlayerVehicle
-	{
-		const asset:uint = PlaneData.getPlane(UserData.instance.currentPlane).assetIndex;
-
-		var weapon:IBehavior;
-		var attrs:ActorAttrs;
-
-		var shield:Boolean;
-		var fusion:Boolean;
-		switch (UserData.instance.currentPlane) {
-		/// bottom tier/////////////////////////////////////////////////////////////////
-		case 0:
-			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
-			attrs = new ActorAttrs(100, 4.5, 0.5, 0.2);
-			break;
-		case 1:
-			weapon = BehaviorFactory.createAutofire(
-				[new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), new AmmoFireSource(AmmoType.BULLET, 10, 15, 0)], 
-				400);
-			attrs = new ActorAttrs(117, 5, 0.5, 0.1);
-			break;
-		case 2:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.BULLET, 10, -15, 0), 
-					new AmmoFireSource(AmmoType.BULLET, 10,  15, 0),
-					new AmmoFireSource(AmmoType.BULLET, 10,   0, -10)], 
-				400);
-			attrs = new ActorAttrs(133, 5.5, 1, 0.1);
-			break;
-		
-		case 3:
-			weapon = createShieldActivator(10, 50, -10); 
-			attrs = new ActorAttrs(200, 3, 1, 0.1);
-			shield = true;
-			break;
-		case 4:
-			weapon = createShieldActivator(20, 100, -10); 
-			attrs = new ActorAttrs(250, 3.5, 0.7, 0.1);
-			shield = true;
-			break;
-		case 5:
-			weapon = new CompositeBehavior(
-				createShieldActivator(30, 150, -10),
-				BehaviorFactory.createAutofire(
-					[	new AmmoFireSource(AmmoType.LASER, 3, -12, 0, 0, 1),
-						new AmmoFireSource(AmmoType.LASER, 3,  12, 0, 0, 1),
-						new AmmoFireSource(AmmoType.LASER, 1, -8, 5, -180, 0),
-						new AmmoFireSource(AmmoType.LASER, 1,  8, 5, -180, 0)	], 
-					1500, 1500)
-			);	
-			attrs = new ActorAttrs(300, 3.7, 0.7, 0.1);
-			shield = true;
-			break;
-		
-		case 6:
-			weapon = new AlternatingBehavior(
-				500, 1500,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -18, -30, 0, 0), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  18, -30, 0, 0), 1000)
-			);
-			attrs = new ActorAttrs(200, 4, 0.3, 0.1);
-			break;
-		case 7:
-			weapon = new AlternatingBehavior(
-				200, 600,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -18, -30, 0, 1), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20, -15, -25, 0, 1), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  15, -25, 0, 1), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 20,  18, -30, 0, 1), 1000)
-			);
-			attrs = new ActorAttrs(225, 4.25, 0.3, 0.1);
-			break;
-		case 8:
-			weapon = new AlternatingBehavior(
-				250, 350,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 22, -18, -30, 0, 2), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 22, -15, -25, 0, 2), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 22,  15, -25, 0, 2), 1000),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 22,  18, -30, 0, 2), 1000)
-			);
-			attrs = new ActorAttrs(300, 4.25, 0.7, 0.2);
-			break;
-		
-		// level 9 ///////////////////////////////////////////
-		case 34:
-			// desc: people outgrowing the Stingers but wanting the speed go this line etc
-			// dps: 233
-			weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 35, 0, -15, 0, 0), 150);
-			attrs = new ActorAttrs(400, 5.5, 0.7, 0.1);
-			break;
-		case 35:
-			// dps: 400
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.BULLET, 50,  -20, 0, 0, 1),
-					new AmmoFireSource(AmmoType.BULLET, 50,   20, 0, 0, 1)],
-				250);
-			attrs = new ActorAttrs(550, 6.5, 0.8, 0.1);
-			break;
-		case 36:
-			// dps: 600
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.BULLET, 66, -20, 0, 0, 5), 
-					new AmmoFireSource(AmmoType.BULLET, 66,  20, 0, 0, 5),
-					new AmmoFireSource(AmmoType.BULLET, 66,   0, -10, 0, 5)], 
-				333);
-			attrs = new ActorAttrs(700, 8, 1, 0.1);
-			break;
-
-		case 28:
-			weapon = BehaviorFactory.createChargedFire(
-				[	new AmmoFireSource(AmmoType.FUSION, 40, -22, 0, 0),
-					new AmmoFireSource(AmmoType.FUSION, 40,  22, 0, 0)],
-				5, 1000, 5);
-			attrs = new ActorAttrs(450, 5.2, 1, 0.1);
-			fusion = true;
-			break;
-		case 29:
-			weapon = BehaviorFactory.createChargedFire(
-				[	new AmmoFireSource(AmmoType.FUSION, 130, -22, 0, 0),
-					new AmmoFireSource(AmmoType.FUSION, 130,  22, 0, 0)],
-				5, 1000, 5);
-			attrs = new ActorAttrs(675, 6, 1, 0.1);
-			fusion = true;
-			break;
-		case 30:
-			weapon = BehaviorFactory.createChargedFire(
-				[	new AmmoFireSource(AmmoType.FUSION, 225, -22, 0, 0),
-					new AmmoFireSource(AmmoType.FUSION, 225,  22, 0, 0)],
-				5, 1000, 10);
-			attrs = new ActorAttrs(900, 7, 1, 0.1);
-			fusion = true;
-			break;
-
-		case 15:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 110, -24, 0, 0, 1),
-					new AmmoFireSource(AmmoType.LASER, 110,  24, 0, 0, 1)],
-				1000, 1000);
-			attrs = new ActorAttrs(425, 5, 0.8, 0.1);
-			break;
-		case 16:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 110, -24, 0, 0, 2),
-					new AmmoFireSource(AmmoType.LASER, 100, -19, -5, 0, 2),
-					new AmmoFireSource(AmmoType.LASER, 100,  19, -5, 0, 2),
-					new AmmoFireSource(AmmoType.LASER, 110,  24, 0, 0, 2)],
-				1000, 1000);
-			attrs = new ActorAttrs(610, 5.5, 0.9, 0.1);
-			break;
-		case 17:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 100, -30, 5, 0, 4),
-					new AmmoFireSource(AmmoType.LASER, 100, -24, 0, 0, 4),
-					new AmmoFireSource(AmmoType.LASER, 100, -19, -5, 0, 4),
-					new AmmoFireSource(AmmoType.LASER, 100,  19, -5, 0, 4),
-					new AmmoFireSource(AmmoType.LASER, 100,  24, 0, 0, 4),
-					new AmmoFireSource(AmmoType.LASER, 100,  30, 5, 0, 4)],
-				1000, 1000);
-			attrs = new ActorAttrs(800, 6, 1, 0.1);
-			break;
-		
-		case 12:
-			weapon = createShieldActivator(40, 225, -15);
-			attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
-			shield = true;
-			break;
-		case 13:
-			weapon = createShieldActivator(90, 500, -15);
-			attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
-			shield = true;
-			break;
-		case 14:
-			weapon = createShieldActivator(150, 750, -15);
-			attrs = new ActorAttrs(4000, 3.5, 0.8, 0.5);
-			shield = true;
-			break;
-
-		case 21:
-			weapon = new CompositeBehavior(
-				createShieldActivator(25, 150, -15),
-				BehaviorFactory.createAutofire(
-					[ new AmmoFireSource(AmmoType.BULLET, 20, -20, -20),
-					  new AmmoFireSource(AmmoType.BULLET, 20,  20, -20)], 500)
-			);
-			attrs = new ActorAttrs(750, 4, 0.7, 0.1);
-			shield = true;
-			break;
-		case 22:
-			weapon = new CompositeBehavior(
-				createShieldActivator(60, 250, -15),
-				BehaviorFactory.createAutofire(
-					[   new AmmoFireSource(AmmoType.ROCKET, 40, -20, -25),
-						new AmmoFireSource(AmmoType.ROCKET, 40,  20, -25)], 500)
-			);
-			attrs = new ActorAttrs(1400, 4, 0.7, 0.1);
-			shield = true;
-			break;
-		case 23:
-			weapon = new CompositeBehavior(
-				createShieldActivator(100, 300, -15),
-				BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
-			);
-			attrs = new ActorAttrs(3000, 4, 0.7, 0.1);
-			shield = true;
-			fusion = true;
-			break;
-
-		case 31:
-			weapon = new CompositeBehavior(
-				createShieldActivator(75, 350, -15),
-				BehaviorFactory.createAutofire(
-					[	new AmmoFireSource(AmmoType.LASER, 25, -20, 0, 0, 1),
-						new AmmoFireSource(AmmoType.LASER, 25,  20, 0, 0, 1)],
-					1000, 1000)
-			);
-			attrs = new ActorAttrs(750, 3.75, 0.6, 0.1);
-			shield = true;
-			break;
-		case 32:
-			weapon = new CompositeBehavior(
-				createShieldActivator(160, 500, -15),
-				BehaviorFactory.createAutofire(
-					[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 2),
-						new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),
-						new AmmoFireSource(AmmoType.LASER, 33,  20, 0, 0, 2),
-						new AmmoFireSource(AmmoType.LASER, 33,  30, 10, 0, 2)],
-					1500, 1500)
-			);
-			attrs = new ActorAttrs(1800, 3.75, 0.6, 0.1);
-			shield = true;
-			break;
-		case 33:
-			weapon = new CompositeBehavior(
-				createShieldActivator(250, 700, -15),
-				BehaviorFactory.createAutofire(
-					[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 5),
-						new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 5),
-						new AmmoFireSource(AmmoType.LASER, 33, -5, -10, 0, 5),
-						new AmmoFireSource(AmmoType.LASER, 33,  5, -10, 0, 5),
-						new AmmoFireSource(AmmoType.LASER, 33,  20, 0, 0, 5),
-						new AmmoFireSource(AmmoType.LASER, 33,  30, 10, 0, 5)],
-					1500, 1500)
-			);
-			attrs = new ActorAttrs(3000, 3.75, 0.6, 0.1);
-			shield = true;
-			break;
-
-		case 9:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 70, -35, -15),
-					new AmmoFireSource(AmmoType.LASER, 70,  35, -15)],
-				500
-			);
-			attrs = new ActorAttrs(1000, 4, 0.2, 0.1);
-			break;
-		case 10:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 40, -37, -32, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40, -16, -32, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  16, -32, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  37, -32, 0, 5)],
-				400
-			);
-			attrs = new ActorAttrs(2500, 4, 0.2, 0.1);
-			break;
-		case 11:
-			weapon = BehaviorFactory.createAutofire(
-				[	new AmmoFireSource(AmmoType.LASER, 40, -63, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40, -43, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40, -23, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  23, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  43, -35, 0, 5),
-					new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 5)],
-				333
-			);
-			attrs = new ActorAttrs(3700, 4.25, 0.2, 0.1);
-			break;
-
-		case 25:
-			weapon = new AlternatingBehavior(666, 666,
-				new CompositeBehavior(
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75, -35, -15, 0, 0), 700, 700),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75,  35, -15, 0, 0), 700, 700)
-				),
-				new CompositeBehavior(
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75,  20, -25, 0, 0), 700, 700),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 75, -20, -25, 0, 0), 700, 700)
-				)
-			);
-			attrs = new ActorAttrs(1000, 3.5, 0.8, 0.1);
-			break;
-		case 26:
-			weapon = new AlternatingBehavior(333, 333,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 100, -35, -15, 0, 0), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 100, -20, -25, 0, 0), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 100,  20, -25, 0, 0), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 100,  35, -15, 0, 0), 400, 400)
-			);
-			attrs = new ActorAttrs(2500, 3.5, 0.8, 0.1);
-			break;
-		case 27:
-			weapon = new AlternatingBehavior(333, 333,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -30, -10, 0, 3), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  30, -10, 0, 2), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -15, -20, 0, 2), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  15, -20, 0, 3), 400, 400)
-			);
-			attrs = new ActorAttrs(4000, 3.5, 1, 0.1);
-			break;
-
-		case 18:
-			weapon = new AlternatingBehavior(333, 333,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50, -20, -15, 0, 1), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50,  20, -15, 0, 1), 400, 400)
-			);
-			attrs = new ActorAttrs(600, 4.1, 0.4, 0.1);
-			break;
-		case 19:
-			weapon = new AlternatingBehavior(333, 333,
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50, -20, -15, 0, 3), 400, 400),
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50,  20, -15, 0, 3), 400, 400)
-			);
-			attrs = new ActorAttrs(1050, 4.2, 0.5, 0.1);
-			break;
-		case 20:
-			weapon = new CompositeBehavior(
-				BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, 0, 40, 180, 4), 333, 333),
-				new AlternatingBehavior(333, 333,
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200, -20, -20, 0, 4), 400, 400),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 200,  20, -20, 0, 4), 400, 400)
-				)
-			);
-			attrs = new ActorAttrs(1500, 4.5, 0.6, 0.1);
-			break;
-		}
-		attrs.RADIUS = PlaneData.getPlane(asset).radius;
-		
-		var plane:Actor = new Actor(ActorAssetManager.createShip(asset), attrs);
-		plane.behavior = BehaviorFactory.faceForward;
-		plane.healthMeterEnabled = false;
-		
-		return new PlayerVehicle(plane, weapon, shield, fusion);
-	}
-	static public function getPlayerTank():PlayerVehicle
+	static public function getPlayerTank():GameScriptPlayerVehicle
 	{
 		const hull:uint = TankPartData.getHull(UserData.instance.currentHull).assetIndex;
 		const turret:uint = TankPartData.getTurret(UserData.instance.currentTurret).assetIndex;
 		
 		var tank:Actor = TankActor.createTankActor(hull, turret, new ActorAttrs(100, 1.5, 1, 0.5));
 		tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
-		return null;
+		
+		var weapon:IBehavior = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -67), 400);
+		
+		return new GameScriptPlayerVehicle(tank, weapon, false, false);
 	}
 
 	static public function placeAtRandomEdge(actor:Actor, bounds:Bounds):void
@@ -906,7 +562,7 @@ class BaseScript implements IGameScript
 		game.scoreBoard.showFusion = false;
 		game.scoreBoard.showShield = false;
 		
-		var player:PlayerVehicle;
+		var player:GameScriptPlayerVehicle;
 		if (TANK)
 		{
 			player = Utils.getPlayerTank();
@@ -915,7 +571,7 @@ class BaseScript implements IGameScript
 		}
 		else
 		{
-			player = Utils.getPlayerPlane();
+			player = GameScriptPlayerFactory.getPlayerPlane();
 			
 			game.scoreBoard.showFusion = player.usingFusion;
 			game.scoreBoard.showShield = player.usingShield;
@@ -1250,20 +906,6 @@ final class DeathAnimationBehavior implements IBehavior
 		{
 			Actor.createExplosion(game, actor.worldPos, 2, Math.random()*3);
 		}
-	}
-}
-final class PlayerVehicle
-{
-	public var actor:Actor;
-	public var weapon:IBehavior;
-	public var usingShield:Boolean;
-	public var usingFusion:Boolean;
-	public function PlayerVehicle(actor:Actor, weapon:IBehavior, shield:Boolean, fusion:Boolean)
-	{
-		this.actor = actor;
-		this.weapon = weapon;
-		this.usingShield = shield;
-		this.usingFusion = fusion;
 	}
 }
 

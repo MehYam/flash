@@ -7,7 +7,6 @@ package gameData
 		public var upgrades:uint;
 		public var purchasable:Boolean;
 		public var unlock:uint = 0;  // index of PlaneData that unlocks this one
-		public var radius:Number;
 
 		public function PlaneData(name:String, aindex:uint, radius:Number, baseStats:VehiclePartStats, upgrades:uint = 0, purchasable:Boolean = true)
 		{
