@@ -379,24 +379,53 @@ package scripts
 			var attrs:ActorAttrs;
 			var hullWeapon:IBehavior;
 			var upgrade:TankPartData;
+			var source:AmmoFireSource;
+
+			var turretWeapon:IBehavior;
+			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
+			switch (UserData.instance.currentTurret) {
+				case 0:
+					//				turretWeapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, tankScale(-67), 0, 5, true), 400);
+					source = new AmmoFireSource(AmmoType.BULLET, 10, 0, tankScale(-67), 0, 5, true);
+					upgrade = turret.getUpgrade(0);
+					if (upgrade.purchased)
+					{
+						//					
+					}
+					upgrade = turret.getUpgrade(1);
+					if (upgrade.purchased)
+					{
+						//					
+					}
+					turretWeapon = BehaviorFactory.createAutofire(source, 400);
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+			}
+
 			const hull:TankPartData = TankPartData.getHull(UserData.instance.currentHull);
-			
 			switch(UserData.instance.currentHull) {
 			case 0:
-				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				attrs = new ActorAttrs(800, 1.5, 0.2, 0.2);
 				
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
-					attrs.MAX_HEALTH += 250;
+					attrs.MAX_HEALTH += 500;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)
 				{
 					hullWeapon = BehaviorFactory.createAutofire(
-						[	new AmmoFireSource(AmmoType.BULLET, 10, tankScale(-15), tankScale(-50), 180, 5),
-							new AmmoFireSource(AmmoType.BULLET, 10, tankScale( 15), tankScale(-50), 180, 5)],
-						1000
+						[	new AmmoFireSource(AmmoType.BULLET, 4, tankScale(-15), tankScale(40), 180, 0),
+							new AmmoFireSource(AmmoType.BULLET, 4, tankScale( 15), tankScale(40), 180, 0)],
+						333
 					);
 				}
 				break;
@@ -411,31 +440,6 @@ package scripts
 				break;
 			case 4:
 				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
-				break;
-			}
-			var turretWeapon:IBehavior;
-			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
-			switch (UserData.instance.currentTurret) {
-			case 0:
-				turretWeapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, tankScale(-67), 0, 5, true), 400);
-				upgrade = turret.getUpgrade(0);
-				if (upgrade.purchased)
-				{
-//					
-				}
-				upgrade = turret.getUpgrade(1);
-				if (upgrade.purchased)
-				{
-//					
-				}
-				break;
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
 				break;
 			}
 			

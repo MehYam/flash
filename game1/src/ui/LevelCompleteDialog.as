@@ -12,11 +12,11 @@ package ui
 
 	public class LevelCompleteDialog extends GameDialog
 	{
-		public function LevelCompleteDialog(stats:PlayedLevelStats)
+		public function LevelCompleteDialog(stats:PlayedLevelStats, level:uint)
 		{
 			super();
 			
-			title = "STATS";
+			title = "STATS - Level " + (level+1);
 			
 			addFields(stats);
 			addBottomStuff();

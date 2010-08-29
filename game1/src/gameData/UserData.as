@@ -73,11 +73,14 @@ package gameData
 
 				s_instance.levelReached = 17;
 
-				s_instance.currentHull = 0;
-				s_instance.currentTurret = 0;
-//				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(0), 0);
-//				s_instance.purchasePart(TankPartData.getHull(0).getUpgrade(1), 0);
-//				s_instance.purchasePart(TankPartData.getTurret(0).getUpgrade(1), 0);
+				const testHull:uint = 0;
+				const testTurret:uint = 0;
+				s_instance.currentHull = testHull;
+				s_instance.currentTurret = testTurret;
+				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);
+				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(1), 0);
+//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
+//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
 			}
 			return s_instance;
 		}

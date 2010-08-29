@@ -594,7 +594,7 @@ package
 			}
 			_cast.removeAll();
 			
-			var endLvl:LevelCompleteDialog = new LevelCompleteDialog(stats);
+			var endLvl:LevelCompleteDialog = new LevelCompleteDialog(stats, _lastStartedLevel);
 			Util.listen(endLvl, Event.COMPLETE, onLevelCompleteDialogDismissed);
 
 			UIUtil.openDialog(this.parent, endLvl);

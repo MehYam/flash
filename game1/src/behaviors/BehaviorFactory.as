@@ -3,8 +3,6 @@ package behaviors
 	import flash.geom.Point;
 	
 	import karnold.utils.RateLimiter;
-	
-	import spark.effects.Fade;
 
 	final public class BehaviorFactory
 	{

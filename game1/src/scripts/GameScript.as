@@ -32,7 +32,7 @@ package scripts
 					if (line.length < 2) continue;
 					if (line.charCodeAt(0) == levelDelimiter)
 					{
-						if (level)
+						if (level && level.length)
 						{
 							s_levels.push(level);
 						}
