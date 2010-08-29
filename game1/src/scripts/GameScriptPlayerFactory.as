@@ -379,25 +379,30 @@ package scripts
 			var attrs:ActorAttrs;
 			var hullWeapon:IBehavior;
 			var upgrade:TankPartData;
+
 			var source:AmmoFireSource;
+			var fireRate:Number;
+			var damage:Number;
 
 			var turretWeapon:IBehavior;
 			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
 			switch (UserData.instance.currentTurret) {
 				case 0:
-					//				turretWeapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, tankScale(-67), 0, 5, true), 400);
-					source = new AmmoFireSource(AmmoType.BULLET, 10, 0, tankScale(-67), 0, 5, true);
+					fireRate = 400;
+					damage = 10;
+
 					upgrade = turret.getUpgrade(0);
 					if (upgrade.purchased)
 					{
-						//					
+						fireRate *= .5;
 					}
 					upgrade = turret.getUpgrade(1);
 					if (upgrade.purchased)
 					{
-						//					
+						damage *= 1.5;	
 					}
-					turretWeapon = BehaviorFactory.createAutofire(source, 400);
+					source = new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-67), 0, 5, true);
+					turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
 					break;
 				case 1:
 					break;
@@ -417,7 +422,7 @@ package scripts
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
-					attrs.MAX_HEALTH += 500;
+					attrs.MAX_HEALTH *= 1.625;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)

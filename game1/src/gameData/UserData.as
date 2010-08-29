@@ -79,8 +79,8 @@ package gameData
 				s_instance.currentTurret = testTurret;
 				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);
 				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(1), 0);
-//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
-//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
+				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
+				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
 			}
 			return s_instance;
 		}
