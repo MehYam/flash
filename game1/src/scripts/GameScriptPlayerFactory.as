@@ -380,9 +380,10 @@ package scripts
 			var hullWeapon:IBehavior;
 			var upgrade:TankPartData;
 
-			var source:AmmoFireSource;
+			var source:*;
 			var fireRate:Number;
 			var damage:Number;
+			var angle:Number;
 
 			var turretWeapon:IBehavior;
 			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
@@ -403,8 +404,37 @@ package scripts
 					}
 					source = new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-67), 0, 5, true);
 					turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
+					// min dps 25, max dps 75
 					break;
 				case 1:
+					fireRate = 666;
+					damage = 26;
+					upgrade = turret.getUpgrade(0);
+					if (upgrade.purchased)
+					{
+						angle = 10;
+					}
+					source = [	new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-55), 0, 5, true),
+								new AmmoFireSource(AmmoType.BULLET, damage, tankScale(-15), tankScale(-20), -angle, 5, true),
+								new AmmoFireSource(AmmoType.BULLET, damage, tankScale( 15), tankScale(-20),  angle, 5, true)];
+
+					upgrade = turret.getUpgrade(1);
+					if (upgrade.purchased)
+					{
+						turretWeapon = new CompositeBehavior(
+										BehaviorFactory.createAutofire(source, fireRate),
+										BehaviorFactory.createAutofire(
+											[	new AmmoFireSource(AmmoType.ROCKET, damage*2, 0, tankScale(-55), 0, 0, true),
+												new AmmoFireSource(AmmoType.ROCKET, damage*2, tankScale(-15), tankScale(-20), -angle - 5, 0, true),
+												new AmmoFireSource(AmmoType.ROCKET, damage*2, tankScale( 15), tankScale(-20),  angle + 5, 0, true)],
+											fireRate*2)
+						);
+					}
+					else
+					{
+						turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
+					}
+					// min dps 120, max dps 220
 					break;
 				case 2:
 					break;
@@ -422,7 +452,7 @@ package scripts
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
-					attrs.MAX_HEALTH *= 1.625;
+					attrs.MAX_HEALTH = 1300;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)
@@ -433,9 +463,21 @@ package scripts
 						333
 					);
 				}
+				// armor 800-1300, speed 1.5, dps 24
 				break;
 			case 1:
-				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				attrs = new ActorAttrs(1300, 2, 0.2, 0.2);
+				upgrade = hull.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					attrs.MAX_HEALTH = 1600;
+				}
+				upgrade = hull.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					attrs.MAX_SPEED = 2.5;
+				}
+				// armor 1300-1600, speed 2-2.5
 				break;
 			case 2:
 				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
