@@ -439,7 +439,6 @@ package scripts
 					break;
 				case 2:
 					// fusion starts at 100
-					
 					upgrade = turret.getUpgrade(0);
 					if (upgrade.purchased)
 					{
@@ -504,7 +503,17 @@ package scripts
 				// armor 1300-1600, speed 2-2.5
 				break;
 			case 2:
-				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				attrs = new ActorAttrs(2000, 2.8, 0.5, 0.2);
+				upgrade = hull.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					hullWeapon = createShieldActivator(160, 500, -50);
+				}
+				upgrade = hull.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					attrs.MAX_SPEED = 3.3;
+				}
 				break;
 			case 3:
 				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
