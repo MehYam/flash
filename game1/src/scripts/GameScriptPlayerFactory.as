@@ -379,13 +379,14 @@ package scripts
 			var attrs:ActorAttrs;
 			var hullWeapon:IBehavior;
 			var upgrade:TankPartData;
-
 			var source:*;
 			var fireRate:Number;
 			var damage:Number;
 			var angle:Number;
-
 			var turretWeapon:IBehavior;
+			var showFusion:Boolean;
+			var showShield:Boolean;
+			
 			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
 			switch (UserData.instance.currentTurret) {
 				case 0:
@@ -437,6 +438,29 @@ package scripts
 					// min dps 120, max dps 220
 					break;
 				case 2:
+					// fusion starts at 100
+					
+					upgrade = turret.getUpgrade(0);
+					if (upgrade.purchased)
+					{
+						source = [	new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60), -2.5, 0, true),
+									new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60),  2.5, 0, true)];
+					}
+					else
+					{
+						source = new AmmoFireSource(AmmoType.FUSION, 50, 0, tankScale(-50), 0, 0, true);
+					}
+					upgrade = turret.getUpgrade(1);
+					if (upgrade.purchased)
+					{
+						fireRate = 1000;
+					}
+					else
+					{
+						fireRate = 666;
+					}
+					turretWeapon = BehaviorFactory.createChargedFire(source, 5, fireRate, 40);
+					showFusion = true;
 					break;
 				case 3:
 					break;
@@ -495,7 +519,7 @@ package scripts
 			var tank:Actor = TankActor.createTankActor(hull.assetIndex, turret.assetIndex, attrs);
 			tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
 
-			return new GameScriptPlayerVehicle(tank, new CompositeBehavior(hullWeapon, turretWeapon), false, false);
+			return new GameScriptPlayerVehicle(tank, new CompositeBehavior(hullWeapon, turretWeapon), showShield, showFusion);
 		}
 	}
 }

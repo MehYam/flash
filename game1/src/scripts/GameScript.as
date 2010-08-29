@@ -543,26 +543,13 @@ class BaseScript implements IGameScript
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 
 	{
-		game.scoreBoard.showFusion = false;
-		game.scoreBoard.showShield = false;
-		
-		var player:GameScriptPlayerVehicle;
-		if (TANK)
-		{
-			player = GameScriptPlayerFactory.getPlayerTank();
-			_weapon = player.weapon;
-			game.setPlayer(player.actor);
-		}
-		else
-		{
-			player = GameScriptPlayerFactory.getPlayerPlane();
-			
-			game.scoreBoard.showFusion = player.usingFusion;
-			game.scoreBoard.showShield = player.usingShield;
-			
-			_weapon = player.weapon;
-			game.setPlayer(player.actor);
-		}
+		var player:GameScriptPlayerVehicle = TANK ?
+			GameScriptPlayerFactory.getPlayerTank() : GameScriptPlayerFactory.getPlayerPlane();
+
+		_weapon = player.weapon;
+		game.scoreBoard.showFusion = player.usingFusion;
+		game.scoreBoard.showShield = player.usingShield;
+		game.setPlayer(player.actor);
 	}
 
 	// IGameEvents
