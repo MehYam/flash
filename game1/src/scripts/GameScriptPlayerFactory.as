@@ -389,82 +389,92 @@ package scripts
 			
 			const turret:TankPartData = TankPartData.getTurret(UserData.instance.currentTurret);
 			switch (UserData.instance.currentTurret) {
-				case 0:
-					fireRate = 400;
-					damage = 10;
+			case 0:
+				fireRate = 400;
+				damage = 10;
 
-					upgrade = turret.getUpgrade(0);
-					if (upgrade.purchased)
-					{
-						fireRate *= .5;
-					}
-					upgrade = turret.getUpgrade(1);
-					if (upgrade.purchased)
-					{
-						damage *= 1.5;	
-					}
-					source = new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-67), 0, 5, true);
+				upgrade = turret.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					fireRate *= .5;
+				}
+				upgrade = turret.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					damage *= 1.5;	
+				}
+				source = new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-67), 0, 5, true);
+				turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
+				// min dps 25, max dps 75
+				break;
+			case 1:
+				fireRate = 666;
+				damage = 26;
+				upgrade = turret.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					angle = 10;
+				}
+				source = [	new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-55), 0, 5, true),
+							new AmmoFireSource(AmmoType.BULLET, damage, tankScale(-15), tankScale(-20), -angle, 5, true),
+							new AmmoFireSource(AmmoType.BULLET, damage, tankScale( 15), tankScale(-20),  angle, 5, true)];
+
+				upgrade = turret.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					turretWeapon = new CompositeBehavior(
+									BehaviorFactory.createAutofire(source, fireRate),
+									BehaviorFactory.createAutofire(
+										[	new AmmoFireSource(AmmoType.ROCKET, damage*2, 0, tankScale(-55), 0, 0, true),
+											new AmmoFireSource(AmmoType.ROCKET, damage*2, tankScale(-15), tankScale(-20), -angle - 5, 0, true),
+											new AmmoFireSource(AmmoType.ROCKET, damage*2, tankScale( 15), tankScale(-20),  angle + 5, 0, true)],
+										fireRate*2)
+					);
+				}
+				else
+				{
 					turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
-					// min dps 25, max dps 75
-					break;
-				case 1:
+				}
+				// min dps 120, max dps 220
+				break;
+			case 2:
+				// fusion starts at 100
+				upgrade = turret.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					source = [	new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60), -2.5, 0, true),
+								new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60),  2.5, 0, true)];
+				}
+				else
+				{
+					source = new AmmoFireSource(AmmoType.FUSION, 50, 0, tankScale(-50), 0, 0, true);
+				}
+				upgrade = turret.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					fireRate = 1000;
+				}
+				else
+				{
 					fireRate = 666;
-					damage = 26;
-					upgrade = turret.getUpgrade(0);
-					if (upgrade.purchased)
-					{
-						angle = 10;
-					}
-					source = [	new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-55), 0, 5, true),
-								new AmmoFireSource(AmmoType.BULLET, damage, tankScale(-15), tankScale(-20), -angle, 5, true),
-								new AmmoFireSource(AmmoType.BULLET, damage, tankScale( 15), tankScale(-20),  angle, 5, true)];
-
-					upgrade = turret.getUpgrade(1);
-					if (upgrade.purchased)
-					{
-						turretWeapon = new CompositeBehavior(
-										BehaviorFactory.createAutofire(source, fireRate),
-										BehaviorFactory.createAutofire(
-											[	new AmmoFireSource(AmmoType.ROCKET, damage*2, 0, tankScale(-55), 0, 0, true),
-												new AmmoFireSource(AmmoType.ROCKET, damage*2, tankScale(-15), tankScale(-20), -angle - 5, 0, true),
-												new AmmoFireSource(AmmoType.ROCKET, damage*2, tankScale( 15), tankScale(-20),  angle + 5, 0, true)],
-											fireRate*2)
-						);
-					}
-					else
-					{
-						turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
-					}
-					// min dps 120, max dps 220
-					break;
-				case 2:
-					// fusion starts at 100
-					upgrade = turret.getUpgrade(0);
-					if (upgrade.purchased)
-					{
-						source = [	new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60), -2.5, 0, true),
-									new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60),  2.5, 0, true)];
-					}
-					else
-					{
-						source = new AmmoFireSource(AmmoType.FUSION, 50, 0, tankScale(-50), 0, 0, true);
-					}
-					upgrade = turret.getUpgrade(1);
-					if (upgrade.purchased)
-					{
-						fireRate = 1000;
-					}
-					else
-					{
-						fireRate = 666;
-					}
-					turretWeapon = BehaviorFactory.createChargedFire(source, 5, fireRate, 40);
-					showFusion = true;
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
+				}
+				turretWeapon = BehaviorFactory.createChargedFire(source, 5, fireRate, 40);
+				showFusion = true;
+				break;
+			case 3:
+				// dps - 300 -> 600
+				upgrade = turret.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+				}
+				upgrade = turret.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+				}
+				break;
+			case 4:
+				// dps - 300 -> 600
+				break;
 			}
 
 			const hull:TankPartData = TankPartData.getHull(UserData.instance.currentHull);
@@ -508,6 +518,7 @@ package scripts
 				if (upgrade.purchased)
 				{
 					hullWeapon = createShieldActivator(160, 500, -50);
+					showShield = true;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)
