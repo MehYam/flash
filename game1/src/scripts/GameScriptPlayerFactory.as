@@ -18,11 +18,11 @@ package scripts
 
 	public class GameScriptPlayerFactory
 	{
-		static private function createShieldActivator(shieldDamage:Number, shieldArmor:Number, yOffset:Number, lifetime:Number = 1400):IBehavior
+		static private function createShieldActivator(shieldDamage:Number, shieldArmor:Number, yOffset:Number = 0, lifetime:Number = 1400):IBehavior
 		{
-			return BehaviorFactory.createShieldActivator(
+			return ShieldActor.createActivator(
 				new AmmoFireSource(AmmoType.SHIELD, shieldDamage, 0, yOffset, 0),
-				new ActorAttrs(shieldArmor, 0, 0, 0.01, 50, 0, false, lifetime));
+				new ActorAttrs(shieldArmor, 0, 0, 0.01, 40, 0, false, lifetime));
 		}
 		static public function getPlayerPlane():GameScriptPlayerVehicle
 		{
@@ -59,18 +59,18 @@ package scripts
 					break;
 				
 				case 3:
-					weapon = createShieldActivator(10, 50, -10); 
+					weapon = createShieldActivator(10, 50); 
 					attrs = new ActorAttrs(200, 3, 1, 0.1);
 					shield = true;
 					break;
 				case 4:
-					weapon = createShieldActivator(20, 100, -10); 
+					weapon = createShieldActivator(20, 100); 
 					attrs = new ActorAttrs(250, 3.5, 0.7, 0.1);
 					shield = true;
 					break;
 				case 5:
 					weapon = new CompositeBehavior(
-						createShieldActivator(30, 150, -10),
+						createShieldActivator(30, 150),
 						BehaviorFactory.createAutofire(
 							[	new AmmoFireSource(AmmoType.LASER, 3, -12, 0, 0, 1),
 								new AmmoFireSource(AmmoType.LASER, 3,  12, 0, 0, 1),
@@ -192,24 +192,24 @@ package scripts
 					break;
 				
 				case 12:
-					weapon = createShieldActivator(40, 225, -15);
+					weapon = createShieldActivator(40, 225);
 					attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
 					shield = true;
 					break;
 				case 13:
-					weapon = createShieldActivator(90, 500, -15);
+					weapon = createShieldActivator(90, 500);
 					attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
 					shield = true;
 					break;
 				case 14:
-					weapon = createShieldActivator(150, 750, -15);
+					weapon = createShieldActivator(150, 750);
 					attrs = new ActorAttrs(4000, 3.5, 0.8, 0.5);
 					shield = true;
 					break;
 				
 				case 21:
 					weapon = new CompositeBehavior(
-						createShieldActivator(25, 150, -15),
+						createShieldActivator(25, 150),
 						BehaviorFactory.createAutofire(
 							[	new AmmoFireSource(AmmoType.BULLET, 20, -20, -20),
 								new AmmoFireSource(AmmoType.BULLET, 20,  20, -20)], 500)
@@ -219,7 +219,7 @@ package scripts
 					break;
 				case 22:
 					weapon = new CompositeBehavior(
-						createShieldActivator(60, 250, -15),
+						createShieldActivator(60, 250),
 						BehaviorFactory.createAutofire(
 							[   new AmmoFireSource(AmmoType.ROCKET, 40, -20, -25),
 								new AmmoFireSource(AmmoType.ROCKET, 40,  20, -25)], 500)
@@ -229,7 +229,7 @@ package scripts
 					break;
 				case 23:
 					weapon = new CompositeBehavior(
-						createShieldActivator(100, 300, -15),
+						createShieldActivator(100, 300),
 						BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 					);
 					attrs = new ActorAttrs(3000, 4, 0.7, 0.1);
@@ -239,7 +239,7 @@ package scripts
 				
 				case 31:
 					weapon = new CompositeBehavior(
-						createShieldActivator(75, 350, -15),
+						createShieldActivator(75, 350),
 						BehaviorFactory.createAutofire(
 							[	new AmmoFireSource(AmmoType.LASER, 25, -20, 0, 0, 1),
 								new AmmoFireSource(AmmoType.LASER, 25,  20, 0, 0, 1)],
@@ -250,7 +250,7 @@ package scripts
 					break;
 				case 32:
 					weapon = new CompositeBehavior(
-						createShieldActivator(160, 500, -15),
+						createShieldActivator(160, 500),
 						BehaviorFactory.createAutofire(
 							[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 2),
 								new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 2),
@@ -263,7 +263,7 @@ package scripts
 					break;
 				case 33:
 					weapon = new CompositeBehavior(
-						createShieldActivator(250, 700, -15),
+						createShieldActivator(250, 700),
 						BehaviorFactory.createAutofire(
 							[	new AmmoFireSource(AmmoType.LASER, 33, -30, 10, 0, 5),
 								new AmmoFireSource(AmmoType.LASER, 33, -20, 0, 0, 5),
@@ -462,15 +462,26 @@ package scripts
 				showFusion = true;
 				break;
 			case 3:
-				// dps - 300 -> 600
+				// dps - 300 -> 800
+				damage = 100;
+				fireRate = 1000;
 				upgrade = turret.getUpgrade(0);
+				var rocket:uint = 0; 
 				if (upgrade.purchased)
 				{
+					fireRate = 750;
 				}
 				upgrade = turret.getUpgrade(1);
 				if (upgrade.purchased)
 				{
+//					damage = 150;
+//					rocket = 1;
 				}
+				turretWeapon = new AlternatingBehavior(fireRate/3 - 33, fireRate/3 + 33,
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, damage, tankScale(-10), tankScale(-80), -10, rocket, true), fireRate),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, damage, tankScale(  0), tankScale(-80),   0, rocket, true), fireRate),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, damage, tankScale( 10), tankScale(-80),  10, rocket, true), fireRate)
+				);
 				break;
 			case 4:
 				// dps - 300 -> 600
@@ -517,7 +528,7 @@ package scripts
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
-					hullWeapon = createShieldActivator(160, 500, -50);
+					hullWeapon = createShieldActivator(160, 500);
 					showShield = true;
 				}
 				upgrade = hull.getUpgrade(1);
@@ -532,30 +543,28 @@ package scripts
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
-					attrs.MAX_HEALTH = 4000;
+					attrs.MAX_HEALTH = 3800;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)
 				{
-					hullWeapon = BehaviorFactory.createAutofire(
-						[	new AmmoFireSource(AmmoType.LASER, 25, tankScale(-13), tankScale(-40), 0, 2),
-							new AmmoFireSource(AmmoType.LASER, 25, tankScale( 13), tankScale(-40), 0, 2)],
-						333
-					);
+					hullWeapon = createShieldActivator(120, 500, -20);
+					showShield = true;
 				}
-				// armor 3000-4000, speed 2.5
+				// armor 3000-3800 + shield 500, speed 2.5
 				break;
 			case 4:
+				attrs = new ActorAttrs(3800, 2.2, 0.5, 0.2);
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
+					attrs.MAX_HEALTH = 4500;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)
 				{
 				}
-				attrs = new ActorAttrs(3800, 2.2, 0.5, 0.2);
-				// armor 3800-4500 + shield 500, speed 2.2
+				// armor 3800-5000, speed 2.2
 				break;
 			}
 			

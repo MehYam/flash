@@ -82,9 +82,15 @@ package behaviors
 			}
 			return ammo;
 		}
-		public function get damage():Number  // exists just for ShieldActivator.....
+		
+		// hack: these exist just for shield activator
+		public function get damage():Number
 		{
 			return _damage;
+		}
+		public function get offsetY():Number
+		{
+			return _offsetY;
 		}
 	}
 }

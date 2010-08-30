@@ -350,7 +350,7 @@ package
 		{
 			var foo:Shape = new Shape;
 			foo.graphics.lineStyle(1);
-			foo.graphics.beginFill(0xff0000, .7);
+			foo.graphics.beginFill(0xff0000, .5);
 			foo.graphics.drawCircle(0, 0, radius);
 			foo.graphics.moveTo(10, 0);
 			foo.graphics.lineTo(-10, 0);

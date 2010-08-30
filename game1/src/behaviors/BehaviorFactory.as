@@ -147,10 +147,6 @@ package behaviors
 		{
 			return new ChargedFireBehavior(source, chargeSteps, msStepDuration, damageAtFull);
 		}
-		static public function createShieldActivator(source:AmmoFireSource, attrs:ActorAttrs):IBehavior
-		{
-			return new ShieldActivatorBehavior(source, attrs, 1000);
-		}
 		static public function createExpire(lifetime:int):IBehavior
 		{
 			return new ExpireBehavior(lifetime);
@@ -175,7 +171,6 @@ import karnold.utils.MathUtil;
 import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
-import scripts.ShieldActor;
 import scripts.TankActor;
 
 final class Accelerator implements IBehavior
@@ -442,64 +437,13 @@ final class ChargedFireBehavior implements IBehavior
 	}
 }
 
-// KAI: this might be something more generic
-// KAI: this might also be the same thing as the chargedfire, when you think about it
-final class ShieldActivatorBehavior implements IBehavior  
-{
-	private var _source:AmmoFireSource;
-	private var _attrs:ActorAttrs;
-	private var _limiter:RateLimiter;
-	public function ShieldActivatorBehavior(source:AmmoFireSource, attrs:ActorAttrs, msRecharge:uint):void
-	{
-		_source = source;
-		_limiter = new RateLimiter(msRecharge, msRecharge);
-		_attrs = attrs;
-	}
-	private var _shield:ShieldActor;
-	public function onFrame(game:IGame, actor:Actor):void
-	{
-		if (actor)
-		{
-			if (_shield && (!_shield.alive || !game.playerShooting))
-			{
-				// launch if the user's launched a ready shield, or if a ready shield has died
-				_shield.release(game);
-				_shield = null;
-				_limiter.reset();
-				
-				game.scoreBoard.pctShield = 0.01;
-				game.globalBehavior = this;
-			}
-			else if (!_shield && game.playerShooting && _limiter.now)
-			{
-				_shield = ShieldActor(_source.fire(game, actor));
-				
-				// this seriously needs a redesign
-				_shield.attrs = _attrs;
-				_shield.reset();
-				_shield.damage = _source.damage;
-				_shield.healthMeterEnabled = false;
-			}
-		}
-		else
-		{
-			// UI code....
-			const charge:Number = 1 - _limiter.remaining / _limiter.minRate;
-			game.scoreBoard.pctShield = charge;
-			if (charge == 1)
-			{
-				game.globalBehavior = null;
-			}
-		}
-	}
-}
-
 final class ShadowPlayerBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		Util.setPoint(actor.worldPos, game.player.worldPos);
-		actor.displayObject.rotation = game.player.displayObject.rotation;
+		const player:Actor = game.player;
+		Util.setPoint(actor.worldPos, player.worldPos);
+		actor.displayObject.rotation = player.displayObject.rotation;
 	}	
 }
 

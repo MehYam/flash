@@ -139,7 +139,7 @@ final class HullSpec
 		new HullSpec(1.3, 1, 5, 10),
 		new HullSpec(1.3),
 		new HullSpec(1.5, 1, 5, 10, -10),
-		new HullSpec(1.6, 1.3, 0, 12)
+		new HullSpec(1.6, 1.3, 0, 12, -10)
 	];
 	
 	public var turretOffsetY:Number;
