@@ -73,8 +73,8 @@ package gameData
 
 				s_instance.levelReached = 17;
 
-				const testHull:uint = 2;
-				const testTurret:uint = 2;
+				const testHull:uint = 3;
+				const testTurret:uint = 3;
 				s_instance.currentHull = testHull;
 				s_instance.currentTurret = testTurret;
 				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);

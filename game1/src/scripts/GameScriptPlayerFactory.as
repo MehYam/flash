@@ -525,12 +525,37 @@ package scripts
 				{
 					attrs.MAX_SPEED = 3.3;
 				}
+				// armor 2000 + shield 500, speed 2.8-3.3
 				break;
 			case 3:
-				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				attrs = new ActorAttrs(3000, 2.5, 0.5, 0.2);
+				upgrade = hull.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					attrs.MAX_HEALTH = 4000;
+				}
+				upgrade = hull.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+					hullWeapon = BehaviorFactory.createAutofire(
+						[	new AmmoFireSource(AmmoType.LASER, 25, tankScale(-13), tankScale(-40), 0, 2),
+							new AmmoFireSource(AmmoType.LASER, 25, tankScale( 13), tankScale(-40), 0, 2)],
+						333
+					);
+				}
+				// armor 3000-4000, speed 2.5
 				break;
 			case 4:
-				attrs = new ActorAttrs(250, 1.5, 0.2, 0.2);
+				upgrade = hull.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+				}
+				upgrade = hull.getUpgrade(1);
+				if (upgrade.purchased)
+				{
+				}
+				attrs = new ActorAttrs(3800, 2.2, 0.5, 0.2);
+				// armor 3800-4500 + shield 500, speed 2.2
 				break;
 			}
 			
