@@ -22,7 +22,7 @@ package scripts
 		{
 			return ShieldActor.createActivator(
 				new AmmoFireSource(AmmoType.SHIELD, shieldDamage, 0, yOffset, 0),
-				new ActorAttrs(shieldArmor, 0, 0, 0.01, 40, 0, false, lifetime));
+				new ActorAttrs(shieldArmor, 0, 0, 0.01, 45, 0, false, lifetime));
 		}
 		static public function getPlayerPlane():GameScriptPlayerVehicle
 		{
@@ -462,20 +462,20 @@ package scripts
 				showFusion = true;
 				break;
 			case 3:
-				// dps - 300 -> 800
+				// dps - 300 -> 600
 				damage = 100;
 				fireRate = 1000;
 				upgrade = turret.getUpgrade(0);
-				var rocket:uint = 0; 
 				if (upgrade.purchased)
 				{
 					fireRate = 750;
 				}
 				upgrade = turret.getUpgrade(1);
+				var rocket:uint = 0; 
 				if (upgrade.purchased)
 				{
-//					damage = 150;
-//					rocket = 1;
+					damage = 150;
+					rocket = 1;
 				}
 				turretWeapon = new AlternatingBehavior(fireRate/3 - 33, fireRate/3 + 33,
 					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, damage, tankScale(-10), tankScale(-80), -10, rocket, true), fireRate),
@@ -484,7 +484,28 @@ package scripts
 				);
 				break;
 			case 4:
-				// dps - 300 -> 600
+				// dps - 450 -> 600
+				damage = 75;
+				fireRate = 500;
+				
+				upgrade = turret.getUpgrade(0);
+				var bullet:uint = 0;
+				if (upgrade.purchased)
+				{
+					bullet = 5;
+					damage = 100;
+				}
+				upgrade = turret.getUpgrade(0);
+				if (upgrade.purchased)
+				{
+					fireRate = 400;
+				}
+				turretWeapon = BehaviorFactory.createAutofire(
+					[	new AmmoFireSource(AmmoType.BULLET, damage, tankScale(-30), 0, -90, bullet, true),
+						new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-30),   0, bullet, true),
+						new AmmoFireSource(AmmoType.BULLET, damage, tankScale( 30), 0,  90, bullet, true)],
+					fireRate
+				);
 				break;
 			}
 
@@ -558,11 +579,16 @@ package scripts
 				upgrade = hull.getUpgrade(0);
 				if (upgrade.purchased)
 				{
-					attrs.MAX_HEALTH = 4500;
+					attrs.MAX_HEALTH = 4300;
 				}
 				upgrade = hull.getUpgrade(1);
 				if (upgrade.purchased)
 				{
+					hullWeapon = BehaviorFactory.createAutofire(
+						[	new AmmoFireSource(AmmoType.BULLET, 15, tankScale(-15), tankScale(40), 180, 5),
+							new AmmoFireSource(AmmoType.BULLET, 15, tankScale( 15), tankScale(40), 180, 5)],
+						333
+					);
 				}
 				// armor 3800-5000, speed 2.2
 				break;

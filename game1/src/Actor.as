@@ -379,13 +379,13 @@ final class BulletActor0 extends BulletActor { public function BulletActor0() { 
 final class BulletActor1 extends BulletActor { public function BulletActor1() { super(0x00ff5d); } }
 final class BulletActor2 extends BulletActor { public function BulletActor2() { super(0xeeee00); } }
 final class BulletActor3 extends BulletActor { public function BulletActor3() { super(0xff9400); } }
-final class BulletActor4 extends BulletActor { public function BulletActor4() { super(0xffecaa); } }
+final class BulletActor4 extends BulletActor { public function BulletActor4() { super(0xffffff); } }
 final class BulletActor5 extends BulletActor { public function BulletActor5() { super(0xff0000); } }
 final class LaserActor0 extends LaserActor { public function LaserActor0() { super(0x90ff); } }
 final class LaserActor1 extends LaserActor { public function LaserActor1() { super(0xff5d); } }
 final class LaserActor2 extends LaserActor { public function LaserActor2() { super(0xeeee00); } }
 final class LaserActor3 extends LaserActor { public function LaserActor3() { super(0xff9400); } }
-final class LaserActor4 extends LaserActor { public function LaserActor4() { super(0xffecaa); } }
+final class LaserActor4 extends LaserActor { public function LaserActor4() { super(0xffffff); } }
 final class LaserActor5 extends LaserActor { public function LaserActor5() { super(0xff0000); } }
 final class ExplosionParticleActor0 extends ExplosionParticleActor { public function ExplosionParticleActor0() { super(0xcccccc); } }
 final class ExplosionParticleActor1 extends ExplosionParticleActor { public function ExplosionParticleActor1() { super(0xffff00); } }

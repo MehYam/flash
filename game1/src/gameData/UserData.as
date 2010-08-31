@@ -28,59 +28,59 @@ package gameData
 				
 				// TEST DATA BELOW
 //				s_instance.credits = 100000;
-				s_instance.purchasePart(PlaneData.getPlane(1), 0);
-				s_instance.purchasePart(PlaneData.getPlane(3), 0);
-				s_instance.purchasePart(PlaneData.getPlane(2), 0);
-				s_instance.purchasePart(PlaneData.getPlane(6), 0);
-				s_instance.purchasePart(PlaneData.getPlane(4), 0);
-				s_instance.purchasePart(PlaneData.getPlane(7), 0);
-				s_instance.purchasePart(PlaneData.getPlane(5), 0);
-				s_instance.purchasePart(PlaneData.getPlane(8), 0);
-				
-				// second tier
-				s_instance.purchasePart(PlaneData.getPlane(34), 0);
-				s_instance.purchasePart(PlaneData.getPlane(28), 0);
-				s_instance.purchasePart(PlaneData.getPlane(15), 0);
-				s_instance.purchasePart(PlaneData.getPlane(12), 0);
-				s_instance.purchasePart(PlaneData.getPlane(21), 0);
-				s_instance.purchasePart(PlaneData.getPlane(31), 0);
-				s_instance.purchasePart(PlaneData.getPlane( 9), 0);
-				s_instance.purchasePart(PlaneData.getPlane(25), 0);
-				s_instance.purchasePart(PlaneData.getPlane(18), 0);
-
-				s_instance.purchasePart(PlaneData.getPlane(35), 0);
-				s_instance.purchasePart(PlaneData.getPlane(29), 0);
-				s_instance.purchasePart(PlaneData.getPlane(16), 0);
-				s_instance.purchasePart(PlaneData.getPlane(13), 0);
-				s_instance.purchasePart(PlaneData.getPlane(22), 0);
-				s_instance.purchasePart(PlaneData.getPlane(32), 0);
-				s_instance.purchasePart(PlaneData.getPlane(10), 0);
-				s_instance.purchasePart(PlaneData.getPlane(26), 0);
-				s_instance.purchasePart(PlaneData.getPlane(19), 0);
-				
-				// final tier testing
-				s_instance.purchasePart(PlaneData.getPlane(36), 0);
-				s_instance.purchasePart(PlaneData.getPlane(30), 0);
-				s_instance.purchasePart(PlaneData.getPlane(17), 0);
-				s_instance.purchasePart(PlaneData.getPlane(14), 0);
-				s_instance.purchasePart(PlaneData.getPlane(23), 0);
-				s_instance.purchasePart(PlaneData.getPlane(33), 0);
-				s_instance.purchasePart(PlaneData.getPlane(11), 0);
-				s_instance.purchasePart(PlaneData.getPlane(20), 0);
-				s_instance.purchasePart(PlaneData.getPlane(27), 0);
-
-				s_instance.currentPlane = 27;
-
-				s_instance.levelReached = 17;
-
-				const testHull:uint = 3;
-				const testTurret:uint = 3;
-				s_instance.currentHull = testHull;
-				s_instance.currentTurret = testTurret;
-				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);
-				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(1), 0);
-				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
-				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(1), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(3), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(2), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(6), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(4), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(7), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(5), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(8), 0);
+//				
+//				// second tier
+//				s_instance.purchasePart(PlaneData.getPlane(34), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(28), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(15), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(12), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(21), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(31), 0);
+//				s_instance.purchasePart(PlaneData.getPlane( 9), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(25), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(18), 0);
+//
+//				s_instance.purchasePart(PlaneData.getPlane(35), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(29), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(16), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(13), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(22), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(32), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(10), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(26), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(19), 0);
+//				
+//				// final tier testing
+//				s_instance.purchasePart(PlaneData.getPlane(36), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(30), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(17), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(14), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(23), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(33), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(11), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(20), 0);
+//				s_instance.purchasePart(PlaneData.getPlane(27), 0);
+//
+//				s_instance.currentPlane = 27;
+//
+//				s_instance.levelReached = 17;
+//
+//				const testHull:uint = 2;
+//				const testTurret:uint = 4;
+//				s_instance.currentHull = testHull;
+//				s_instance.currentTurret = testTurret;
+//				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);
+//				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(1), 0);
+//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
+//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
 			}
 			return s_instance;
 		}
