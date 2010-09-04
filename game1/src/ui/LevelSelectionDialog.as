@@ -4,6 +4,7 @@ package ui
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
 	import flash.text.TextFormat;
@@ -195,8 +196,18 @@ package ui
 		private function openDialog(dlg:DisplayObject):void
 		{
 			enabled = false;
-			Util.listen(dlg, Event.COMPLETE, onDialogComplete);
 			UIUtil.openDialog(parent, dlg);
+			attachDialogListeners(dlg);
+		}
+		private function onPurchase(e:GlobalUIEvent):void
+		{
+			// because HACK the dialog replaces itself :(
+			attachDialogListeners(EventDispatcher(e.arg));
+		}
+		private function attachDialogListeners(dlg:EventDispatcher):void
+		{
+			Util.listen(dlg, Event.COMPLETE, onDialogComplete);
+			Util.listen(dlg, GlobalUIEvent.PURCHASE_MADE, onPurchase);
 		}
 		private function onDialogComplete(e:Event):void
 		{

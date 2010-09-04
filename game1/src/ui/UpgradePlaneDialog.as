@@ -204,6 +204,8 @@ package ui
 			refresh.y = y;
 			refresh._list.scrollPos = _list.scrollPos;
 
+			dispatchEvent(new GlobalUIEvent(GlobalUIEvent.PURCHASE_MADE, refresh));
+
 			parent.addChildAt(refresh, parent.getChildIndex(this) + 1);
 			parent.removeChild(this);
 		}
@@ -217,7 +219,7 @@ package ui
 				const target:PlaneData = PlaneData.getPlane(targetIndex);
 
 				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(target.assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetIndex);
-				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target));
+				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target), ToolTipMgr.DEFAULT_DELAY, ToolTipMgr.DEFAULT_OFFSETX, ToolTipMgr.DEFAULT_OFFSETY - 10);
 				if (target.purchased)
 				{
 					UIUtil.addCheckmark(upgradeItem);

@@ -10,6 +10,10 @@ package karnold.utils
 	
 	final public class ToolTipMgr
 	{
+		static public const DEFAULT_DELAY:uint = 400;
+		static public const DEFAULT_OFFSETX:Number = 5;
+		static public const DEFAULT_OFFSETY:Number = -5;
+		
 		public function ToolTipMgr(s:SINGLETON)	{if (!s) throw "don't";}
 		
 		static private var s_instance:ToolTipMgr;
@@ -41,8 +45,8 @@ package karnold.utils
 				{	
 					_tooltip.text = entry.text;
 				}
-				dobj.x = Math.min(Math.max(0, x + 5), stage.stageWidth - dobj.width);
-				dobj.y = Math.min(Math.max(0, y - dobj.height - 5), stage.stageHeight - dobj.height);
+				dobj.x = Math.min(Math.max(0, x + entry.offsetX), stage.stageWidth - dobj.width);
+				dobj.y = Math.min(Math.max(0, y - dobj.height + entry.offsetY), stage.stageHeight - dobj.height);
 
 				if (!dobj.parent)
 				{	
@@ -60,11 +64,15 @@ package karnold.utils
 			}
 		}
 		
-		public function addToolTip(target:DisplayObject, text:String, delay:int = 400):void
+		public function addToolTip(target:DisplayObject, 
+								   text:String, 
+								   delay:int = DEFAULT_DELAY, 
+								   offsetX:Number = DEFAULT_OFFSETX, 
+								   offsetY:Number = DEFAULT_OFFSETY):void
 		{
 			if (target != null)
 			{						
-				this._hosts[target] = new ToolTipEntry(text, delay); 
+				this._hosts[target] = new ToolTipEntry(text, delay, offsetX, offsetY); 
 				
 				Util.listen(target, MouseEvent.MOUSE_OVER, onMouseOver);				
 				Util.listen(target, MouseEvent.MOUSE_OUT, onMouseOut);			
@@ -144,10 +152,14 @@ final class ToolTipEntry
 {
 	private var _text:String;
 	private var _delay:int;
-	public function ToolTipEntry(text:String, delay:int):void
+	private var _offsetX:Number;
+	private var _offsetY:Number;
+	public function ToolTipEntry(text:String, delay:int, offsetX:Number, offsetY:Number):void
 	{
 		_text = text;
 		_delay = delay;
+		_offsetX = offsetX;
+		_offsetY = offsetY;
 	}
 	public function get text():String
 	{
@@ -156,6 +168,14 @@ final class ToolTipEntry
 	public function get delay():int
 	{
 		return _delay;
+	}
+	public function get offsetX():Number
+	{
+		return _offsetX;
+	}
+	public function get offsetY():Number
+	{
+		return _offsetY;
 	}
 };
 

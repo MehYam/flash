@@ -176,7 +176,7 @@ package ui
 			tf.width = UPGRADE_WIDTH - 20;
 			
 			var upgrade:GameListItem = new GameListItem(tf, UPGRADE_WIDTH - 10, (LIST_HEIGHT-27)/2, upgradeIndex);
-			ToolTipMgr.instance.addToolTip(upgrade, UIUtil.formatItemTooltip(part, false));
+			ToolTipMgr.instance.addToolTip(upgrade, UIUtil.formatItemTooltip(part, false), ToolTipMgr.DEFAULT_DELAY*2);
 			upgrade.border = true;
 			if (part.purchased)
 			{
@@ -488,6 +488,8 @@ package ui
 			refresh._listHulls.scrollPos = _listHulls.scrollPos;
 			refresh._listTurrets.scrollPos = _listTurrets.scrollPos;
 			
+			dispatchEvent(new GlobalUIEvent(GlobalUIEvent.PURCHASE_MADE, refresh));
+
 			parent.addChildAt(refresh, parent.getChildIndex(this) + 1);
 			parent.removeChild(this);
 		}
