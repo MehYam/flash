@@ -27,6 +27,11 @@ package gameData
 				s_instance.currentTurret = 0;
 				
 				// TEST DATA BELOW
+				for (var i:uint = 1; i < 5; ++i)
+				{
+					s_instance.purchasePart(TankPartData.getHull(i), 0);
+					s_instance.purchasePart(TankPartData.getTurret(i), 0);
+				}
 //				s_instance.credits = 100000;
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(3), 0);

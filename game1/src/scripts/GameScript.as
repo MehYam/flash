@@ -13,52 +13,59 @@ package scripts
 			return new TestScript(10);
 		}
 
-		static private var s_levels:Array;
+		static private function parseLevels(encodedLevels:String):Array
+		{
+			var lines:Array = encodedLevels.split("\n");
+			lines.length;
+			
+			var levels:Array = [];
+			var tmpLevel:Array;
+			const levelDelimiter:uint = "#".charCodeAt(0);
+			for each (var line:String in lines)
+			{
+				if (line.length < 2) continue;
+				if (line.charCodeAt(0) == levelDelimiter)
+				{
+					if (tmpLevel && tmpLevel.length)
+					{
+						levels.push(tmpLevel);
+					}
+					tmpLevel = [];
+				}
+				else
+				{
+					var wave:Array = []
+					var spawns:Array = line.split(";");
+					for each (var spawn:String in spawns)
+					{
+						var spawnArgs:Array = spawn.split(",");
+						if (spawnArgs.length == 2)
+						{
+							wave.push(new Wave(EnemyEnum.LOOKUP[spawnArgs[0]], parseInt(spawnArgs[1])));
+						}
+						else
+						{
+							throw "Bad level data";
+						}
+					}
+					tmpLevel.push(wave);
+				}
+			}
+			return levels;
+		}
+		static private var s_levels:Object; 
 		static public function getLevel(i:uint):IGameScript
 		{
 			if (!s_levels)
 			{
-				s_levels = [];
-				
-				const waveStr:String = Levels.planeLevels;
-				
-				var lines:Array = waveStr.split("\n");
-				lines.length;
-				
-				var level:Array;
-				const levelDelimiter:uint = "#".charCodeAt(0);
-				for each (var line:String in lines)
-				{
-					if (line.length < 2) continue;
-					if (line.charCodeAt(0) == levelDelimiter)
-					{
-						if (level && level.length)
-						{
-							s_levels.push(level);
-						}
-						level = [];
-					}
-					else
-					{
-						var wave:Array = []
-						var spawns:Array = line.split(";");
-						for each (var spawn:String in spawns)
-						{
-							var spawnArgs:Array = spawn.split(",");
-							if (spawnArgs.length == 2)
-							{
-								wave.push(new Wave(EnemyEnum.LOOKUP[spawnArgs[0]], parseInt(spawnArgs[1])));
-							}
-							else
-							{
-								throw "Bad level data";
-							}
-						}
-						level.push(wave);
-					}
-				}
+				s_levels = { planes: parseLevels(Levels.planeLevels), tanks: parseLevels(Levels.tankLevels) };
 			}
-			return new WaveBasedGameScript(s_levels[i].slice());
+			
+			const tank:Boolean = (i%2) != 0;
+			const level:uint = i/2;
+			const waves:Array = tank ? s_levels.tanks[level] : s_levels.planes[level]; 
+			
+			return new WaveBasedGameScript(waves.slice(), tank);
 		}
 	}
 }
@@ -539,7 +546,11 @@ final class Utils
 class BaseScript implements IGameScript
 {
 	// IGameScript
-	protected const TANK:Boolean = true;
+	private var TANK:Boolean;
+	public function BaseScript(tank:Boolean):void
+	{
+		TANK = tank;
+	}
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 
 	{
@@ -597,6 +608,7 @@ final class TestScript extends BaseScript
 	private var _actors:int;
 	public function TestScript(actors:int)
 	{
+		super(false);
 		_actors = actors;
 	}
 
@@ -640,9 +652,9 @@ class WaveBasedGameScript extends BaseScript
 
 	private var NUMWAVES:uint;
 	private var _waves:Array; 
-	public function WaveBasedGameScript(waves:Array)
+	public function WaveBasedGameScript(waves:Array, tank:Boolean)
 	{
-		super();
+		super(tank);
 		_waves = waves;
 		NUMWAVES = waves.length;
 	}
@@ -790,11 +802,11 @@ class WaveBasedGameScript extends BaseScript
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;
 			_stats.damageReceived += damage;
-		trace("PLAYER HIT FOR", damage, "TO", actor.health, "/", actor.attrs.MAX_HEALTH); 
+//		trace("PLAYER HIT FOR", damage, "TO", actor.health, "/", actor.attrs.MAX_HEALTH); 
 		}
 		else
 		{
-		trace("ENEMY HIT FOR", damage, "TO", actor.health, "/", actor.attrs.MAX_HEALTH); 
+//		trace("ENEMY HIT FOR", damage, "TO", actor.health, "/", actor.attrs.MAX_HEALTH); 
 		}
 			
 		if (!isFriendly && !wasCollision)
@@ -905,5 +917,11 @@ final class Levels
 	static public function get planeLevels():String
 	{
 		return (new PlaneLevels).toString();
+	}
+	[Embed(source="assets/tanklevels.txt", mimeType="application/octet-stream")]
+	static private const TankLevels:Class;
+	static public function get tankLevels():String
+	{
+		return (new TankLevels).toString();
 	}
 }

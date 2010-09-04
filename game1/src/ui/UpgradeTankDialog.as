@@ -182,7 +182,12 @@ package ui
 			{
 				upgrade.mouseEnabled = false;
 				upgrade.alpha = 0.5;
-				UIUtil.addCheckmark(upgrade);
+				var check:DisplayObject = UIUtil.addCheckmark(upgrade);
+				
+				check.x += 20;
+				check.y -= 20;
+				check.scaleX *= .5;
+				check.scaleY *= .5;
 			}
 			list.addItem(upgrade);
 		}

@@ -2,32 +2,12 @@ package gameData
 {
 	public class TankPartData extends VehiclePart
 	{
-		static private function createUpgrade(i:uint):TankPartData
-		{
-			switch (i) {
-			case 0:
-				return new TankPartData("Improved Firerate", 0, new VehiclePartStats(0, 0, 0.2, 0, 2000));
-			case 1:
-				return new TankPartData("Improved Damage",   0, new VehiclePartStats(0, 0.3, 0, 0, 4000));
-			case 2:
-				return new TankPartData("Speed Boost",       0, new VehiclePartStats(0, 0, 0, 0.3, 5000));
-			case 3:
-				return new TankPartData("Adds Rockets",      0, new VehiclePartStats(0, 0, 0, 0, 7000));
-			}
-			return null;
-		}
 		private var _upgrades:Array = [];
-		public function TankPartData(name:String, assetIndex:uint, baseStats:VehiclePartStats, radius:Number = 0, upgradeA:int = -1, upgradeB:int = -1)
+		public function TankPartData(name:String, assetIndex:uint, baseStats:VehiclePartStats, radius:Number = 0, upgradeA:TankPartData = null, upgradeB:TankPartData = null)
 		{
 			super(name, assetIndex, baseStats);
-			if (upgradeA >= 0)
-			{
-				_upgrades[0] = createUpgrade(upgradeA);
-			}
-			if (upgradeB >= 0)
-			{
-				_upgrades[1] = createUpgrade(upgradeB);
-			}
+			_upgrades[0] = upgradeA;
+			_upgrades[1] = upgradeB;
 			this.radius = radius;
 		}
 
@@ -42,11 +22,21 @@ package gameData
 			{
 				s_hulls =
 				[
-					new TankPartData("Hunter", 0,		new VehiclePartStats(.1, 0, 0, .1, 1000), 38, 0, 1),
-					new TankPartData("Wreckingball", 1,	new VehiclePartStats(.5, 0, 0, .2, 4000), 30, 2, 3),
-					new TankPartData("Seeker", 2,		new VehiclePartStats(.6, 0, 0, .3, 7000), 30, 0, 1),
-					new TankPartData("Rhino", 3,		new VehiclePartStats(.8, 0, 0, .2, 20000),35, 0, 1),
-					new TankPartData("Hunter X", 4,		new VehiclePartStats(.3, 0, 0, .1, 2000), 42, 1, 2)
+					new TankPartData("Hunter", 0,		new VehiclePartStats(.1, 0, 0, .1, 1000), 38, 
+						new TankPartData("+500 Armor",  0, new VehiclePartStats(.3, 0, 0, 0,  1000)),
+						new TankPartData("Aft Cannons", 0, new VehiclePartStats( 0, .1, .1, 0, 1000))),
+					new TankPartData("Wreckingball", 1,	new VehiclePartStats(.5, 0, 0, .2, 4000), 30,
+						new TankPartData("+300 Armor",  0, new VehiclePartStats(.2, 0, 0, 0, 2000)),
+						new TankPartData("+25% Speed",  0, new VehiclePartStats( 0, 0, 0, .3, 3000))),
+					new TankPartData("Seeker", 2,		new VehiclePartStats(.6, 0, 0, .3, 7000), 30,
+						new TankPartData("Adds Shield", 0, new VehiclePartStats(.2, .2, .1, 0, 5000)),
+						new TankPartData("+25% Speed",  0, new VehiclePartStats(0, 0, 0, .2, 6000))),
+					new TankPartData("Rhino", 3,		new VehiclePartStats(.8, 0, 0, .2, 20000),35,
+						new TankPartData("+800 Armor",  0, new VehiclePartStats(.3, 0, 0, 0, 7000)),
+						new TankPartData("Adds Shield", 0, new VehiclePartStats(.2, .2, .2, 0, 7000))),
+					new TankPartData("Hunter X", 4,		new VehiclePartStats(.3, 0, 0, .1, 2000), 42,
+						new TankPartData("+500 Armor",  0, new VehiclePartStats(.3, 0, 0, 0, 10000)),
+						new TankPartData("Aft Cannons", 0, new VehiclePartStats( 0, .2, .2, 0, 10000)))
 				];
 			}
 			return s_hulls;
@@ -58,11 +48,21 @@ package gameData
 			{
 				s_turrets =
 				[
-					new TankPartData("Stinger", 0, 		new VehiclePartStats(0, .1, .1, 0, 1000), 0, 0, 1),
-					new TankPartData("Destroyer", 1,    new VehiclePartStats(0, .3, .2, 0, 3000), 0, 0, 1),
-					new TankPartData("Fuz-o", 2,		new VehiclePartStats(0, .4, .1, 0, 5000), 0, 2, 3),
-					new TankPartData("Spreader", 3,	    new VehiclePartStats(0, .6, .1, 0, 4000), 0, 0, 3),
-					new TankPartData("Triclops", 4,		new VehiclePartStats(0, .5, .1, 0, 20000), 0, 3, 2)
+					new TankPartData("Stinger", 0, 		new VehiclePartStats(0, .1, .1, 0, 1000), 0,
+						new TankPartData("+100% Firerate", 0, new VehiclePartStats(0, 0, .5, 0, 1000)),
+						new TankPartData("+50% Damage", 0,    new VehiclePartStats(0, .1, 0, 0, 1000))),
+					new TankPartData("Destroyer", 1,    new VehiclePartStats(0, .3, .2, 0, 3000), 0,
+						new TankPartData("Spread Fire", 0,    new VehiclePartStats(0, 0, 0, 0, 2000)),
+						new TankPartData("Rockets", 0,        new VehiclePartStats(0, .4, .4, 0, 3000))),
+					new TankPartData("Fuz-o", 2,		new VehiclePartStats(0, .4, .1, 0, 5000), 0,
+						new TankPartData("Double Fusion", 0,  new VehiclePartStats(0, .3, 0, 0, 5000)),
+						new TankPartData("+50% Firerate", 0,  new VehiclePartStats(0, 0, .3, 0, 5000))),
+					new TankPartData("Spreader", 3,	    new VehiclePartStats(0, .6, .1, 0, 4000), 0,
+						new TankPartData("+33% Firerate", 0,  new VehiclePartStats(0, 0, .3, 0, 7000)),
+						new TankPartData("Rocket Upgrade", 0, new VehiclePartStats(0, .3, 0, 0, 7000))),
+					new TankPartData("Triclops", 4,		new VehiclePartStats(0, .5, .1, 0, 20000), 0,
+						new TankPartData("+33% Damage", 0,    new VehiclePartStats(0, .3, 0, 0, 8000)),
+						new TankPartData("+25% Firerate", 0,  new VehiclePartStats(0, 0, .25, 0, 8000)))
 				];
 			}
 			return s_turrets;

@@ -58,12 +58,14 @@ package ui
 			item.mouseEnabled = false;
 			return item;
 		}
-		static public function addCheckmark(item:GameListItem):void
+		static public function addCheckmark(item:GameListItem):DisplayObject
 		{
 			var check:DisplayObject = AssetManager.instance.checkmark();
 			check.x = item.width - check.width/2 - 10;
 			check.y = check.height/2 + 15;
 			item.addChild(check);
+			
+			return check;
 		}
 		static public var s_tweenInDialogArg:Object;
 		static public function openDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void
