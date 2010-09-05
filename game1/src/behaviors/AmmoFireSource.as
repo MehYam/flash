@@ -56,16 +56,17 @@ package behaviors
 				break;
 			}
 			ammo.damage = _damage * damageMultiplier;
-			const angle:Number = (_turret && actor is TankActor) ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;
+			const angle:Number = actor.getBaseFiringAngle(this);
 
 			Util.setPoint(po_tmp, actor.worldPos);
 			po_tmp.offset(_offsetX, _offsetY);
 
 			MathUtil.rotatePoint(actor.worldPos, po_tmp, angle);
 			
+			actor.isFiring(this);
 			if (_ammoType != AmmoType.SHIELD)
 			{
-				// only because shield doesn't have an actorattr yet
+				// only because shield doesn't have an actorattr yet - lame
 				ammo.launchDegrees(po_tmp, angle + _angle);
 			}
 			if (isPlayer)
@@ -85,7 +86,15 @@ package behaviors
 			}
 			return ammo;
 		}
-		
+		// hack: these exist just for the muzzle flash
+		public function get turret():Boolean
+		{
+			return _turret;
+		}
+		public function get type():AmmoType
+		{
+			return _ammoType;
+		}
 		// hack: these exist just for shield activator
 		public function get damage():Number
 		{

@@ -183,6 +183,13 @@ package
 		{
 			launchHelper(start, MathUtil.getRadiansRotation(deltaX, deltaY));
 		}
+		public function getBaseFiringAngle(source:AmmoFireSource):Number
+		{
+			return displayObject.rotation;
+		}
+		public function isFiring(source:AmmoFireSource):void
+		{
+		}
 		static public function createPooledActor(type:Class):Actor
 		{
 			var actor:Actor = ActorPool.instance.get(type) as Actor;

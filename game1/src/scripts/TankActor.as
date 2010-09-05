@@ -1,12 +1,16 @@
 package scripts
 {
 	import behaviors.ActorAttrs;
+	import behaviors.AmmoFireSource;
+	import behaviors.AmmoType;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.Point;
 	
+	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
 	
 	public class TankActor extends Actor
@@ -40,6 +44,23 @@ package scripts
 		{
 			return _turret.rotation + displayObject.rotation;
 		}
+		public override function getBaseFiringAngle(source:AmmoFireSource):Number
+		{
+			return source.turret ? turretRotation : displayObject.rotation;
+		}
+		private var _muzzleFlash:MuzzleFlash;
+		public override function isFiring(source:AmmoFireSource):void
+		{
+			// sucks.  as an alternative this could be an actor, and could use behaviors
+			if (source.type == AmmoType.CANNON)
+			{
+				if (!_muzzleFlash)
+				{
+					_muzzleFlash = new MuzzleFlash;
+				}
+				_muzzleFlash.fire(source, DisplayObjectContainer(_turret));
+			}
+		}
 
 		private var _trackRunning:Boolean = true;
 		public override function onFrame(gameState:IGame):void
@@ -55,6 +76,10 @@ package scripts
 			else if (!_trackRunning)
 			{
 				_trackRunning = true;
+			}
+			if (_muzzleFlash)
+			{
+				_muzzleFlash.onFrame(gameState, this);
 			}
 			treadFrame();
 		}
@@ -114,6 +139,16 @@ package scripts
 		}
 	}
 }
+import behaviors.AmmoFireSource;
+import behaviors.IBehavior;
+
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.geom.Point;
+
+import karnold.utils.MathUtil;
+import karnold.utils.RateLimiter;
+import karnold.utils.Util;
 
 final class MUSTUSEFACTORYFUNCTION { public static var instance:MUSTUSEFACTORYFUNCTION = new MUSTUSEFACTORYFUNCTION; }
 
@@ -160,5 +195,43 @@ final class HullSpec
 		this.trackOffsetX = trackOffsetX * Consts.TANK_SCALE;
 		this.trackOffsetY = trackOffsetY * Consts.TANK_SCALE;
 		this.hullOffsetY = hullOffsetY * Consts.TANK_SCALE;
+	}
+}
+
+final class MuzzleFlash implements IBehavior
+{
+	private var _rate:RateLimiter = new RateLimiter(50, 50); 
+	private var _flashes:Array = [];
+	private var _flash:DisplayObject;
+	public function MuzzleFlash():void
+	{
+		for (var i:uint = 0; i < 3; ++i)
+		{
+			_flashes.push(ActorAssetManager.createMuzzleFlash(i));
+		}
+	}
+	public function fire(source:AmmoFireSource, parent:DisplayObjectContainer):void
+	{
+		if (_flash)
+		{
+			Util.ASSERT(_flash.parent != null);
+			_flash.parent.removeChild(_flash);
+		}
+		const rnd:Number = MathUtil.random(-2, 2);
+		_flash = _flashes[uint(Math.random() * _flashes.length)];
+		_flash.x = rnd;
+		_flash.y = -_flash.height/2 + source.offsetY + rnd;
+		
+		parent.addChild(_flash);
+
+		_rate.reset();
+	}
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		if (_flash && _rate.now)
+		{
+			_flash.parent.removeChild(_flash);
+			_flash = null;
+		}
 	}
 }
