@@ -119,6 +119,7 @@ package karnold.utils
 			}
 			return value;
 		}
+		// these assume an object with top-left at 0, 0
 		static public function objectIsContained(dobj:DisplayObject, left:Number, top:Number, width:Number, height:Number):Boolean
 		{
 			return	dobj.x >= left &&
@@ -132,6 +133,20 @@ package karnold.utils
 					dobj.y <= (top + height) &&
 					left   <= (dobj.x + dobj.width) &&
 					top    <= (dobj.y + dobj.height);
+		}
+		static public function radiusIsContained(pX:Number, pY:Number, radius:Number, left:Number, top:Number, width:Number, height:Number):Boolean
+		{
+			return (pX-radius) >= left &&
+				   (pY-radius) >= top &&
+				   ((pX+radius) <= (left+width)) &&
+				   ((pY+radius) <= (top+height));
+		}
+		static public function radiusIntersects(pX:Number, pY:Number, radius:Number, left:Number, top:Number, width:Number, height:Number):Boolean
+		{
+			return (pX-radius) <= (left + width) &&
+				   (pX+radius) >=  left && 
+				   (pY-radius) <= (top + height) &&
+				   (pY+radius) >=  top;
 		}
 	}
 }

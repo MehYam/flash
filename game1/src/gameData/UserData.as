@@ -69,9 +69,9 @@ package gameData
 //				s_instance.purchasePart(PlaneData.getPlane(20), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(27), 0);
 //
-//				s_instance.currentPlane = 27;
+				s_instance.currentPlane = 36;
 //
-//				s_instance.levelReached = 17;
+				s_instance.levelsBeaten = 34;
 //
 //				const testHull:uint = 2;
 //				const testTurret:uint = 4;
@@ -91,7 +91,7 @@ package gameData
 		}
 		
 		public var credits:uint;
-		public var levelReached:uint;
+		public var levelsBeaten:uint;  // essentially 1-based index, so == 0 means not yet completed any levels
 		public var currentPlane:uint;
 		public var currentHull:uint;
 		public var currentTurret:uint;

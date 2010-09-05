@@ -171,6 +171,7 @@ package
 		private var _lastCameraPos:Point = new Point;
 		private var _lastPurge:int;
 		private var _shooting:ShootState = ShootState.NONE;
+		private var _debugFlag:Boolean = false;  // used for incidental things
 		private function onFrame():void
 		{
 			if (_globalBehavior)
@@ -182,6 +183,7 @@ package
 			// Toggle framerate panel
 			if (_input.checkKeyHistoryAndClear(Input.KEY_TILDE))
 			{
+				_debugFlag = !_debugFlag;
 				if (!_frameRate)
 				{
 					_frameRate = new GameFrameRatePanel(this);
@@ -363,30 +365,31 @@ package
 
 					if (a.alive)
 					{
-						a.displayObject.x = a.worldPos.x - _cameraPos.x;
-						a.displayObject.y = a.worldPos.y - _cameraPos.y;
+						var dobj:DisplayObject = a.displayObject;
+						dobj.x = a.worldPos.x - _cameraPos.x;
+						dobj.y = a.worldPos.y - _cameraPos.y;
 						
 						// assume that if the displayobject is a bitmap, it's aligned to top left.  Else,
 						// it's centered
-						var recenter:Boolean = a.displayObject is Bitmap;
+						var recenter:Boolean = dobj is Bitmap;
 						if (recenter)
 						{
-							a.displayObject.x -= a.displayObject.width/2;
-							a.displayObject.y -= a.displayObject.height/2;
+							dobj.x -= dobj.width/2;
+							dobj.y -= dobj.height/2;
 						}
 						
-						if (MathUtil.objectIntersects(a.displayObject, 0, 0, stage.stageWidth, stage.stageHeight))
+						if (MathUtil.radiusIntersects(dobj.x, dobj.y, a.attrs.RADIUS, 0, 0, stage.stageWidth, stage.stageHeight))
 						{
-							if (!a.displayObject.parent)
+							if (!dobj.parent)
 							{
-								_actorLayer.addChild(a.displayObject);
+								_actorLayer.addChild(dobj);
 							}
 						}
 						else
 						{
-							if (a.displayObject.parent)
+							if (dobj.parent)
 							{
-								a.displayObject.parent.removeChild(a.displayObject);
+								dobj.parent.removeChild(dobj);
 							}
 						}
 					}
@@ -585,8 +588,8 @@ package
 			if (stats.victory)
 			{
 				UserData.instance.credits += stats.creditsEarned;
-				UserData.instance.levelReached = Math.min(_lastStartedLevel + 1, Consts.LEVELS - 1);
-				_levelSelectionDialog.unlockLevels(UserData.instance.levelReached + 1);
+				UserData.instance.levelsBeaten = Math.min(_lastStartedLevel + 1, Consts.LEVELS - 1);
+				_levelSelectionDialog.unlockLevels(UserData.instance.levelsBeaten + 1);
 			}
 			else
 			{

@@ -51,7 +51,7 @@ package ui
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
 
-					if (level > UserData.instance.levelReached)
+					if (level > UserData.instance.levelsBeaten)
 					{
 						btn.enabled = false;
 						var lock:DisplayObject = AssetManager.instance.lock();
@@ -62,10 +62,10 @@ package ui
 						lock.name = LOCK_NAME;
 						DisplayObjectContainer(btn).addChild(lock);
 					}
-					else if (level <= UserData.instance.levelReached)
+					else if (level <= UserData.instance.levelsBeaten)
 					{
 						addIcon(btn, (level % 2) != 0);
-						if (level < UserData.instance.levelReached)
+						if (level < UserData.instance.levelsBeaten)
 						{
 							addCheck(btn);
 						}
