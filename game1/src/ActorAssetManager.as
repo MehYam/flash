@@ -283,7 +283,26 @@ package
 			base.addChild(new TANKTREADTOP);
 			return base;
 		}
-
+		[Embed(source="assets/master.swf", symbol="cannonround0")]
+		static private const CANNONROUND0:Class;
+		[Embed(source="assets/master.swf", symbol="cannonround1")]
+		static private const CANNONROUND1:Class;
+		static private const CANNONS:Array = [CANNONROUND0, CANNONROUND1];
+		static public function createCannonBlast(level:uint):DisplayObject
+		{
+			return createAssetRasterized(CANNONS[level], true, false);
+		}
+		[Embed(source="assets/master.swf", symbol="muzzleflash0")]
+		static private const MUZZLEFLASH0:Class;
+		[Embed(source="assets/master.swf", symbol="muzzleflash1")]
+		static private const MUZZLEFLASH1:Class;
+		[Embed(source="assets/master.swf", symbol="muzzleflash2")]
+		static private const MUZZLEFLASH2:Class;
+		static private const MUZZLEFLASH:Array = [MUZZLEFLASH0, MUZZLEFLASH1, MUZZLEFLASH2];
+		static public function createMuzzleFlash(level:uint):DisplayObject
+		{
+			return createAssetRasterized(MUZZLEFLASH[level], true, false); 
+		}
 		static public function createExplosionParticle(color:uint):DisplayObject
 		{
 			return SimpleRasterizedObjectCreator.getInstance(ExplosionCreator).create(color);

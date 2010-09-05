@@ -403,7 +403,7 @@ package scripts
 				{
 					damage *= 1.5;	
 				}
-				source = new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-67), 0, 5, true);
+				source = new AmmoFireSource(AmmoType.CANNON, damage, 0, tankScale(-67), 0, 0, true);
 				turretWeapon = BehaviorFactory.createAutofire(source, fireRate);
 				// min dps 25, max dps 75
 				break;
@@ -415,9 +415,9 @@ package scripts
 				{
 					angle = 10;
 				}
-				source = [	new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-55), 0, 5, true),
-							new AmmoFireSource(AmmoType.BULLET, damage, tankScale(-15), tankScale(-20), -angle, 5, true),
-							new AmmoFireSource(AmmoType.BULLET, damage, tankScale( 15), tankScale(-20),  angle, 5, true)];
+				source = [	new AmmoFireSource(AmmoType.CANNON, damage, 0, tankScale(-55), 0, 0, true),
+							new AmmoFireSource(AmmoType.CANNON, damage, tankScale(-15), tankScale(-20), -angle, 0, true),
+							new AmmoFireSource(AmmoType.CANNON, damage, tankScale( 15), tankScale(-20),  angle, 0, true)];
 
 				upgrade = turret.getUpgrade(1);
 				if (upgrade.purchased)
@@ -489,10 +489,10 @@ package scripts
 				fireRate = 500;
 				
 				upgrade = turret.getUpgrade(0);
-				var bullet:uint = 0;
+				var level:uint = 0;
 				if (upgrade.purchased)
 				{
-					bullet = 5;
+					level = 1;
 					damage = 100;
 				}
 				upgrade = turret.getUpgrade(0);
@@ -501,9 +501,9 @@ package scripts
 					fireRate = 400;
 				}
 				turretWeapon = BehaviorFactory.createAutofire(
-					[	new AmmoFireSource(AmmoType.BULLET, damage, tankScale(-30), 0, -90, bullet, true),
-						new AmmoFireSource(AmmoType.BULLET, damage, 0, tankScale(-30),   0, bullet, true),
-						new AmmoFireSource(AmmoType.BULLET, damage, tankScale( 30), 0,  90, bullet, true)],
+					[	new AmmoFireSource(AmmoType.CANNON, damage, tankScale(-30), 0, -90, level, true),
+						new AmmoFireSource(AmmoType.CANNON, damage, 0, tankScale(-30),   0, level, true),
+						new AmmoFireSource(AmmoType.CANNON, damage, tankScale( 30), 0,  90, level, true)],
 					fireRate
 				);
 				break;
@@ -523,8 +523,8 @@ package scripts
 				if (upgrade.purchased)
 				{
 					hullWeapon = BehaviorFactory.createAutofire(
-						[	new AmmoFireSource(AmmoType.BULLET, 4, tankScale(-15), tankScale(40), 180, 0),
-							new AmmoFireSource(AmmoType.BULLET, 4, tankScale( 15), tankScale(40), 180, 0)],
+						[	new AmmoFireSource(AmmoType.CANNON, 4, tankScale(-15), tankScale(40), 180, 0),
+							new AmmoFireSource(AmmoType.CANNON, 4, tankScale( 15), tankScale(40), 180, 0)],
 						333
 					);
 				}

@@ -4,6 +4,7 @@ package behaviors
 	{
 		static public const BULLET:ActorAttrs = new ActorAttrs(1, 8, 10, 0, 20, 0, false, 1500);
 		static public const ROCKET:ActorAttrs = new ActorAttrs(1, 8, 0.2, 0, 20, 0, false, 4000);
+		static public const CANNON:ActorAttrs = new ActorAttrs(1, 14, 10, 0, 20, 0, false, 1000);
 		static public const LASER:ActorAttrs = new ActorAttrs(1, 6, 7, 0, 20, 0, false, 2000);
 		static public const FUSIONBLAST:ActorAttrs = new ActorAttrs(1, 5, 10, 0, 20, 0, true, 4000);
 		static public const EXPLOSION:ActorAttrs = new ActorAttrs(0, 100, 0, 0.1, 0, 0, false, 300);

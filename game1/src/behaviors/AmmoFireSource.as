@@ -35,22 +35,25 @@ package behaviors
 			const isPlayer:Boolean = actor == game.player;
 			var ammo:Actor;
 			switch(_ammoType) {
-				case AmmoType.BULLET:
-					ammo = Actor.createBullet(_level);
-					break;
-				case AmmoType.LASER:
-				case AmmoType.HIGHLASER:
-					ammo = Actor.createLaser(_level);
-					break;
-				case AmmoType.ROCKET:
-					ammo = Actor.createRocket(_level, false);// no homing missiles for now !isPlayer && _level==2);
-					break;
-				case AmmoType.FUSION:
-					ammo = Actor.createFusionBlast();
-					break;
-				case AmmoType.SHIELD:
-					ammo = ShieldActor.create();
-					break;
+			case AmmoType.BULLET:
+				ammo = Actor.createBullet(_level);
+				break;
+			case AmmoType.LASER:
+			case AmmoType.HIGHLASER:
+				ammo = Actor.createLaser(_level);
+				break;
+			case AmmoType.ROCKET:
+				ammo = Actor.createRocket(_level, false);// no homing missiles for now !isPlayer && _level==2);
+				break;
+			case AmmoType.FUSION:
+				ammo = Actor.createFusionBlast();
+				break;
+			case AmmoType.SHIELD:
+				ammo = ShieldActor.create();
+				break;
+			case AmmoType.CANNON:
+				ammo = Actor.createCannonBlast(_level);
+				break;
 			}
 			ammo.damage = _damage * damageMultiplier;
 			const angle:Number = (_turret && actor is TankActor) ? (TankActor(actor).turretRotation) : actor.displayObject.rotation;

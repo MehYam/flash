@@ -183,6 +183,11 @@ package
 		{
 			launchHelper(start, MathUtil.getRadiansRotation(deltaX, deltaY));
 		}
+		static public function createPooledActor(type:Class):Actor
+		{
+			var actor:Actor = ActorPool.instance.get(type) as Actor;
+			return actor || new type;
+		}
 		static private var s_bulletLevels:Array; 
 		static public function createBullet(level:uint):Actor
 		{
@@ -190,36 +195,28 @@ package
 			{
 				s_bulletLevels = [BulletActor0, BulletActor1, BulletActor2, BulletActor3, BulletActor4, BulletActor5];
 			}
-			const type:Class = s_bulletLevels[level];
-			var bullet:Actor = ActorPool.instance.get(type) as Actor;
-			return bullet || new type;
+			return createPooledActor(s_bulletLevels[level]);
 		}
-		static private var s_explLevels:Array;
+		static private var s_laserLevels:Array;
 		static public function createLaser(level:uint):Actor
 		{
-			if (!s_explLevels)
+			if (!s_laserLevels)
 			{
-				s_explLevels = [LaserActor0, LaserActor1, LaserActor2, LaserActor3, LaserActor4, LaserActor5]; 
+				s_laserLevels = [LaserActor0, LaserActor1, LaserActor2, LaserActor3, LaserActor4, LaserActor5]; 
 			}
-			const type:Class = s_explLevels[level];
-			var laser:Actor = ActorPool.instance.get(type) as Actor;
-			return laser || new type;
+			return createPooledActor(s_laserLevels[level]);
 		}
-		static private var s_levels:Array; 
+		static private var s_expLevels:Array; 
 		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint, level:uint):void
 		{
-			if (!s_levels)
+			if (!s_expLevels)
 			{
-				s_levels = [ExplosionParticleActor0, ExplosionParticleActor1, ExplosionParticleActor2];
+				s_expLevels = [ExplosionParticleActor0, ExplosionParticleActor1, ExplosionParticleActor2];
 			}
-			const colorClass:Class = s_levels[level];
+			const colorClass:Class = s_expLevels[level];
 			for (var i:uint = 0; i < numParticles; ++i)
 			{
-				var actor:Actor = ActorPool.instance.get(colorClass) as Actor;
-				if (!actor)
-				{
-					actor = new colorClass();
-				}
+				var actor:Actor = createPooledActor(colorClass);
 				actor.displayObject.alpha = Math.random();
 				Util.setPoint(actor.worldPos, worldPos);
 				actor.speed.x = MathUtil.random(-10, 10);
@@ -228,16 +225,29 @@ package
 				game.addEffect(actor);
 			}
 		}
+		static private var s_rockets:Array;
 		static public function createRocket(level:uint, homing:Boolean):Actor
 		{
-			var rocket:RocketActor = RocketActor(ActorPool.instance.get(RocketActor) || new RocketActor(level));
+			if (!s_rockets)
+			{
+				s_rockets = [RocketActor0, RocketActor1, RocketActor2, RocketActor3]; 
+			}
+			var rocket:RocketActor = RocketActor(createPooledActor(s_rockets[level]));
 			rocket.homing = homing;
 			return rocket;
 		}
 		static public function createFusionBlast():Actor
 		{
-			var blast:Actor = ActorPool.instance.get(FusionBlastActor);
-			return blast || new FusionBlastActor;
+			return createPooledActor(FusionBlastActor);
+		}
+		static private var s_cannonBlast:Array;
+		static public function createCannonBlast(level:uint):Actor
+		{
+			if (!s_cannonBlast)
+			{
+				s_cannonBlast = [CannonBlast0, CannonBlast1];
+			}
+			return createPooledActor(s_cannonBlast[level]);
 		}
 	}
 }
@@ -258,12 +268,19 @@ import org.osmf.traits.DownloadableTrait;
 
 import scripts.IPenetratingAmmo;
 
+class CannonBlast extends Actor
+{
+	public function CannonBlast(level:uint):void
+	{
+		super(ActorAssetManager.createCannonBlast(level), ActorAttrs.CANNON);
+		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.CANNON.LIFETIME), BehaviorFactory.faceForward);
+	}
+}
 class BulletActor extends Actor
 {
 	public function BulletActor(color:uint):void
 	{
 		super(ActorAssetManager.createBullet(color), ActorAttrs.BULLET);
-//		behavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME));
 		behavior = BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME);
 	}
 }
@@ -283,14 +300,14 @@ class ExplosionParticleActor extends Actor
 		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.EXPLOSION.LIFETIME), BehaviorFactory.fade);
 	}
 }
-final class RocketActor extends Actor
+class RocketActor extends Actor
 {
 	static private function composeRocket(index:uint):DisplayObject
 	{
 		var parent:Sprite = new Sprite;
 		
 		var rocket:DisplayObject = ActorAssetManager.createRocket(index);
-		var plume:DisplayObject = ActorAssetManager.createFlame();
+		var plume:DisplayObject = (index%2) ? ActorAssetManager.createFlame() : ActorAssetManager.createBlueFlame();
 		
 		Util.centerChild(rocket, parent);
 		Util.centerChild(plume, parent);
@@ -373,8 +390,9 @@ final class FusionBlastActor extends PiercingAmmoActor
 	}
 }
 
-// We use actor type as the key to pool with.  So, we have to do this stupid thing below, or else find
-// a different pooling mechanism (maybe pooling the display objects separately)
+// We'll fix this with the pool key, soon
+final class CannonBlast0 extends CannonBlast { public function CannonBlast0() { super(0); } }
+final class CannonBlast1 extends CannonBlast { public function CannonBlast1() { super(1); } }
 final class BulletActor0 extends BulletActor { public function BulletActor0() { super(0x8888ff); } }
 final class BulletActor1 extends BulletActor { public function BulletActor1() { super(0x00ff5d); } }
 final class BulletActor2 extends BulletActor { public function BulletActor2() { super(0xeeee00); } }
@@ -390,3 +408,7 @@ final class LaserActor5 extends LaserActor { public function LaserActor5() { sup
 final class ExplosionParticleActor0 extends ExplosionParticleActor { public function ExplosionParticleActor0() { super(0xcccccc); } }
 final class ExplosionParticleActor1 extends ExplosionParticleActor { public function ExplosionParticleActor1() { super(0xffff00); } }
 final class ExplosionParticleActor2 extends ExplosionParticleActor { public function ExplosionParticleActor2() { super(0); } }
+final class RocketActor0 extends RocketActor { public function RocketActor0() { super(0); } }
+final class RocketActor1 extends RocketActor { public function RocketActor1() { super(1); } }
+final class RocketActor2 extends RocketActor { public function RocketActor2() { super(2); } }
+final class RocketActor3 extends RocketActor { public function RocketActor3() { super(3); } }
