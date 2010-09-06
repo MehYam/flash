@@ -74,12 +74,12 @@ package gameData
 				s_instance.levelsBeaten = 34;
 //
 //				const testHull:uint = 2;
-//				const testTurret:uint = 4;
 //				s_instance.currentHull = testHull;
-//				s_instance.currentTurret = testTurret;
 //				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(1), 0);
-//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
+				const testTurret:uint = 1;
+				s_instance.currentTurret = testTurret;
+				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
 //				for (var i:uint = 1; i < 5; ++i)
 //				{

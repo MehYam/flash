@@ -608,7 +608,7 @@ final class TestScript extends BaseScript
 	private var _actors:int;
 	public function TestScript(actors:int)
 	{
-		super(false);
+		super(true);
 		_actors = actors;
 	}
 

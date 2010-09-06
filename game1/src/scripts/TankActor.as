@@ -9,6 +9,7 @@ package scripts
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
+	import flash.utils.Dictionary;
 	
 	import karnold.utils.MathUtil;
 	import karnold.utils.Util;
@@ -48,17 +49,23 @@ package scripts
 		{
 			return source.turret ? turretRotation : displayObject.rotation;
 		}
+		private var _muzzleFlashes:Dictionary;
 		private var _muzzleFlash:MuzzleFlash;
 		public override function isFiring(source:AmmoFireSource):void
 		{
 			// sucks.  as an alternative this could be an actor, and could use behaviors
 			if (source.type == AmmoType.CANNON)
 			{
-				if (!_muzzleFlash)
+				if (!_muzzleFlashes)
 				{
-					_muzzleFlash = new MuzzleFlash;
+					_muzzleFlashes = new Dictionary(true);
 				}
-				_muzzleFlash.fire(source, DisplayObjectContainer(_turret));
+				var muzzleFlash:MuzzleFlash = _muzzleFlashes[source];
+				if (!muzzleFlash)
+				{
+					_muzzleFlashes[source] = muzzleFlash = new MuzzleFlash;
+				}
+				muzzleFlash.fire(source, DisplayObjectContainer(_turret));
 			}
 		}
 
@@ -77,9 +84,12 @@ package scripts
 			{
 				_trackRunning = true;
 			}
-			if (_muzzleFlash)
+			if (_muzzleFlashes)
 			{
-				_muzzleFlash.onFrame(gameState, this);
+				for each (var mf:MuzzleFlash in _muzzleFlashes)
+				{
+					mf.onFrame(gameState, this);
+				}
 			}
 			treadFrame();
 		}
@@ -87,16 +97,19 @@ package scripts
 		private var _treadOffset:Number = 0;
 		public function treadFrame():void
 		{
-			var leftTread:DisplayObject = _leftTrack.getChildAt(1);
-			var rightTread:DisplayObject= _rightTrack.getChildAt(1);
-			
-			leftTread.y = _treadOffset;
-			rightTread.y = _treadOffset;
-
-			_treadOffset -= .1;
-			if (_treadOffset < -5)
+			if (speed.x != 0 || speed.y != 0)
 			{
-				_treadOffset = 0;
+				var leftTread:DisplayObject = _leftTrack.getChildAt(1);
+				var rightTread:DisplayObject= _rightTrack.getChildAt(1);
+				
+				leftTread.y = _treadOffset;
+				rightTread.y = _treadOffset;
+	
+				_treadOffset -= .1;
+				if (_treadOffset < -5)
+				{
+					_treadOffset = 0;
+				}
 			}
 		}
 
@@ -219,7 +232,7 @@ final class MuzzleFlash implements IBehavior
 		}
 		const rnd:Number = MathUtil.random(-2, 2);
 		_flash = _flashes[uint(Math.random() * _flashes.length)];
-		_flash.x = rnd;
+		_flash.x = source.offsetX + rnd;
 		_flash.y = -_flash.height/2 + source.offsetY + rnd;
 		
 		parent.addChild(_flash);

@@ -95,6 +95,10 @@ package behaviors
 		{
 			return _ammoType;
 		}
+		public function get offsetX():Number
+		{
+			return _offsetX;
+		}
 		// hack: these exist just for shield activator
 		public function get damage():Number
 		{
