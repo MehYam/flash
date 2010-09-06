@@ -3,6 +3,7 @@ package {
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
+	import flash.display.GradientType;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -59,7 +60,9 @@ package {
 			
 //			testEmbeddedXML();
 			
-			testEmbeddedText();
+//			testEmbeddedText();
+			
+			testGradientCircle();
 		}
 	
 		private function testTextField():void
@@ -424,6 +427,23 @@ package {
 			
 			tf.text = str; 
 			addChild(tf);
+		}
+		
+		private function testGradientCircle():void
+		{
+			var shape:Shape = new Shape;
+
+			var colors:Array = [0xFF0000, 0x0000FF];
+			var alphas:Array = [100, 0];
+			var ratios:Array = [0, 0xFF];
+			var matrix:Matrix = new Matrix;
+			matrix.createGradientBox(100, 100);
+
+			shape.graphics.beginGradientFill(GradientType.RADIAL, colors, alphas, ratios, matrix);
+			shape.graphics.drawEllipse(0, 0, 100, 100);
+			shape.graphics.endFill();		
+			
+			addChild(shape);
 		}
 	}
 }

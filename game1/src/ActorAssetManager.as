@@ -6,6 +6,7 @@ package
 	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.GradientType;
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 	import flash.display.Shape;
@@ -19,6 +20,8 @@ package
 	import flash.utils.Dictionary;
 	
 	import karnold.utils.Util;
+	
+	import spark.primitives.supportClasses.FilledElement;
 	
 	public final class ActorAssetManager
 	{
@@ -337,11 +340,13 @@ package
 		{
 			var wo:Shape = new Shape;
 			
-			wo.graphics.lineStyle(0);
-			wo.graphics.beginFill(color);
+//			wo.graphics.lineStyle(0);
+			var matrix:Matrix = new Matrix;
+			matrix.createGradientBox(width, height, 0, -width/2, -height/2);
+			
+			wo.graphics.beginGradientFill(GradientType.RADIAL, [color, color], [100, 0], [63, 255], matrix); 
 			wo.graphics.drawEllipse(-width/2, -height/2, width, height);
 			wo.graphics.endFill();
-			
 			return wo;
 		}
 		
@@ -459,7 +464,8 @@ final internal class BulletCreator extends SimpleRasterizedObjectCreator
 {
 	protected override function create_impl(color:uint):DisplayObject
 	{
-		return ActorAssetManager.createCircle(color, 7, 7);
+//		return ActorAssetManager.createCircle(color, 7, 7);
+		return ActorAssetManager.createCircle(color, 10, 10);
 	}
 }
 final internal class LaserCreator extends SimpleRasterizedObjectCreator

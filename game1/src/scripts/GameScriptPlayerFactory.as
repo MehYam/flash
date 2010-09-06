@@ -595,6 +595,7 @@ package scripts
 
 			var tank:Actor = TankActor.createTankActor(hull.assetIndex, turret.assetIndex, attrs);
 			tank.behavior = new CompositeBehavior(BehaviorFactory.faceForward, BehaviorFactory.faceMouse);
+			tank.healthMeterEnabled = false;
 
 			return new GameScriptPlayerVehicle(tank, new CompositeBehavior(hullWeapon, turretWeapon), showShield, showFusion);
 		}
