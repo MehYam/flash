@@ -550,6 +550,8 @@ class BaseScript implements IGameScript
 	public function BaseScript(tank:Boolean):void
 	{
 		TANK = tank;
+
+//		var planes:Array = [];
 	}
 	private var _weapon:IBehavior;
 	public function begin(game:IGame):void 

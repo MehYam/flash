@@ -10,8 +10,8 @@ package behaviors
 		static public const EXPLOSION:ActorAttrs = new ActorAttrs(0, 100, 0, 0.1, 0, 0, false, 300);
 
 		static public const INFINITE_LIFETIME:int = -1;
-		
-		// these semi-belong here
+
+		static public const MAX_ROTATIONAL_DELTA:Number = 5;
 		static public const DEFAULT_VALUE:uint = 10;
 
 		public var MAX_HEALTH:Number;

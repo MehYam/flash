@@ -204,15 +204,18 @@ package
 			//
 			// Apply user input to the player object
 			var speed:Point = _player.speed;
+			var playerImpelled:Boolean = false;
 			if (!_mobsStunned)
 			{
 				if (_input.isKeyDown(Input.KEY_RIGHT))
 				{
 					speed.x = Math.min(_player.attrs.MAX_SPEED, speed.x + _player.attrs.ACCELERATION);
+					playerImpelled = true;
 				}
 				else if (_input.isKeyDown(Input.KEY_LEFT))
 				{
 					speed.x = Math.max(-_player.attrs.MAX_SPEED, speed.x - _player.attrs.ACCELERATION);
+					playerImpelled = true;
 				}
 				else if (speed.x)
 				{
@@ -221,16 +224,20 @@ package
 				if (_input.isKeyDown(Input.KEY_DOWN))
 				{
 					speed.y = Math.min(_player.attrs.MAX_SPEED, speed.y + _player.attrs.ACCELERATION);
+					playerImpelled = true;
 				}
 				else if (_input.isKeyDown(Input.KEY_UP))
 				{
 					speed.y = Math.max(-_player.attrs.MAX_SPEED, speed.y - _player.attrs.ACCELERATION);
+					playerImpelled = true;
 				}
 				else if (speed.y)
 				{
 					speed.y = MathUtil.speedDecay(speed.y, _player.attrs.SPEED_DECAY);
 				}
 			}
+
+			player.underForce = playerImpelled;
 
 			//
 			// Reposition the player and the background tiles as necessary

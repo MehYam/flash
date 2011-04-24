@@ -23,6 +23,7 @@ package
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
+		public var underForce:Boolean = true;  // only used for game.player, a hack for face forward behavior
 
 		// meta-data that maybe doesn't belong here
 		public var attrs:ActorAttrs;

@@ -41,7 +41,7 @@ package scripts
 				/// bottom tier/////////////////////////////////////////////////////////////////
 			case 0:
 				weapon = BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.BULLET, 10, 0, -10), 400);
-				attrs = new ActorAttrs(100, 4.5, 0.5, 0.2);
+				attrs = new ActorAttrs(100, 4.5, 0.5, 0.1);
 				break;
 			case 1:
 				weapon = BehaviorFactory.createAutofire(

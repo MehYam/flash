@@ -27,7 +27,7 @@ package gameData
 				s_instance.currentTurret = 0;
 				
 				// TEST DATA BELOW
-				s_instance.credits = 100000;
+//				s_instance.credits = 100000;
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(3), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(2), 0);
@@ -69,17 +69,17 @@ package gameData
 //				s_instance.purchasePart(PlaneData.getPlane(20), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(27), 0);
 //
-				s_instance.currentPlane = 36;
+//				s_instance.currentPlane = 36;
 //
-				s_instance.levelsBeaten = 34;
+//				s_instance.levelsBeaten = 34;
 //
 //				const testHull:uint = 2;
 //				s_instance.currentHull = testHull;
 //				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getHull(testHull).getUpgrade(1), 0);
-				const testTurret:uint = 1;
-				s_instance.currentTurret = testTurret;
-				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
+//				const testTurret:uint = 1;
+//				s_instance.currentTurret = testTurret;
+//				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(0), 0);
 //				s_instance.purchasePart(TankPartData.getTurret(testTurret).getUpgrade(1), 0);
 //				for (var i:uint = 1; i < 5; ++i)
 //				{
