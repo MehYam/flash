@@ -17,7 +17,10 @@ package scripts
 		static private const s_behavior:IBehavior = new CompositeBehavior(BehaviorFactory.fade, BehaviorFactory.speedDecay);
 		public function BlingActor()
 		{
-			super(new ShadowTextField(s_fmt, 0xffff00, 0, 2), s_attrs);
+			var tf:ShadowTextField = new ShadowTextField(0xffff00, 0, 2);
+			tf.defaultTextFormat = s_fmt;
+			super(tf, s_attrs);
+			
 			behavior = s_behavior;
 		}
 		public override function onFrame(game:IGame):void

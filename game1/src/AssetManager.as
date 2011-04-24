@@ -13,6 +13,7 @@ package
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
+	import flash.text.TextFormat;
 	
 	import karnold.tile.IBitmapFactory;
 
@@ -198,6 +199,34 @@ package
 			var retval:DisplayObject = new TANKICON;
 //			retval.filters = s_uiStuffDropShadow;
 			return retval; 
+		}
+		
+		[Embed(source='assets/fonts/Computerfont.ttf', fontFamily='embeddedComputerfont', mimeType='application/x-font', embedAsCFF='false')] 
+		static private const Computerfont:Class;
+		[Embed(source='assets/fonts/RADIOSTA.TTF', fontFamily='embeddedRadiostars', mimeType='application/x-font', embedAsCFF='false')] 
+		static private const Radiofont:Class;
+		[Embed(source='assets/fonts/SF TransRobotics.ttf', fontFamily='embeddedSFT', mimeType='application/x-font', embedAsCFF='false')] 
+		static private const SFTfont:Class;
+		
+		static public const FONT_COMPUTER:String = "embeddedComputerfont";
+		static public const FONT_RADIOSTARS:String = "embeddedRadiostars";
+		static public const FONT_ROBOT:String = "embeddedSFT";
+		public function createFont(font:String, size:int, color:Object = null):TextFormat
+		{
+			var retval:TextFormat = new TextFormat;
+			retval.font = font;
+			retval.size = size;
+			retval.color = color;
+			return retval;
+		}
+		public function assignFont(textFieldObject:Object, font:String, size:int, color:Object = null):void
+		{
+			assignTextFormat(textFieldObject, createFont(font, size, color));
+		}
+		public function assignTextFormat(textFieldObject:Object, textFormat:TextFormat):void
+		{
+			textFieldObject.defaultTextFormat = textFormat;
+			textFieldObject.embedFonts = true;
 		}
 	}
 }

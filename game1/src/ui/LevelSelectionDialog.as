@@ -160,16 +160,19 @@ package ui
 
 			var goldReportParent:Sprite = new Sprite;
 
-			var tf:TextFormat = new TextFormat("Computerfont", 24);
-			var goldReport:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x00, 1);
+			var goldReport:ShadowTextField = new ShadowTextField(0xffffff, 0x00, 1);
+			AssetManager.instance.assignFont(goldReport, AssetManager.FONT_COMPUTER, 24);
 			goldReport.text = "Credits:";
+			goldReport.embedFonts = true;
 			
 			goldReportParent.addChild(goldReport);
 			
-			var gold:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), Consts.CREDIT_FIELD_COLOR, 0, 1);
+			var gold:ShadowTextField = new ShadowTextField(Consts.CREDIT_FIELD_COLOR, 0, 1);
+			AssetManager.instance.assignFont(gold, AssetManager.FONT_ROBOT, 24); 
 			gold.y = goldReport.y - 2;
 			gold.x = goldReport.x + goldReport.width + 2;
 			gold.text = String(UserData.instance.credits);
+			gold.embedFonts = true;
 			_gold = gold;
 			
 			goldReportParent.addChild(gold);

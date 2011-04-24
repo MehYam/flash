@@ -12,12 +12,13 @@ package ui
 		{
 			super();
 
-			var tf:TextFormat = new TextFormat("Computerfont", 18);
-			var labelField:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x00, 1);
+			var labelField:ShadowTextField = new ShadowTextField(0xffffff, 0x00, 1);
+			AssetManager.instance.assignFont(labelField, AssetManager.FONT_COMPUTER, 18);
 			labelField.text = label;
 			labelField.y = 7;
 			
-			_valueField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), Consts.CREDIT_FIELD_COLOR, 0, 1);
+			_valueField = new ShadowTextField(Consts.CREDIT_FIELD_COLOR, 0, 1);
+			AssetManager.instance.assignFont(_valueField, AssetManager.FONT_ROBOT, 24); 
 			_valueField.x = labelField.width + 5;
 			_valueField.text = "32768";
 			

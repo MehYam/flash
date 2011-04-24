@@ -24,10 +24,11 @@ package ui
 
 		public static function create(label:String, raised:Boolean = true, size:Number = 24, distance:Number = 2):GameButton
 		{
-			var tf:TextFormat = new TextFormat("Computerfont", size);
+			var tf:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_COMPUTER, size); 
 			tf.align = TextFormatAlign.CENTER;
 
-			var text:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x000000, distance);
+			var text:ShadowTextField = new ShadowTextField(0xffffff, 0x000000, distance);
+			AssetManager.instance.assignTextFormat(text, tf);
 			text.text = label;
 
 			return new GameButton(text, AssetManager.instance.buttonFace(raised), AssetManager.instance.buttonFaceOver(raised), AssetManager.instance.buttonFaceDown());

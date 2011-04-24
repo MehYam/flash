@@ -39,17 +39,19 @@ package ui
 		private var _lastFieldBottom:Number = TOP_MARGIN;
 		private function addField(label:String, value:String, valueColor:uint = 0xffffff):void
 		{
-			var tf:TextFormat = new TextFormat("Computerfont", 24);
-			var labelField:ShadowTextField = new ShadowTextField(tf, 0xffffff, 0x444444, 1);
+			var labelField:ShadowTextField = new ShadowTextField(0xffffff, 0x444444, 1);
+			AssetManager.instance.assignFont(labelField, AssetManager.FONT_COMPUTER, 24);
 			labelField.text = label + ":";
 			labelField.x = 20;
 			labelField.y = _lastFieldBottom;
 
-			var valueField:ShadowTextField = new ShadowTextField(new TextFormat("SF Transrobotics", 24), 0x555577, valueColor, 1);
-			
+			var valueField:ShadowTextField = new ShadowTextField(0x555577, valueColor, 1);
+			AssetManager.instance.assignFont(valueField, AssetManager.FONT_ROBOT, 24);
+				
 			valueField.y = labelField.y - 2;
 			valueField.x = 250 - valueField.width;
 			valueField.text = value;
+			valueField.embedFonts = true;
 			
 			addChild(labelField);
 			addChild(valueField);

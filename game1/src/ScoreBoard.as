@@ -24,9 +24,11 @@ package
 			
 			mouseEnabled = false;
 			mouseChildren = false;
+
+			const radioStars24:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_RADIOSTARS, 24);
 			
-			const labelFormat:TextFormat = new TextFormat("Radio Stars", 24, null);
-			var labelField:ShadowTextField = new ShadowTextField(labelFormat);
+			var labelField:ShadowTextField = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(labelField, radioStars24);
 			labelField.text = "Health:";
 			labelField.cacheAsBitmap = true;
 			addChild(labelField);
@@ -39,13 +41,17 @@ package
 
 			var horz:Number = _health.x + _health.width + GAP;
 
-			labelField = new ShadowTextField(labelFormat);
+			labelField = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(labelField, radioStars24);
 			labelField.text = "Earnings:";
 			labelField.cacheAsBitmap = true;
 			labelField.x = horz;
 			addChild(labelField);
 			
-			_earnings = new ShadowTextField(new TextFormat("SF TransRobotics", 26));
+			const robot26:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_ROBOT, 26);
+			
+			_earnings = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(_earnings, robot26);
 			_earnings.text = "0";
 			_earnings.x = labelField.x + labelField.width + GAP/2;
 			_earnings.y = -4;
@@ -53,7 +59,8 @@ package
 
 			var vert:Number = labelField.y + labelField.height - 6;
 
-			labelField = new ShadowTextField(labelFormat);
+			labelField = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(labelField, radioStars24);
 			labelField.text = "Level:";
 			labelField.x = 0;
 			labelField.y = vert;
@@ -66,23 +73,25 @@ package
 			_progress.y = labelField.y + GAP/2 + 1;
 			addChild(_progress);
 
-			const indicatorTextFormat:TextFormat = new TextFormat("SF TransRobotics", 20);
-			
-			_comboIndicator = new ShadowTextField(indicatorTextFormat);
+			const indicatorTextFormat:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_ROBOT, 20);
+			_comboIndicator = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(_comboIndicator, indicatorTextFormat);
 			_comboIndicator.x = _earnings.x -100;
 			_comboIndicator.y = _earnings.y + _earnings.height - 9;
 			combo = 1;
 			addChild(_comboIndicator);
 
 			vert = labelField.y + labelField.height;
-			labelField = new ShadowTextField(indicatorTextFormat);
+			labelField = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(labelField, indicatorTextFormat);
 			labelField.text = "FUSION:";
 			labelField.fgColor = 0xff00ff;
 			var meter:ProgressMeter = new ProgressMeter(80, 10, 0, 0xff00ff);
 			_fusionIndicator = new LabelAndMeter(labelField, meter);
 			_fusionIndicator.y = vert;
 
-			labelField = new ShadowTextField(indicatorTextFormat);
+			labelField = new ShadowTextField;
+			AssetManager.instance.assignTextFormat(labelField, indicatorTextFormat);
 			labelField.text = "SHIELD:";
 			labelField.fgColor = 0x0000ff;
 			meter = new ProgressMeter(80, 10, 0, 0x0000ff);

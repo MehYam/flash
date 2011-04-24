@@ -524,7 +524,8 @@ package
 		{
 			if (!_textFieldTyper)
 			{
-				_centerPrint = new ShadowTextField(new TextFormat("Computerfont", 36));
+				_centerPrint = new ShadowTextField;
+				AssetManager.instance.assignFont(_centerPrint, AssetManager.FONT_COMPUTER, 36);
 				_textFieldTyper = new TextFieldTyper(_centerPrint, false);
 				_textFieldTyper.postDelay = 3000;
 				Util.listen(_textFieldTyper, Event.COMPLETE, onCenterPrintDone);

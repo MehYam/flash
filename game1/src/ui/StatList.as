@@ -47,8 +47,9 @@ package ui
 		static private var s_dropShadow:Array = [new DropShadowFilter(2, 45, 0, 1, 0, 0)];
 		static private function addStatField(parent:DisplayObjectContainer, label:String, meterValue:Number, meterColor:uint = 0x0033ff):ProgressMeter
 		{
-			var tf:TextFormat = new TextFormat("SF Transrobotics", 18);
-			var labelField:ShadowTextField = new ShadowTextField(tf, 0x00, 0xff, 1);
+			var labelField:ShadowTextField = new ShadowTextField(0x00, 0xff, 1);
+			AssetManager.instance.assignFont(labelField, AssetManager.FONT_ROBOT, 18);
+
 			labelField.text = label + ":";
 			labelField.y = s_fieldTop;
 			

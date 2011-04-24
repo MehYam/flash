@@ -33,8 +33,9 @@ package ui
 			textField.y = 80;
 			textField.autoSize = TextFieldAutoSize.LEFT;
 
-			var format:TextFormat = new TextFormat("Computerfont", 24, 0x00ff00);
+			var format:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_COMPUTER, 24, 0x00ff00);
 			textField.defaultTextFormat = format;
+			textField.embedFonts = true;
 
 			var textFieldTyper:TextFieldTyper = new TextFieldTyper(textField, true);
 			textFieldTyper.text = "Prepare Yourself For...";
@@ -53,7 +54,8 @@ package ui
 			var textFieldTyper:TextFieldTyper = TextFieldTyper(e.target);
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 			
-			var textField:DisplayObject = new ShadowTextField(new TextFormat("SF Transrobotics", 96), 0xffffff, 0x666688, 5);
+			var textField:ShadowTextField = new ShadowTextField(0xffffff, 0x666688, 5);
+			AssetManager.instance.assignFont(textField, AssetManager.FONT_ROBOT, 96); 
 			textField.x = LEFT;
 			textField.y = 150;
 			addChild(textField);

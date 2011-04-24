@@ -166,9 +166,10 @@ package ui
 		}
 		static private function addUpgrade(list:GameList, part:TankPartData, upgradeIndex:uint):void
 		{
-			const fmt:TextFormat = new TextFormat("SF TransRobotics", 16);
+			const fmt:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_ROBOT, 16);
 			var tf:TextField = new TextField();
 			tf.defaultTextFormat = fmt;
+			tf.embedFonts = true;
 			tf.autoSize = TextFieldAutoSize.CENTER;
 			tf.wordWrap = true;
 			tf.text = part.name;

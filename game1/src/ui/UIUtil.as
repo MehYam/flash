@@ -31,9 +31,10 @@ package ui
 			
 			parent.addChild(skin);
 			
-			var tf:TextFormat = new TextFormat("Radio Stars", 14);
-			var labelField:ShadowTextField = new ShadowTextField(tf, 0, 0x00ff00, 1);
+			var labelField:ShadowTextField = new ShadowTextField(0, 0x00ff00, 1);
+			AssetManager.instance.assignFont(labelField, AssetManager.FONT_RADIOSTARS, 14);
 			labelField.text = label;
+			labelField.embedFonts = true;
 			
 			labelField.x = skin.x + 3;
 			labelField.y = skin.y;

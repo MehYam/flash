@@ -19,9 +19,10 @@ package ui
 			
 			this.title = title;
 
-			var fmt:TextFormat = new TextFormat("Computerfont", 18, 0);
+			var fmt:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_COMPUTER, 18, 0);
 			var txt:TextField = new TextField;
 			txt.defaultTextFormat = fmt;
+			txt.embedFonts = true;
 			txt.autoSize = TextFieldAutoSize.LEFT;
 			txt.multiline = true;
 			txt.wordWrap = true;

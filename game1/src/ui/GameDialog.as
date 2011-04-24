@@ -70,8 +70,8 @@ package ui
 			{
 				removeChild(_title);
 			}
-			var fmt:TextFormat = new TextFormat("SF Transrobotics", 20);
-			var tf:ShadowTextField = new ShadowTextField(fmt);
+			var tf:ShadowTextField = new ShadowTextField;
+			AssetManager.instance.assignFont(tf, AssetManager.FONT_ROBOT, 20);
 			tf.text = t;
 			tf.x = s_titleOffset.x;
 			tf.y = s_titleOffset.y;
