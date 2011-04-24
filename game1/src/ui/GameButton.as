@@ -10,8 +10,8 @@ package ui
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	
-	import karnold.utils.Util;
 	import karnold.ui.ShadowTextField;
+	import karnold.utils.Util;
 	
 	// There are about a million better ways to do this - resorting to this	because I'm running out of
 	// time and can't get 9 sliced Buttons to work from CS3.
@@ -21,8 +21,9 @@ package ui
 		private var _over:DisplayObject;
 		private var _down:DisplayObject;
 		private var _text:*;  // sucks, but because it could be a TextField or ShadowTextField
+		private var _offset:Point;
 
-		public static function create(label:String, raised:Boolean = true, size:Number = 24, distance:Number = 2):GameButton
+		public static function create(label:String, raised:Boolean = true, size:Number = 24, distance:Number = 2, textOffset:Point = null):GameButton
 		{
 			var tf:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_COMPUTER, size); 
 			tf.align = TextFormatAlign.CENTER;
@@ -31,9 +32,9 @@ package ui
 			AssetManager.instance.assignTextFormat(text, tf);
 			text.text = label;
 
-			return new GameButton(text, AssetManager.instance.buttonFace(raised), AssetManager.instance.buttonFaceOver(raised), AssetManager.instance.buttonFaceDown());
+			return new GameButton(text, AssetManager.instance.buttonFace(raised), AssetManager.instance.buttonFaceOver(raised), AssetManager.instance.buttonFaceDown(), textOffset);
 		}
-		public function GameButton(text:DisplayObject, up:DisplayObject, over:DisplayObject, down:DisplayObject)
+		public function GameButton(text:DisplayObject, up:DisplayObject, over:DisplayObject, down:DisplayObject, textOffset:Point = null)
 		{
 			super();
 			
@@ -50,9 +51,10 @@ package ui
 			_over = over;
 			_down = down;
 			_text = text;
-			
-			_text.x = TEXTOFFSET.x;
-			_text.y = TEXTOFFSET.y;
+
+			_offset = textOffset || TEXTOFFSET;
+			_text.x = _offset.x;
+			_text.y = _offset.y;
 			_text.mouseEnabled = false;
 
 			width = 2*_text.x + _text.width;
@@ -85,21 +87,18 @@ package ui
 		}
 		
 		private static const TEXTOFFSET:Point = new Point(7, 2);
-		private static const TEXTOFFSET_DOWN:Point = new Point(TEXTOFFSET.x + 2, TEXTOFFSET.y + 2);
+		private static const TEXTOFFSET_DOWN:Point = new Point(2, 2);
 		private function setFace(sprite:DisplayObject):void
 		{
 			removeChildAt(0);
 			addChildAt(sprite, 0);
 
+			_text.x = _offset.x;
+			_text.y = _offset.y;
 			if (sprite == _down)
 			{
-				_text.x = TEXTOFFSET_DOWN.x;
-				_text.y = TEXTOFFSET_DOWN.y;
-			}
-			else
-			{
-				_text.x = TEXTOFFSET.x;
-				_text.y = TEXTOFFSET.y;
+				_text.x += TEXTOFFSET_DOWN.x;
+				_text.y += TEXTOFFSET_DOWN.y;
 			}
 		}
 		

@@ -43,6 +43,7 @@ package
 	import ui.GameToolTip;
 	import ui.LevelCompleteDialog;
 	import ui.LevelSelectionDialog;
+	import ui.MessageBox;
 	import ui.TestDialog;
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
@@ -104,23 +105,16 @@ package
 			parent.addChild(_title);
 			
 			Util.listen(_title, TitleScreenEvent.NEW_GAME, onNewGame);
+			Util.listen(_title, TitleScreenEvent.CONTINUE, onContinue);
 		}
 		private function onNewGame(e:Event):void
 		{
-			// Logic:
-			//  - if user's never played before, put them right in wave 1
-			//  - else bring up the confirm dialog
-			
-			//UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
-//			startGame(0);
-			onContinue(e);
+//			UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
+			startLevel(0);
 		}
 		private function onContinue(e:Event):void
 		{
 			toLevelSelectionDialog();
-			//UIUtil.openDialog(this, new UpgradeTankDialog);
-			//UIUtil.openDialog(this, new UpgradePlaneDialog);
-			//UIUtil.openDialog(this, new TestDialog);
 		}
 		private var _levelSelectionDialog:LevelSelectionDialog;
 		private function toLevelSelectionDialog():void

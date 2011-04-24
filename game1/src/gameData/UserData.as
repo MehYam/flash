@@ -27,7 +27,7 @@ package gameData
 				s_instance.currentTurret = 0;
 				
 				// TEST DATA BELOW
-//				s_instance.credits = 100000;
+				s_instance.credits = 100000;
 //				s_instance.purchasePart(PlaneData.getPlane(1), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(3), 0);
 //				s_instance.purchasePart(PlaneData.getPlane(2), 0);
@@ -71,7 +71,7 @@ package gameData
 //
 //				s_instance.currentPlane = 36;
 //
-//				s_instance.levelsBeaten = 34;
+				s_instance.levelsBeaten = 34;
 //
 //				const testHull:uint = 2;
 //				s_instance.currentHull = testHull;

@@ -9,8 +9,8 @@ package ui
 	
 	import karnold.utils.Util;
 
-	// this is possibly the most poorly written UI code in history.  The fact that it looks pretty decent
-	// and works nicely is frightening genius on my part
+	// this is possibly the most poorly written UI code in history.  The fact that it looks okay
+	// and actually works means i'm awesome
 	public class GameList extends Sprite
 	{
 		static public const DEBUG_MODE:Boolean = false;
@@ -149,18 +149,22 @@ package ui
 			}			
 			if (!_leftButton && _scroll)
 			{
-				_leftButton = GameButton.create("<", true, 12, 1);
-				_leftButton.x = 0;
-				_leftButton.y = _bounds.y - _leftButton.height;
+				_leftButton = GameButton.create("<", true, 9, 1, new Point(0, 36));
+				_leftButton.x = -1;
 				_leftButton.enabled = false;
 				Util.listen(_leftButton, MouseEvent.MOUSE_DOWN, onScrollLeft);
 				addChild(_leftButton);
 				
-				_rightButton = GameButton.create(">", true, 12, 1);
-				_rightButton.x = _bounds.x - _rightButton.width;
-				_rightButton.y = _leftButton.y;
+				_rightButton = GameButton.create(">", true, 9, 1, new Point(0, 36));
 				Util.listen(_rightButton, MouseEvent.MOUSE_DOWN, onScrollRight);
 				addChild(_rightButton);
+				
+				_leftButton.height = height - 10;
+				_rightButton.height = _leftButton.height;
+				_leftButton.width = 10;
+				_rightButton.width = 10;
+
+				_rightButton.x = _bounds.x - _rightButton.width;
 			}
 			updateScrollButtons();
 		}
@@ -211,10 +215,6 @@ package ui
 			{
 				_leftButton.enabled = (_scrollPos > 0);
 				_rightButton.enabled = !allTheWayRight;
-				
-				//hack on hack on hack....... this fixes that annoying bug where you scroll all the way in either direction
-				_leftButton.mouseEnabled = true;
-				_rightButton.mouseEnabled = true;
 			}
 		}
 	}

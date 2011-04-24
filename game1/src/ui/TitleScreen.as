@@ -15,6 +15,8 @@ package ui
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
 	
+	import gameData.UserData;
+	
 	import karnold.ui.ShadowTextField;
 	import karnold.utils.FrameTimer;
 	import karnold.utils.Util;
@@ -83,7 +85,7 @@ package ui
 			continueButton.width = newGameButton.width;
 			Util.centerChild(continueButton, this);
 			continueButton.y = newGameButton.y + newGameButton.height + 20;
-			continueButton.enabled = false;
+			continueButton.enabled = UserData.instance.levelsBeaten > 0;
 			addChild(continueButton);
 
 			Util.listen(continueButton, MouseEvent.CLICK, onContinue);
