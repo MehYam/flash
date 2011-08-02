@@ -429,7 +429,7 @@ final class ChargedFireBehavior implements IBehavior
 				_charging = false;
 				_stepRate.reset();
 
-				FireHelper.fireAsArrayOrSource(game, actor, _currentStep);
+				FireHelper.fireAsArrayOrSource(game, actor, _source, _currentStep);
 				_currentStep = 0;
 				game.scoreBoard.pctFusion = .01;
 			}
