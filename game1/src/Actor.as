@@ -205,6 +205,7 @@ package
 			}
 			return createPooledActor(s_bulletLevels[level]);
 		}
+		static public function get bulletLevels():uint { return s_bulletLevels.length; }
 		static private var s_laserLevels:Array;
 		static public function createLaser(level:uint):Actor
 		{
@@ -214,6 +215,7 @@ package
 			}
 			return createPooledActor(s_laserLevels[level]);
 		}
+		static public function get laserLevels():uint { return s_laserLevels.length; }
 		static private var s_expLevels:Array; 
 		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint, level:uint):void
 		{
@@ -257,6 +259,7 @@ package
 			}
 			return createPooledActor(s_cannonBlast[level]);
 		}
+		static public function get cannonLevels():uint { return s_cannonBlast.length; }
 	}
 }
 import behaviors.ActorAttrs;

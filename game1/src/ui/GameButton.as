@@ -112,6 +112,8 @@ package ui
 			Util.listen(stage, MouseEvent.MOUSE_UP, onMouseUp);
 			Util.listen(stage, Event.MOUSE_LEAVE, onMouseUp);
 			Util.listen(this, MouseEvent.CLICK, onClick);
+			
+			AssetManager.instance.uiClick();
 		}
 		private function onMouseUp(e:Event):void
 		{
@@ -130,7 +132,7 @@ package ui
 		}
 		private function onClick(e:Event):void
 		{
-//KAI: play a sound
+			AssetManager.instance.uiClick();
 		}
 	}
 }

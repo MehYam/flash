@@ -29,6 +29,30 @@ package behaviors
 			_turret = turret;
 		}
 
+		public function playSound():void
+		{
+			switch(_ammoType) {
+			case AmmoType.BULLET:
+				AssetManager.instance.bulletSound(_level / Actor.bulletLevels);
+				break;
+			case AmmoType.LASER:
+			case AmmoType.HIGHLASER:
+				AssetManager.instance.laser2Sound();
+				break;
+			case AmmoType.ROCKET:
+				AssetManager.instance.rocketSound();
+				break;
+			case AmmoType.FUSION:
+				AssetManager.instance.fusionSound();
+				break;
+			case AmmoType.SHIELD:
+				AssetManager.instance.shieldLaunchSound();
+				break;
+			case AmmoType.CANNON:
+				AssetManager.instance.shotSound(_level / Actor.cannonLevels);
+				break;
+			}
+		}
 		static private var po_tmp:Point = new Point;
 		public function fire(game:IGame, actor:Actor, damageMultiplier:Number = 1):Actor
 		{

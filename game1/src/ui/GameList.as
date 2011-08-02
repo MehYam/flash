@@ -150,7 +150,7 @@ package ui
 			if (!_leftButton && _scroll)
 			{
 				_leftButton = GameButton.create("<", true, 9, 1, new Point(0, 36));
-				_leftButton.x = -1;
+				_leftButton.x = -3;
 				_leftButton.enabled = false;
 				Util.listen(_leftButton, MouseEvent.MOUSE_DOWN, onScrollLeft);
 				addChild(_leftButton);
@@ -164,7 +164,7 @@ package ui
 				_leftButton.width = 10;
 				_rightButton.width = 10;
 
-				_rightButton.x = _bounds.x - _rightButton.width;
+				_rightButton.x = _bounds.x - _rightButton.width + 2;
 			}
 			updateScrollButtons();
 		}

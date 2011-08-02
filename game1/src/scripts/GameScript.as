@@ -757,10 +757,13 @@ class WaveBasedGameScript extends BaseScript
 		}
 		else if (friendly.alive)
 		{
+			// bounce - I think this only happens with shields (since it's the only friendly)
 			ammo.speed.x = -ammo.speed.x;
 			ammo.speed.y = -ammo.speed.y;
 			
 			game.convertToFriendlyAmmo(ammo);
+			
+			AssetManager.instance.laserBounceSound();
 		}
 	}
 	public override function onEnemyStruckByAmmo(game:IGame, enemy:Actor, ammo:Actor):void
@@ -816,6 +819,11 @@ class WaveBasedGameScript extends BaseScript
 			_stats.damageDealt += damage;
 		}
 
+		if (wasCollision)
+		{
+			AssetManager.instance.collisionSound();
+		}
+		
 		// handle actor death
 		if (actor.health <= 0)
 		{
@@ -834,7 +842,7 @@ class WaveBasedGameScript extends BaseScript
 
 			if (!isFriendly)
 			{
-				AssetManager.instance.deathSound();
+				AssetManager.instance.explosionSound();
 				++_stats.enemiesKilled;
 
 				_game.scoreBoard.pctLevel = _stats.enemiesKilled / _stats.enemiesTotal;

@@ -57,7 +57,7 @@ package ui
 	
 					if (_sounds)
 					{
-						AssetManager.instance.laserSound();
+						AssetManager.instance.laser2Sound();
 					}
 				}
 				else

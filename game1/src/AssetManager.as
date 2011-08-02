@@ -14,6 +14,7 @@ package
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	import flash.text.TextFormat;
+	import flash.utils.Dictionary;
 	
 	import karnold.tile.IBitmapFactory;
 
@@ -65,29 +66,68 @@ package
 			}
 			return new Bitmap(_cachedTiles[index]);
 		}
-		
-		[Embed(source="assets/crash1.mp3")]
-		static private const CrashSound:Class;
-		private var _crashSound:Sound;
-		public function deathSound():void
+
+		private var _sounds:Dictionary = new Dictionary;
+		private function playSound(sound:Class):void
 		{
-			if (!_crashSound)
+			var soundInstance:Sound = _sounds[sound];
+			if (!soundInstance)
 			{
-				_crashSound = new CrashSound() as Sound;
+				soundInstance = _sounds[sound] = new sound() as Sound;
 			}
-			_crashSound.play();
+			soundInstance.play();
 		}
-		[Embed(source="assets/laser1.mp3")]
-		static private const WeaponSound:Class;
-		private var _weaponSound:Sound;
-		public function laserSound():void
-		{
-			if (!_weaponSound)
-			{
-				_weaponSound = new WeaponSound() as Sound;
-			}
-			_weaponSound.play();
-		}
+
+		[Embed(source="assets/sounds/crash1.mp3")] static private const Crash1Sound:Class;
+		[Embed(source="assets/sounds/laser1.mp3")] static private const Laser1Sound:Class;
+		[Embed(source="assets/sounds/laser2.mp3")] static private const Laser2Sound:Class;
+		[Embed(source="assets/sounds/bump1.mp3")] static private const Bump1Sound:Class;
+		[Embed(source="assets/sounds/bump2.mp3")] static private const Bump2Sound:Class;
+		[Embed(source="assets/sounds/bump3.mp3")] static private const Bump3Sound:Class;
+		static private const s_bumpSounds:Array = [Bump1Sound, Bump2Sound, Bump3Sound];
+		[Embed(source="assets/sounds/explosion1.mp3")] static private const Explosion1Sound:Class;
+		[Embed(source="assets/sounds/explosion2.mp3")] static private const Explosion2Sound:Class;
+		[Embed(source="assets/sounds/explosion3.mp3")] static private const Explosion3Sound:Class;
+		[Embed(source="assets/sounds/explosion4.mp3")] static private const Explosion4Sound:Class;
+		[Embed(source="assets/sounds/explosion5.mp3")] static private const Explosion5Sound:Class;
+		static private const s_explosionSounds:Array = [Explosion1Sound, Explosion2Sound, Explosion3Sound, Explosion4Sound, Explosion5Sound];
+		[Embed(source="assets/sounds/click.mp3")] static private const UIClickSound:Class;
+		[Embed(source="assets/sounds/fusion1.mp3")] static private const Fusion1Sound:Class;
+		[Embed(source="assets/sounds/fusion2.mp3")] static private const Fusion2Sound:Class;
+		[Embed(source="assets/sounds/fusion3.mp3")] static private const Fusion3Sound:Class;
+		[Embed(source="assets/sounds/fusion4.mp3")] static private const Fusion4Sound:Class;
+		static private const s_bulletSounds:Array = [Fusion1Sound, Fusion2Sound, Fusion3Sound, Fusion4Sound];
+		[Embed(source="assets/sounds/shot1.mp3")] static private const Shot1Sound:Class;
+		[Embed(source="assets/sounds/shot2.mp3")] static private const Shot2Sound:Class;
+		[Embed(source="assets/sounds/shot3.mp3")] static private const Shot3Sound:Class;
+		static private const s_shotSounds:Array = [Shot1Sound, Shot2Sound, Shot3Sound];
+		[Embed(source="assets/sounds/blast1.mp3")] static private const RocketSound:Class;
+		[Embed(source="assets/sounds/shieldsorcloak2.mp3")] static private const ShieldSound:Class;
+		[Embed(source="assets/sounds/purchase1.mp3")] static private const FusionSound:Class;
+		[Embed(source="assets/sounds/bump1.mp3")] static private const Collision1Sound:Class;
+		[Embed(source="assets/sounds/bump2.mp3")] static private const Collision2Sound:Class;
+		[Embed(source="assets/sounds/bump3.mp3")] static private const Collision3Sound:Class;
+		static private const s_collisionSounds:Array = [Collision1Sound, Collision2Sound, Collision3Sound];
+		[Embed(source="assets/sounds/laserbounce1.mp3")] static private const LaserBounce1Sound:Class;
+		[Embed(source="assets/sounds/laserbounce2.mp3")] static private const LaserBounce2Sound:Class;
+		[Embed(source="assets/sounds/laserbounce3.mp3")] static private const LaserBounce3Sound:Class;
+		[Embed(source="assets/sounds/laserbounce4.mp3")] static private const LaserBounce4Sound:Class;
+		[Embed(source="assets/sounds/laserbounce5.mp3")] static private const LaserBounce5Sound:Class;
+		static private const s_laserBounceSounds:Array = [LaserBounce1Sound, LaserBounce2Sound, LaserBounce3Sound, LaserBounce4Sound, LaserBounce5Sound];
+
+		public function laser1Sound():void { playSound(Laser1Sound); }
+		public function laser2Sound():void { playSound(Laser2Sound); }
+		public function deathSound():void { playSound(Crash1Sound); }
+		public function bulletSound(pct:Number):void { playSound(s_bulletSounds[uint(pct * s_bulletSounds.length)]); }
+		public function bumpSound():void { playSound(s_bumpSounds[uint(Math.random() * s_bumpSounds.length)]); }
+		public function explosionSound():void { playSound(s_explosionSounds[uint(Math.random() * s_explosionSounds.length)]);	}
+		public function shotSound(pct:Number):void { playSound(s_shotSounds[uint(pct * s_shotSounds.length)]); }
+		public function rocketSound():void { playSound(RocketSound); }
+		public function shieldLaunchSound():void { playSound(ShieldSound); }
+		public function fusionSound():void { playSound(FusionSound); }
+		public function collisionSound():void { playSound(s_collisionSounds[uint(Math.random() * s_collisionSounds.length)]); }
+		public function laserBounceSound():void { playSound(s_laserBounceSounds[uint(Math.random() * s_laserBounceSounds.length)]); }
+		public function uiClick():void { playSound(UIClickSound); }
 
 		static private const s_uiFaceScale9:Rectangle = new Rectangle(10, 10, 30, 30);
 		public function uiFace(color:uint):DisplayObject
@@ -147,18 +187,12 @@ package
 			return rect;
 		}
 
-		[Embed(source="assets/master.swf", symbol="checkmark")]
-		static private const CHECKMARK:Class;
-		[Embed(source="assets/master.swf", symbol="arrow")]
-		static private const ARROW:Class;
-		[Embed(source="assets/master.swf", symbol="lock")]
-		static private const LOCK:Class;
-		[Embed(source="assets/master.swf", symbol="question")]
-		static private const QUESTION:Class;
-		[Embed(source="assets/master.swf", symbol="planeIcon")]
-		static private const PLANEICON:Class;
-		[Embed(source="assets/master.swf", symbol="tankIcon")]
-		static private const TANKICON:Class;
+		[Embed(source="assets/master.swf", symbol="checkmark")]		static private const CHECKMARK:Class;
+		[Embed(source="assets/master.swf", symbol="arrow")]		static private const ARROW:Class;
+		[Embed(source="assets/master.swf", symbol="lock")]		static private const LOCK:Class;
+		[Embed(source="assets/master.swf", symbol="question")]		static private const QUESTION:Class;
+		[Embed(source="assets/master.swf", symbol="planeIcon")]		static private const PLANEICON:Class;
+		[Embed(source="assets/master.swf", symbol="tankIcon")]		static private const TANKICON:Class;
 		
 		static private const s_uiStuffDropShadow:Array = [new DropShadowFilter(2, 45, 0, 1, 1, 1)];
 		public function checkmark():DisplayObject
@@ -201,12 +235,9 @@ package
 			return retval; 
 		}
 		
-		[Embed(source='assets/fonts/Computerfont.ttf', fontFamily='embeddedComputerfont', mimeType='application/x-font', embedAsCFF='false')] 
-		static private const Computerfont:Class;
-		[Embed(source='assets/fonts/RADIOSTA.TTF', fontFamily='embeddedRadiostars', mimeType='application/x-font', embedAsCFF='false')] 
-		static private const Radiofont:Class;
-		[Embed(source='assets/fonts/SF TransRobotics.ttf', fontFamily='embeddedSFT', mimeType='application/x-font', embedAsCFF='false')] 
-		static private const SFTfont:Class;
+		[Embed(source='assets/fonts/Computerfont.ttf', fontFamily='embeddedComputerfont', mimeType='application/x-font', embedAsCFF='false')]		static private const Computerfont:Class;
+		[Embed(source='assets/fonts/RADIOSTA.TTF', fontFamily='embeddedRadiostars', mimeType='application/x-font', embedAsCFF='false')] 		static private const Radiofont:Class;
+		[Embed(source='assets/fonts/SF TransRobotics.ttf', fontFamily='embeddedSFT', mimeType='application/x-font', embedAsCFF='false')]		static private const SFTfont:Class;
 		
 		static public const FONT_COMPUTER:String = "embeddedComputerfont";
 		static public const FONT_RADIOSTARS:String = "embeddedRadiostars";

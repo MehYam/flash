@@ -325,6 +325,29 @@ final class FadeInBehavior implements IBehavior  //KAI: unnecessary and dumb
 	}
 }
 
+final class FireHelper
+{
+	static public function fireAsArrayOrSource(game:IGame, actor:Actor, source:*, step:Number = 1):void
+	{
+		const sourceAsArray:Array = source as Array;
+		if (sourceAsArray)
+		{
+			for each (var thisSource:AmmoFireSource in sourceAsArray)
+			{
+				thisSource.fire(game, actor, step);
+			}
+			if (sourceAsArray.length)
+			{
+				AmmoFireSource(sourceAsArray[0]).playSound();
+			}
+		}
+		else
+		{
+			AmmoFireSource(source).fire(game, actor, step);
+			AmmoFireSource(source).playSound();
+		}
+	}
+}
 final class AutofireBehavior implements IBehavior
 {
 	private var _source:*;
@@ -338,22 +361,9 @@ final class AutofireBehavior implements IBehavior
 	{
 		if (!_rate || _rate.now)
 		{
-			AssetManager.instance.laserSound();
-			
 			// This sucks a little bit, but the game script must ensure that this only gets called while the player's
 			// shooting
-			const sourceAsArray:Array = _source as Array;
-			if (sourceAsArray)
-			{
-				for each (var source:AmmoFireSource in sourceAsArray)
-				{
-					source.fire(game, actor);
-				}
-			}
-			else
-			{
-				AmmoFireSource(_source).fire(game, actor);
-			}
+			FireHelper.fireAsArrayOrSource(game, actor, _source);
 		}
 	}
 }
@@ -418,18 +428,8 @@ final class ChargedFireBehavior implements IBehavior
 			{
 				_charging = false;
 				_stepRate.reset();
-				const sourceAsArray:Array = _source as Array;
-				if (sourceAsArray)
-				{
-					for each (var source:AmmoFireSource in sourceAsArray)
-					{
-						source.fire(game, actor, _currentStep);
-					}
-				}
-				else
-				{
-					AmmoFireSource(_source).fire(game, actor, _currentStep);
-				}
+
+				FireHelper.fireAsArrayOrSource(game, actor, _currentStep);
 				_currentStep = 0;
 				game.scoreBoard.pctFusion = .01;
 			}
