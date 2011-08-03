@@ -84,6 +84,7 @@ package
 			if (bmd)
 			{
 				var bmp:DisplayObject = new Bitmap(bmd);
+				Bitmap(bmp).smoothing = true;
 				if (centered)
 				{
 					bmp.x = -bmp.width/2;

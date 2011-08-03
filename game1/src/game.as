@@ -591,6 +591,7 @@ package
 			{
 				UserData.instance.credits += stats.creditsEarned;
 				UserData.instance.levelsBeaten = Math.min(_lastStartedLevel + 1, Consts.LEVELS - 1);
+//KAI: null object reference here
 				_levelSelectionDialog.unlockLevels(UserData.instance.levelsBeaten + 1);
 			}
 			else

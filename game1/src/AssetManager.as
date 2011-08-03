@@ -64,7 +64,9 @@ package
 					_cachedTiles.push(tileBMD);
 				}
 			}
-			return new Bitmap(_cachedTiles[index]);
+			var retval:Bitmap = new Bitmap(_cachedTiles[index]);
+//			retval.smoothing = true;
+			return retval;
 		}
 
 		private var _sounds:Dictionary = new Dictionary;
@@ -90,7 +92,7 @@ package
 		[Embed(source="assets/sounds/explosion3.mp3")] static private const Explosion3Sound:Class;
 		[Embed(source="assets/sounds/explosion4.mp3")] static private const Explosion4Sound:Class;
 		[Embed(source="assets/sounds/explosion5.mp3")] static private const Explosion5Sound:Class;
-		static private const s_explosionSounds:Array = [Explosion1Sound, Explosion2Sound, Explosion3Sound, Explosion4Sound, Explosion5Sound];
+		static private const s_explosionSounds:Array = [Explosion1Sound, Explosion2Sound, Explosion3Sound, Explosion4Sound, Explosion5Sound].concat(s_bumpSounds);
 		[Embed(source="assets/sounds/click.mp3")] static private const UIClickSound:Class;
 		[Embed(source="assets/sounds/fusion1.mp3")] static private const Fusion1Sound:Class;
 		[Embed(source="assets/sounds/fusion2.mp3")] static private const Fusion2Sound:Class;
@@ -125,7 +127,7 @@ package
 		public function rocketSound():void { playSound(RocketSound); }
 		public function shieldLaunchSound():void { playSound(ShieldSound); }
 		public function fusionSound():void { playSound(FusionSound); }
-		public function collisionSound():void { playSound(s_collisionSounds[uint(Math.random() * s_collisionSounds.length)]); }
+		public function collisionSound():void { deathSound(); }//playSound(s_collisionSounds[uint(Math.random() * s_collisionSounds.length)]); }
 		public function laserBounceSound():void { playSound(s_laserBounceSounds[uint(Math.random() * s_laserBounceSounds.length)]); }
 		public function uiClick():void { playSound(UIClickSound); }
 
