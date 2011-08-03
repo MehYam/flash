@@ -486,21 +486,22 @@ final class SpeedDecayBehavior implements IBehavior
 }
 final class ExpireBehavior implements IBehavior, IResettable
 {
-	private var start:int = getTimer();
+	private var frames:int = 0;
 	private var lifetime:int;
 	public function ExpireBehavior(msLifeTime:int):void
 	{
-		lifetime = msLifeTime;
+		lifetime = Consts.millisecondsToFrames(msLifeTime);
 	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		if ((getTimer() - start) > lifetime)
+		++frames;
+		if (frames > lifetime)
 		{
 			game.killActor(actor);
 		}
 	}
 	public function reset():void
 	{
-		start = getTimer();
+		frames = 0;
 	}
 }

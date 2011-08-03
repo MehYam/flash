@@ -114,6 +114,7 @@ final class EnemyEnum
 		this.assetIndex = assetIndex;
 		this.attrs.RADIUS = PlaneData.getPlane(assetIndex).radius;
 		this.attrs.VALUE = value;
+		this.attrs.BOUND_EXTENT = ActorAttrs.EXTENT_FURTHER;
 
 		LOOKUP[name] = this;
 	}

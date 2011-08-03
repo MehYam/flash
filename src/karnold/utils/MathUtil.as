@@ -63,23 +63,28 @@ package karnold.utils
 			var retval:Number = speed * (1-decay);
 			return (Math.abs(retval) < SPEED_ALPHA) ? 0 : retval;
 		}
-		static public function constrain(bounds:Bounds, point:Point, width:Number, height:Number, speedForBounce:Point = null):void
+		static public const MARGIN_ZERO:Point = new Point(0, 0);
+		static public function constrain(bounds:Bounds, point:Point, width:Number, height:Number, speedForBounce:Point = null, margin:Point = null):void
 		{
+			margin = margin || MARGIN_ZERO;
+			
 			// contain world position
-			if (point.x < bounds.left)
+			const minHorz:Number = bounds.left - margin.x;
+			if (point.x < minHorz)
 			{
 				point.x = bounds.left;
 				speedForBounce.x = -speedForBounce.x;
 			}
 			else
 			{
-				const maxHorz:Number = bounds.right - width;
+				const maxHorz:Number = bounds.right + margin.x - width;
 				if (point.x > maxHorz)
 				{
 					point.x = maxHorz;
 					speedForBounce.x = -speedForBounce.x;
 				}
 			}
+			const minVert:Number = bounds.top - margin.y;
 			if (point.y < bounds.top)
 			{
 				point.y = bounds.top;
@@ -87,7 +92,7 @@ package karnold.utils
 			}
 			else 
 			{
-				const maxVert:Number = bounds.bottom - height;
+				const maxVert:Number = bounds.bottom + margin.y - height;
 				if (point.y > maxVert)
 				{
 					point.y = maxVert;

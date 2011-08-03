@@ -134,9 +134,9 @@ package
 			
 			// attrs.SPEED_DECAY would be done here too if I were doing this over again.  Would have to rebalance all the numbers....
 
-			if (attrs.BOUNDED)
+			if (attrs.BOUND_EXTENT != ActorAttrs.EXTENT_INFINITE)
 			{	
-				MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed);
+				MathUtil.constrain(game.worldBounds, worldPos, 0, 0, speed, attrs.BOUND_EXTENT);
 			}
 			if (_behavior)
 			{

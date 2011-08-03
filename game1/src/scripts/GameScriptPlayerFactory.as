@@ -22,7 +22,7 @@ package scripts
 		{
 			return ShieldActor.createActivator(
 				new AmmoFireSource(AmmoType.SHIELD, shieldDamage, 0, yOffset, 0),
-				new ActorAttrs(shieldArmor, 0, 0, 0.01, 45, 0, false, lifetime));
+				new ActorAttrs(shieldArmor, 0, 0, 0.01, 45, 0, ActorAttrs.EXTENT_INFINITE, lifetime));
 		}
 		static public function getPlayerPlane():GameScriptPlayerVehicle
 		{

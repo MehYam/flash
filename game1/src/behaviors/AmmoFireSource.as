@@ -6,7 +6,6 @@ package behaviors
 	import karnold.utils.Util;
 	
 	import scripts.ShieldActor;
-	import scripts.TankActor;
 
 	public class AmmoFireSource
 	{
