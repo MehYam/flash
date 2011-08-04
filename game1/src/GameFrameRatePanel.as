@@ -39,7 +39,7 @@ package
 			addFieldOnNextLine(_pooled);
 
 			_debugText = new NumericRasterTextField;
-//			addFieldOnNextLine(_debugText);
+			addFieldOnNextLine(_debugText);
 			
 			txt1 = 0;
 			txt2 = 0;

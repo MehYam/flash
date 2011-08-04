@@ -168,6 +168,8 @@ package
 		private var _debugFlag:Boolean = false;  // used for incidental things
 		private function onFrame():void
 		{
+			if (_frameRate)
+			_frameRate.debug = width + ", " + height;
 			if (_globalBehavior)
 			{
 				_globalBehavior.onFrame(this, null);
