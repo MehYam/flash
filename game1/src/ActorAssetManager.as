@@ -493,7 +493,7 @@ final internal class FusionBlastCreator extends SimpleRasterizedObjectCreator
 	{
 		var blast:Shape = new Shape;
 		blast.graphics.lineStyle(0, 0, 0);
-		blast.graphics.beginFill(color, 0.7);
+		blast.graphics.beginFill(color, 0.5);
 		blast.graphics.drawRoundRect(-WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT, 4, 4);
 		blast.graphics.endFill();
 		return blast;
