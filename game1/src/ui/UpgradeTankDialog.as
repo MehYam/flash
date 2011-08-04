@@ -303,7 +303,7 @@ package ui
 			const item:GameListItem = _listTurrets.selection as GameListItem;
 			_lastSelectedTurret = item.cookie;
 			
-			const turret:TankPartData = TankPartData.getHull(_lastSelectedTurret);
+			const turret:TankPartData = TankPartData.getTurret(_lastSelectedTurret);
 			populateUpgrades(_listTurretUpgrades, turret);
 			
 			if (turret.purchased)
