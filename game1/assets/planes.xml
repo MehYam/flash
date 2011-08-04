@@ -1,42 +1,42 @@
 <data>
 <planes>
-<plane n='Bee'          a='0'  rad='12' dmg='0.05' rate='0.3'  arm='0.05' speed='0.4'  cost='1000'   unl='0' up='2'  c='0'/>
-<plane n='Wasp'         a='1'  rad='12' dmg='0.1'  rate='0.3'  arm='0.05' speed='0.5'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Hornet'       a='2'  rad='12' dmg='0.15' rate='0.3'  arm='0.1'  speed='0.6'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Jem'          a='3'  rad='12' dmg='0.1'  rate='0.1'  arm='0.2'  speed='0.1'  cost='2000'   unl='0' up='2'  c='1'/>
-<plane n='Jem II'       a='4'  rad='12' dmg='0.15' rate='0.2'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'  c='1'/>
-<plane n='Jem VSBL'     a='5'  rad='12' dmg='0.2'  rate='0.3'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'  c='2'/>
-<plane n='Bat'          a='6'  rad='20' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.2'  cost='3000'   unl='1' up='2'  c='3'/>
-<plane n='Bat II'       a='7'  rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Bat III'      a='8'  rad='23' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Osprey'       a='9'  rad='35' dmg='0.4'  rate='0.3'  arm='0.4'  speed='0.8'  cost='4000'   unl='8' up='2'  c='3'/>
-<plane n='Osprey II'    a='10' rad='35' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Osprey III'   a='11' rad='38' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Diptera'      a='12' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='5000'   unl='5' up='2'  c='1'/>
-<plane n='Diptera X'    a='13' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='1'/>
-<plane n='Diptera XI'   a='14' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='1'/>
-<plane n='Cygnus X-1'   a='15' rad='27' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.8'  cost='6000'   unl='2' up='2'  c='0'/>
-<plane n='Cygnus X-2'   a='16' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Cygnus X-3'   a='17' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Ghost'        a='18' rad='18' dmg='0.4'  rate='0.3'  arm='0.6'  speed='0.8'  cost='7000'   unl='8' up='2'  c='3'/>
-<plane n='Phantom'      a='19' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Spectre'      a='20' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Attacus'      a='21' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='8000'   unl='5' up='2'  c='2'/>
-<plane n='Attacus II'   a='22' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2'/>
-<plane n='Attacus III'  a='23' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2'/>
-<plane n='???'          a='24' rad='20' dmg='0.4'  rate='0.3'  arm='0.1'  speed='0.8'  cost='9000'   unl='0' up='0' nosale='true'  c='2'/>
-<plane n='XStealth'     a='25' rad='30' dmg='0.4'  rate='0.3'  arm='0.02' speed='0.8'  cost='10000'  unl='8' up='2'  c='3'/>
-<plane n='YStealth'     a='26' rad='30' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='ZStealth'     a='27' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3'/>
-<plane n='Rocinante'    a='28' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='11000'  unl='2' up='2'  c='0'/>
-<plane n='Rocinante II' a='29' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Rocinante III' a='30' rad='22' dmg='0.4' rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Esox'         a='31' rad='21' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='5' up='2'  c='2'/>
-<plane n='Pike'         a='32' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2'/>
-<plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2'/>
-<plane n='Raven'        a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'  c='0'/>
-<plane n='Corvid'       a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0'/>
-<plane n='Deathwing'    a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0'/>
+<plane n='Bee'          a='0'  rad='12' dmg='0.05' rate='0.3'  arm='0.05' speed='0.4'  cost='1000'   unl='0' up='2'  c='0' l="0"/>
+<plane n='Wasp'         a='1'  rad='12' dmg='0.1'  rate='0.3'  arm='0.05' speed='0.5'  cost='2000'   unl='0' up='0'  c='0' l="1"/>
+<plane n='Hornet'       a='2'  rad='12' dmg='0.15' rate='0.3'  arm='0.1'  speed='0.6'  cost='2000'   unl='0' up='0'  c='0' l="2"/>
+<plane n='Jem'          a='3'  rad='12' dmg='0.1'  rate='0.1'  arm='0.2'  speed='0.1'  cost='2000'   unl='0' up='2'  c='1' l="0"/>
+<plane n='Jem II'       a='4'  rad='12' dmg='0.15' rate='0.2'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'  c='1' l="1"/>
+<plane n='Jem VSBL'     a='5'  rad='12' dmg='0.2'  rate='0.3'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'  c='2' l="2"/>
+<plane n='Bat'          a='6'  rad='20' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.2'  cost='3000'   unl='1' up='2'  c='3' l="0"/>
+<plane n='Bat II'       a='7'  rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="1"/>
+<plane n='Bat III'      a='8'  rad='23' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="2"/>
+<plane n='Osprey'       a='9'  rad='35' dmg='0.4'  rate='0.3'  arm='0.4'  speed='0.8'  cost='4000'   unl='8' up='2'  c='3' l="3"/>
+<plane n='Osprey II'    a='10' rad='35' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="4"/>
+<plane n='Osprey III'   a='11' rad='38' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="5"/>
+<plane n='Diptera'      a='12' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='5000'   unl='5' up='2'  c='1' l="3"/>
+<plane n='Diptera X'    a='13' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='1' l="4"/>
+<plane n='Diptera XI'   a='14' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='1' l="5"/>
+<plane n='Cygnus X-1'   a='15' rad='27' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.8'  cost='6000'   unl='2' up='2'  c='0' l="3"/>
+<plane n='Cygnus X-2'   a='16' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="4"/>
+<plane n='Cygnus X-3'   a='17' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="5"/>
+<plane n='Ghost'        a='18' rad='18' dmg='0.4'  rate='0.3'  arm='0.6'  speed='0.8'  cost='7000'   unl='8' up='2'  c='3' l="3"/>
+<plane n='Phantom'      a='19' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="4"/>
+<plane n='Spectre'      a='20' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="5"/>
+<plane n='Attacus'      a='21' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='8000'   unl='5' up='2'  c='2' l="3"/>
+<plane n='Attacus II'   a='22' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="4"/>
+<plane n='Attacus III'  a='23' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="5"/>
+<plane n='???'          a='24' rad='20' dmg='0.4'  rate='0.3'  arm='0.1'  speed='0.8'  cost='9000'   unl='0' up='0' nosale='true'  c='2' l="8"/>
+<plane n='XStealth'     a='25' rad='30' dmg='0.4'  rate='0.3'  arm='0.02' speed='0.8'  cost='10000'  unl='8' up='2'  c='3' l="3"/>
+<plane n='YStealth'     a='26' rad='30' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="4"/>
+<plane n='ZStealth'     a='27' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="5"/>
+<plane n='Rocinante'    a='28' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='11000'  unl='2' up='2'  c='0' l="3"/>
+<plane n='Rocinante II' a='29' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="4"/>
+<plane n='Rocinante III' a='30' rad='22' dmg='0.4' rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="5"/>
+<plane n='Esox'         a='31' rad='21' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='5' up='2'  c='2' l="3"/>
+<plane n='Pike'         a='32' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="4"/>
+<plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="5"/>
+<plane n='Raven'        a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'  c='0' l="3"/>
+<plane n='Corvid'       a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="4"/>
+<plane n='Deathwing'    a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="5"/>
 </planes>
 <descs>
 <desc plane="0">The Bee is the basic ship in the Stinger line required by all tournament contestants.  Your... "new Bee" has been fitted with a low-energy cannon, and like all Rogue-class ships, it prioritizes maneuverability and damage over armor.

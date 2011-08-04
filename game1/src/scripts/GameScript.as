@@ -80,6 +80,7 @@ import behaviors.IBehavior;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.filters.DropShadowFilter;
+import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.getTimer;
@@ -785,6 +786,8 @@ class WaveBasedGameScript extends BaseScript
 		}
 	}
 
+	static private const GLOW:Array = [ new GlowFilter ];
+	
 	// this is a little nutty - seems like we should be using OOP or something
 	public override function damageActor(game:IGame, actor:Actor, damage:Number, isFriendly:Boolean, wasCollision:Boolean):void
 	{
@@ -858,6 +861,23 @@ class WaveBasedGameScript extends BaseScript
 					_comboTimer.start(COMBO_LAPSE);
 					
 					BlingActor.launch(game, actor.worldPos.x, actor.worldPos.y, credits);
+					
+					if (Math.random() < Consts.SHIP_DROP_CHANCE)
+					{
+						var powerup:Actor = new Actor(ActorAssetManager.createShip(Math.random() * 36), new ActorAttrs(0, 10, 0, 0.05));
+						powerup.displayObject.scaleX /= 2;
+						powerup.displayObject.scaleY /= 2;
+						powerup.displayObject.filters = GLOW;
+						
+						powerup.speed.x = actor.speed.x;
+						powerup.speed.y = actor.speed.y;
+						powerup.worldPos.x = actor.worldPos.x;
+						powerup.worldPos.y = actor.worldPos.y;
+						
+						powerup.behavior = BehaviorFactory.createSpinDrift();
+						
+						game.addEffect(powerup);
+					}
 				}
 				--_liveEnemies;
 				if (!_liveEnemies)

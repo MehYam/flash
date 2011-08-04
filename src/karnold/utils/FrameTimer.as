@@ -205,7 +205,11 @@ final class FrameTimerEngine
 	private var _running:Boolean = false;
 	private function manageEnterFrameListener():void
 	{
-		if (_debug_dead) return;
+		if (_debug_dead)
+		{
+			trace("FrameTimer debug dead");
+			return;
+		}
 
 		//
 		// Toggle the enter frame listener, trying to do it a little intelligently to avoid redundant add/removeEventListener calls
@@ -214,10 +218,12 @@ final class FrameTimerEngine
 		{
 			if (shouldRun)
 			{
+				trace("FrameTimer adding enter frame for", _numTimersProbably, "timers");
 				s_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
 			}
 			else
 			{
+				trace("FrameTimer killing enter frame");
 				s_stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			}
 			_running = shouldRun;

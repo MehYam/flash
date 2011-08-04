@@ -20,6 +20,8 @@ package behaviors
 		static private var _speedDecay:IBehavior;
 		static private var _shadowPlayer:IBehavior;
 		static private var _turret:IBehavior;
+		static private var _standardSpinCW:IBehavior;
+		static private var _standardSpinCCW:IBehavior;
 		static public function get faceForward():IBehavior
 		{
 			if (!_faceForward)
@@ -132,6 +134,22 @@ package behaviors
 			}
 			return _turret;
 		}
+		static public function get spinCW():IBehavior
+		{
+			if (!_standardSpinCW)
+			{
+				_standardSpinCW = new SpinBehavior;
+			}
+			return _standardSpinCW;
+		}
+		static public function get spinCCW():IBehavior
+		{
+			if (!_standardSpinCCW)
+			{
+				_standardSpinCCW = new SpinBehaviorCCW;
+			}
+			return _standardSpinCCW;
+		}
 		// Non-singletons
 		// source - is either an AmmoFireSource or array of them
 		static public function createAutofire(source:*, msRateMin:uint, msRateMax:uint = 0):IBehavior
@@ -154,6 +172,10 @@ package behaviors
 		static public function createShake():IBehavior
 		{
 			return new ShakeBehavior;
+		}
+		static public function createSpinDrift():IBehavior
+		{
+			return new CompositeBehavior((Math.random() < 0.5) ? spinCW : spinCCW, speedDecay, new Pulse, new ExpireBehavior(3000));
 		}
 	}
 }
@@ -503,5 +525,39 @@ final class ExpireBehavior implements IBehavior, IResettable
 	public function reset():void
 	{
 		frames = 0;
+	}
+}
+
+final class SpinBehavior implements IBehavior
+{
+	static public const SPIN:Number = 2;
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		actor.displayObject.rotation += SPIN;
+	}
+}
+final class SpinBehaviorCCW implements IBehavior
+{
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		actor.displayObject.rotation -= SpinBehavior.SPIN;
+	}
+}
+final class Pulse implements IBehavior
+{
+	static private const MAX:Number = 1;
+	static private const MIN:Number = 0.2;
+	private var _direction:Number = -1;
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		if (actor.displayObject.alpha < MIN)
+		{
+			_direction = 1;
+		}
+		else if (actor.displayObject.alpha >= 1)
+		{
+			_direction = -1;
+		}
+		actor.displayObject.alpha += _direction/10;
 	}
 }
