@@ -7,6 +7,7 @@ package ui
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
+	import flash.geom.Rectangle;
 	import flash.text.TextFormat;
 	
 	import gameData.UserData;
@@ -14,6 +15,8 @@ package ui
 	import karnold.ui.ShadowTextField;
 	import karnold.utils.ToolTipMgr;
 	import karnold.utils.Util;
+	
+	import scripts.TankActor;
 	
 	public class LevelSelectionDialog extends GameDialog
 	{
@@ -64,10 +67,10 @@ package ui
 					}
 					else if (level <= UserData.instance.levelsBeaten)
 					{
-						addIcon(btn, (level % 2) != 0);
+						addLevelButtonIcon(btn, (level % 2) != 0);
 						if (level < UserData.instance.levelsBeaten)
 						{
-							addCheck(btn);
+							addLevelButtonCheck(btn);
 						}
 					}
 					Util.listen(btn, MouseEvent.CLICK, onLevel);
@@ -85,11 +88,28 @@ package ui
 
 				_gold.text = String(UserData.instance.credits);
 				_goldParent.x -= (_goldParent.width - prevWidth);  // haxorZ
-				
+
+				updateCurrentVehicles();
 				enabled = true;
 			}
 		}
-		private function addIcon(btn:DisplayObjectContainer, tank:Boolean):void
+		public function updateCurrentVehicles():void
+		{
+			Util.removeAllChildren(_vehicleParent);
+			var plane:DisplayObject = ActorAssetManager.createShipRaw(UserData.instance.currentPlane);
+			var bounds:Rectangle = plane.getBounds(plane);
+			plane.x = -bounds.left;
+			plane.scaleX = plane.scaleY = 0.75;
+			_vehicleParent.addChild(plane);
+			
+			var tank:DisplayObject = TankActor.createTankActor(UserData.instance.currentHull, UserData.instance.currentTurret, null).displayObject;
+			bounds = tank.getBounds(tank);
+			tank.x = -bounds.left + plane.width + 20;
+			
+			tank.scaleX = tank.scaleY = 0.75;
+			_vehicleParent.addChild(tank);
+		}
+		static private function addLevelButtonIcon(btn:DisplayObjectContainer, tank:Boolean):void
 		{
 			var icon:DisplayObject = tank ? AssetManager.instance.tankIcon() : AssetManager.instance.planeIcon();
 			icon.name = ICON_NAME;
@@ -100,7 +120,7 @@ package ui
 			icon.filters = ICON_DROP;
 			btn.addChild(icon);
 		}
-		private function addCheck(btn:DisplayObjectContainer):void
+		static private function addLevelButtonCheck(btn:DisplayObjectContainer):void
 		{
 			Util.ASSERT(!btn.getChildByName(CHECK_NAME));
 			
@@ -129,18 +149,19 @@ package ui
 					var check:DisplayObject = btn.getChildByName(CHECK_NAME);
 					if (!check)
 					{
-						addCheck(btn);
+						addLevelButtonCheck(btn);
 					}
 				}
 				var icon:DisplayObject = btn.getChildByName(ICON_NAME);
 				if (!icon)
 				{
-					addIcon(btn, (i % 2) != 0);
+					addLevelButtonIcon(btn, (i % 2) != 0);
 				}
 			}
 		}
 		private var _gold:ShadowTextField;
 		private var _goldParent:Sprite;
+		private var _vehicleParent:Sprite;
 		private function addBottomInterface():void
 		{
 			var hangar:DisplayObject = GameButton.create("Plane Hangar", true, 20, 1);
@@ -157,6 +178,11 @@ package ui
 			
 			addChild(garage);
 			Util.listen(garage, MouseEvent.CLICK, onTankGarage);
+
+			_vehicleParent = new Sprite;
+			_vehicleParent.x = hangar.x + hangar.width + 5;
+			_vehicleParent.y = (garage.y + garage.height + hangar.y)/2;
+			addChild(_vehicleParent);
 
 			var goldReportParent:Sprite = new Sprite;
 
@@ -215,6 +241,9 @@ package ui
 		private function onDialogComplete(e:Event):void
 		{
 			enabled = true;
+			
+			_gold.text = String(UserData.instance.credits);
+			updateCurrentVehicles();
 		}
 		private var _selection:uint = 0;
 		private function onLevel(e:Event):void

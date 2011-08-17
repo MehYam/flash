@@ -21,8 +21,6 @@ package
 	
 	import karnold.utils.Util;
 	
-	import spark.primitives.supportClasses.FilledElement;
-	
 	public final class ActorAssetManager
 	{
 		static public function rasterize(target:DisplayObject, scale:Number = 1):BitmapData
@@ -65,6 +63,9 @@ package
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
+		static private var s_dropShadowFilterTank:Array = [new DropShadowFilter(2, 45, 0, 0.5, 0, 0)];
+		static public function get planeDropShadow():Array { return s_dropShadowFilter; }
+		static public function get tankDropShadow():Array { return s_dropShadowFilterTank; }
 		static private function createAssetRasterized(clss:Class, centered:Boolean, dropShadow:Boolean, scale:Number = 1):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;

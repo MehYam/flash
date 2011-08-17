@@ -147,6 +147,7 @@ package scripts
 			parent.addChild(track2);
 			parent.addChild(hull);
 			parent.addChild(turretParent);
+			parent.filters = ActorAssetManager.tankDropShadow;
 
 			return new TankActor(MUSTUSEFACTORYFUNCTION.instance, parent, track, track2, turretParent, bc);
 		}
