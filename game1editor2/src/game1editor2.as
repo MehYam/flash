@@ -48,6 +48,8 @@ package
 			_playArea.graphics.lineStyle(0, 0x0000ff);
 			_playArea.graphics.drawRect(0, 0, 800, 600);
 			_playArea.graphics.endFill();
+			_playArea.scaleX = _playArea.scaleY  = 0.79;
+			
 			_playArea.scrollRect = new Rectangle(0, 0, _playArea.width, _playArea.height);
 
 			_playArea.x = _imageSelect.x + _imageSelect.width + 5;

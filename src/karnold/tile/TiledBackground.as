@@ -1,8 +1,13 @@
 package karnold.tile
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
+	
+	import gameData.UserData;
 	
 	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
@@ -14,7 +19,11 @@ package karnold.tile
 		private var _displaySize:Point;
 		private var _factory:ITileFactory;
 		private var _tiles:Array2D;
-		
+
+		// Blt'ing all the tiles to a single display-size buffer seems to be more efficient than
+		// parenting the actual bitmaps on the display - mind blown.  Also, the non-buffered mode
+		// has some weird aliasing on the row and column boundaries when the parent is scaled.
+		static private const BUFFERED_TILES:Boolean = true;
 		static public function createFromString(parent:DisplayObjectContainer, factory:ITileFactory, displayWidth:Number, displayHeight:Number, string:String):TiledBackground
 		{
 			var horz:uint = 0;
@@ -70,6 +79,11 @@ package karnold.tile
 					removeChildAt(x, y);
 				}
 			}
+			if (_buffer && _buffer.parent)
+			{
+				_buffer.parent.removeChild(_buffer);
+				_buffer = null;
+			}
 		}
 
 		private function removeChildAt(x:uint, y:uint):void
@@ -97,10 +111,20 @@ package karnold.tile
 		private var _tileOffset:Point = new Point;
 
 		// [kja] premature optimization - these are kept around to avoid allocating them every frame
-		// all premature optimization is marked as po_
+		// all premature optimization is marked as po_*
 		private var po_tempBounds:Bounds = new Bounds;
+		private var po_tempTileSource:Rectangle = new Rectangle;
+		private var po_tempTileDest:Point = new Point;
+		private var _buffer:Bitmap;
 		public function setCamera(cameraPos:Point):void
 		{
+			if (BUFFERED_TILES && !_buffer)
+			{
+				var bmd:BitmapData = new BitmapData(_displaySize.x, _displaySize.y, false);
+				_buffer = new Bitmap(bmd);
+				
+				_parent.addChild(_buffer);
+			}
 			const TILE_SIZE:Number = _factory.tileSize;
 
 			// determine the before/after of the world scene bounds
@@ -124,20 +148,32 @@ package karnold.tile
 					var wo:DisplayObject = DisplayObject(_tiles.lookup(slotX, slotY));
 					if (wo)
 					{
-						wo.x = (slotX - po_tempBounds.left) * TILE_SIZE - _tileOffset.x;
-						wo.y = (slotY - po_tempBounds.top) * TILE_SIZE - _tileOffset.y;
-						if (!wo.parent)
+						const destX:Number = (slotX - po_tempBounds.left) * TILE_SIZE - _tileOffset.x;
+						const destY:Number = (slotY - po_tempBounds.top) * TILE_SIZE - _tileOffset.y;
+						if (BUFFERED_TILES)
 						{
-							_parent.addChild(wo);
-//							trace("adding", slotX, slotY);							
+							po_tempTileSource.width = wo.width;
+							po_tempTileSource.height = wo.height;
+							po_tempTileDest.x = destX;
+							po_tempTileDest.y = destY;
+							_buffer.bitmapData.copyPixels(Bitmap(wo).bitmapData, po_tempTileSource, po_tempTileDest); 
+						}
+						else
+						{
+							wo.x = destX;
+							wo.y = destY;
+							if (!wo.parent)
+							{
+								_parent.addChild(wo);
+								// trace("adding", slotX, slotY);							
+							}
 						}
 					}
 				}
 			} 
 			// loop through the objects of the last bounds, removing them if they're offscreen
-			if (!po_tempBounds.equals(_bounds))
+			if (BUFFERED_TILES && !po_tempBounds.equals(_bounds))
 			{
-//				trace("bounds change", _lastMapBounds, "to", po_currentMapBounds);
 				const left:uint = Math.max(0, _bounds.left); 
 				for (slotX = left; slotX <= _bounds.right; ++slotX)
 				{
@@ -149,7 +185,7 @@ package karnold.tile
 							if (removee.parent && !po_tempBounds.contains(slotX, slotY))
 							{
 								removee.parent.removeChild(removee);
-//								trace("removing", slotX, slotY);
+								// trace("removing", slotX, slotY);
 							}
 						}
 					}
