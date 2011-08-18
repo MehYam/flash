@@ -1,6 +1,7 @@
 package ui
 {
 	import flash.display.DisplayObject;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -122,6 +123,7 @@ package ui
 		private var _itemsVisible:uint = 0;
 		private var _leftButton:GameButton;
 		private var _rightButton:GameButton;
+		private var _indicators:Sprite;
 		public function render():void
 		{
 			clear();
@@ -146,26 +148,49 @@ package ui
 				graphics.clear();
 				graphics.lineStyle(1, 0xff0000);
 				graphics.drawRect(0, 0, width, height);
-			}			
-			if (!_leftButton && _scroll)
-			{
-				_leftButton = GameButton.create("<", true, 9, 1, new Point(0, 36));
-				_leftButton.x = -3;
-				_leftButton.enabled = false;
-				Util.listen(_leftButton, MouseEvent.MOUSE_DOWN, onScrollLeft);
-				addChild(_leftButton);
-				
-				_rightButton = GameButton.create(">", true, 9, 1, new Point(0, 36));
-				Util.listen(_rightButton, MouseEvent.MOUSE_DOWN, onScrollRight);
-				addChild(_rightButton);
-				
-				_leftButton.height = height - 10;
-				_rightButton.height = _leftButton.height;
-				_leftButton.width = 10;
-				_rightButton.width = 10;
-
-				_rightButton.x = _bounds.x - _rightButton.width + 2;
 			}
+			if (_scroll)
+			{
+				if (!_leftButton)
+				{
+					_leftButton = GameButton.create("<", true, 9, 1, new Point(0, 36));
+					_leftButton.x = -3;
+					_leftButton.enabled = false;
+					Util.listen(_leftButton, MouseEvent.MOUSE_DOWN, onScrollLeft);
+					addChild(_leftButton);
+					
+					_rightButton = GameButton.create(">", true, 9, 1, new Point(0, 36));
+					Util.listen(_rightButton, MouseEvent.MOUSE_DOWN, onScrollRight);
+					addChild(_rightButton);
+					
+					_leftButton.height = height - 10;
+					_rightButton.height = _leftButton.height;
+					_leftButton.width = 10;
+					_rightButton.width = 10;
+					
+					_rightButton.x = _bounds.x - _rightButton.width + 2;
+				}
+				if (!_indicators)
+				{
+					_indicators = new Sprite;
+					
+					for (var i:int = 0; i <= (_items.length - _itemsVisible); ++i)
+					{
+						var indicator:Shape = new Shape;
+						indicator.graphics.lineStyle(2);
+						indicator.graphics.beginFill(0, 0.8);
+						indicator.graphics.drawRect(0, 0, 3, 3);
+						indicator.graphics.endFill();
+						
+						indicator.x = i * 7;
+						_indicators.addChild(indicator);
+					}
+					_indicators.x = (this.width - _indicators.width)/2;
+					_indicators.y = this.height - _indicators.height;
+					addChild(_indicators);
+				}
+			}
+			
 			updateScrollButtons();
 		}
 
@@ -213,8 +238,21 @@ package ui
 		{
 			if (_leftButton)
 			{
-				_leftButton.enabled = (_scrollPos > 0);
-				_rightButton.enabled = !allTheWayRight;
+				var canScroll:Boolean = (_scrollPos > 0);
+				_leftButton.enabled = canScroll;
+				_leftButton.alpha = canScroll ? 1 : 0.1;
+				
+				canScroll = !allTheWayRight
+				_rightButton.enabled = canScroll;
+				_rightButton.alpha = canScroll ? 1 : 0.1;
+			}
+			if (_indicators)
+			{
+				for (var i:int = 0; i <= (_items.length - _itemsVisible); ++i)
+				{
+					var indicator:DisplayObject = _indicators.getChildAt(i);
+					indicator.alpha = (i == _scrollPos) ? 1 : 0.25;
+				}
 			}
 		}
 	}
