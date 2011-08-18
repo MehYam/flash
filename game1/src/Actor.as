@@ -217,7 +217,7 @@ package
 		}
 		static public function get laserLevels():uint { return s_laserLevels.length; }
 		static private var s_expLevels:Array; 
-		static public function createExplosion(game:IGame, worldPos:Point, numParticles:uint, level:uint):void
+		static public function createExplosionParticle(game:IGame, worldPos:Point, numParticles:uint, level:uint):void
 		{
 			if (!s_expLevels)
 			{

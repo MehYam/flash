@@ -64,16 +64,17 @@ package
 		static public const RASTERIZING:Boolean = true;
 		static private var s_rasterizationStore:Dictionary = new Dictionary;
 
-		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
-		static private var s_dropShadowFilterTank:Array = [new DropShadowFilter(2, 45, 0, 0.5, 0, 0)];
-		static private var s_blurFilter:Array = [new BlurFilter(5, 5, BitmapFilterQuality.MEDIUM)];
-		static public function get planeDropShadow():Array { return s_dropShadowFilter; }
-		static public function get tankDropShadow():Array { return s_dropShadowFilterTank; }
+		static private var s_dropShadow:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
+		static private var s_dropShadowTank:Array = [new DropShadowFilter(2, 45, 0, 0.5, 0, 0)];
+		static private var s_blur:Array = [new BlurFilter(5, 5, BitmapFilterQuality.MEDIUM)];
+		static private var s_blurHeavy:Array = [new BlurFilter(25, 25, BitmapFilterQuality.LOW)];
+		static public function get planeDropShadow():Array { return s_dropShadow; }
+		static public function get tankDropShadow():Array { return s_dropShadowTank; }
 		static private function createAssetRasterized(clss:Class, 
-													  centered:Boolean, 
-													  attachDropShadow:Boolean,
-													  preBlur:Boolean = false,
-													  scale:Number = 1):DisplayObject
+													  centered:Boolean,
+													  scale:Number = 1,
+													  preFilter:Array = null,
+													  postFilter:Array = null):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;
 			var retval:DisplayObject;
@@ -82,13 +83,13 @@ package
 				retval = new clss();
 				retval.scaleX = scale;
 				retval.scaleY = scale;
+				if (preFilter)
+				{
+					if (retval.filters.length) throw "filter";
+					retval.filters = preFilter;
+				}
 				if (RASTERIZING)
 				{
-					if (preBlur)
-					{
-						if (retval.filters.length) throw "filter";
-						retval.filters = s_blurFilter;
-					}
 					bmd = rasterize(retval, scale);
 					s_rasterizationStore[clss] = bmd;
 				}
@@ -109,88 +110,51 @@ package
 				{
 					retval = bmp;
 				}
-				if (attachDropShadow)
+				if (postFilter)
 				{
-					retval.filters = s_dropShadowFilter;
+					retval.filters = postFilter;
 				}
 			}
 			return retval; // this will be either a bitmap, a bitmap centered on a sprite, or the source vector object 
 		}
 		// Ship assets /////////////////////////////////////////////////////
-		[Embed(source="assets/master.swf", symbol="ship2_0")]
-		static private const SHIP0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_0_0")]
-		static private const SHIP0_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_0_1")]
-		static private const SHIP0_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_1")]
-		static private const SHIP1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_1_0")]
-		static private const SHIP1_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_1_1")]
-		static private const SHIP1_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_2")]
-		static private const SHIP2:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_2_0")]
-		static private const SHIP2_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_2_1")]
-		static private const SHIP2_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_3")]
-		static private const SHIP3:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_3_0")]
-		static private const SHIP3_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_3_1")]
-		static private const SHIP3_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_4")]
-		static private const SHIP4:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_4_0")]
-		static private const SHIP4_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_4_1")]
-		static private const SHIP4_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_5")]
-		static private const SHIP5:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_5_0")]
-		static private const SHIP5_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_5_1")]
-		static private const SHIP5_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_6")]
-		static private const SHIP6:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_6_0")]
-		static private const SHIP6_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_6_1")]
-		static private const SHIP6_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_7")]
-		static private const SHIP7:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_7_0")]
-		static private const SHIP7_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_7_1")]
-		static private const SHIP7_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_8")]
-		static private const SHIP8:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_9")]
-		static private const SHIP9:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_9_1")]
-		static private const SHIP9_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_9_2")]
-		static private const SHIP9_2:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_10")]
-		static private const SHIP10:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_10_1")]
-		static private const SHIP10_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_10_2")]
-		static private const SHIP10_2:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_11")]
-		static private const SHIP11:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_11_1")]
-		static private const SHIP11_1:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_11_2")]
-		static private const SHIP11_2:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_12")]
-		static private const SHIP12:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_12_0")]
-		static private const SHIP12_0:Class;
-		[Embed(source="assets/master.swf", symbol="ship2_12_1")]
-		static private const SHIP12_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_0")]		static private const SHIP0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_0_0")]		static private const SHIP0_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_0_1")]		static private const SHIP0_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_1")]		static private const SHIP1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_1_0")]		static private const SHIP1_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_1_1")]		static private const SHIP1_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_2")]		static private const SHIP2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_2_0")]		static private const SHIP2_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_2_1")]		static private const SHIP2_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_3")]		static private const SHIP3:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_3_0")]		static private const SHIP3_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_3_1")]		static private const SHIP3_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_4")]		static private const SHIP4:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_4_0")]		static private const SHIP4_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_4_1")]		static private const SHIP4_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_5")]		static private const SHIP5:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_5_0")]		static private const SHIP5_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_5_1")]		static private const SHIP5_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_6")]		static private const SHIP6:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_6_0")]		static private const SHIP6_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_6_1")]		static private const SHIP6_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_7")]		static private const SHIP7:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_7_0")]		static private const SHIP7_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_7_1")]		static private const SHIP7_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_8")]		static private const SHIP8:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_9")]		static private const SHIP9:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_9_1")]		static private const SHIP9_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_9_2")]		static private const SHIP9_2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_10")]		static private const SHIP10:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_10_1")]		static private const SHIP10_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_10_2")]		static private const SHIP10_2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_11")]		static private const SHIP11:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_11_1")]		static private const SHIP11_1:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_11_2")]		static private const SHIP11_2:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_12")]		static private const SHIP12:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_12_0")]		static private const SHIP12_0:Class;
+		[Embed(source="assets/master.swf", symbol="ship2_12_1")]		static private const SHIP12_1:Class;
 
 		static private const SHIP_TYPES:Array = 
 			[SHIP0, SHIP0_0, SHIP0_1, SHIP1, SHIP1_0, SHIP1_1, SHIP2, SHIP2_0, SHIP2_1, SHIP3, SHIP3_0, SHIP3_1, SHIP4, SHIP4_0, SHIP4_1, SHIP5, SHIP5_0, SHIP5_1, SHIP6, SHIP6_0, SHIP6_1, SHIP7, SHIP7_0, SHIP7_1, SHIP8, SHIP9, SHIP9_1, SHIP9_2, SHIP10, SHIP10_1, SHIP10_2, SHIP11, SHIP11_1, SHIP11_2, SHIP12, SHIP12_0, SHIP12_1];
@@ -215,126 +179,117 @@ package
 				SHIP_SCALES[17] = 0.9;
 			}
 			const scale:Number = SHIP_SCALES[index] || 1;
-			return createAssetRasterized(SHIP_TYPES[index], true, true, false, scale);
+			return createAssetRasterized(SHIP_TYPES[index], true, scale, null, s_dropShadow);
 		}
 		static public function createShipRaw(index:uint):DisplayObject
 		{
 			var ship:DisplayObject = new SHIP_TYPES[index];
-			ship.filters = s_dropShadowFilter;
+			ship.filters = s_dropShadow;
 			return ship;
 		}
 
 		// end ships /////////////////////////////////////////////////////////////
-		[Embed(source="assets/master.swf", symbol="rocket0")]
-		static private const ROCKET0:Class;
-		[Embed(source="assets/master.swf", symbol="rocket1")]
-		static private const ROCKET1:Class;
-		[Embed(source="assets/master.swf", symbol="rocket2")]
-		static private const ROCKET2:Class;
-		[Embed(source="assets/master.swf", symbol="rocket3")]
-		static private const ROCKET3:Class;
+		[Embed(source="assets/master.swf", symbol="rocket0")]		static private const ROCKET0:Class;
+		[Embed(source="assets/master.swf", symbol="rocket1")]		static private const ROCKET1:Class;
+		[Embed(source="assets/master.swf", symbol="rocket2")]		static private const ROCKET2:Class;
+		[Embed(source="assets/master.swf", symbol="rocket3")]		static private const ROCKET3:Class;
 		static private const ROCKET_TYPES:Array = [ROCKET0, ROCKET1, ROCKET2, ROCKET3];
 		
 		static public function createRocket(index:uint):DisplayObject
 		{
-			return createAssetRasterized(ROCKET_TYPES[index], false, false, false, 1);
+			return createAssetRasterized(ROCKET_TYPES[index], false);
 		}
-		[Embed(source="assets/master.swf", symbol="flame")]
-		static private const FLAME:Class;
-		[Embed(source="assets/master.swf", symbol="blueflame")]
-		static private const BLUEFLAME:Class;
-		[Embed(source="assets/master.swf", symbol="shield")]
-		static private const SHIELD:Class;
+		[Embed(source="assets/master.swf", symbol="flame")]		static private const FLAME:Class;
+		[Embed(source="assets/master.swf", symbol="blueflame")]		static private const BLUEFLAME:Class;
+		[Embed(source="assets/master.swf", symbol="shield")]		static private const SHIELD:Class;
 		static public function createFlame():DisplayObject
 		{
-			return createAssetRasterized(FLAME, false, false, true);
+			return createAssetRasterized(FLAME, false, 1, s_blur);
 		}
 		static public function createBlueFlame():DisplayObject
 		{
-			return createAssetRasterized(BLUEFLAME, false, false, true);
+			return createAssetRasterized(BLUEFLAME, false, 1, s_blur);
 		}
 		static public function createShield():DisplayObject
 		{
-			return createAssetRasterized(SHIELD, true, false, true);
+			return createAssetRasterized(SHIELD, true, 1, s_blur);
 		}
+		[Embed(source="assets/master.swf", symbol="explosion1")] static private const EXPLOSION1:Class;
+		[Embed(source="assets/master.swf", symbol="explosion2")] static private const EXPLOSION2:Class;
+		[Embed(source="assets/master.swf", symbol="smoke1")] static private const SMOKE1:Class;
+		[Embed(source="assets/master.swf", symbol="smoke2")] static private const SMOKE2:Class;
+		static private const EXPLOSION_TYPES:Array = [EXPLOSION1, EXPLOSION2];
+		static private const SMOKE_TYPES:Array = [SMOKE1, SMOKE2];
+		static public function createExplosion(index:uint):DisplayObject
+		{
+			return createAssetRasterized(EXPLOSION_TYPES[index], false, 1, s_blurHeavy);
+		}
+		static public function createSmoke(index:uint):DisplayObject
+		{
+			return createAssetRasterized(SMOKE_TYPES[index], false, 1, s_blurHeavy);
+		}
+
 		// tanks ////////////////////////////////////////////////////////////////
-		[Embed(source="assets/master.swf", symbol="tankhull0")]
-		static private const HULL0:Class;
-		[Embed(source="assets/master.swf", symbol="tankhull1")]
-		static private const HULL1:Class;
-		[Embed(source="assets/master.swf", symbol="tankhull2")]
-		static private const HULL2:Class;
-		[Embed(source="assets/master.swf", symbol="tankhull3")]
-		static private const HULL3:Class;
-		[Embed(source="assets/master.swf", symbol="tankhull4")]
-		static private const HULL4:Class;
-		[Embed(source="assets/master.swf", symbol="tankturret0")]
-		static private const TURRET0:Class;
-		[Embed(source="assets/master.swf", symbol="tankturret1")]
-		static private const TURRET1:Class;
-		[Embed(source="assets/master.swf", symbol="tankturret2")]
-		static private const TURRET2:Class;
-		[Embed(source="assets/master.swf", symbol="tankturret3")]
-		static private const TURRET3:Class;
-		[Embed(source="assets/master.swf", symbol="tankturret4")]
-		static private const TURRET4:Class;
+		[Embed(source="assets/master.swf", symbol="tankhull0")]		static private const HULL0:Class;
+		[Embed(source="assets/master.swf", symbol="tankhull1")]		static private const HULL1:Class;
+		[Embed(source="assets/master.swf", symbol="tankhull2")]		static private const HULL2:Class;
+		[Embed(source="assets/master.swf", symbol="tankhull3")]		static private const HULL3:Class;
+		[Embed(source="assets/master.swf", symbol="tankhull4")]		static private const HULL4:Class;
+		[Embed(source="assets/master.swf", symbol="tankturret0")]		static private const TURRET0:Class;
+		[Embed(source="assets/master.swf", symbol="tankturret1")]		static private const TURRET1:Class;
+		[Embed(source="assets/master.swf", symbol="tankturret2")]		static private const TURRET2:Class;
+		[Embed(source="assets/master.swf", symbol="tankturret3")]		static private const TURRET3:Class;
+		[Embed(source="assets/master.swf", symbol="tankturret4")]		static private const TURRET4:Class;
 
 		static private const HULL_TYPES:Array =	[HULL0, HULL2, HULL3, HULL4, HULL1];
 		static private const TURRET_TYPES:Array = [TURRET0, TURRET1, TURRET2, TURRET3, TURRET4];
 		static public function createHull(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, false, false, Consts.TANK_SCALE) : new HULL_TYPES[index];
+			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, Consts.TANK_SCALE) : new HULL_TYPES[index];
 		}
 		static public function createTurret(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, false, false, Consts.TANK_SCALE * 1.1) : new TURRET_TYPES[index];
+			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, Consts.TANK_SCALE * 1.1) : new TURRET_TYPES[index];
 		}
 
-		[Embed(source="assets/master.swf", symbol="tanktread")]
-		static private const TANKTREAD:Class;
-		[Embed(source="assets/master.swf", symbol="tanktreadtop")]
-		static private const TANKTREADTOP:Class;
+		[Embed(source="assets/master.swf", symbol="tanktread")]		static private const TANKTREAD:Class;
+		[Embed(source="assets/master.swf", symbol="tanktreadtop")]		static private const TANKTREADTOP:Class;
 		static public function createTrack():DisplayObjectContainer
 		{
 			var base:DisplayObjectContainer = new TANKTREAD;
 			base.addChild(new TANKTREADTOP);
 			return base;
 		}
-		[Embed(source="assets/master.swf", symbol="cannonround0")]
-		static private const CANNONROUND0:Class;
-		[Embed(source="assets/master.swf", symbol="cannonround1")]
-		static private const CANNONROUND1:Class;
+		[Embed(source="assets/master.swf", symbol="cannonround0")]		static private const CANNONROUND0:Class;
+		[Embed(source="assets/master.swf", symbol="cannonround1")]		static private const CANNONROUND1:Class;
 		static private const CANNONS:Array = [CANNONROUND0, CANNONROUND1];
 		static public function createCannonBlast(level:uint):DisplayObject
 		{
-			return createAssetRasterized(CANNONS[level], true, false);
+			return createAssetRasterized(CANNONS[level], true);
 		}
-		[Embed(source="assets/master.swf", symbol="muzzleflash0")]
-		static private const MUZZLEFLASH0:Class;
-		[Embed(source="assets/master.swf", symbol="muzzleflash1")]
-		static private const MUZZLEFLASH1:Class;
-		[Embed(source="assets/master.swf", symbol="muzzleflash2")]
-		static private const MUZZLEFLASH2:Class;
+		[Embed(source="assets/master.swf", symbol="muzzleflash0")]		static private const MUZZLEFLASH0:Class;
+		[Embed(source="assets/master.swf", symbol="muzzleflash1")]		static private const MUZZLEFLASH1:Class;
+		[Embed(source="assets/master.swf", symbol="muzzleflash2")]		static private const MUZZLEFLASH2:Class;
 		static private const MUZZLEFLASH:Array = [MUZZLEFLASH0, MUZZLEFLASH1, MUZZLEFLASH2];
 		static public function createMuzzleFlash(level:uint):DisplayObject
 		{
-			return createAssetRasterized(MUZZLEFLASH[level], true, false, true); 
+			return createAssetRasterized(MUZZLEFLASH[level], true, 1, s_blur); 
 		}
 		static public function createExplosionParticle(color:uint):DisplayObject
 		{
-			return SimpleRasterizedObjectCreator.getInstance(ExplosionCreator).create(color);
+			return AbstractSimpleRasterizedObjectCreator.getInstance(ExplosionCreator).create(color);
 		}
 		static public function createBullet(color:uint = 0xff7f00):DisplayObject
 		{
-			return SimpleRasterizedObjectCreator.getInstance(BulletCreator).create(color);
+			return AbstractSimpleRasterizedObjectCreator.getInstance(BulletCreator).create(color);
 		}
 		static public function createLaser(color:uint = 0xff0000):DisplayObject
 		{
-			return SimpleRasterizedObjectCreator.getInstance(LaserCreator).create(color);
+			return AbstractSimpleRasterizedObjectCreator.getInstance(LaserCreator).create(color);
 		}
 		static public function createFusionBlast(color:uint = 0xff00ff):DisplayObject
 		{
-			return SimpleRasterizedObjectCreator.getInstance(FusionBlastCreator).create(color);
+			return AbstractSimpleRasterizedObjectCreator.getInstance(FusionBlastCreator).create(color);
 		}
 		public static function createSpiro(color:uint, width:Number, height:Number):DisplayObject
 		{
@@ -406,12 +361,14 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.utils.Dictionary;
 
-internal class SimpleRasterizedObjectCreator
+// The point of this is to rasterize a simple vector object once, and look up its BitmapData
+// to create Bitmap instances later.
+internal class AbstractSimpleRasterizedObjectCreator
 {
 	static private var s_store:Dictionary = new Dictionary;
 
 	private var _centered:Boolean;
-	public function SimpleRasterizedObjectCreator(centered:Boolean = false)
+	public function AbstractSimpleRasterizedObjectCreator(centered:Boolean = false)
 	{
 		_centered = centered;
 	}
@@ -450,7 +407,7 @@ internal class SimpleRasterizedObjectCreator
 	}
 
 	static private var s_instances:Dictionary = new Dictionary;
-	static public function getInstance(clss:Class):SimpleRasterizedObjectCreator
+	static public function getInstance(clss:Class):AbstractSimpleRasterizedObjectCreator
 	{
 		if (!s_instances[clss])
 		{
@@ -460,7 +417,7 @@ internal class SimpleRasterizedObjectCreator
 	}
 }
 
-final internal class ExplosionCreator extends SimpleRasterizedObjectCreator
+final internal class ExplosionCreator extends AbstractSimpleRasterizedObjectCreator
 {
 	static private const EXPLOSION_SIZE:Number = 3;
 	static private const HALFSIZE:Number = EXPLOSION_SIZE/2;
@@ -474,7 +431,7 @@ final internal class ExplosionCreator extends SimpleRasterizedObjectCreator
 		return particle;
 	}
 }
-final internal class BulletCreator extends SimpleRasterizedObjectCreator
+final internal class BulletCreator extends AbstractSimpleRasterizedObjectCreator
 {
 	protected override function create_impl(color:uint):DisplayObject
 	{
@@ -482,7 +439,7 @@ final internal class BulletCreator extends SimpleRasterizedObjectCreator
 		return ActorAssetManager.createCircle(color, 10, 10);
 	}
 }
-final internal class LaserCreator extends SimpleRasterizedObjectCreator
+final internal class LaserCreator extends AbstractSimpleRasterizedObjectCreator
 {
 	public function LaserCreator() { super(true); }
 
@@ -496,7 +453,7 @@ final internal class LaserCreator extends SimpleRasterizedObjectCreator
 		return bullet;
 	}
 }
-final internal class FusionBlastCreator extends SimpleRasterizedObjectCreator
+final internal class FusionBlastCreator extends AbstractSimpleRasterizedObjectCreator
 {
 	public function FusionBlastCreator() { super(true); }
 

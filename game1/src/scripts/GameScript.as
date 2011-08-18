@@ -797,7 +797,7 @@ class WaveBasedGameScript extends BaseScript
 		if (!isFriendly || isPlayer)
 		{
 			const particles:uint = Math.min(20, 3 + 10 * damage/actor.attrs.MAX_HEALTH);
-			Actor.createExplosion(game, actor.worldPos, particles, isPlayer ? 0 : 1);
+			Actor.createExplosionParticle(game, actor.worldPos, particles, isPlayer ? 0 : 1);
 		}
 
 		actor.health -= damage;
@@ -831,10 +831,10 @@ class WaveBasedGameScript extends BaseScript
 		// handle actor death
 		if (actor.health <= 0)
 		{
+			actor.behavior = new DeathAnimationBehavior;
 			if (isPlayer && actor.alive)
 			{
 				game.stunMobs();
-				actor.behavior = new DeathAnimationBehavior;
 
 				_game.centerPrint("Level lost - you must try again.");
 				
@@ -918,7 +918,7 @@ final class DeathAnimationBehavior implements IBehavior
 	{
 		if (getTimer() - _start < 1500)
 		{
-			Actor.createExplosion(game, actor.worldPos, 2, Math.random()*3);
+			Actor.createExplosionParticle(game, actor.worldPos, 2, Math.random()*3);
 		}
 	}
 }

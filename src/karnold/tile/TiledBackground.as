@@ -4,6 +4,7 @@ package karnold.tile
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.filters.BlurFilter;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -122,7 +123,6 @@ package karnold.tile
 			{
 				var bmd:BitmapData = new BitmapData(_displaySize.x, _displaySize.y, false);
 				_buffer = new Bitmap(bmd);
-				
 				_parent.addChild(_buffer);
 			}
 			const TILE_SIZE:Number = _factory.tileSize;
