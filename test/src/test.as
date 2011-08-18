@@ -18,6 +18,7 @@ package
 	import flash.filters.BevelFilter;
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.BitmapFilterType;
+	import flash.filters.BlurFilter;
 	import flash.filters.DropShadowFilter;
 	import flash.filters.GradientGlowFilter;
 	import flash.geom.Matrix;
@@ -34,7 +35,8 @@ package
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 
-	public class test extends Sprite
+	[SWF(backgroundColor="#0")]
+	public final class test extends Sprite
 	{
 		public function test()
 		{
@@ -62,7 +64,65 @@ package
 //			testBooleanExpressionTrick();
 //			testPixelSnapping();
 //			testBrowserZoomDetection();
-			testArray();
+//			testArray();
+			testBlurFilterRasterizationBounds();
+		}
+		static public function rasterize(target:DisplayObject, scale:Number = 1):BitmapData
+		{
+			const bounds:Rectangle = target.getBounds(target);
+			const inflate:int = 10;
+			bounds.left -= inflate;
+			bounds.top -= inflate;
+			bounds.right += inflate;
+			bounds.bottom += inflate;
+			var bitmapData:BitmapData = new BitmapData(bounds.width * scale, bounds.height * scale, true, 0);
+			
+			var matrix:Matrix = new Matrix;
+			matrix.translate(-bounds.left, -bounds.top);
+			matrix.scale(scale, scale);
+			bitmapData.draw(target, matrix);
+			
+			return bitmapData;
+		}
+		private function outline(obj:DisplayObject, color:uint):void
+		{
+			const bounds:Rectangle = obj.getBounds(this);
+			var shape:Shape = new Shape;
+			shape.graphics.lineStyle(0, color);
+			shape.graphics.drawRect(0, 0, bounds.width, bounds.height);
+			
+			shape.x = bounds.left;
+			shape.y = bounds.top;
+			
+			trace("bounds", bounds.width, bounds.height);
+			addChild(shape);
+		}
+		[Embed(source="assets/master.swf", symbol="explosion1")] static private const EXPLOSION1:Class;
+		private function testBlurFilterRasterizationBounds():void
+		{
+			stage.align = StageAlign.TOP_LEFT;
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			
+			var dobj:DisplayObject = new EXPLOSION1;
+			dobj.x = 100;
+			dobj.y = 100;
+			outline(dobj, 0x00ff00);
+			dobj.filters = [new BlurFilter(25, 25, BitmapFilterQuality.LOW)];
+//			outline(dobj, 0xff0000);
+			
+			addChild(dobj);
+			
+			dobj = new EXPLOSION1;
+			dobj.filters = [new BlurFilter(25, 25, BitmapFilterQuality.LOW)];
+			var bmd:BitmapData = rasterize(dobj);
+			var bmp:Bitmap = new Bitmap(bmd);
+			
+			bmp.x = 200;
+			bmp.y = 100;
+			bmp.smoothing;
+//			outline(bmp, 0x00ff00);
+			
+			addChild(bmp);
 		}
 		private function testArray():void
 		{

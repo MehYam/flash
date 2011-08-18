@@ -29,6 +29,10 @@ package
 			}
 			return null;
 		}
+		public function getOrCreate(clss:Class):Actor
+		{
+			return Actor(get(clss) || new clss);
+		}
 		public function recycle(actor:Actor):void
 		{
 			Util.ASSERT(!actor.alive && !actor.displayObject.parent);

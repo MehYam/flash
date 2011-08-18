@@ -38,7 +38,7 @@ package scripts
 		}
 		static public function launch(game:IGame, worldX:Number, worldY:Number, value:uint):void
 		{
-			var ba:BlingActor = (ActorPool.instance.get(BlingActor) as BlingActor) || new BlingActor; 
+			var ba:Actor = ActorPool.instance.getOrCreate(BlingActor); 
 			ba.worldPos.x = worldX;
 			ba.worldPos.y = worldY;
 			

@@ -357,7 +357,7 @@ package
 			}
 			
 		}
-		private function runFrameOnCast(cast:Array):void
+		private function runFrameOnCast(cast:Vector.<Actor>):void
 		{
 			var index:uint = 0;
 			for each (var a:Actor in cast)
@@ -700,17 +700,17 @@ import karnold.utils.Util;
 
 final class Cast
 {
-	public var friendlies:Array = [];
-	public var enemies:Array = [];
-	public var enemyAmmo:Array = [];
-	public var friendlyAmmo:Array = [];
-	public var effects:Array = [];
+	public var friendlies:Vector.<Actor> = new Vector.<Actor>;
+	public var enemies:Vector.<Actor> = new Vector.<Actor>;
+	public var enemyAmmo:Vector.<Actor> = new Vector.<Actor>;
+	public var friendlyAmmo:Vector.<Actor> = new Vector.<Actor>;
+	public var effects:Vector.<Actor> = new Vector.<Actor>;
 	
 	public function get length():uint
 	{
 		return enemies.length + enemyAmmo.length + friendlyAmmo.length + effects.length + friendlies.length;
 	}
-	static private function actorIsAlive(element:*, index:int, arr:Array):Boolean
+	static private function actorIsAlive(element:*, index_unused:int, vec_unused:Vector.<Actor>):Boolean
 	{
 		var actor:Actor = element as Actor;
 		if (actor && !actor.alive )
@@ -742,7 +742,7 @@ final class Cast
 		remove(friendlyAmmo);
 		remove(effects);
 	}
-	private function remove(cast:Array):void
+	private function remove(cast:Vector.<Actor>):void
 	{
 		for each (var actor:Actor in cast)
 		{

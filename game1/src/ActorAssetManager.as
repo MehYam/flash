@@ -25,9 +25,10 @@ package
 	
 	public final class ActorAssetManager
 	{
-		static public function rasterize(target:DisplayObject, scale:Number = 1):BitmapData
+		static public function rasterize(target:DisplayObject, scale:Number = 1, filterExtra:Number = 0):BitmapData
 		{
 			const bounds:Rectangle = target.getBounds(target);
+			bounds.inflate(filterExtra, filterExtra);
 			var bitmapData:BitmapData = new BitmapData(bounds.width * scale, bounds.height * scale, true, 0);
 
 			var matrix:Matrix = new Matrix;
@@ -90,7 +91,13 @@ package
 				}
 				if (RASTERIZING)
 				{
-					bmd = rasterize(retval, scale);
+					var filterExtra:Number = 0;
+					var blur:BlurFilter = retval.filters.length ? (retval.filters[0] as BlurFilter) : null;
+					if (blur)
+					{
+						filterExtra = Math.max(blur.blurX, blur.blurY) / 2;
+					}
+					bmd = rasterize(retval, scale, filterExtra);
 					s_rasterizationStore[clss] = bmd;
 				}
 			}
@@ -222,11 +229,11 @@ package
 		static private const SMOKE_TYPES:Array = [SMOKE1, SMOKE2];
 		static public function createExplosion(index:uint):DisplayObject
 		{
-			return createAssetRasterized(EXPLOSION_TYPES[index], false, 1, s_blurHeavy);
+			return createAssetRasterized(EXPLOSION_TYPES[index], true, 1, s_blurHeavy);
 		}
 		static public function createSmoke(index:uint):DisplayObject
 		{
-			return createAssetRasterized(SMOKE_TYPES[index], false, 1, s_blurHeavy);
+			return createAssetRasterized(SMOKE_TYPES[index], true, 1, s_blurHeavy);
 		}
 
 		// tanks ////////////////////////////////////////////////////////////////

@@ -97,6 +97,7 @@ import karnold.utils.RateLimiter;
 import karnold.utils.Util;
 
 import scripts.BlingActor;
+import scripts.ExplosionActor;
 import scripts.GameScriptPlayerFactory;
 import scripts.GameScriptPlayerVehicle;
 import scripts.IGameScript;
@@ -831,7 +832,8 @@ class WaveBasedGameScript extends BaseScript
 		// handle actor death
 		if (actor.health <= 0)
 		{
-			actor.behavior = new DeathAnimationBehavior;
+//			actor.behavior = new DeathAnimationBehavior;
+			ExplosionActor.launch(game, actor.worldPos.x, actor.worldPos.y);
 			if (isPlayer && actor.alive)
 			{
 				game.stunMobs();

@@ -1,14 +1,101 @@
 package scripts
 {
 	import behaviors.ActorAttrs;
+	import behaviors.BehaviorFactory;
+	import behaviors.CompositeBehavior;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	
-	public class ExplosionActor extends Actor
+	import karnold.utils.MathUtil;
+	
+	public final class ExplosionActor extends Actor
 	{
-		public function ExplosionActor(dobj:DisplayObject, attrs:ActorAttrs=null)
+		static private const s_attrs:ActorAttrs = new ActorAttrs(0, 2, 0, 0.05, 0, 0, null, 2000);
+		
+		private var _flash:DisplayObject;
+		private var _smoke:Vector.<DisplayObject> = new Vector.<DisplayObject>;
+		public function ExplosionActor()
 		{
-			super(dobj, attrs);
+			// KAI: would be a lot better to spawn these all off as separate actors?
+			var parent:Sprite = new Sprite;
+			super(parent, s_attrs);
+			
+			for (var i:uint = 0; i < 4; ++i)
+			{
+				var obj:DisplayObject = ActorAssetManager.createSmoke(0);
+				_smoke.push(obj);
+				
+				parent.addChild(obj);
+			}
+			_smoke.push(ActorAssetManager.createSmoke(1));
+			_smoke.push(ActorAssetManager.createSmoke(1));
+			parent.addChild(_smoke[_smoke.length-2]);
+			parent.addChild(_smoke[_smoke.length-1]);
+			
+			_flash = ActorAssetManager.createExplosion(1);
+			parent.addChild(_flash);
+//			behavior = BehaviorFactory.createExpire(s_attrs.LIFETIME);
+			reset();
+		}
+		public override function reset():void
+		{
+			super.reset();
+			
+			if (_flash)
+			{
+				_flash.scaleX = _flash.scaleY = 0;
+				_flash.alpha = 0.25;
+				
+				for each (var smoke:DisplayObject in _smoke)
+				{
+					smoke.x = 0;
+					smoke.y = 0;
+					smoke.alpha = 1;
+				}
+			}
+		}
+		public override function onFrame(game:IGame):void
+		{
+			super.onFrame(game);
+			
+			if (_flash.scaleX < 1)
+			{
+				_flash.scaleX += 0.1;
+				_flash.scaleY += 0.1;
+				_flash.alpha += 0.1; 
+			}
+			else
+			{
+				_flash.alpha = 0;
+			}
+			const speed:Number = 3;
+			_smoke[0].x -= speed;
+			_smoke[0].y -= speed;
+			_smoke[1].x += speed;
+			_smoke[1].y -= speed;
+			_smoke[2].x += speed;
+			_smoke[2].y += speed;
+			_smoke[3].x -= speed;
+			_smoke[3].y += speed;
+			_smoke[4].y -= speed;
+			_smoke[5].y += speed;
+			for each (var smoke:DisplayObject in _smoke)
+			{
+				smoke.alpha -= 0.035;
+			}
+			if (smoke.alpha < 0.1)
+			{
+				alive = false;
+			}
+		}
+		static public function launch(game:IGame, worldX:Number, worldY:Number):void
+		{
+			var e:Actor = ActorPool.instance.getOrCreate(ExplosionActor);
+			
+			e.worldPos.x = worldX;
+			e.worldPos.y = worldY;
+			game.addEffect(e);
 		}
 	}
 }
