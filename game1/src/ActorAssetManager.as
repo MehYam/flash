@@ -223,9 +223,12 @@ package
 		}
 		[Embed(source="assets/master.swf", symbol="explosion1")] static private const EXPLOSION1:Class;
 		[Embed(source="assets/master.swf", symbol="explosion2")] static private const EXPLOSION2:Class;
+		[Embed(source="assets/master.swf", symbol="explosion3")] static private const EXPLOSION3:Class;
+		[Embed(source="assets/master.swf", symbol="explosion4")] static private const EXPLOSION4:Class;
+		[Embed(source="assets/master.swf", symbol="explosion5")] static private const EXPLOSION5:Class;
 		[Embed(source="assets/master.swf", symbol="smoke1")] static private const SMOKE1:Class;
 		[Embed(source="assets/master.swf", symbol="smoke2")] static private const SMOKE2:Class;
-		static private const EXPLOSION_TYPES:Array = [EXPLOSION1, EXPLOSION2];
+		static private const EXPLOSION_TYPES:Array = [EXPLOSION1, EXPLOSION2, EXPLOSION3, EXPLOSION4, EXPLOSION5];
 		static private const SMOKE_TYPES:Array = [SMOKE1, SMOKE2];
 		static public function createExplosion(index:uint):DisplayObject
 		{

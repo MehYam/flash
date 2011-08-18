@@ -72,7 +72,7 @@ package karnold.utils
 			const minHorz:Number = bounds.left - margin.x;
 			if (point.x < minHorz)
 			{
-				point.x = bounds.left;
+				point.x = minHorz;
 				speedForBounce.x = -speedForBounce.x;
 			}
 			else
@@ -85,9 +85,9 @@ package karnold.utils
 				}
 			}
 			const minVert:Number = bounds.top - margin.y;
-			if (point.y < bounds.top)
+			if (point.y < minVert)
 			{
-				point.y = bounds.top;
+				point.y = minVert;
 				speedForBounce.y = -speedForBounce.y;
 			}
 			else 

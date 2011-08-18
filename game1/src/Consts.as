@@ -18,6 +18,6 @@ package
 		
 		static public const TANK_SCALE:Number = 0.8;
 		
-		static public const SHIP_DROP_CHANCE:Number = 0.5;
+		static public const SHIP_DROP_CHANCE:Number = 0.2;
 	}
 }

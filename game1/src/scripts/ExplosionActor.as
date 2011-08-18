@@ -15,6 +15,7 @@ package scripts
 		
 		private var _flash:DisplayObject;
 		private var _smoke:Vector.<DisplayObject> = new Vector.<DisplayObject>;
+		private var _velocities:Vector.<Number> = new Vector.<Number>;
 		public function ExplosionActor()
 		{
 			// KAI: would be a lot better to spawn these all off as separate actors?
@@ -33,7 +34,7 @@ package scripts
 			parent.addChild(_smoke[_smoke.length-2]);
 			parent.addChild(_smoke[_smoke.length-1]);
 			
-			_flash = ActorAssetManager.createExplosion(1);
+			_flash = ActorAssetManager.createExplosion(Math.random() * 5);
 			parent.addChild(_flash);
 //			behavior = BehaviorFactory.createExpire(s_attrs.LIFETIME);
 			reset();
@@ -47,11 +48,14 @@ package scripts
 				_flash.scaleX = _flash.scaleY = 0;
 				_flash.alpha = 0.25;
 				
+				var i:uint = 0;
 				for each (var smoke:DisplayObject in _smoke)
 				{
 					smoke.x = 0;
 					smoke.y = 0;
 					smoke.alpha = 1;
+					
+					_velocities[i++] = Math.random() * 4;
 				}
 			}
 		}
@@ -69,17 +73,16 @@ package scripts
 			{
 				_flash.alpha = 0;
 			}
-			const speed:Number = 3;
-			_smoke[0].x -= speed;
-			_smoke[0].y -= speed;
-			_smoke[1].x += speed;
-			_smoke[1].y -= speed;
-			_smoke[2].x += speed;
-			_smoke[2].y += speed;
-			_smoke[3].x -= speed;
-			_smoke[3].y += speed;
-			_smoke[4].y -= speed;
-			_smoke[5].y += speed;
+			_smoke[0].x -= _velocities[0];
+			_smoke[0].y -= _velocities[0];
+			_smoke[1].x += _velocities[1];
+			_smoke[1].y -= _velocities[1];
+			_smoke[2].x += _velocities[2];
+			_smoke[2].y += _velocities[2];
+			_smoke[3].x -= _velocities[3];
+			_smoke[3].y += _velocities[3];
+			_smoke[4].y -= _velocities[4];
+			_smoke[5].y += _velocities[5];
 			for each (var smoke:DisplayObject in _smoke)
 			{
 				smoke.alpha -= 0.035;
