@@ -19,7 +19,8 @@ package karnold.utils
 		private static var s_engine:FrameTimerEngine;
 		public static function init(stage:Stage):void
 		{
-			if (!stage) {
+			if (!stage)
+			{
 				throw new Error("FrameTimer is being initialized with a null Stage value!");
 			}
 			if (!s_engine)
@@ -187,13 +188,13 @@ final class FrameTimerEngine
 		const now:int = getTimer();
 		for (var key:Object in _timers)
 		{
-			var timer:FrameTimer = FrameTimer(key);
-			timer.z_internal_fire();
+			++numTimersNow;
 
-			if (timer.running)			
-			{
-				++numTimersNow;
-			}
+			var timer:FrameTimer = FrameTimer(key);
+			
+			//KAI: weakness here - a timer may stop itself upon firing.  It's bad if it does this since
+			// we're iterating the keys
+			timer.z_internal_fire();
 		}
 		_numTimersProbably = numTimersNow;
 		manageEnterFrameListener();
