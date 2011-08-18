@@ -13,6 +13,8 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.BitmapFilter;
+	import flash.filters.BitmapFilterQuality;
+	import flash.filters.BlurFilter;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -64,9 +66,14 @@ package
 
 		static private var s_dropShadowFilter:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
 		static private var s_dropShadowFilterTank:Array = [new DropShadowFilter(2, 45, 0, 0.5, 0, 0)];
+		static private var s_blurFilter:Array = [new BlurFilter(5, 5, BitmapFilterQuality.MEDIUM)];
 		static public function get planeDropShadow():Array { return s_dropShadowFilter; }
 		static public function get tankDropShadow():Array { return s_dropShadowFilterTank; }
-		static private function createAssetRasterized(clss:Class, centered:Boolean, dropShadow:Boolean, scale:Number = 1):DisplayObject
+		static private function createAssetRasterized(clss:Class, 
+													  centered:Boolean, 
+													  attachDropShadow:Boolean,
+													  preBlur:Boolean = false,
+													  scale:Number = 1):DisplayObject
 		{
 			var bmd:BitmapData = s_rasterizationStore[clss] as BitmapData;
 			var retval:DisplayObject;
@@ -77,6 +84,11 @@ package
 				retval.scaleY = scale;
 				if (RASTERIZING)
 				{
+					if (preBlur)
+					{
+						if (retval.filters.length) throw "filter";
+						retval.filters = s_blurFilter;
+					}
 					bmd = rasterize(retval, scale);
 					s_rasterizationStore[clss] = bmd;
 				}
@@ -97,7 +109,7 @@ package
 				{
 					retval = bmp;
 				}
-				if (dropShadow)
+				if (attachDropShadow)
 				{
 					retval.filters = s_dropShadowFilter;
 				}
@@ -203,7 +215,7 @@ package
 				SHIP_SCALES[17] = 0.9;
 			}
 			const scale:Number = SHIP_SCALES[index] || 1;
-			return createAssetRasterized(SHIP_TYPES[index], true, true, scale);
+			return createAssetRasterized(SHIP_TYPES[index], true, true, false, scale);
 		}
 		static public function createShipRaw(index:uint):DisplayObject
 		{
@@ -225,7 +237,7 @@ package
 		
 		static public function createRocket(index:uint):DisplayObject
 		{
-			return createAssetRasterized(ROCKET_TYPES[index], false, false, 1);
+			return createAssetRasterized(ROCKET_TYPES[index], false, false, false, 1);
 		}
 		[Embed(source="assets/master.swf", symbol="flame")]
 		static private const FLAME:Class;
@@ -235,15 +247,15 @@ package
 		static private const SHIELD:Class;
 		static public function createFlame():DisplayObject
 		{
-			return createAssetRasterized(FLAME, false, false);
+			return createAssetRasterized(FLAME, false, false, true);
 		}
 		static public function createBlueFlame():DisplayObject
 		{
-			return createAssetRasterized(BLUEFLAME, false, false);
+			return createAssetRasterized(BLUEFLAME, false, false, true);
 		}
 		static public function createShield():DisplayObject
 		{
-			return createAssetRasterized(SHIELD, true, false);
+			return createAssetRasterized(SHIELD, true, false, true);
 		}
 		// tanks ////////////////////////////////////////////////////////////////
 		[Embed(source="assets/master.swf", symbol="tankhull0")]
@@ -271,11 +283,11 @@ package
 		static private const TURRET_TYPES:Array = [TURRET0, TURRET1, TURRET2, TURRET3, TURRET4];
 		static public function createHull(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, false, Consts.TANK_SCALE) : new HULL_TYPES[index];
+			return rasterized ? createAssetRasterized(HULL_TYPES[index], false, false, false, Consts.TANK_SCALE) : new HULL_TYPES[index];
 		}
 		static public function createTurret(index:uint, rasterized:Boolean = true):DisplayObject
 		{
-			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, false, Consts.TANK_SCALE * 1.1) : new TURRET_TYPES[index];
+			return rasterized ? createAssetRasterized(TURRET_TYPES[index], false, false, false, Consts.TANK_SCALE * 1.1) : new TURRET_TYPES[index];
 		}
 
 		[Embed(source="assets/master.swf", symbol="tanktread")]
@@ -306,7 +318,7 @@ package
 		static private const MUZZLEFLASH:Array = [MUZZLEFLASH0, MUZZLEFLASH1, MUZZLEFLASH2];
 		static public function createMuzzleFlash(level:uint):DisplayObject
 		{
-			return createAssetRasterized(MUZZLEFLASH[level], true, false); 
+			return createAssetRasterized(MUZZLEFLASH[level], true, false, true); 
 		}
 		static public function createExplosionParticle(color:uint):DisplayObject
 		{
