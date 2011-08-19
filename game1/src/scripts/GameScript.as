@@ -103,6 +103,7 @@ import scripts.GameScriptPlayerVehicle;
 import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
 import scripts.ShieldActor;
+import scripts.SmallExplosionActor;
 
 final class EnemyEnum
 {
@@ -734,6 +735,11 @@ class WaveBasedGameScript extends BaseScript
 	}
 
 	// IGameEvents
+//	if (!isFriendly || isPlayer)
+//	{
+//		const particles:uint = Math.min(20, 3 + 10 * damage/actor.attrs.MAX_HEALTH);
+//		Actor.createExplosionParticle(game, actor.worldPos, particles, isPlayer ? 0 : 1);
+//	}
 	public override function onOpposingCollision(game:IGame, friendly:Actor, enemy:Actor):void
 	{
 		const friendlyIsShield:Boolean = friendly is ShieldActor;
@@ -757,6 +763,8 @@ class WaveBasedGameScript extends BaseScript
 		if (friendly == game.player)
 		{
 			game.killActor(ammo);
+			
+			SmallExplosionActor.launch(game, ammo.worldPos, ammo.speed);
 		}
 		else if (friendly.alive)
 		{
@@ -776,31 +784,26 @@ class WaveBasedGameScript extends BaseScript
 		{
 			if (!pa.isActorStruck(enemy))
 			{
+				Actor.createExplosionParticle(game, enemy.worldPos, 20, 0);
+
 				pa.strikeActor(enemy);
 				damageActor(game, enemy, ammo.damage, false, false);
 			}
 		}
 		else
 		{
+			SmallExplosionActor.launch(game, ammo.worldPos, ammo.speed);
+			
 			damageActor(game, enemy, ammo.damage, false, false);
 			game.killActor(ammo);
 		}
 	}
 
-	static private const GLOW:Array = [ new GlowFilter ];
+	static private const GLOW:Array = [ new GlowFilter(0x00ffff, 0.75, 25, 10) ];
 	
 	// this is a little nutty - seems like we should be using OOP or something
 	public override function damageActor(game:IGame, actor:Actor, damage:Number, isFriendly:Boolean, wasCollision:Boolean):void
 	{
-		const isPlayer:Boolean = actor == game.player;
-
-		// Deal the damage and cue the visual effect
-		if (!isFriendly || isPlayer)
-		{
-			const particles:uint = Math.min(20, 3 + 10 * damage/actor.attrs.MAX_HEALTH);
-			Actor.createExplosionParticle(game, actor.worldPos, particles, isPlayer ? 0 : 1);
-		}
-
 		actor.health -= damage;
 		if (actor.health > 0)
 		{
@@ -808,6 +811,7 @@ class WaveBasedGameScript extends BaseScript
 		}
 
 		// Maintain player damage and stats
+		const isPlayer:Boolean = actor == game.player;
 		if (isPlayer)
 		{
 			game.scoreBoard.pctHealth = actor.health / actor.attrs.MAX_HEALTH;

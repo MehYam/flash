@@ -19,6 +19,7 @@ package scripts
 		public function ExplosionActor()
 		{
 			// KAI: would be a lot better to spawn these all off as separate actors?
+			// yes - then we could get rid of SmallExplosionActor
 			var parent:Sprite = new Sprite;
 			super(parent, s_attrs);
 			

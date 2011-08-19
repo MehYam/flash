@@ -226,13 +226,20 @@ package
 		[Embed(source="assets/master.swf", symbol="explosion3")] static private const EXPLOSION3:Class;
 		[Embed(source="assets/master.swf", symbol="explosion4")] static private const EXPLOSION4:Class;
 		[Embed(source="assets/master.swf", symbol="explosion5")] static private const EXPLOSION5:Class;
+		[Embed(source="assets/master.swf", symbol="explosionsmall1")] static private const SMALLEXPLOSION1:Class;
+		[Embed(source="assets/master.swf", symbol="explosionsmall2")] static private const SMALLEXPLOSION2:Class;
 		[Embed(source="assets/master.swf", symbol="smoke1")] static private const SMOKE1:Class;
 		[Embed(source="assets/master.swf", symbol="smoke2")] static private const SMOKE2:Class;
 		static private const EXPLOSION_TYPES:Array = [EXPLOSION1, EXPLOSION2, EXPLOSION3, EXPLOSION4, EXPLOSION5];
+		static private const SMALLEXPLOSION_TYPES:Array = [SMALLEXPLOSION1, SMALLEXPLOSION2];
 		static private const SMOKE_TYPES:Array = [SMOKE1, SMOKE2];
 		static public function createExplosion(index:uint):DisplayObject
 		{
 			return createAssetRasterized(EXPLOSION_TYPES[index], true, 1, s_blurHeavy);
+		}
+		static public function createSmallExplosion(index:uint):DisplayObject
+		{
+			return createAssetRasterized(SMALLEXPLOSION_TYPES[index], true, 1, s_blur);
 		}
 		static public function createSmoke(index:uint):DisplayObject
 		{
