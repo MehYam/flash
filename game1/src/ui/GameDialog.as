@@ -79,5 +79,10 @@ package ui
 			
 			_title = tf;
 		}
+		protected function set enabled(b:Boolean):void
+		{
+			mouseEnabled = b;
+			mouseChildren = b;
+		}
 	}
 }

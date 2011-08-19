@@ -100,6 +100,8 @@ package ui
 			
 			graphics.beginFill(0);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			
+			enabled = true;
 		}
 		private function onUserImpatient(e:Event):void
 		{
@@ -110,10 +112,12 @@ package ui
 		}
 		private function onNewGame(e:Event):void
 		{
+			enabled = false;
 			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.NEW_GAME));
 		}
 		private function onContinue(e:Event):void
 		{
+			enabled = false;
 			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.CONTINUE));
 		}
 		
@@ -129,6 +133,18 @@ package ui
 			{
 				parent.removeChild(this);
 				_fade.stop();
+			}
+		}
+		private function set enabled(b:Boolean):void
+		{
+			// lame - TitleScreen ends up being the parent for the other dialogs, so for now manually enable the controls
+			for (var i:uint = 0; i < numChildren; ++i)
+			{
+				var btn:GameButton = getChildAt(i) as GameButton;
+				if (btn)
+				{
+					btn.enabled = b;
+				}
 			}
 		}
 	}

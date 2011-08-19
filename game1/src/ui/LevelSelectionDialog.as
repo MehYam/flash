@@ -209,11 +209,6 @@ package ui
 
 			addChild(goldReportParent);
 		}
-		private function set enabled(b:Boolean):void
-		{
-			mouseEnabled = b;
-			mouseChildren = b;
-		}
 		private function onPlaneHangar(e:Event):void
 		{
 			openDialog(new UpgradePlaneDialog);

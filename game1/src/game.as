@@ -116,16 +116,11 @@ package
 		{
 			toLevelSelectionDialog();
 		}
-		private var _levelSelectionDialog:LevelSelectionDialog;
+		private var _levelSelectionDialog:LevelSelectionDialog = new LevelSelectionDialog;
 		private function toLevelSelectionDialog():void
 		{
-			if (!_levelSelectionDialog)
-			{
-				_levelSelectionDialog = new LevelSelectionDialog;
-				UIUtil.openDialog(_title, _levelSelectionDialog);
-				
-				Util.listen(_levelSelectionDialog, Event.SELECT, onLevelSelected);
-			}
+			UIUtil.openDialog(_title, _levelSelectionDialog);
+			Util.listen(_levelSelectionDialog, Event.SELECT, onLevelSelected);
 		}
 		private function onLevelSelected(e:Event):void
 		{
