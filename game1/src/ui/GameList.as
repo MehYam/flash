@@ -173,20 +173,27 @@ package ui
 				if (!_indicators)
 				{
 					_indicators = new Sprite;
+					_indicators.buttonMode = true;
 					
 					for (var i:int = 0; i <= (_items.length - _itemsVisible); ++i)
 					{
-						var indicator:Shape = new Shape;
-						indicator.graphics.lineStyle(2);
+						var indicator:Sprite = new Sprite;
+						indicator.graphics.lineStyle();
 						indicator.graphics.beginFill(0, 0.8);
-						indicator.graphics.drawRect(0, 0, 3, 3);
+						indicator.graphics.drawRect(0, 0, 5, 4);
 						indicator.graphics.endFill();
 						
 						indicator.x = i * 7;
 						_indicators.addChild(indicator);
 					}
 					_indicators.x = (this.width - _indicators.width)/2;
-					_indicators.y = this.height - _indicators.height;
+					_indicators.y = this.height - 1;
+
+					_indicators.graphics.beginFill(0, 0.05);
+					_indicators.graphics.drawRect(0, 0, _indicators.width, _indicators.height);
+					_indicators.graphics.endFill();
+					
+					Util.listen(_indicators, MouseEvent.MOUSE_DOWN, onIndicatorDown);
 					addChild(_indicators);
 				}
 			}
@@ -194,6 +201,32 @@ package ui
 			updateScrollButtons();
 		}
 
+		private function onIndicatorDown(e:MouseEvent):void
+		{
+			Util.listen(stage, MouseEvent.MOUSE_MOVE, onIndicatorMove);
+			Util.listen(stage, MouseEvent.MOUSE_UP, onIndicatorUp);
+			Util.listen(stage, Event.MOUSE_LEAVE, onIndicatorUp);
+			
+			onIndicatorMove(e);
+		}
+		private function onIndicatorMove(e:MouseEvent):void
+		{
+			const ptLocal:Point = _indicators.globalToLocal(stage.localToGlobal(new Point(e.stageX, e.stageY)));
+			const pct:Number = ptLocal.x / _indicators.width + 0.02; // on Windows, there's a bit of a weird offset with the hand cursor!? 
+			const newScrollPos:int = Math.max(0, Math.min(maxScrollPos, pct * (maxScrollPos + 1)));
+			if (_scrollPos != newScrollPos)
+			{
+				this.scrollPos = newScrollPos;
+				
+				AssetManager.instance.uiClick();
+			}
+		}
+		private function onIndicatorUp(e:Event):void
+		{
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onIndicatorMove);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onIndicatorUp);
+			stage.removeEventListener(Event.MOUSE_LEAVE, onIndicatorUp);
+		}
 		public function renderVert():void  // atrocities!
 		{
 			clear();
@@ -222,13 +255,13 @@ package ui
 				render();
 			}
 		}
-		private function get allTheWayRight():Boolean
+		private function get maxScrollPos():int
 		{
-			return (_scrollPos + _itemsVisible) >= _items.length; 
+			return _items.length - _itemsVisible;
 		}
 		private function onScrollRight(e:Event):void
 		{
-			if (!allTheWayRight)
+			if (_scrollPos < maxScrollPos)
 			{
 				++_scrollPos;
 				render();
@@ -242,7 +275,7 @@ package ui
 				_leftButton.enabled = canScroll;
 				_leftButton.alpha = canScroll ? 1 : 0.1;
 				
-				canScroll = !allTheWayRight
+				canScroll = _scrollPos < maxScrollPos;
 				_rightButton.enabled = canScroll;
 				_rightButton.alpha = canScroll ? 1 : 0.1;
 			}

@@ -132,7 +132,7 @@ package ui
 		}
 		private function onClick(e:Event):void
 		{
-			AssetManager.instance.uiClick();
+//			AssetManager.instance.uiClick();
 		}
 	}
 }

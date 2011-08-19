@@ -180,6 +180,7 @@ package ui
 			addChild(done);
 		}
 		
+		private var _lastNumAvailablePlanes:int = 0;
 		private function onPurchase(_unused:Event):void
 		{
 			Util.ASSERT(UserData.instance.currentPlane != _currentSelected);

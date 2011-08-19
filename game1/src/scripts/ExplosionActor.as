@@ -57,6 +57,7 @@ package scripts
 					
 					_velocities[i++] = Math.random() * 4;
 				}
+				displayObject.rotation = Math.random() * 360;
 			}
 		}
 		public override function onFrame(game:IGame):void

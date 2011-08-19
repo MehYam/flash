@@ -832,8 +832,14 @@ class WaveBasedGameScript extends BaseScript
 		// handle actor death
 		if (actor.health <= 0)
 		{
-//			actor.behavior = new DeathAnimationBehavior;
-			ExplosionActor.launch(game, actor.worldPos.x, actor.worldPos.y);
+			if (isPlayer)
+			{
+				actor.behavior = new DeathAnimationBehavior;
+			}
+			else
+			{
+				ExplosionActor.launch(game, actor.worldPos.x, actor.worldPos.y);
+			}
 			if (isPlayer && actor.alive)
 			{
 				game.stunMobs();
@@ -915,12 +921,19 @@ class WaveBasedGameScript extends BaseScript
 
 final class DeathAnimationBehavior implements IBehavior
 {
-	private var _start:uint = getTimer();
+	private var _next:uint = 0;
+	private var _remaining:uint = 7;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		if (getTimer() - _start < 1500)
+		const now:uint = getTimer();
+		if (now > _next && _remaining)
 		{
-			Actor.createExplosionParticle(game, actor.worldPos, 2, Math.random()*3);
+			ExplosionActor.launch(game, 
+				actor.worldPos.x + ((Math.random() - 0.5) * actor.displayObject.width), 
+				actor.worldPos.y + ((Math.random() - 0.5) * actor.displayObject.height));
+			
+			_next = now + (Math.random() * 300);
+			--_remaining;
 		}
 	}
 }
