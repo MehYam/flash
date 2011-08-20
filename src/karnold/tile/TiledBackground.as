@@ -8,8 +8,6 @@ package karnold.tile
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import gameData.UserData;
-	
 	import karnold.utils.Array2D;
 	import karnold.utils.Bounds;
 	import karnold.utils.Location;

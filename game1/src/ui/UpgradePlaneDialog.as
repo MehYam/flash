@@ -102,7 +102,7 @@ package ui
 				}
 				else
 				{
-					_list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
+//					_list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
 				}
 				
 			}

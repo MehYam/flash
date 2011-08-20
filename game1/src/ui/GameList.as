@@ -149,7 +149,7 @@ package ui
 				graphics.lineStyle(1, 0xff0000);
 				graphics.drawRect(0, 0, width, height);
 			}
-			if (_scroll)
+			if (_scroll && (_itemsVisible < _items.length))
 			{
 				if (!_leftButton)
 				{
