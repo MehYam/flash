@@ -15,7 +15,7 @@ package gameData
 			this.purchasable = purchasable;
 			this.radius = radius;
 		}
-		static private var s_entries:Array;
+		static private var s_entries:Vector.<PlaneData>;
 		static public function getPlane(i:uint):PlaneData
 		{
 			return planes[i];
@@ -25,11 +25,11 @@ package gameData
 		static private const PLANEXML:Class;
 
 		static private const CLASSNAMES:Array = ["Rogue", "Melee", "Melee/Hybrid", "Fighter"];
-		static public function get planes():Array
+		static public function get planes():Vector.<PlaneData>
 		{
 			if (!s_entries)
 			{
-				s_entries = []; 
+				s_entries = new Vector.<PlaneData>; 
 				
 				var byteArray:ByteArray = new PLANEXML;
 				const xml:XML = new XML(byteArray.readUTFBytes(byteArray.length));		

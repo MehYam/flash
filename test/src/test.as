@@ -22,6 +22,7 @@ package
 	import flash.filters.DropShadowFilter;
 	import flash.filters.GradientGlowFilter;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.SharedObject;
 	import flash.net.URLRequest;

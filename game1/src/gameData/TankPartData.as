@@ -2,7 +2,7 @@ package gameData
 {
 	public class TankPartData extends VehiclePart
 	{
-		private var _upgrades:Array = [];
+		private var _upgrades:Vector.<TankPartData> = new Vector.<TankPartData>;
 		public function TankPartData(name:String, assetIndex:uint, baseStats:VehiclePartStats, radius:Number = 0, upgradeA:TankPartData = null, upgradeB:TankPartData = null)
 		{
 			super(name, assetIndex, baseStats);
@@ -15,13 +15,13 @@ package gameData
 		{
 			return _upgrades[index];
 		}
-		static private var s_hulls:Array;
-		static public function get hulls():Array
+		static private var s_hulls:Vector.<TankPartData>;
+		static public function get hulls():Vector.<TankPartData>
 		{
 			if (!s_hulls)
 			{
-				s_hulls =
-				[
+				s_hulls = Vector.<TankPartData>
+				([
 					new TankPartData("Hunter", 0,		new VehiclePartStats(.1, 0, 0, .1, 1000), 38, 
 						new TankPartData("+500 Armor",  0, new VehiclePartStats(.3, 0, 0, 0,  1000)),
 						new TankPartData("Aft Cannons", 0, new VehiclePartStats( 0, .1, .1, 0, 1000))),
@@ -37,17 +37,17 @@ package gameData
 					new TankPartData("Hunter X", 4,		new VehiclePartStats(.3, 0, 0, .1, 2000), 42,
 						new TankPartData("+500 Armor",  0, new VehiclePartStats(.3, 0, 0, 0, 10000)),
 						new TankPartData("Aft Cannons", 0, new VehiclePartStats( 0, .2, .2, 0, 10000)))
-				];
+				]);
 			}
 			return s_hulls;
 		}
-		static private var s_turrets:Array;
-		static public function get turrets():Array
+		static private var s_turrets:Vector.<TankPartData>;
+		static public function get turrets():Vector.<TankPartData>
 		{
 			if (!s_turrets)
 			{
-				s_turrets =
-				[
+				s_turrets = Vector.<TankPartData>
+				([
 					new TankPartData("Stinger", 0, 		new VehiclePartStats(0, .1, .1, 0, 1000), 0,
 						new TankPartData("+100% Firerate", 0, new VehiclePartStats(0, 0, .5, 0, 1000)),
 						new TankPartData("+50% Damage", 0,    new VehiclePartStats(0, .1, 0, 0, 1000))),
@@ -63,7 +63,7 @@ package gameData
 					new TankPartData("Triclops", 4,		new VehiclePartStats(0, .5, .1, 0, 20000), 0,
 						new TankPartData("+33% Damage", 0,    new VehiclePartStats(0, .3, 0, 0, 8000)),
 						new TankPartData("+25% Firerate", 0,  new VehiclePartStats(0, 0, .25, 0, 8000)))
-				];
+				]);
 			}
 			return s_turrets;
 		}

@@ -14,6 +14,7 @@ package ui
 	
 	public class StatList extends Sprite
 	{
+		private var _title:ShadowTextField;
 		private var _armor:ProgressMeter;
 		private var _damage:ProgressMeter;
 		private var _fireRate:ProgressMeter;
@@ -26,14 +27,15 @@ package ui
 			var skin:DisplayObject = AssetManager.instance.innerFace();
 			
 			skin.width = 150;
+
+			_fieldTop = 12;
 			
-			s_fieldTop = 0;
 			var fields:Sprite = new Sprite;
 			_armor = addStatField(fields, "Armor", stats.armor);
 			_damage = addStatField(fields, "Damage", stats.damage);
 			_fireRate = addStatField(fields, "Fire Rate", stats.fireRate);
-			addStatField(fields, "Ammo", 0.1);
 			_speed = addStatField(fields, "Speed", stats.speed);
+			addStatField(fields, "Ammo", 0.1);
 			_stats = stats;
 			
 			skin.height = height;
@@ -42,18 +44,25 @@ package ui
 			fields.x = skin.x + 5;
 			fields.y = skin.y + 5;
 			addChild(fields);
+
+			_title = new ShadowTextField(0, 0x00ff00, 1);
+			AssetManager.instance.assignFont(_title, AssetManager.FONT_RADIOSTARS, 14);
+			_title.x = 3;
+			_title.text = "---";
+			_title.embedFonts = true;
+			addChild(_title);
 		}
-		static private var s_fieldTop:Number;
 		static private var s_dropShadow:Array = [new DropShadowFilter(2, 45, 0, 1, 0, 0)];
-		static private function addStatField(parent:DisplayObjectContainer, label:String, meterValue:Number, meterColor:uint = 0x0033ff):ProgressMeter
+		private var _fieldTop:Number;
+		private function addStatField(parent:DisplayObjectContainer, label:String, meterValue:Number, meterColor:uint = 0x0033ff):ProgressMeter
 		{
 			var labelField:ShadowTextField = new ShadowTextField(0x00, 0xff, 1);
 			AssetManager.instance.assignFont(labelField, AssetManager.FONT_ROBOT, 18);
 
 			labelField.text = label + ":";
-			labelField.y = s_fieldTop;
+			labelField.y = _fieldTop;
 			
-			s_fieldTop += 20;
+			_fieldTop += 20;
 			
 			var meter:ProgressMeter = new ProgressMeter(50, 7, 0, meterColor);
 			meter.pct = meterValue;
@@ -68,7 +77,11 @@ package ui
 			
 			return meter;
 		}
-	
+
+		public function set title(text:String):void
+		{
+			_title.text = text;
+		}
 		public function set stats(stats:VehiclePartStats):void
 		{
 			_stats = stats;

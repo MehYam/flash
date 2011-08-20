@@ -9,6 +9,7 @@ package ui
 	
 	import gameData.PlaneData;
 	import gameData.UserData;
+	import gameData.VehiclePart;
 	import gameData.VehiclePartStats;
 	
 	import karnold.utils.ToolTipMgr;
@@ -70,6 +71,7 @@ package ui
 		private function populateShipList(userData:UserData):void
 		{
 			var upgrades:uint;
+			var unlocksLeft:Boolean = false;
 			for (var i:uint = 0; i < PlaneData.planes.length; ++i)
 			{
 				if (upgrades)
@@ -102,9 +104,12 @@ package ui
 				}
 				else
 				{
-//					_list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
+					unlocksLeft = true;
 				}
-				
+			}
+			if (unlocksLeft)
+			{
+				_list.addItem(UIUtil.createMysteryGameListItem(LIST_HEIGHT));
 			}
 			_list.render();
 		}
@@ -220,7 +225,7 @@ package ui
 				const target:PlaneData = PlaneData.getPlane(targetIndex);
 
 				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(target.assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetIndex);
-				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target), ToolTipMgr.DEFAULT_DELAY, ToolTipMgr.DEFAULT_OFFSETX, ToolTipMgr.DEFAULT_OFFSETY - 10);
+				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target), ToolTipMgr.DEFAULT_DELAY, ToolTipMgr.DEFAULT_OFFSETX, ToolTipMgr.DEFAULT_OFFSETY - 20);
 				if (target.purchased)
 				{
 					UIUtil.addCheckmark(upgradeItem);
@@ -288,14 +293,26 @@ package ui
 			}
 			
 			_statList.stats = planeData.baseStats;
-			_statList.compare = null;
+			comparePlane = null;
 		}
 		private function onItemRoll(e:Event):void
 		{
 			const item:GameListItem = (_list.rolledOverItem || _upgradeList.rolledOverItem) as GameListItem;
-			const stats:VehiclePartStats = item ? PlaneData.getPlane(item.cookie).baseStats : null;
+			const plane:VehiclePart = item ? PlaneData.getPlane(item.cookie) : null;
 			
+			comparePlane = plane;
+		}
+		private function set comparePlane(plane:VehiclePart):void
+		{
+			const stats:VehiclePartStats = plane ? plane.baseStats : null; 
 			_statList.compare = stats;
+			
+			var title:String = PlaneData.getPlane(_currentSelected).name;
+			if (stats && title != plane.name)
+			{
+				title += "->" + plane.name;
+			}
+			_statList.title = title; 
 		}
 		private function onDone(e:Event):void
 		{

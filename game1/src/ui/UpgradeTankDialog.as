@@ -389,6 +389,7 @@ package ui
 			// now perform the compare
 			_stats.stats = po_stats;
 			_stats.compare = po_compareStats;
+			_stats.title = "TANK"
 		}
 		static private function accumulateUpgrade(list:GameList, tankPart:TankPartData, upgradeIndex:uint):void
 		{
