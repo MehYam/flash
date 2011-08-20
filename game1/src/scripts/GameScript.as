@@ -16,7 +16,6 @@ package scripts
 		static private function parseLevels(encodedLevels:String):Array
 		{
 			var lines:Array = encodedLevels.split("\n");
-			lines.length;
 			
 			var levels:Array = [];
 			var tmpLevel:Array;

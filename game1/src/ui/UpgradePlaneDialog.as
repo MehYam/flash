@@ -88,11 +88,11 @@ package ui
 				const prereq:PlaneData = PlaneData.planes[plane.unlock];
 				upgrades = plane.upgrades;
 
-				if (prereq.purchased)
+				if (UserData.instance.owns(prereq.id))
 				{
 					var item:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(plane.assetIndex), LIST_HEIGHT, LIST_HEIGHT, i);
 					ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(plane));
-					if (plane.purchased)
+					if (UserData.instance.owns(plane.id))
 					{
 						UIUtil.addCheckmark(item);
 						if (i == userData.currentPlane)
@@ -219,14 +219,14 @@ package ui
 		private function addUpgradeItem(forItem:uint, slot:uint):void
 		{
 			const forPlane:PlaneData = PlaneData.getPlane(forItem);
-			if (forPlane.purchased)
+			if (UserData.instance.owns(forPlane.id))
 			{
 				const targetIndex:uint = forItem + 1;
 				const target:PlaneData = PlaneData.getPlane(targetIndex);
 
 				var upgradeItem:GameListItem = new GameListItem(ActorAssetManager.createShipRaw(target.assetIndex), LIST_HEIGHT, LIST_HEIGHT, targetIndex);
 				ToolTipMgr.instance.addToolTip(upgradeItem, UIUtil.formatItemTooltip(target), ToolTipMgr.DEFAULT_DELAY, ToolTipMgr.DEFAULT_OFFSETX, ToolTipMgr.DEFAULT_OFFSETY - 20);
-				if (target.purchased)
+				if (UserData.instance.owns(target.id))
 				{
 					UIUtil.addCheckmark(upgradeItem);
 				}
@@ -283,7 +283,7 @@ package ui
 			_purchaseBtn.enabled = false;
 
 			const planeData:PlaneData = PlaneData.planes[selection];
-			if (planeData.purchased)
+			if (UserData.instance.owns(planeData.id))
 			{
 				UserData.instance.currentPlane = selection;
 			}

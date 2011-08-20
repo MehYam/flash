@@ -2,72 +2,99 @@ package gameData
 {
 	public class TankPartData extends VehiclePart
 	{
-		private var _upgrades:Vector.<TankPartData> = new Vector.<TankPartData>;
-		public function TankPartData(name:String, assetIndex:uint, baseStats:VehiclePartStats, radius:Number = 0, upgradeA:TankPartData = null, upgradeB:TankPartData = null)
+		private var _upgrades:Vector.<String> = new Vector.<String>;
+		
+		// asset index goes into the ID, they must line up
+		public function TankPartData(lock:Class, id:String, name:String, assetIndex:uint, baseStats:VehiclePartStats, radius:Number, upgradeA:String, upgradeB:String)
 		{
-			super(name, assetIndex, baseStats);
+			super(id, name, assetIndex, baseStats);
+
+			if (lock != INTERNALFACTORY) throw "you can't construct these!";
+			
 			_upgrades[0] = upgradeA;
 			_upgrades[1] = upgradeB;
 			this.radius = radius;
 		}
-
 		public function getUpgrade(index:uint):TankPartData
 		{
-			return _upgrades[index];
+			return s_upgrades[_upgrades[index]];
 		}
-		static private var s_hulls:Vector.<TankPartData>;
-		static public function get hulls():Vector.<TankPartData>
-		{
-			if (!s_hulls)
+		static private var s_hulls:Vector.<TankPartData> = new Vector.<TankPartData>;
+		static private var s_turrets:Vector.<TankPartData> = new Vector.<TankPartData>;
+		static private var s_upgrades:Object = {};
+		static public function init(hulls:Vector.<Object>, turrets:Vector.<Object>, hullups:Vector.<Object>, turretups:Vector.<Object>):void
+		{	
+			var i:uint = 0;
+			var tmp:Vector.<TankPartData> = new Vector.<TankPartData>;
+			for each (var hullup:Object in hullups)
 			{
-				s_hulls = Vector.<TankPartData>
-				([
-					new TankPartData("Hunter", 0,		new VehiclePartStats(.1, 0, 0, .1, 1000), 38, 
-						new TankPartData("+500 Armor",  0, new VehiclePartStats(.3, 0, 0, 0,  1000)),
-						new TankPartData("Aft Cannons", 0, new VehiclePartStats( 0, .1, .1, 0, 1000))),
-					new TankPartData("Wreckingball", 1,	new VehiclePartStats(.5, 0, 0, .2, 4000), 30,
-						new TankPartData("+300 Armor",  0, new VehiclePartStats(.2, 0, 0, 0, 2000)),
-						new TankPartData("+25% Speed",  0, new VehiclePartStats( 0, 0, 0, .3, 3000))),
-					new TankPartData("Seeker", 2,		new VehiclePartStats(.6, 0, 0, .3, 7000), 30,
-						new TankPartData("Adds Shield", 0, new VehiclePartStats(.2, .2, .1, 0, 5000)),
-						new TankPartData("+25% Speed",  0, new VehiclePartStats(0, 0, 0, .2, 6000))),
-					new TankPartData("Rhino", 3,		new VehiclePartStats(.8, 0, 0, .2, 20000),35,
-						new TankPartData("+800 Armor",  0, new VehiclePartStats(.3, 0, 0, 0, 7000)),
-						new TankPartData("Adds Shield", 0, new VehiclePartStats(.2, .2, .2, 0, 7000))),
-					new TankPartData("Hunter X", 4,		new VehiclePartStats(.3, 0, 0, .1, 2000), 42,
-						new TankPartData("+500 Armor",  0, new VehiclePartStats(.3, 0, 0, 0, 10000)),
-						new TankPartData("Aft Cannons", 0, new VehiclePartStats( 0, .2, .2, 0, 10000)))
-				]);
+				var hup:HullUpgrade = new HullUpgrade(i++, hullup.name, new VehiclePartStats(hullup.armor, hullup.damage, hullup.rate, hullup.speed, hullup.cost));
+				tmp.push(hup);
+				s_upgrades[hup.id] = hup;
 			}
-			return s_hulls;
-		}
-		static private var s_turrets:Vector.<TankPartData>;
-		static public function get turrets():Vector.<TankPartData>
-		{
-			if (!s_turrets)
+			for each (var hull:Object in hulls)
 			{
-				s_turrets = Vector.<TankPartData>
-				([
-					new TankPartData("Stinger", 0, 		new VehiclePartStats(0, .1, .1, 0, 1000), 0,
-						new TankPartData("+100% Firerate", 0, new VehiclePartStats(0, 0, .5, 0, 1000)),
-						new TankPartData("+50% Damage", 0,    new VehiclePartStats(0, .1, 0, 0, 1000))),
-					new TankPartData("Destroyer", 1,    new VehiclePartStats(0, .3, .2, 0, 3000), 0,
-						new TankPartData("Spread Fire", 0,    new VehiclePartStats(0, 0, 0, 0, 2000)),
-						new TankPartData("Rockets", 0,        new VehiclePartStats(0, .4, .4, 0, 3000))),
-					new TankPartData("Fuz-o", 2,		new VehiclePartStats(0, .4, .1, 0, 5000), 0,
-						new TankPartData("Double Fusion", 0,  new VehiclePartStats(0, .3, 0, 0, 5000)),
-						new TankPartData("+50% Firerate", 0,  new VehiclePartStats(0, 0, .3, 0, 5000))),
-					new TankPartData("Spreader", 3,	    new VehiclePartStats(0, .6, .1, 0, 4000), 0,
-						new TankPartData("+33% Firerate", 0,  new VehiclePartStats(0, 0, .3, 0, 7000)),
-						new TankPartData("Rocket Upgrade", 0, new VehiclePartStats(0, .3, 0, 0, 7000))),
-					new TankPartData("Triclops", 4,		new VehiclePartStats(0, .5, .1, 0, 20000), 0,
-						new TankPartData("+33% Damage", 0,    new VehiclePartStats(0, .3, 0, 0, 8000)),
-						new TankPartData("+25% Firerate", 0,  new VehiclePartStats(0, 0, .25, 0, 8000)))
-				]);
+				var h:Hull = new Hull(hull.name, hull.iAsset, new VehiclePartStats(hull.armor, hull.damage, hull.rate, hull.speed, hull.cost),
+				                      hull.radius, tmp[parseInt(hull.up1)].id, tmp[parseInt(hull.up2)].id);
+				s_hulls.push(h);
 			}
-			return s_turrets;
+			i = 0;
+			tmp.length = 0;
+			for each (var turretup:Object in turretups)
+			{
+				var tup:TurretUpgrade = new TurretUpgrade(i++, turretup.name, new VehiclePartStats(turretup.armor, turretup.damage, turretup.rate, turretup.speed, turretup.cost));
+				tmp.push(tup);
+				s_upgrades[tup.id] = tup;
+			}
+			for each (var turret:Object in turrets)
+			{
+				var t:Turret = new Turret(turret.name, turret.iAsset, new VehiclePartStats(turret.armor, turret.damage, turret.rate, turret.speed, turret.cost),
+					tmp[parseInt(turret.up1)].id, tmp[parseInt(turret.up2)].id);
+				
+				s_turrets.push(t);
+			}
 		}
+		static public function get hulls():Vector.<TankPartData> {	return s_hulls;	}
+		static public function get turrets():Vector.<TankPartData>	{	return s_turrets;	}
+		//KAI: would be better to replace index with the VehiclePart.id
 		static public function getHull(index:uint):TankPartData { return s_hulls[ index ]; }
 		static public function getTurret(index:uint):TankPartData { return s_turrets[ index ]; }
+
+	}
+}
+import gameData.TankPartData;
+import gameData.VehiclePartStats;
+
+import karnold.utils.Util;
+
+final internal class INTERNALFACTORY {}
+final internal class Hull extends TankPartData
+{
+	public function Hull(name:String, assetIndex:uint, baseStats:VehiclePartStats, radius:Number, upgradeA:String, upgradeB:String)
+	{
+		Util.ASSERT(upgradeA && upgradeB);
+		super(INTERNALFACTORY, "h" + assetIndex, name, assetIndex, baseStats, radius, upgradeA, upgradeB);
+	}
+}
+final internal class Turret extends TankPartData
+{
+	public function Turret(name:String, assetIndex:uint, baseStats:VehiclePartStats, upgradeA:String, upgradeB:String)
+	{
+		Util.ASSERT(upgradeA && upgradeB);
+		super(INTERNALFACTORY, "t" + assetIndex, name, assetIndex, baseStats, 0, upgradeA, upgradeB);
+	}
+}
+final internal class HullUpgrade extends TankPartData
+{
+	public function HullUpgrade(index:uint, name:String, baseStats:VehiclePartStats)
+	{
+		super(INTERNALFACTORY, "hu" + index, name, assetIndex, baseStats, 0, null, null);
+	}
+}
+final internal class TurretUpgrade extends TankPartData
+{
+	public function TurretUpgrade(index:uint, name:String, baseStats:VehiclePartStats)
+	{
+		super(INTERNALFACTORY, "tu" + index, name, assetIndex, baseStats, 0, null, null);
 	}
 }

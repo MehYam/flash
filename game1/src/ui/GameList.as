@@ -180,14 +180,14 @@ package ui
 						var indicator:Sprite = new Sprite;
 						indicator.graphics.lineStyle();
 						indicator.graphics.beginFill(0, 0.8);
-						indicator.graphics.drawRect(0, 0, 5, 4);
+						indicator.graphics.drawRect(0, 0, 6, 6);
 						indicator.graphics.endFill();
 						
 						indicator.x = i * 7;
 						_indicators.addChild(indicator);
 					}
 					_indicators.x = (this.width - _indicators.width)/2;
-					_indicators.y = this.height - 1;
+					_indicators.y = this.height - _indicators.height;
 
 					_indicators.graphics.beginFill(0, 0.05);
 					_indicators.graphics.drawRect(0, 0, _indicators.width, _indicators.height);

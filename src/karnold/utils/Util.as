@@ -372,6 +372,55 @@ package karnold.utils
 			return true;
 		}
 
+		// returns a map of tables in this form:
+		// tablename -> array of row Object's.
+		// Each row object is a mapping of the key->values according to the column names found at the
+		// top of the table
+		public static function parseTables(text:String, delim:String = "\t"):Object
+		{
+			var result:Object = {};
+			var lines:Array = text.split("\r\n");
+			const tableDelimiter:uint = "#".charCodeAt(0);
+
+			var currentTableName:String;
+			var currentTableColumns:Array;
+			var currentTableRows:Vector.<Object>;
+			for each (var line:String in lines)
+			{
+				if (line.length < 2) continue;
+				if (line.charCodeAt(0) == tableDelimiter)
+				{
+					if (currentTableRows)
+					{
+						result[currentTableName] = currentTableRows;
+						currentTableRows = null;
+						currentTableColumns = null;
+					}
+
+					// new table
+					currentTableName = line.substr(1);
+				}
+				else if (!currentTableColumns)
+				{
+					currentTableColumns = line.split(delim);
+					currentTableRows = new Vector.<Object>;
+				}
+				else
+				{
+					var row:Object = {};
+					var currentRow:Array = line.split(delim);
+					var col:uint = 0;
+					
+					if (currentRow.length > currentTableColumns.length) throw ("bad row" + line); 
+					for each (var cell:String in currentRow)
+					{
+						row[currentTableColumns[col++]] = cell;
+					}
+					currentTableRows.push(row);
+				}
+			}
+			return result;
+		}
 		public function Util(hide:CONSTRUCTOR_HIDER) {}
 	}
 }

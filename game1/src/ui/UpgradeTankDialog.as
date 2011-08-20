@@ -58,7 +58,7 @@ package ui
 				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(hull));
 
 				_listHulls.addItem(item);
-				if (hull.purchased)
+				if (UserData.instance.owns(hull.id))
 				{
 					UIUtil.addCheckmark(item);
 					if (index == UserData.instance.currentHull)
@@ -109,7 +109,7 @@ package ui
 				var item:GameListItem = new GameListItem(ActorAssetManager.createTurret(turret.assetIndex, false), ITEM_SIZE, ITEM_SIZE, index); 
 				ToolTipMgr.instance.addToolTip(item, UIUtil.formatItemTooltip(turret));
 				_listTurrets.addItem(item);
-				if (turret.purchased)
+				if (UserData.instance.owns(turret.id))
 				{
 					UIUtil.addCheckmark(item);
 					if (index == UserData.instance.currentTurret)
@@ -151,7 +151,7 @@ package ui
 		private function populateUpgrades(list:GameList, tankPart:TankPartData):void
 		{
 			list.clearItems();
-			if (tankPart.purchased)
+			if (UserData.instance.owns(tankPart.id))
 			{
 				addUpgrade(list, tankPart.getUpgrade(0), 0);
 				addUpgrade(list, tankPart.getUpgrade(1), 1);
@@ -179,7 +179,7 @@ package ui
 			var upgrade:GameListItem = new GameListItem(tf, UPGRADE_WIDTH - 10, (LIST_HEIGHT-27)/2, upgradeIndex);
 			ToolTipMgr.instance.addToolTip(upgrade, UIUtil.formatItemTooltip(part, false), ToolTipMgr.DEFAULT_DELAY*2);
 			upgrade.border = true;
-			if (part.purchased)
+			if (UserData.instance.owns(part.id))
 			{
 				upgrade.mouseEnabled = false;
 				upgrade.alpha = 0.5;
@@ -288,11 +288,11 @@ package ui
 			const hull:TankPartData = TankPartData.getHull(_lastSelectedHull);
 			populateUpgrades(_listHullUpgrades, hull);
 
-			if (hull.purchased)
+			if (UserData.instance.owns(hull.id))
 			{
 				UserData.instance.currentHull = _lastSelectedHull;
 			}
-			_purchaseBtn.enabled = !hull.purchased && UserData.instance.credits >= hull.baseStats.cost;
+			_purchaseBtn.enabled = !UserData.instance.owns(hull.id) && UserData.instance.credits >= hull.baseStats.cost;
 			
 			populatePreview();
 			updateStats();
@@ -306,11 +306,11 @@ package ui
 			const turret:TankPartData = TankPartData.getTurret(_lastSelectedTurret);
 			populateUpgrades(_listTurretUpgrades, turret);
 			
-			if (turret.purchased)
+			if (UserData.instance.owns(turret.id))
 			{
 				UserData.instance.currentTurret = _lastSelectedTurret;
 			}
-			_purchaseBtn.enabled = !turret.purchased && UserData.instance.credits >= turret.baseStats.cost;;
+			_purchaseBtn.enabled = !UserData.instance.owns(turret.id) && UserData.instance.credits >= turret.baseStats.cost;;
 			
 			populatePreview();
 			updateStats();
@@ -397,7 +397,7 @@ package ui
 			const selectedItem:GameListItem = list.selection as GameListItem;
 			const rolledItem:GameListItem = list.rolledOverItem as GameListItem;
 
-			if (tankPart.purchased && tankPart.getUpgrade(upgradeIndex).purchased ||
+			if (UserData.instance.owns(tankPart.id) && UserData.instance.owns(tankPart.getUpgrade(upgradeIndex).id) ||
 			    (selectedItem && selectedItem.cookie == upgradeIndex))
 			{
 				// if we've bought or selected it
@@ -417,25 +417,25 @@ package ui
 			
 			var item:GameListItem = _listHulls.selection as GameListItem;
 			const hull:TankPartData = item ? TankPartData.getHull(item.cookie) : null;
-			if (hull && !hull.purchased)
+			if (hull && !UserData.instance.owns(hull.id))
 			{
 				cost += hull.baseStats.cost;
 			}
 			item = _listTurrets.selection as GameListItem;
 			const turret:TankPartData = item ? TankPartData.getTurret(item.cookie) : null;
-			if (turret && !turret.purchased)
+			if (turret && !UserData.instance.owns(turret.id))
 			{
 				cost += turret.baseStats.cost;
 			}
 			item = _listHullUpgrades.selection as GameListItem;
 			var upgrade:TankPartData = item ? TankPartData.getHull(_lastSelectedHull).getUpgrade(item.cookie) : null;
-			if (upgrade && !upgrade.purchased)
+			if (upgrade && !UserData.instance.owns(upgrade.id))
 			{
 				cost += upgrade.baseStats.cost;
 			}
 			item = _listTurretUpgrades.selection as GameListItem;
 			upgrade = item ? TankPartData.getTurret(_lastSelectedTurret).getUpgrade(item.cookie) : null;
-			if (upgrade && !upgrade.purchased)
+			if (upgrade && !UserData.instance.owns(upgrade.id))
 			{
 				cost += upgrade.baseStats.cost;
 			}
@@ -455,27 +455,27 @@ package ui
 			
 			var item:GameListItem = _listHulls.selection as GameListItem;
 			const hull:TankPartData = item ? TankPartData.getHull(item.cookie) : null;
-			if (hull && !hull.purchased)
+			if (hull && !UserData.instance.owns(hull.id))
 			{
 				ud.purchasePart(hull, hull.baseStats.cost); 
 				ud.currentHull = item.cookie;
 			}
 			item = _listTurrets.selection as GameListItem;
 			const turret:TankPartData = item ? TankPartData.getTurret(item.cookie) : null;
-			if (turret && !turret.purchased)
+			if (turret && !UserData.instance.owns(turret.id))
 			{
 				ud.purchasePart(turret, turret.baseStats.cost);
 				ud.currentTurret = item.cookie;
 			}
 			item = _listHullUpgrades.selection as GameListItem;
 			var upgrade:TankPartData = item ? TankPartData.getHull(_lastSelectedHull).getUpgrade(item.cookie) : null;
-			if (upgrade && !upgrade.purchased)
+			if (upgrade && !UserData.instance.owns(upgrade.id))
 			{
 				ud.purchasePart(upgrade, upgrade.baseStats.cost);
 			}
 			item = _listTurretUpgrades.selection as GameListItem;
 			upgrade = item ? TankPartData.getTurret(_lastSelectedTurret).getUpgrade(item.cookie) : null;
-			if (upgrade && !upgrade.purchased)
+			if (upgrade && !UserData.instance.owns(upgrade.id))
 			{
 				ud.purchasePart(upgrade, upgrade.baseStats.cost);
 			}

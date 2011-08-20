@@ -10,12 +10,17 @@ package gameData
 
 		public function PlaneData(name:String, aindex:uint, radius:Number, baseStats:VehiclePartStats, upgrades:uint = 0, purchasable:Boolean = true)
 		{
-			super(name, aindex, baseStats);
+			super("p" + aindex, name, aindex, baseStats);
 			this.upgrades = upgrades;
 			this.purchasable = purchasable;
 			this.radius = radius;
 		}
 		static private var s_entries:Vector.<PlaneData>;
+		static public function get planes():Vector.<PlaneData>
+		{
+			return s_entries;
+		}
+		//KAI: would be better to replace i with the VehiclePart.id
 		static public function getPlane(i:uint):PlaneData
 		{
 			return planes[i];
@@ -23,44 +28,38 @@ package gameData
 
 		[Embed(source="assets/planes.xml", mimeType="application/octet-stream")]
 		static private const PLANEXML:Class;
-
 		static private const CLASSNAMES:Array = ["Rogue", "Melee", "Melee/Hybrid", "Fighter"];
-		static public function get planes():Vector.<PlaneData>
+		static public function init(planes:Vector.<Object>):void
 		{
-			if (!s_entries)
+			s_entries = new Vector.<PlaneData>; 
+			for each (var plane:Object in planes)
 			{
-				s_entries = new Vector.<PlaneData>; 
-				
-				var byteArray:ByteArray = new PLANEXML;
-				const xml:XML = new XML(byteArray.readUTFBytes(byteArray.length));		
-				for each (var item:XML in xml.planes.children())
-				{
-					var pd:PlaneData =
-						new PlaneData(
-							item.@n,
-							item.@a,
-							item.@rad,
-							new VehiclePartStats(
-								item.@arm,
-								item.@dmg,
-								item.@rate,
-								item.@speed,
-								item.@cost
-							),
-							item.@up,
-							item.@nosale != "true"
-						);
-					pd.unlock = item.@unl;
-					pd.subType = CLASSNAMES[uint(item.@c)];
-					s_entries.push(pd);
-				}
+				var pd:PlaneData = new PlaneData(
+					plane.name,
+					plane.iAsset,
+					plane.radius,
+					new VehiclePartStats(
+						plane.armor,
+						plane.damage,
+						plane.rate,
+						plane.speed,
+						plane.cost
+					),
+					plane.upgrades,
+					!plane.nosale
+				);
+				pd.unlock = plane.unlock;
+				pd.subType = CLASSNAMES[parseInt(plane["class"])];
 
-				for each (var desc:XML in xml.descs.children())
-				{
-					getPlane(desc.@plane).description = desc.text();
-				}
+				s_entries.push(pd);
 			}
-			return s_entries;
+
+			var byteArray:ByteArray = new PLANEXML;
+			const xml:XML = new XML(byteArray.readUTFBytes(byteArray.length));		
+			for each (var desc:XML in xml.descs.children())
+			{
+				getPlane(desc.@plane).description = desc.text();
+			}
 		}
 	}
 }

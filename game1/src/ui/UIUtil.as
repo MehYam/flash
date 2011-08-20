@@ -138,14 +138,13 @@ package ui
 		{
 			const cost:uint = part.baseStats.cost;
 			var costString:String = "";
-			if (part.purchased)
+
+			const canAfford:Boolean = part.baseStats.cost <= UserData.instance.credits;
+			costString = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");
+			
+			if (UserData.instance.owns(part.id))
 			{
-				costString = "<i>Purchased</i>";
-			}
-			else
-			{
-				const canAfford:Boolean = part.baseStats.cost <= UserData.instance.credits;
-				costString = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");  
+				costString += " <i>(Purchased)</i>";
 			}
 
 			var retval:String = nameHeader ? "Name: " : "";

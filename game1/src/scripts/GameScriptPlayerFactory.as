@@ -394,12 +394,12 @@ package scripts
 				damage = 10;
 
 				upgrade = turret.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					fireRate *= .5;
 				}
 				upgrade = turret.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					damage *= 1.5;	
 				}
@@ -411,13 +411,13 @@ package scripts
 				fireRate = 666;
 				damage = 26;
 				upgrade = turret.getUpgrade(0);
-				angle = upgrade.purchased ? 10 : 0;
+				angle = UserData.instance.owns(upgrade.id) ? 10 : 0;
 				source = [	new AmmoFireSource(AmmoType.CANNON, damage, 0, tankScale(-55), 0, 0, true),
 							new AmmoFireSource(AmmoType.CANNON, damage, tankScale(-15), tankScale(-20), -angle, 0, true),
 							new AmmoFireSource(AmmoType.CANNON, damage, tankScale( 15), tankScale(-20),  angle, 0, true)];
 
 				upgrade = turret.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					turretWeapon = new CompositeBehavior(
 									BehaviorFactory.createAutofire(source, fireRate),
@@ -437,7 +437,7 @@ package scripts
 			case 2:
 				// fusion starts at 100
 				upgrade = turret.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					source = [	new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60), -2.5, 0, true),
 								new AmmoFireSource(AmmoType.FUSION, 60, 0, tankScale(-60),  2.5, 0, true)];
@@ -447,7 +447,7 @@ package scripts
 					source = new AmmoFireSource(AmmoType.FUSION, 50, 0, tankScale(-50), 0, 0, true);
 				}
 				upgrade = turret.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					fireRate = 1000;
 				}
@@ -463,13 +463,13 @@ package scripts
 				damage = 100;
 				fireRate = 1000;
 				upgrade = turret.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					fireRate = 750;
 				}
 				upgrade = turret.getUpgrade(1);
 				var rocket:uint = 0; 
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					damage = 150;
 					rocket = 1;
@@ -487,13 +487,13 @@ package scripts
 				
 				upgrade = turret.getUpgrade(0);
 				var level:uint = 0;
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					level = 1;
 					damage = 100;
 				}
 				upgrade = turret.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					fireRate = 400;
 				}
@@ -512,12 +512,12 @@ package scripts
 				attrs = new ActorAttrs(800, 1.5, 0.2, 0.2);
 				
 				upgrade = hull.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					attrs.MAX_HEALTH = 1300;
 				}
 				upgrade = hull.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					hullWeapon = BehaviorFactory.createAutofire(
 						[	new AmmoFireSource(AmmoType.CANNON, 4, tankScale(-15), tankScale(40), 180, 0),
@@ -530,12 +530,12 @@ package scripts
 			case 1:
 				attrs = new ActorAttrs(1300, 2, 0.2, 0.2);
 				upgrade = hull.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					attrs.MAX_HEALTH = 1600;
 				}
 				upgrade = hull.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					attrs.MAX_SPEED = 2.5;
 				}
@@ -544,13 +544,13 @@ package scripts
 			case 2:
 				attrs = new ActorAttrs(2000, 2.8, 0.5, 0.2);
 				upgrade = hull.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					hullWeapon = createShieldActivator(160, 500);
 					showShield = true;
 				}
 				upgrade = hull.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					attrs.MAX_SPEED = 3.3;
 				}
@@ -559,12 +559,12 @@ package scripts
 			case 3:
 				attrs = new ActorAttrs(3000, 2.5, 0.5, 0.2);
 				upgrade = hull.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					attrs.MAX_HEALTH = 3800;
 				}
 				upgrade = hull.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					hullWeapon = createShieldActivator(120, 500, -20);
 					showShield = true;
@@ -574,12 +574,12 @@ package scripts
 			case 4:
 				attrs = new ActorAttrs(3800, 2.2, 0.5, 0.2);
 				upgrade = hull.getUpgrade(0);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					attrs.MAX_HEALTH = 4300;
 				}
 				upgrade = hull.getUpgrade(1);
-				if (upgrade.purchased)
+				if (UserData.instance.owns(upgrade.id))
 				{
 					hullWeapon = BehaviorFactory.createAutofire(
 						[	new AmmoFireSource(AmmoType.BULLET, 15, tankScale(-15), tankScale(40), 180, 5),
