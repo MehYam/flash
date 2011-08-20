@@ -32,8 +32,8 @@ package scripts
 			
 			if (_flash)
 			{
-				_flash.scaleX = _flash.scaleY = 1;
-				_flash.alpha = 1;
+				_flash.scaleX = _flash.scaleY = 0;
+				_flash.alpha = 0.75;
 				displayObject.rotation = Math.random() * 360;
 			}
 		}
@@ -41,11 +41,10 @@ package scripts
 		{
 			super.onFrame(game);
 			
-			if (_flash.scaleX > 0)
+			if (_flash.scaleX < 1)
 			{
-				_flash.scaleX -= 0.05;
-				_flash.scaleY -= 0.05;
-				_flash.alpha -= 0.05; 
+				_flash.scaleX += 0.05;
+				_flash.scaleY += 0.05;
 			}
 			else
 			{
