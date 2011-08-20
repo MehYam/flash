@@ -34,6 +34,8 @@ package
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	
+	import karnold.utils.Util;
 
 	[SWF(backgroundColor="#0")]
 	public final class test extends Sprite
@@ -65,7 +67,30 @@ package
 //			testPixelSnapping();
 //			testBrowserZoomDetection();
 //			testArray();
-			testBlurFilterRasterizationBounds();
+//			testBlurFilterRasterizationBounds();
+			testTint();
+		}
+		private function testTint():void
+		{
+			function tintEm(startColor:uint, endColor:uint, y:Number):void
+			{
+				for (var i:uint = 0; i < 16; ++i)
+				{
+					var shape:Shape = new Shape;
+					shape.graphics.beginFill(Util.tint(startColor, endColor, i/15));
+					shape.graphics.drawEllipse(0, 0, 28, 28);
+					shape.graphics.endFill();
+					
+					shape.x = i * (shape.width + 3);
+					shape.y = y;
+					
+					addChild(shape);
+				}
+			}
+			tintEm(0xff0000, 0xffffff, 10);
+			tintEm(0xff0000, 0xffff00, 40);
+			tintEm(0x00ff00, 0xff00ff, 70);
+			tintEm(0x0077ff, 0xff7700, 110);
 		}
 		static public function rasterize(target:DisplayObject, scale:Number = 1):BitmapData
 		{

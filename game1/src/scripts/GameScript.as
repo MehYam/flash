@@ -703,6 +703,7 @@ class WaveBasedGameScript extends BaseScript
 	private var _liveEnemies:uint = 0;
 	private function addNextWave():void
 	{
+//		return;
 		if (_waves.length)
 		{
 			var next:Object = _waves.shift();
@@ -876,9 +877,9 @@ class WaveBasedGameScript extends BaseScript
 					
 					if (Math.random() < Consts.SHIP_DROP_CHANCE)
 					{
-						var powerup:Actor = new Actor(ActorAssetManager.createShip(Math.random() * 36), new ActorAttrs(0, 10, 0, 0.05));
-						powerup.displayObject.scaleX /= 2;
-						powerup.displayObject.scaleY /= 2;
+						var powerup:Actor = new Actor(AssetManager.instance.planeIcon(), new ActorAttrs(0, 10, 0, 0.05));
+						powerup.displayObject.scaleX;
+						powerup.displayObject.scaleY;
 						powerup.displayObject.filters = GLOW;
 						
 						powerup.speed.x = actor.speed.x;

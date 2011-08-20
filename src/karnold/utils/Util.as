@@ -102,6 +102,19 @@ package karnold.utils
 			self.parent.removeChild(self);
 		}
 		
+		static public function tint(rgbFrom:uint, rgbTo:uint, pct:Number):uint
+		{
+			const rFrom:uint = (0xff0000 & rgbFrom) >> 16;
+			const gFrom:uint = (0x00ff00 & rgbFrom) >> 8;
+			const bFrom:uint = (0x0000ff & rgbFrom);
+			const rTo:uint = (0xff0000 & rgbTo) >> 16;
+			const gTo:uint = (0x00ff00 & rgbTo) >> 8;
+			const bTo:uint = (0x0000ff & rgbTo);
+			const rResult:uint = rFrom + pct*(rTo - rFrom);
+			const gResult:uint = gFrom + pct*(gTo - gFrom);
+			const bResult:uint = bFrom + pct*(bTo - bFrom);
+			return (rResult << 16) | (gResult << 8) | bResult;  
+		}
 		static public function drawOutline(target:Sprite, color:uint = 0xff00ff):void
 		{
 			target.graphics.lineStyle(1, color);

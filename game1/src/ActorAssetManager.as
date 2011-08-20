@@ -67,10 +67,14 @@ package
 
 		static private var s_dropShadow:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
 		static private var s_dropShadowTank:Array = [new DropShadowFilter(2, 45, 0, 0.5, 0, 0)];
+		
+		static private var s_blurLight:Array = [new BlurFilter(3, 3, BitmapFilterQuality.MEDIUM)];
 		static private var s_blur:Array = [new BlurFilter(5, 5, BitmapFilterQuality.MEDIUM)];
 		static private var s_blurHeavy:Array = [new BlurFilter(25, 25, BitmapFilterQuality.LOW)];
 		static public function get planeDropShadow():Array { return s_dropShadow; }
 		static public function get tankDropShadow():Array { return s_dropShadowTank; }
+		static public function get blur():Array { return s_blur; }
+		static public function get lightBlur():Array { return s_blurLight; }
 		static private function createAssetRasterized(clss:Class, 
 													  centered:Boolean,
 													  scale:Number = 1,
@@ -335,7 +339,24 @@ package
 			wo.graphics.endFill();
 			return wo;
 		}
-		
+
+		public static function createStar(color:uint, outerRadius:Number, innerRadius:Number):DisplayObject
+		{
+			var wo:Shape = new Shape;
+			wo.graphics.lineStyle(1, color);
+			wo.graphics.beginFill(Util.tint(color, 0xffffff, 0.5));
+			wo.graphics.moveTo(0, -outerRadius);
+			wo.graphics.lineTo(-innerRadius, -innerRadius);
+			wo.graphics.lineTo(-outerRadius, 0);
+			wo.graphics.lineTo(-innerRadius, innerRadius);
+			wo.graphics.lineTo(0, outerRadius);
+			wo.graphics.lineTo(innerRadius, innerRadius);
+			wo.graphics.lineTo(outerRadius, 0);
+			wo.graphics.lineTo(innerRadius, -innerRadius);
+			wo.graphics.lineTo(0, -outerRadius);
+			wo.graphics.endFill();
+			return wo;
+		}
 		public static function createSquare(color:uint, size:Number):DisplayObject
 		{
 			var wo:Shape = new Shape;
@@ -378,16 +399,18 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.utils.Dictionary;
 
-// The point of this is to rasterize a simple vector object once, and look up its BitmapData
-// to create Bitmap instances later.
+import karnold.utils.Util;
+
 internal class AbstractSimpleRasterizedObjectCreator
 {
 	static private var s_store:Dictionary = new Dictionary;
 
 	private var _centered:Boolean;
-	public function AbstractSimpleRasterizedObjectCreator(centered:Boolean = false)
+	private var _filterExtra:Number;
+	public function AbstractSimpleRasterizedObjectCreator(centered:Boolean = false, filterExtra:Number = 0)
 	{
 		_centered = centered;
+		_filterExtra = filterExtra;
 	}
 	private var _keyLookup:Object = {};
 	protected function create_impl(color:uint):DisplayObject { throw "override me"; } // "abstract" template method, to be overridden by subclass 
@@ -406,7 +429,7 @@ internal class AbstractSimpleRasterizedObjectCreator
 			{
 				return raw;
 			}
-			bmd = ActorAssetManager.rasterize(raw);
+			bmd = ActorAssetManager.rasterize(raw, 1, _filterExtra);
 			s_store[key] = bmd;
 		}
 		
@@ -450,10 +473,23 @@ final internal class ExplosionCreator extends AbstractSimpleRasterizedObjectCrea
 }
 final internal class BulletCreator extends AbstractSimpleRasterizedObjectCreator
 {
+	static private const SIZE:Number = 8;
+	static private const INNER:Number = SIZE/5;
+	public function BulletCreator():void
+	{
+		super(false, 2);
+	}
 	protected override function create_impl(color:uint):DisplayObject
 	{
-//		return ActorAssetManager.createCircle(color, 7, 7);
-		return ActorAssetManager.createCircle(color, 10, 10);
+//		var parent:Sprite = new Sprite;
+		
+		var asset:DisplayObject = ActorAssetManager.createStar(color, SIZE, INNER);
+//		asset.filters = ActorAssetManager.blur;
+		
+//		parent.addChild(asset);
+//		parent.addChild(ActorAssetManager.createStar(color, SIZE, INNER));
+		return asset;
+//		return ActorAssetManager.createCircle(color, 10, 10);
 	}
 }
 final internal class LaserCreator extends AbstractSimpleRasterizedObjectCreator

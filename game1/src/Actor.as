@@ -273,6 +273,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.utils.Dictionary;
 
+import karnold.utils.MathUtil;
 import karnold.utils.Util;
 
 import org.osmf.traits.DownloadableTrait;
@@ -289,10 +290,16 @@ class CannonBlast extends Actor
 }
 class BulletActor extends Actor
 {
+	static private var s_count:uint = 0;
 	public function BulletActor(color:uint):void
 	{
 		super(ActorAssetManager.createBullet(color), ActorAttrs.BULLET);
-		behavior = BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME);
+		behavior = new CompositeBehavior(BehaviorFactory.createExpire(ActorAttrs.BULLET.LIFETIME), BehaviorFactory.createPulse(MathUtil.random(0.2, 0.4)));
+	}
+	public override function reset():void
+	{
+		super.reset();
+		displayObject.alpha = Math.random();
 	}
 }
 class LaserActor extends Actor

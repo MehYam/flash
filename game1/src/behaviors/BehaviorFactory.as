@@ -6,22 +6,22 @@ package behaviors
 
 	final public class BehaviorFactory
 	{
+		static private var _accelerator:IBehavior;
 		static private var _faceForward:IBehavior;
 		static private var _facePlayer:IBehavior;
 		static private var _faceMouse:IBehavior;
 		static private var _gravityPush:IBehavior;
 		static private var _gravityPull:IBehavior;
-		static private var _strafe:IBehavior;
 		static private var _follow:IBehavior;
 		static private var _fade:IBehavior;
 		static private var _fadeIn:IBehavior;
 		static private var _fadeFast:IBehavior;
-		static private var _accelerator:IBehavior;
 		static private var _speedDecay:IBehavior;
 		static private var _shadowPlayer:IBehavior;
-		static private var _turret:IBehavior;
+		static private var _strafe:IBehavior;
 		static private var _standardSpinCW:IBehavior;
 		static private var _standardSpinCCW:IBehavior;
+		static private var _turret:IBehavior;
 		static public function get faceForward():IBehavior
 		{
 			if (!_faceForward)
@@ -168,6 +168,10 @@ package behaviors
 		static public function createExpire(lifetime:int):IBehavior
 		{
 			return new ExpireBehavior(lifetime);
+		}
+		static public function createPulse(speed:Number):IBehavior
+		{
+			return new Pulse(speed);
 		}
 		static public function createShake():IBehavior
 		{
@@ -548,6 +552,11 @@ final class Pulse implements IBehavior
 	static private const MAX:Number = 1;
 	static private const MIN:Number = 0.2;
 	private var _direction:Number = -1;
+	private var _speed:Number;
+	public function Pulse(speed:Number = 0.1):void
+	{
+		_speed = speed;
+	}
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (actor.displayObject.alpha < MIN)
@@ -558,6 +567,6 @@ final class Pulse implements IBehavior
 		{
 			_direction = -1;
 		}
-		actor.displayObject.alpha += _direction/10;
+		actor.displayObject.alpha += _direction * _speed;
 	}
 }
