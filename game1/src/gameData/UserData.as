@@ -16,21 +16,30 @@ package gameData
 			if (!s_instance)
 			{
 				registerClassAlias("PlanevTank.UserData", UserData);
-				var so:SharedObject = SharedObject.getLocal("store.PlanevTank.UserData");
+				var so:SharedObject;
+				try
+				{
+					so = SharedObject.getLocal("store.PlanevTank.UserData");
+				}
+				catch (e:Error)
+				{
+					trace("could not init SharedObject", e);
+				}
 				
 				// priming
 				VehicleData.instance;
-
-				if (so.data.userData)
+				if (so && so.data.userData)
 				{
 					s_instance = so.data.userData;
 				}
 				else
 				{
 					s_instance = new UserData;
-					so.data.userData = s_instance; 
-
-					debug();
+					if (so)
+					{
+						so.data.userData = s_instance;
+					}
+//					debug();
 					
 					s_instance.purchasePart(PlaneData.getPlane(0), 0);
 					s_instance.purchasePart(TankPartData.getHull(0), 0);
@@ -46,6 +55,15 @@ package gameData
 		static public function reset():void
 		{
 			s_instance = null;
+			try
+			{
+				var so:SharedObject = SharedObject.getLocal("store.PlanevTank.UserData");
+				so.clear();
+			}
+			catch (e:Error)
+			{
+				trace("could not clear SharedObject", e);
+			}
 		}
 		static private function debug():void
 		{
@@ -109,30 +127,112 @@ package gameData
 			s_instance.levelsBeaten = 34;
 		}
 		
-		public var credits:uint;
-		public var levelsBeaten:uint;  // essentially 1-based index, so == 0 means not yet completed any levels
-		public var currentPlane:uint;
-		public var currentHull:uint;
-		public var currentTurret:uint;
+		private var _credits:uint;
+		private var _levelsBeaten:uint;  // essentially 1-based index, so == 0 means not yet completed any levels
+		private var _currentPlane:uint;
+		private var _currentHull:uint;
+		private var _currentTurret:uint;
 
 		private var _purchases:Object = {}; // key of id => VehiclePartData
 		public function readExternal(input:IDataInput):void
 		{
-			this.credits = input.readUnsignedInt();
-			this.levelsBeaten = input.readUnsignedInt();
-			this.currentPlane = input.readUnsignedInt();
-			this.currentHull = input.readUnsignedInt();
-			this.currentTurret = input.readUnsignedInt();
-			this._purchases = input.readObject();
+			_credits = input.readUnsignedInt();
+			_levelsBeaten = input.readUnsignedInt();
+			_currentPlane = input.readUnsignedInt();
+			_currentHull = input.readUnsignedInt();
+			_currentTurret = input.readUnsignedInt();
+			_purchases = input.readObject();
 		}
 		public function writeExternal(output:IDataOutput):void
 		{
-			output.writeUnsignedInt(credits);
-			output.writeUnsignedInt(levelsBeaten);
-			output.writeUnsignedInt(currentPlane);
-			output.writeUnsignedInt(currentHull);
-			output.writeUnsignedInt(currentTurret);
+			output.writeUnsignedInt(_credits);
+			output.writeUnsignedInt(_levelsBeaten);
+			output.writeUnsignedInt(_currentPlane);
+			output.writeUnsignedInt(_currentHull);
+			output.writeUnsignedInt(_currentTurret);
 			output.writeObject(_purchases);
+		}
+		public function get currentTurret():uint
+		{
+			return _currentTurret;
+		}
+		public function set currentTurret(value:uint):void
+		{
+			if (value != _currentTurret)
+			{
+				_currentTurret = value;
+				flush();
+			}
+		}
+		public function get currentHull():uint
+		{
+			return _currentHull;
+		}
+		public function set currentHull(value:uint):void
+		{
+			if (value != _currentHull)
+			{
+				_currentHull = value;
+				flush();
+			}
+		}
+		public function get currentPlane():uint
+		{
+			return _currentPlane;
+		}
+		public function set currentPlane(value:uint):void
+		{
+			if (value != _currentPlane)
+			{
+				_currentPlane = value;
+				flush();
+			}
+				
+		}
+		public function get levelsBeaten():uint
+		{
+			return _levelsBeaten;
+		}
+		public function set levelsBeaten(value:uint):void
+		{
+			if (_levelsBeaten != value)
+			{
+				_levelsBeaten = value;
+				flush();
+			}
+		}
+		public function get credits():uint
+		{
+			return _credits;
+		}
+		public function set credits(value:uint):void
+		{
+			if (_credits != value)
+			{
+				_credits = value;
+				flush();
+			}
+		}
+		private function flush():void
+		{
+			try
+			{
+				var so:SharedObject = SharedObject.getLocal("store.PlanevTank.UserData");
+				so.data.userData = this;
+				
+				try
+				{
+					so.flush();
+				}
+				catch (e:Error)
+				{
+					trace("flush failed", e);
+				}
+			}
+			catch (e:Error)
+			{
+				trace("getLocal failure", e);
+			}
 		}
 		public function owns(partId:String):Boolean { return _purchases[partId]; } 
 		public function purchasePart(part:VehiclePart, cost:uint):void
@@ -142,10 +242,7 @@ package gameData
 			
 			_purchases[part.id] = true;
 			credits -= cost;
-			
-			var so:SharedObject = SharedObject.getLocal("store.PlanevTank.UserData");
-			so.data.userData = this;
-			so.flush();
+			flush();
 		}
 	}
 }

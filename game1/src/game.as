@@ -584,6 +584,7 @@ package
 		{
 			pause();
 			
+			// KAI: none of this belongs here.  The game engine shouldn't know about UserData at all, especially not credits
 			if (stats.victory)
 			{
 				UserData.instance.credits += stats.creditsEarned;
