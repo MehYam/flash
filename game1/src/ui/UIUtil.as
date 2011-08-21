@@ -88,7 +88,7 @@ package ui
 		}
 		
 		static public var s_tweenOutDialogArg:Object;
-		static public function closeDialog(parent:DisplayObjectContainer, dialog:DisplayObject):void
+		static public function closeDialog(dialog:DisplayObject):void
 		{
 			if (!s_tweenOutDialogArg)
 			{

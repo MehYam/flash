@@ -6,6 +6,7 @@ package
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -86,7 +87,7 @@ package
 
 			toTitleScreen();
 		}
-		private var _title:DisplayObjectContainer;
+		private var _title:TitleScreen;
 		private function toTitleScreen(fadeIn:Boolean = false):void
 		{
 			if (!_title)
@@ -104,27 +105,62 @@ package
 			}
 			parent.addChild(_title);
 			
+			_title.enabled = true;
+			
 			Util.listen(_title, TitleScreenEvent.NEW_GAME, onNewGame);
 			Util.listen(_title, TitleScreenEvent.CONTINUE, onContinue);
+			Util.listen(_title, TitleScreenEvent.INSTRUCTIONS, onInstructions);
 		}
+		private var _msgBox:DisplayObject;
 		private function onNewGame(e:Event):void
 		{
-//			UIUtil.openDialog(this, new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost."));
-			startLevel(0);
+			if (!_msgBox)
+			{
+				_msgBox = new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost.", "Start Over", "Cancel");
+			}
+			Util.listen(_msgBox, Event.COMPLETE, onNewGameResult);
+			Util.listen(_msgBox, Event.CANCEL, onNewGameResult);
+			UIUtil.openDialog(_title, _msgBox);
+		}
+		private function onNewGameResult(e:Event):void
+		{
+			UIUtil.closeDialog(_msgBox);
+			if (e.type == Event.CANCEL)
+			{
+				toTitleScreen();
+			}
+			else
+			{
+				UserData.reset();
+
+				_levelSelectionDialog = new LevelSelectionDialog;
+				startLevel(0);
+			}
 		}
 		private function onContinue(e:Event):void
 		{
 			toLevelSelectionDialog();
 		}
+		private function onInstructions(e:Event):void
+		{
+			// show instructions dialog, attach to it's close event, in the close event
+			// re-enable the title screen
+		}
 		private var _levelSelectionDialog:LevelSelectionDialog = new LevelSelectionDialog;
 		private function toLevelSelectionDialog():void
 		{
 			UIUtil.openDialog(_title, _levelSelectionDialog);
-			Util.listen(_levelSelectionDialog, Event.SELECT, onLevelSelected);
+			Util.listen(_levelSelectionDialog, Event.SELECT, onLevelSelectionChoice);
+			Util.listen(_levelSelectionDialog, Event.CLOSE, onLevelSelectionQuit);
 		}
-		private function onLevelSelected(e:Event):void
+		private function onLevelSelectionChoice(e:Event):void
 		{
 			startLevel(_levelSelectionDialog.selection);
+		}
+		private function onLevelSelectionQuit(e:Event):void
+		{
+			UIUtil.closeDialog(_levelSelectionDialog);
+			toTitleScreen();
 		}
 		private var _currentScript:IGameScript;
 		private var _lastStartedLevel:uint;
@@ -589,7 +625,6 @@ package
 			{
 				UserData.instance.credits += stats.creditsEarned;
 				UserData.instance.levelsBeaten = Math.min(_lastStartedLevel + 1, Consts.LEVELS - 1);
-//KAI: null object reference here
 				_levelSelectionDialog.unlockLevels(UserData.instance.levelsBeaten + 1);
 			}
 			else
@@ -607,7 +642,7 @@ package
 		}
 		private function onLevelCompleteDialogDismissed(e:Event):void
 		{
-			UIUtil.closeDialog(this.parent, DisplayObject(e.target));
+			UIUtil.closeDialog(DisplayObject(e.target));
 			toTitleScreen(true);
 		}
 		public function get running():Boolean

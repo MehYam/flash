@@ -24,6 +24,16 @@ package ui
 	public class TitleScreen extends Sprite
 	{
 		static private const LEFT:Number = 20;
+		static private const PREAMBLES:Array =
+		[
+			"Prepare yourself for...",
+			"Lookout, it's...",
+			"It's about to get real...",
+			"Whatcha gonna do, when they come for you...",
+			"Get your shooting skills on, it's...",
+			"Now your ships are burned, it's...",
+			"Hungry for killage?  It's..."
+		];
 		private var _typer:TextFieldTyper;
 		public function TitleScreen()
 		{
@@ -40,7 +50,7 @@ package ui
 			textField.embedFonts = true;
 
 			var textFieldTyper:TextFieldTyper = new TextFieldTyper(textField, true);
-			textFieldTyper.text = "Prepare Yourself For...";
+			textFieldTyper.text = PREAMBLES[uint(Math.random() * PREAMBLES.length)];
 
 			addChild(textField);
 			
@@ -69,27 +79,37 @@ package ui
 		}
 
 		private var _titleComplete:Boolean = false;
+		private var _continueButton:GameButton;
+		static private const BUTTON_MARGIN:Number = 8;
 		private function onTitleComplete(e:Event):void
 		{
 			var textFieldTyper:TextFieldTyper = TextFieldTyper(e.target);
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 
+			var instructions:GameButton = GameButton.create("Instructions");
 			var newGameButton:GameButton = GameButton.create("New Game");
+			newGameButton.width = instructions.width;
 			Util.centerChild(newGameButton, this);
-			newGameButton.y = 300;
+			newGameButton.y = 325;
 			addChild(newGameButton);
 
-			Util.listen(newGameButton, MouseEvent.CLICK, onNewGame);
-
 			var continueButton:GameButton = GameButton.create("Continue");
-			continueButton.width = newGameButton.width;
-			Util.centerChild(continueButton, this);
-			continueButton.y = newGameButton.y + newGameButton.height + 20;
+			continueButton.width = instructions.width;
+			continueButton.x = newGameButton.x;
+			continueButton.y = newGameButton.y + newGameButton.height + BUTTON_MARGIN;
 			continueButton.enabled = UserData.instance.levelsBeaten > 0;
 			addChild(continueButton);
+			
+			_continueButton = continueButton;
 
+			instructions.width = newGameButton.width;
+			instructions.x = continueButton.x;
+			instructions.y = continueButton.y + continueButton.height + BUTTON_MARGIN;
+			addChild(instructions);
+			
+			Util.listen(newGameButton, MouseEvent.CLICK, onNewGame);
 			Util.listen(continueButton, MouseEvent.CLICK, onContinue);
-
+			Util.listen(instructions, MouseEvent.CLICK, onInstructions);
 			_titleComplete = true;
 		}
 
@@ -97,11 +117,14 @@ package ui
 		{
 			Util.listen(stage, KeyboardEvent.KEY_DOWN, onUserImpatient);
 			Util.listen(stage, MouseEvent.MOUSE_DOWN, onUserImpatient);
-			
+
+			enabled = true;
+			if (_continueButton)
+			{
+				_continueButton.enabled = UserData.instance.levelsBeaten > 0;
+			}
 			graphics.beginFill(0);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-			
-			enabled = true;
 		}
 		private function onUserImpatient(e:Event):void
 		{
@@ -120,7 +143,11 @@ package ui
 			enabled = false;
 			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.CONTINUE));
 		}
-		
+		private function onInstructions(e:Event):void
+		{
+			enabled = false;
+			dispatchEvent(new TitleScreenEvent(TitleScreenEvent.INSTRUCTIONS));
+		}
 		private var _fade:FrameTimer = new FrameTimer(tweenAlpha);
 		public function fadeAndRemoveSelf():void
 		{
@@ -135,7 +162,7 @@ package ui
 				_fade.stop();
 			}
 		}
-		private function set enabled(b:Boolean):void
+		public function set enabled(b:Boolean):void
 		{
 			// lame - TitleScreen ends up being the parent for the other dialogs, so for now manually enable the controls
 			for (var i:uint = 0; i < numChildren; ++i)

@@ -497,7 +497,7 @@ package ui
 		}
 		private function onDone(e:Event):void
 		{
-			UIUtil.closeDialog(parent, this);
+			UIUtil.closeDialog(this);
 			
 			dispatchEvent(new Event(Event.COMPLETE));
 		}

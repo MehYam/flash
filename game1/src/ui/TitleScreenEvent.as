@@ -6,6 +6,7 @@ package ui
 	{
 		static public const NEW_GAME:String = "TitleScreenEvent.newgame";
 		static public const CONTINUE:String = "TitleScreenEvent.continue";
+		static public const INSTRUCTIONS:String = "TitleScreenEvent.instructions";
 		public function TitleScreenEvent(type:String)
 		{
 			super(type, false, false);

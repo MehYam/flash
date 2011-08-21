@@ -23,17 +23,17 @@ package ui
 		public function LevelSelectionDialog()
 		{
 			super();
-
+			
 			title = "LEVEL SELECTION";
-
+			
 			addLevelButtons();
 			addBottomInterface();
-
+			
 			render();
 			
 			Util.listen(this, Event.ADDED_TO_STAGE, onAddedToStage);
 		}
-
+		
 		static private const LOCK_NAME:String = "lock";
 		static private const CHECK_NAME:String = "check";
 		static private const ICON_NAME:String = "icon";
@@ -53,7 +53,7 @@ package ui
 					btn.width = 95;
 					btn.y = TOP_MARGIN + (r * (btn.height + 2));
 					btn.x = 10 + c * (btn.width + 2);
-
+					
 					if (level > UserData.instance.levelsBeaten)
 					{
 						btn.enabled = false;
@@ -74,7 +74,7 @@ package ui
 						}
 					}
 					Util.listen(btn, MouseEvent.CLICK, onLevel);
-
+					
 					addChild(btn);
 					_buttons.push(btn);
 				}
@@ -85,10 +85,10 @@ package ui
 			if (e.target == this)
 			{
 				const prevWidth:Number = _goldParent.width;
-
+				
 				_gold.text = String(UserData.instance.credits);
 				_goldParent.x -= (_goldParent.width - prevWidth);  // haxorZ
-
+				
 				updateCurrentVehicles();
 				enabled = true;
 			}
@@ -204,10 +204,17 @@ package ui
 			goldReportParent.addChild(gold);
 
 			goldReportParent.x = width - goldReportParent.width;
-			goldReportParent.y = height - goldReportParent.height;
+			goldReportParent.y = hangar.y;
 			_goldParent = goldReportParent;
 
 			addChild(goldReportParent);
+			
+			var quit:GameButton = GameButton.create("Quit", true, 20, 1);
+			quit.x = width - quit.width;
+			quit.y = garage.y;
+			
+			addChild(quit);
+			Util.listen(quit, MouseEvent.CLICK, onQuit);
 		}
 		private function onPlaneHangar(e:Event):void
 		{
@@ -247,6 +254,10 @@ package ui
 
 			_selection = parseInt(DisplayObject(e.currentTarget).name);
 			dispatchEvent(new Event(Event.SELECT));	
+		}
+		private function onQuit(e:Event):void
+		{
+			dispatchEvent(new Event(Event.CLOSE));
 		}
 		public function get selection():uint
 		{

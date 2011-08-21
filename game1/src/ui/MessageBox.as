@@ -13,7 +13,7 @@ package ui
 	public class MessageBox extends GameDialog
 	{
 		static private const FILTER:Array = [new DropShadowFilter(2, 45, 0xffffff, 1, 0, 0)];
-		public function MessageBox(title:String, caption:String)
+		public function MessageBox(title:String, caption:String, btn1:String = "Yes", btn2:String = "No")
 		{
 			super(true);
 			
@@ -29,24 +29,24 @@ package ui
 			txt.text = caption;
 			txt.x = 10;
 			txt.y = TOP_MARGIN;
-			txt.width = 200;
+			txt.width = 300;
 			txt.filters = FILTER;
 			addChild(txt);
 			
-			var yes:GameButton = GameButton.create("Yes");
-			var no:GameButton = GameButton.create("No");
+			var yes:GameButton = GameButton.create(btn1);
+			var no:GameButton = GameButton.create(btn2);
 			
 			no.width = yes.width;
 			no.x = yes.x + yes.width + 5;
 
-			var dumbParent:Sprite = new Sprite;
-			dumbParent.addChild(yes);
-			dumbParent.addChild(no);
+			var btnParent:Sprite = new Sprite;
+			btnParent.addChild(yes);
+			btnParent.addChild(no);
+			addChild(btnParent);
 
-			dumbParent.x = (width-dumbParent.width)/2 + 10;
-			dumbParent.y = txt.y + txt.height + 20;
+			Util.centerChild(btnParent, this);
+			btnParent.y = txt.y + txt.height + 20;
 			
-			addChild(dumbParent);
 			Util.listen(yes, MouseEvent.CLICK, onYes);
 			Util.listen(no, MouseEvent.CLICK, onNo);
 
@@ -55,11 +55,11 @@ package ui
 		
 		private function onYes(_unused:Event):void
 		{
-			trace("need to dispatch yes");
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 		private function onNo(_unused:Event):void
 		{
-			trace("need to dispatch no");
+			dispatchEvent(new Event(Event.CANCEL));
 		}
 	}
 }
