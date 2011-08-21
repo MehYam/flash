@@ -87,24 +87,27 @@ package ui
 			textFieldTyper.removeEventListener(e.type, arguments.callee);
 
 			var instructions:GameButton = GameButton.create("Instructions");
-			var newGameButton:GameButton = GameButton.create("New Game");
-			newGameButton.width = instructions.width;
-			Util.centerChild(newGameButton, this);
-			newGameButton.y = 325;
-			addChild(newGameButton);
-
 			var continueButton:GameButton = GameButton.create("Continue");
-			continueButton.width = instructions.width;
-			continueButton.x = newGameButton.x;
-			continueButton.y = newGameButton.y + newGameButton.height + BUTTON_MARGIN;
+			var newGameButton:GameButton = GameButton.create("New Game");
+			
+			const btnWidth:Number = Math.max(instructions.width, continueButton.width, newGameButton.width);
+
+			Util.centerChild(continueButton, this);
+			continueButton.y = 325;
+			continueButton.width = btnWidth;
 			continueButton.enabled = UserData.instance.levelsBeaten > 0;
 			addChild(continueButton);
 			
 			_continueButton = continueButton;
+			
+			newGameButton.x = continueButton.x;
+			newGameButton.y = continueButton.y + continueButton.height + BUTTON_MARGIN;
+			newGameButton.width = btnWidth;
+			addChild(newGameButton);
 
-			instructions.width = newGameButton.width;
-			instructions.x = continueButton.x;
-			instructions.y = continueButton.y + continueButton.height + BUTTON_MARGIN;
+			instructions.width = btnWidth;
+			instructions.x = newGameButton.x;
+			instructions.y = newGameButton.y + newGameButton.height + BUTTON_MARGIN;
 			addChild(instructions);
 			
 			Util.listen(newGameButton, MouseEvent.CLICK, onNewGame);

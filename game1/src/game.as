@@ -114,13 +114,20 @@ package
 		private var _msgBox:DisplayObject;
 		private function onNewGame(e:Event):void
 		{
-			if (!_msgBox)
+			if (UserData.instance.levelsBeaten > 0)
 			{
-				_msgBox = new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost.", "Start Over", "Cancel");
+				if (!_msgBox)
+				{
+					_msgBox = new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost.", "Start Over", "Cancel");
+				}
+				Util.listen(_msgBox, Event.COMPLETE, onNewGameResult);
+				Util.listen(_msgBox, Event.CANCEL, onNewGameResult);
+				UIUtil.openDialog(_title, _msgBox);
 			}
-			Util.listen(_msgBox, Event.COMPLETE, onNewGameResult);
-			Util.listen(_msgBox, Event.CANCEL, onNewGameResult);
-			UIUtil.openDialog(_title, _msgBox);
+			else
+			{
+				startLevel(0);
+			}
 		}
 		private function onNewGameResult(e:Event):void
 		{
@@ -149,7 +156,10 @@ package
 		private var _levelSelectionDialog:LevelSelectionDialog = new LevelSelectionDialog;
 		private function toLevelSelectionDialog():void
 		{
-			UIUtil.openDialog(_title, _levelSelectionDialog);
+			if (!_levelSelectionDialog.parent)
+			{
+				UIUtil.openDialog(_title, _levelSelectionDialog);
+			}
 			Util.listen(_levelSelectionDialog, Event.SELECT, onLevelSelectionChoice);
 			Util.listen(_levelSelectionDialog, Event.CLOSE, onLevelSelectionQuit);
 		}
@@ -644,6 +654,7 @@ package
 		{
 			UIUtil.closeDialog(DisplayObject(e.target));
 			toTitleScreen(true);
+			toLevelSelectionDialog();
 		}
 		public function get running():Boolean
 		{
