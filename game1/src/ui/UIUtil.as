@@ -139,10 +139,10 @@ package ui
 			const cost:uint = part.baseStats.cost;
 			var costString:String = "";
 
+			const owns:Boolean = UserData.instance.owns(part.id);
 			const canAfford:Boolean = part.baseStats.cost <= UserData.instance.credits;
-			costString = canAfford ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");
-			
-			if (UserData.instance.owns(part.id))
+			costString = (canAfford || owns) ? (cost + " Credits") : ("<font color='#cc2222'>" + cost + " Credits</font>");
+			if (owns)
 			{
 				costString += " <i>(Purchased)</i>";
 			}
@@ -155,6 +155,10 @@ package ui
 			}
 			retval += "<br>Cost: <b>" + costString + "</b><br><br>";
 			retval += "<font size='-1'>" + (part.description || "Ship details unknown.") + "</font>";
+			if (part.unlockDescription && part.unlockDescription.length)
+			{
+				retval += "<br><br><b>Progression:</b> <i>" + part.unlockDescription + "</i>";
+			}
 			return retval;
 		}
 	}

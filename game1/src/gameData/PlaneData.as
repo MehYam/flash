@@ -7,7 +7,7 @@ package gameData
 		public var upgrades:uint;
 		public var purchasable:Boolean;
 		public var unlock:uint = 0;  // index of PlaneData that unlocks this one
-
+		
 		public function PlaneData(name:String, aindex:uint, radius:Number, baseStats:VehiclePartStats, upgrades:uint = 0, purchasable:Boolean = true)
 		{
 			super("p" + aindex, name, aindex, baseStats);
@@ -58,7 +58,9 @@ package gameData
 			const xml:XML = new XML(byteArray.readUTFBytes(byteArray.length));		
 			for each (var desc:XML in xml.descs.children())
 			{
-				getPlane(desc.@plane).description = desc.text();
+				var planePart:VehiclePart = getPlane(desc.@plane);
+				planePart.description = desc.text();
+				planePart.unlockDescription = desc.@unlockText;
 			}
 		}
 	}

@@ -120,7 +120,7 @@ package
 			{
 				if (!_msgBox)
 				{
-					_msgBox = new MessageBox("Confirm", "Are you sure you want to start a new game?  All previous saved data will be lost.", "Start Over", "Cancel");
+					_msgBox = new MessageBox("Confirm", "Are you sure you want a reset?  All previous saved ships, tanks, credits, and data will be lost.", "Start Over", "Cancel");
 				}
 				Util.listen(_msgBox, Event.COMPLETE, onNewGameResult);
 				Util.listen(_msgBox, Event.CANCEL, onNewGameResult);

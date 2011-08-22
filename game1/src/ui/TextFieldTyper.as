@@ -66,7 +66,7 @@ package ui
 					
 					if (_sounds)
 					{
-						AssetManager.instance.laser1Sound();
+						AssetManager.instance.explosionSoundIndex(0);
 					}
 				}
 			}

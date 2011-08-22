@@ -16,8 +16,8 @@ package ui.dialogs
 	{
 		static private const TEXT:Array = 
 		[
-			"- Use your tank and plane to finish off the opponents on each level\n\n- Earn credits to buy upgrades in the Tank Garage and Plane Hangar",
-			"- Use W,S,A,D or the arrow keys to move your vehicle\n\n-Aim and shoot using the mouse, or shoot forward with SPACE\n\n-Killing enemies quickly raises the combo multiplier higher for better rewards"
+			"- Use your tank and plane to finish off the other contestants of each round\n\n- Use W,S,A,D or the ARROW keys to navigate your vehicle in the arena\n\n- Aim and shoot using the mouse (SPACEBAR shoots too, but only forward)",
+			"- Earn credits to buy upgrades in the Tank Garage and Plane Hangar\n\n- Killing enemies quickly raises the combo multiplier higher for faster upgrades\n\n- Over 35 ships and dozens of tank combinations are available"
 		];
 		static public function get steps():uint { return TEXT.length; }
 		public function TutorialDialog(step:uint)

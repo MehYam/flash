@@ -91,7 +91,8 @@ package
 		[Embed(source="assets/sounds/explosion3.mp3")] static private const Explosion3Sound:Class;
 		[Embed(source="assets/sounds/explosion4.mp3")] static private const Explosion4Sound:Class;
 		[Embed(source="assets/sounds/explosion5.mp3")] static private const Explosion5Sound:Class;
-		static private const s_explosionSounds:Array = [Explosion1Sound, Explosion2Sound, Explosion3Sound, Explosion4Sound, Explosion5Sound].concat(s_bumpSounds);
+		[Embed(source="assets/sounds/brush1.mp3")] static private const Explosion6Sound:Class;
+		static private const s_explosionSounds:Array = [Explosion1Sound, Explosion2Sound, Explosion3Sound, Explosion4Sound, Explosion6Sound].concat(s_bumpSounds);
 		[Embed(source="assets/sounds/click.mp3")] static private const UIClickSound:Class;
 		[Embed(source="assets/sounds/fusion1.mp3")] static private const Fusion1Sound:Class;
 		[Embed(source="assets/sounds/fusion2.mp3")] static private const Fusion2Sound:Class;
@@ -122,6 +123,7 @@ package
 		public function bulletSound(pct:Number):void { playSound(s_bulletSounds[uint(pct * s_bulletSounds.length)]); }
 		public function bumpSound():void { playSound(s_bumpSounds[uint(Math.random() * s_bumpSounds.length)]); }
 		public function explosionSound():void { playSound(s_explosionSounds[uint(Math.random() * s_explosionSounds.length)]);	}
+		public function explosionSoundIndex(index:uint):void { playSound(s_explosionSounds[index]);	}
 		public function shotSound(pct:Number):void { playSound(s_shotSounds[uint(pct * s_shotSounds.length)]); }
 		public function rocketSound():void { playSound(RocketSound); }
 		public function shieldLaunchSound():void { playSound(ShieldSound); }
@@ -271,8 +273,8 @@ package
 			return createFont(AssetManager.FONT_COMPUTER, 18, 0);
 		}
 		
-		[Embed(source="assets/instructions1_small.png")] static private const Tutorial1:Class;
-		[Embed(source="assets/instructions2_small.png")] static private const Tutorial2:Class;
+		[Embed(source="assets/instructions1_small.png")] static private const Tutorial2:Class;
+		[Embed(source="assets/instructions2_small.png")] static private const Tutorial1:Class;
 		static private const TUTIMGS:Array = [Tutorial1, Tutorial2];
 		public function getTutorialImage(index:uint):Bitmap
 		{

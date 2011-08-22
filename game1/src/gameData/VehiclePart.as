@@ -9,6 +9,7 @@ package gameData
 		public var assetIndex:uint;
 		public var baseStats:VehiclePartStats;
 		public var description:String;
+		public var unlockDescription:String;  // description of what this item unlocks
 		public var level:uint;
 		public var radius:Number;
 

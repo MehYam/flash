@@ -20,6 +20,7 @@ package ui
 			_valueField = new ShadowTextField(Consts.CREDIT_FIELD_COLOR, 0, 1);
 			AssetManager.instance.assignFont(_valueField, AssetManager.FONT_ROBOT, 24); 
 			_valueField.x = labelField.width + 5;
+			_valueField.y = 2;
 			_valueField.text = "32768";
 			
 			addChild(labelField);
