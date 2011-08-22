@@ -49,7 +49,7 @@ package ui.dialogs
 			var valueField:ShadowTextField = new ShadowTextField(0x555577, valueColor, 1);
 			AssetManager.instance.assignFont(valueField, AssetManager.FONT_ROBOT, 24);
 				
-			valueField.y = labelField.y - 2;
+			valueField.y = labelField.y;
 			valueField.x = 250 - valueField.width;
 			valueField.text = value;
 			valueField.embedFonts = true;

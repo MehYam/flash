@@ -30,7 +30,7 @@ package ui
 			"Lookout, it's...",
 			"It's about to get real...",
 			"when they come for you, it's...",
-			"Get your shooting skills on, it's...",
+			"Get your shooting on, it's...",
 			"Now your ships are burned, it's...",
 			"Want carnage? It's..."
 		];
