@@ -27,8 +27,7 @@ package
 		//KAI: if this goes in-game, it's better to load it and ditch the loader so that the bitmap data's not duplicated
 		// when we copy it out - OR - see if Bitmap is really smart, and just use the tiled thing.  Worth profiling to
 		// see what the difference is
-		[Embed(source="assets/tiled.png")]
-		private var TiledImages:Class;
+		[Embed(source="assets/tiled.png")] static private const TiledImages:Class;
 		
 		static private var s_instance:AssetManager;
 		static public function get instance():AssetManager
@@ -241,7 +240,7 @@ package
 		[Embed(source='assets/fonts/RADIOSTA.TTF', fontFamily='embeddedRadiostars', mimeType='application/x-font', embedAsCFF='false')] 		static private const Radiofont:Class;
 		[Embed(source='assets/fonts/SF TransRobotics.ttf', fontFamily='embeddedSFT', mimeType='application/x-font', embedAsCFF='false')]		static private const SFTfont:Class;
 		
-		static public const FONT_COMPUTER:String = "embeddedComputerfont";
+		static public const FONT_COMPUTER:String = "embeddedSFT";//"embeddedComputerfont";
 		static public const FONT_RADIOSTARS:String = "embeddedRadiostars";
 		static public const FONT_ROBOT:String = "embeddedSFT";
 		public function createFont(font:String, size:int, color:Object = null):TextFormat
@@ -260,6 +259,26 @@ package
 		{
 			textFieldObject.defaultTextFormat = textFormat;
 			textFieldObject.embedFonts = true;
+		}
+		static private const MBFILTER:Array = [new DropShadowFilter(1, 45, 0xffffff, 1, 0, 0)];
+		public function get messageBoxFontShadow():Array
+		{
+			// start using this in favor of ShadowTextField;
+			return MBFILTER;
+		}
+		public function get messageBoxFont():TextFormat
+		{
+			return createFont(AssetManager.FONT_COMPUTER, 18, 0);
+		}
+		
+		[Embed(source="assets/instructions1_small.png")] static private const Tutorial1:Class;
+		[Embed(source="assets/instructions2_small.png")] static private const Tutorial2:Class;
+		static private const TUTIMGS:Array = [Tutorial1, Tutorial2];
+		public function getTutorialImage(index:uint):Bitmap
+		{
+			var bitmap:Bitmap = new TUTIMGS[index];
+			bitmap.smoothing = true;
+			return bitmap;
 		}
 	}
 }

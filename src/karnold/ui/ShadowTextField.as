@@ -62,5 +62,10 @@ package karnold.ui
 			_top.embedFonts = true;
 			_bottom.embedFonts = true;
 		}
+		public function set htmlText(text:String):void
+		{
+			_top.htmlText = text;
+			_bottom.htmlText = text;
+		}
 	}
 }

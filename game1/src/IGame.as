@@ -19,7 +19,7 @@ package
 		function addEffect(actor:Actor):void;
 		function convertToFriendlyAmmo(actor:Actor):void;
 		function killActor(actor:Actor):void;
-		function centerPrint(text:String):void;
+		function centerPrint(text:String, postDelay:Number = 3000):void;
 
 		function unpause():void;
 		function pause():void;

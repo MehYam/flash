@@ -42,14 +42,16 @@ package
 	import scripts.TankActor;
 	
 	import ui.GameToolTip;
-	import ui.LevelCompleteDialog;
-	import ui.LevelSelectionDialog;
-	import ui.MessageBox;
-	import ui.TestDialog;
 	import ui.TextFieldTyper;
 	import ui.TitleScreen;
 	import ui.TitleScreenEvent;
 	import ui.UIUtil;
+	import ui.dialogs.GameDialog;
+	import ui.dialogs.LevelCompleteDialog;
+	import ui.dialogs.LevelSelectionDialog;
+	import ui.dialogs.MessageBox;
+	import ui.dialogs.TestDialog;
+	import ui.dialogs.TutorialDialog;
 
 	[SWF(backgroundColor="#0")]
 	public final class game extends Sprite implements IGame
@@ -148,10 +150,30 @@ package
 		{
 			toLevelSelectionDialog();
 		}
-		private function onInstructions(e:Event):void
+		private var _tutorialStep:uint = 0;
+		private function onInstructions(e:Event = null):void
 		{
 			// show instructions dialog, attach to it's close event, in the close event
 			// re-enable the title screen
+			const step:uint = _tutorialStep % TutorialDialog.steps;
+			++_tutorialStep;
+
+			var inst:GameDialog = new TutorialDialog(step);
+			
+			UIUtil.openDialog(_title, inst);
+			Util.listen(inst, Event.COMPLETE, onInstructionsComplete);
+		}
+		private function onInstructionsComplete(e:Event):void
+		{
+			UIUtil.closeDialog(DisplayObject(e.target));
+			if (!(_tutorialStep % TutorialDialog.steps))
+			{
+				toTitleScreen();
+			}
+			else
+			{
+				onInstructions();
+			}
 		}
 		private var _levelSelectionDialog:LevelSelectionDialog = new LevelSelectionDialog;
 		private function toLevelSelectionDialog():void
@@ -557,19 +579,19 @@ package
 		}
 		private var _centerPrint:ShadowTextField;
 		private var _textFieldTyper:TextFieldTyper;
-		public function centerPrint(text:String):void
+		public function centerPrint(text:String, postDelay:Number = 3000):void
 		{
 			if (!_textFieldTyper)
 			{
 				_centerPrint = new ShadowTextField;
-				AssetManager.instance.assignFont(_centerPrint, AssetManager.FONT_COMPUTER, 36);
+				AssetManager.instance.assignFont(_centerPrint, AssetManager.FONT_RADIOSTARS, 36);
 				_textFieldTyper = new TextFieldTyper(_centerPrint, false);
-				_textFieldTyper.postDelay = 3000;
+				_textFieldTyper.postDelay = postDelay;
 				Util.listen(_textFieldTyper, Event.COMPLETE, onCenterPrintDone);
 			}
 			_centerPrint.text = text;
 			_centerPrint.x = (stage.stageWidth - _centerPrint.width) / 2;
-			_centerPrint.y = stage.stageHeight/2 - 40;
+			_centerPrint.y = 2*stage.stageHeight/3;
 			_centerPrint.text = "";
 			_hudLayer.addChild(_centerPrint);
 

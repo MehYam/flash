@@ -29,10 +29,10 @@ package ui
 			"Prepare yourself for...",
 			"Lookout, it's...",
 			"It's about to get real...",
-			"Whatcha gonna do, when they come for you...",
+			"when they come for you, it's...",
 			"Get your shooting skills on, it's...",
 			"Now your ships are burned, it's...",
-			"Hungry for killage?  It's..."
+			"Want carnage? It's..."
 		];
 		private var _typer:TextFieldTyper;
 		public function TitleScreen()
@@ -45,7 +45,7 @@ package ui
 			textField.y = 80;
 			textField.autoSize = TextFieldAutoSize.LEFT;
 
-			var format:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_COMPUTER, 24, 0x00ff00);
+			var format:TextFormat = AssetManager.instance.createFont(AssetManager.FONT_RADIOSTARS, 24, 0x00ff00);
 			textField.defaultTextFormat = format;
 			textField.embedFonts = true;
 
