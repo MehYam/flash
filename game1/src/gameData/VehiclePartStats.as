@@ -3,10 +3,10 @@ package gameData
 	public class VehiclePartStats
 	{
 		public var ammo:Object;
-		public var armor:Number;
-		public var damage:Number;
-		public var fireRate:Number;
-		public var speed:Number;
+		public var armor:Number = 0;
+		public var damage:Number = 0;
+		public var fireRate:Number = 0;
+		public var speed:Number = 0;
 		
 		public var cost:uint;
 

@@ -52,7 +52,7 @@ package gameData
 			}
 			for each (var turret:Object in turrets)
 			{
-				var t:Turret = new Turret(turret.name, turret.iAsset, new VehiclePartStats(turret.armor, turret.damage, turret.rate, turret.speed, turret.cost),
+				var t:Turret = new Turret(turret.name, turret.iAsset, new VehiclePartStats(0, turret.damage, turret.rate, 0, turret.cost),
 					tmp[parseInt(turret.up1)].id, tmp[parseInt(turret.up2)].id);
 				
 				s_turrets.push(t);

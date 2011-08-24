@@ -70,7 +70,7 @@ Aft Cannons	0.20	0.20	0.00	0.00	10000
 
 #turretups
 name	damage	rate	armor	speed	cost
-+100% Firerate	0.00	0.50	0.00	0.00	1000
++100% Firerate	0.00	0.20	0.00	0.00	1000
 +50% Damage	0.10	0.00	0.00	0.00	1000
 Spread Fire	0.00	0.00	0.00	0.00	2000
 Rockets	0.40	0.40	0.00	0.00	3000

@@ -394,6 +394,9 @@ package ui.dialogs
 			accumulateUpgrade(_listTurretUpgrades, selectedTurret, 1);
 				
 			// now perform the compare
+			po_stats.armor *= 0.75;
+			po_compareStats.armor *= 0.75;  // fixing problem w/ the data
+			
 			_stats.stats = po_stats;
 			_stats.compare = po_compareStats;
 			_stats.title = "TANK"
