@@ -524,16 +524,16 @@ final class Utils
 		actor.worldPos.y = MathUtil.random(bounds.top, bounds.bottom);
 		switch(int(Math.random() * 4)) {
 			case 0:
-				actor.worldPos.x = bounds.left;
+				actor.worldPos.x = bounds.left - actor.attrs.BOUND_EXTENT.x;
 				break;
 			case 1:
-				actor.worldPos.x = bounds.right;
+				actor.worldPos.x = bounds.right + actor.attrs.BOUND_EXTENT.x;
 				break;
 			case 2:
-				actor.worldPos.y = bounds.top;
+				actor.worldPos.y = bounds.top - actor.attrs.BOUND_EXTENT.y;
 				break;
 			case 3:
-				actor.worldPos.y = bounds.bottom;
+				actor.worldPos.y = bounds.bottom + actor.attrs.BOUND_EXTENT.y;
 				break;
 		}
 	}
@@ -676,7 +676,7 @@ class WaveBasedGameScript extends BaseScript
 		super.begin(game); //KAI:
 
 		game.unpause();
-		game.centerPrint("Wave 1");
+		game.centerPrint("Begin!");
 
 		game.scoreBoard.pctHealth = 1;
 		game.scoreBoard.pctLevel = 0;
@@ -702,7 +702,6 @@ class WaveBasedGameScript extends BaseScript
 	private var _liveEnemies:uint = 0;
 	private function addNextWave():void
 	{
-//		return;
 		if (_waves.length)
 		{
 			var next:Object = _waves.shift();
@@ -894,17 +893,21 @@ class WaveBasedGameScript extends BaseScript
 				--_liveEnemies;
 				if (!_liveEnemies)
 				{
-					if (_waves.length)
+					if (_waves.length == 1)
 					{
-						_game.centerPrint("Wave " + (NUMWAVES - _waves.length + 1));	
+						_game.centerPrint("Final Wave");	
 					}
-					else
+					else if (_waves.length == 0)
 					{
 						_game.centerPrint("Level complete - you did it!");
 						
 						_stats.end();
 						_stats.victory = true;
 						_comboTimer.stop();
+					}
+					else
+					{
+						_waveDelay.start(500 + Math.random()*3000, 1);
 					}
 				}
 			}

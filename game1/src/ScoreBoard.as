@@ -61,7 +61,7 @@ package
 
 			labelField = new ShadowTextField;
 			AssetManager.instance.assignTextFormat(labelField, radioStars24);
-			labelField.text = "Level:";
+			labelField.text = "Enemies:";
 			labelField.x = 0;
 			labelField.y = vert;
 			labelField.cacheAsBitmap = true;

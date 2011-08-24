@@ -37,6 +37,10 @@ package
 			bitmapData.draw(target, matrix);
 			
 			perlinizeIt(bitmapData);
+//			var shape:Shape = new Shape;
+//			shape.graphics.lineStyle(0, 0xff00000);
+//			shape.graphics.drawRect(0, 0, bitmapData.width-1, bitmapData.height-1);
+//			bitmapData.draw(shape);
 			return bitmapData;
 		}
 

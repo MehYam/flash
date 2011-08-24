@@ -111,7 +111,6 @@ package ui
 			
 			Util.listen(stage, MouseEvent.MOUSE_UP, onMouseUp);
 			Util.listen(stage, Event.MOUSE_LEAVE, onMouseUp);
-			Util.listen(this, MouseEvent.CLICK, onClick);
 			
 			AssetManager.instance.uiClick();
 		}
@@ -129,10 +128,6 @@ package ui
 		{
 			_mouseOver = false;
 			setFace(_up);
-		}
-		private function onClick(e:Event):void
-		{
-//			AssetManager.instance.uiClick();
 		}
 	}
 }
