@@ -475,14 +475,17 @@ final class ShadowPlayerBehavior implements IBehavior
 
 final class ShakeBehavior implements IBehavior
 {
-	static private const MAGNITUDE:Number = 3;
+	static private const MAGNITUDE:Number = 1.5;
 
 	private var _rate:RateLimiter = new RateLimiter(10, 100);
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		if (_rate.now)
 		{
-			actor.worldPos.offset(MathUtil.random(-MAGNITUDE, MAGNITUDE), MathUtil.random(-MAGNITUDE, MAGNITUDE));
+			if (Math.random() < 0.5)
+			{
+				actor.worldPos.offset(MathUtil.random(-MAGNITUDE, MAGNITUDE), MathUtil.random(-MAGNITUDE, MAGNITUDE));
+			}
 		}
 	}
 }
