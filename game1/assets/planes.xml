@@ -29,19 +29,16 @@ Although Fighter-class ships are often heavily armored, with some models it's st
 <desc plane="8" unlockText="Higher level Fighter-class ships">Aside more armor, damage, and better cornering, the top Bat ship also seems to have fixed the firing problem.
 Owners of Bat III will have access to the three top-level Fighter-class lines: the Osp, Stealth, and Ghost.</desc>
 
-<desc plane="34">Fans of the Stinger ships usually upgrade to the Raven line, built for agility and targeting.  The fastest ships in the tournament, they were built to strafe around opponents, sniping them from all angles.  The speed comes at the price of armor;  so enjoy melting hulls with this ship, just don't take damage like you dish it out.</desc>
+<desc plane="9">Made from ex-military bombers, the Osp line is the heaviest and slowest moving among the Fighter-class planes.  Strong lasers replace the bombs to make this craft practical for low-altitude close quarters combat.</desc>
 
-<desc plane="35">The second in the Raven line is the Corvid, with upgraded speed and dual cannon fittings.</desc>
+<desc plane="10">The Osp II is an upgrade of everything - speed, power, armor, and an extra pair of lasers.</desc>
 
-<desc plane="36">"Nevermore" was a nickname that stuck and became the official title for the final Raven ship.  The ultimate vehicle for speed freaks and adrenaline junkies, this plane will take them down before they know you've fired.  Armor is lacking, by request of the skilled pilots who don't need it.</desc>
+<desc plane="11">Six parallel lasers and strong armor make the Osp III a wall of death on the tournament field.  Dodging anything in this plane becomes an artform - unlike aiming, given that you're guaranteed to hit something with this giant.</desc>
+<desc plane="12">The strange design of the Dipt line, the only pure-Melee class, was aimed at intimidating other pilots at close range.  It's the most armored ship in the tournament, and so can withstand brutal hits even while shields are recharging.</desc>
 
-<desc plane="28">This ship line uses devastating twin fusion cannons, and is relatively heavy armored for a Rogue-class.  This makes it the slowest of the Rogues, although it's still pretty nimble.
-The key to using fusion effectively is to charge it as much as possible before firing it.  Watch the charge indicator and don't hold it for too long, however, as an overloading cannon will damage the ship over time.
-This ship takes a little practice to master, but nothing matches the pleasure of destroying an entire cluster of enemies with a well-charge fusion blast.</desc>
+<desc plane="13">What kind of twisted individual flies around in a ship that looks like a deer fly?  You, you're that kind of twisted, because you like shields and messing people up.</desc>
 
-<desc plane="29">No surprises here, the Phantom is a slightly faster, stronger, and more deadly version of the first model.</desc>
-
-<desc plane="30">No surprises here either, the Spectre is a slightly faster, stronger, and more deadly version of the second model.</desc>
+<desc plane="14">The third Dipt is the toughest ship, with the strongest shields in the tournament.</desc>
 
 <desc plane="15">Give your enemies a world of doubt and fear in a Cyg ship.  These ships walk the middle ground between the speed of the Ravens and the firepower and armor of the Rocs.</desc>
 
@@ -49,11 +46,9 @@ This ship takes a little practice to master, but nothing matches the pleasure of
 
 <desc plane="17">Six very powerful lasers, but a slow firing rate.</desc>
 
-<desc plane="12">The strange design of the Dipt line, the only pure-Melee class, was aimed at intimidating other pilots at close range.  It's the most armored ship in the tournament, and so can withstand brutal hits even while shields are recharging.</desc>
-
-<desc plane="13">What kind of twisted individual flies around in a ship that looks like a deer fly?  You, you're that kind of twisted, because you like shields and messing people up.</desc>
-
-<desc plane="14">The third Dipt is the toughest ship, with the strongest shields in the tournament.</desc>
+<desc plane="18">The Roc line of ships are tough like other Fighters, but relatively small and nimble.  Alternating dual lasers will keep other contestants guessing.</desc>
+<desc plane="19">Extra lasers are added along with other upgrades to let the Roc II help you progress through the tournament.</desc>
+<desc plane="20">The Roc III is the nimblest Fighter-class in the field, and adds a rear laser to keep opponents off your six.</desc>
 
 <desc plane="21">Atac ships are Melee/Rogue hybrids.  They compromise armor, stability, and shield strength for more maneuverability and light ranged weaponry.  Being able to fire from a distance while shielded is a pretty compelling combination for many tournament contestants.</desc>
 
@@ -62,11 +57,29 @@ This ship takes a little practice to master, but nothing matches the pleasure of
 <desc plane="23">They said it couldn't be done, but the pinnacle of the Atac line features a powerful mono fusion cannon in addition to other upgrades.  Weight of the fusion weaponry has limited the shield strength and armor, but this is still the most versatile ship in the field.  It's the only flying vessel that allows the pilot to aim in two directions at once.
 However, pilots have to constantly manage the decision between powering up a fusion shot vs. refreshing a battered shield.</desc>
 
+<desc plane="25">The Flying V's (Vee) are high-payload Fighters capable of firing multiple rockets at enemies.</desc>
+<desc plane="26">The second Vee ship fires more steadily and predictably than its predecessor, and adds a lot of armor.</desc>
+<desc plane="27">The final Vee ship adds more armor yet, stronger missiles, and better handling.</desc>
+
+<desc plane="28">This ship line uses devastating twin fusion cannons, and is relatively heavy armored for a Rogue-class.  This makes it the slowest of the Rogues, although it's still pretty nimble.
+The key to using fusion effectively is to charge it as much as possible before firing it.  Watch the charge indicator and don't hold it for too long, however, as an overloading cannon will damage the ship over time.
+This ship takes a little practice to master, but nothing matches the pleasure of destroying an entire cluster of enemies with a well-charge fusion blast.</desc>
+
+<desc plane="29">No surprises here, the Phantom is a slightly faster, stronger, and more deadly version of the first model.</desc>
+
+<desc plane="30">The Banshee is the most heavily armored Rogue-class in the tournament.</desc>
+
 <desc plane="31">The Esox line of ships most closely resemble their cheaper Jem cousins.  Fitted with strong shields, armor, and up to six multiple lasers, they're built to cut through foes easily at short and medium range.</desc>
 
 <desc plane="32">Moar lasors!</desc>
 
 <desc plane="33">The top Esox is the ultimate expression of the original Jem intent.  You could probably mine with this ship, but make sure the other miners have cleared out first.</desc>
+
+<desc plane="34">Fans of the Stinger ships usually upgrade to the Raven line, built for agility and targeting.  The fastest ships in the tournament, they were built to strafe around opponents, sniping them from all angles.  The speed comes at the price of armor;  so enjoy melting hulls with this ship, just don't take damage like you dish it out.</desc>
+
+<desc plane="35">The second in the Raven line is the Corvid, with upgraded speed and dual cannon fittings.</desc>
+
+<desc plane="36">"Nevermore" was a nickname that stuck and became the official title for the final Raven ship.  The ultimate vehicle for speed freaks and adrenaline junkies, this plane will take them down before they know you've fired.  Armor is lacking, by request of the skilled pilots who don't need it.</desc>
 
 </descs>
 </data>

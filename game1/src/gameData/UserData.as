@@ -28,18 +28,18 @@ package gameData
 				
 				// priming
 				VehicleData.instance;
-				if (so && so.data.userData)
-				{
-					s_instance = so.data.userData;
-				}
-				else
+//				if (so && so.data.userData)
+//				{
+//					s_instance = so.data.userData;
+//				}
+//				else
 				{
 					s_instance = new UserData;
 					if (so)
 					{
-						so.data.userData = s_instance;
+//						so.data.userData = s_instance;
 					}
-//					debug();
+ 					debug();
 					
 					s_instance.purchasePart(PlaneData.getPlane(0), 0);
 					s_instance.purchasePart(TankPartData.getHull(0), 0);
