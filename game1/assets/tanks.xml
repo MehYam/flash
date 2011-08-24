@@ -1,0 +1,20 @@
+<data>
+<descs>
+<hulls>
+<desc part="0">All contestants are issued a Hunter with a Stinger turret.  It's a strong combination for early rounds, and can get pretty far if fully upgraded, but probably won't win on its own.  Upgrades include a boost to armor and aft cannons.</desc>
+<desc part="1">Rumors claim that the Wreckingball tank started life as a construction vehicle.  In any case, it's a tough vehicle that now slices through opponents on the tournament field.  It's somewhat slow but has a speed upgrade available.</desc>
+<desc part="2">Tanks based on the speedy Seeker hull feel more like planes than land-bound vehicles.  Paired with a Fuz-o cannon, the combination feels similar to the Fighter-class Ghost.  Although available early on to contestants, fully upgraded Seeker hulls have successfully won the tournament before.
+
+An upgraded Seeker also adds flingable shields and even more speed.  Scary.</desc>
+<desc part="3">The Rhino is a heavily armored and reasonably fast hull capable of taking to tournament victory.</desc>
+<desc part="4">The Hunter X is a fortress on treads.  The most heavily armored vehicle in the tournament, ever, even adds shields as an upgrade for extra survivability.  You won't dodge very well in this monster, but you won't care, either.</desc>
+</hulls>
+<turrets>
+<desc part="0">The Stinger firing unit will pump out a lot of high-powered cannon rounds, especially when fully upgraded.</desc>
+<desc part="1">Destroyer turrets are good for leveling crowds of enemies.  Upgrades add rockets to the firing sequence and flare the ammo out in an arc for a wide sweep of damage.</desc>
+<desc part="2">The Fuz-o turret can fire strong, twin fusion beams at a high rate of fire.  Remember to charge the fusion fully (but not too fully) to really mow down your opponents.</desc>
+<desc part="3">If you like firing rocket rounds, and a lot of them, you want the Kratos.</desc>
+<desc part="4">The Triclops turret was made for people who aren't sure what they want to shoot at first.  You can be half-surrounded with enemies and still be firing at all of them.</desc>
+</turrets>
+</descs>
+</data>

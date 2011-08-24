@@ -26,23 +26,32 @@ package gameData
 			return planes[i];
 		}
 
-		[Embed(source="assets/planes.xml", mimeType="application/octet-stream")]
-		static private const PLANEXML:Class;
+		[Embed(source="assets/planes.xml", mimeType="application/octet-stream")] static private const PLANEXML:Class;
 		static private const CLASSNAMES:Array = ["Rogue", "Melee", "Melee/Hybrid", "Fighter"];
 		static public function init(planes:Vector.<Object>):void
 		{
-			s_entries = new Vector.<PlaneData>; 
-			for each (var plane:Object in planes)
+			s_entries = new Vector.<PlaneData>;
+
+			var plane:Object;
+			var max:Object = { armor: 0, damage: 0, rate: 0, speed: 0 };
+			for each (plane in planes)
+			{
+				max.armor = Math.max(max.armor, plane.armor);
+				max.damage = Math.max(max.damage, plane.damage);
+				max.rate = Math.max(max.rate, 1000 / Math.max(1, plane.rate));
+				max.speed = Math.max(max.speed, plane.speed);
+			}
+			for each (plane in planes)
 			{
 				var pd:PlaneData = new PlaneData(
 					plane.name,
 					plane.iAsset,
 					plane.radius,
 					new VehiclePartStats(
-						plane.armor,
-						plane.damage,
-						plane.rate,
-						plane.speed,
+						plane.armor / max.armor,
+						plane.damage / max.damage,
+						1000 / Math.max(1, plane.rate) / max.rate,
+						plane.speed / max.speed,
 						plane.cost
 					),
 					plane.upgrades,

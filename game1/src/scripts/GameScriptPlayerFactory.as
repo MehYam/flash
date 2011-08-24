@@ -198,7 +198,7 @@ package scripts
 				break;
 			case 13:
 				weapon = createShieldActivator(90, 500);
-				attrs = new ActorAttrs(1000, 3.5, 0.8, 0.5);
+				attrs = new ActorAttrs(2000, 3.5, 0.8, 0.5);
 				shield = true;
 				break;
 			case 14:
@@ -232,7 +232,7 @@ package scripts
 					createShieldActivator(100, 300),
 					BehaviorFactory.createChargedFire(new AmmoFireSource(AmmoType.FUSION, 100, 0, -10, 0), 5, 1000, 5)
 				);
-				attrs = new ActorAttrs(3000, 4, 0.7, 0.1);
+				attrs = new ActorAttrs(3000, 4.5, 0.7, 0.1);
 				shield = true;
 				fusion = true;
 				break;
@@ -332,10 +332,10 @@ package scripts
 				break;
 			case 27:
 				weapon = new AlternatingBehavior(333, 333,
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -30, -10, 0, 3), 400, 400),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  30, -10, 0, 2), 400, 400),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150, -15, -20, 0, 2), 400, 400),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 150,  15, -20, 0, 3), 400, 400)
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 175, -30, -10, 0, 3), 400, 400),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 175,  30, -10, 0, 2), 400, 400),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 175, -15, -20, 0, 2), 400, 400),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.ROCKET, 175,  15, -20, 0, 3), 400, 400)
 				);
 				attrs = new ActorAttrs(4000, 3.5, 1, 0.1);
 				break;
@@ -349,8 +349,8 @@ package scripts
 				break;
 			case 19:
 				weapon = new AlternatingBehavior(333, 333,
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50, -20, -15, 0, 3), 400, 400),
-					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 50,  20, -15, 0, 3), 400, 400)
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 100, -20, -15, 0, 3), 400, 400),
+					BehaviorFactory.createAutofire(new AmmoFireSource(AmmoType.LASER, 100,  20, -15, 0, 3), 400, 400)
 				);
 				attrs = new ActorAttrs(1050, 4.2, 0.5, 0.1);
 				break;

@@ -154,7 +154,7 @@ package ui
 				retval += "<br>Class: " + formatLabel(part.subType, 0);
 			}
 			retval += "<br>Cost: <b>" + costString + "</b><br><br>";
-			retval += "<font size='-1'>" + (part.description || "Ship details unknown.") + "</font>";
+			retval += "<font size='-1'>" + (part.description || "Details unavailable.") + "</font>";
 			if (part.unlockDescription && part.unlockDescription.length)
 			{
 				retval += "<br><br><b>Progression:</b> <i>" + part.unlockDescription + "</i>";

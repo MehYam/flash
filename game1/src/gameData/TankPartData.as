@@ -1,5 +1,7 @@
 package gameData
 {
+	import flash.utils.ByteArray;
+
 	public class TankPartData extends VehiclePart
 	{
 		private var _upgrades:Vector.<String> = new Vector.<String>;
@@ -22,6 +24,8 @@ package gameData
 		static private var s_hulls:Vector.<TankPartData> = new Vector.<TankPartData>;
 		static private var s_turrets:Vector.<TankPartData> = new Vector.<TankPartData>;
 		static private var s_upgrades:Object = {};
+
+		[Embed(source="assets/tanks.xml", mimeType="application/octet-stream")] static private const TANKXML:Class;
 		static public function init(hulls:Vector.<Object>, turrets:Vector.<Object>, hullups:Vector.<Object>, turretups:Vector.<Object>):void
 		{	
 			var i:uint = 0;
@@ -52,6 +56,20 @@ package gameData
 					tmp[parseInt(turret.up1)].id, tmp[parseInt(turret.up2)].id);
 				
 				s_turrets.push(t);
+			}
+			// descriptions
+			var byteArray:ByteArray = new TANKXML;
+			const xml:XML = new XML(byteArray.readUTFBytes(byteArray.length));		
+			var desc:XML;
+			for each (desc in xml.descs.hulls.children())
+			{
+				var hullD:VehiclePart = getHull(desc.@part);
+				hullD.description = desc.text();
+			}
+			for each (desc in xml.descs.turret.children())
+			{
+				var turretD:VehiclePart = getTurret(desc.@part);
+				turretD.description = desc.text();
 			}
 		}
 		static public function get hulls():Vector.<TankPartData> {	return s_hulls;	}
