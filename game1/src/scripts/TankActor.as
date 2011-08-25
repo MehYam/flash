@@ -49,6 +49,7 @@ package scripts
 		{
 			return source.turret ? turretRotation : displayObject.rotation;
 		}
+
 		private var _muzzleFlashes:Dictionary;
 		private var _muzzleFlash:MuzzleFlash;
 		public override function isFiring(source:AmmoFireSource):void

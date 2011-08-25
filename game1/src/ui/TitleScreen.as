@@ -28,12 +28,12 @@ package ui
 		[
 			"Prepare yourself for...",
 			"Lookout, it's...",
-			"It's about to get real...",
+			"Ship's about to get real...",
 			"When they come for you, it's...",
 			"Get your shooting on, it's...",
-			"Now your ships are burned, it's...",
-			"Got carnage? It's...",
-			"There's no time for sleep, it's..."
+			"When your ships are burned, it's...",
+			"Need carnage? It's...",
+			"No sleep 'til..."
 		];
 		private var _typer:TextFieldTyper;
 		public function TitleScreen()

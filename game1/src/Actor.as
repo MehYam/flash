@@ -23,7 +23,7 @@ package
 		public var displayObject:DisplayObject;
 		public var speed:Point = new Point();
 		public var worldPos:Point = new Point();
-		public var underForce:Boolean = true;  // only used for game.player, a hack for face forward behavior
+		public var underForce:Boolean = true;  // only used for game.player, a hack for face forward behavior to keep the ship from rotating as its separate axes peter out
 
 		// meta-data that maybe doesn't belong here
 		public var attrs:ActorAttrs;

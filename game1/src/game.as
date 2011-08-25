@@ -39,7 +39,6 @@ package
 	
 	import scripts.GameScript;
 	import scripts.IGameScript;
-	import scripts.TankActor;
 	
 	import ui.GameToolTip;
 	import ui.TextFieldTyper;

@@ -104,13 +104,13 @@ import scripts.IPenetratingAmmo;
 import scripts.ShieldActor;
 import scripts.SmallExplosionActor;
 
-final class EnemyEnum
+class EnemyEnum
 {
 	static public var LOOKUP:Object = {};
 	public var attrs:ActorAttrs;
 	public var assetIndex:uint;
 	public var value:uint;
-	public function EnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String, value:uint = 5)
+	public function EnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String, value:uint)
 	{
 		this.attrs = attrs;
 		this.assetIndex = assetIndex;
@@ -121,10 +121,10 @@ final class EnemyEnum
 		LOOKUP[name] = this;
 	}
 	
-	static private const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
-	static private const FLEEFACING:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.facePlayer);
-	static private const GRAVITY:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
-	static private const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
+	static protected const FLEE:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.faceForward);
+	static protected const FLEEFACING:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPush, BehaviorFactory.facePlayer);
+	static protected const GRAVITY:CompositeBehavior = new CompositeBehavior(BehaviorFactory.gravityPull, BehaviorFactory.faceForward);
+	static protected const HOME:CompositeBehavior = new CompositeBehavior(BehaviorFactory.follow, BehaviorFactory.facePlayer);
 	static public function attackAndFlee(source:*, msRate:uint, msShootRateMin:uint = 300, msShootRateMax:uint = 2000):IBehavior
 	{
 		return new AlternatingBehavior
@@ -135,48 +135,54 @@ final class EnemyEnum
 			FLEE
 		);
 	}
-
+	public function create():Actor
+	{
+		return create_impl();
+	}
+	protected function create_impl():Actor { throw "abstract method"; }
+}
+final class PlaneEnemyEnum extends EnemyEnum
+{
 	// first tier cast
-	static public const BEE:EnemyEnum =       new EnemyEnum(new ActorAttrs(  40, 5,   0.05, 0,   0, 33), 0, "BEE", 5);
-	static public const GREENK:EnemyEnum =    new EnemyEnum(new ActorAttrs(  20, 1.5, 0.1,  0,   0, 10), 3, "GREENK", 5);
-	static public const MOTH:EnemyEnum =      new EnemyEnum(new ActorAttrs(  30, 3,   0.1,  0,   0, 15), 21, "MOTH", 10);
-	static public const OSPREY:EnemyEnum =    new EnemyEnum(new ActorAttrs( 100, 1.5, 0.15, 0,   0, 33), 9, "OSPREY", 15);
-	static public const BAT:EnemyEnum =       new EnemyEnum(new ActorAttrs( 100, 2,   0.05, 0,   0, 20), 6, "BAT", 15);
-
+	static public const BEE:EnemyEnum =       new PlaneEnemyEnum(new ActorAttrs(  40, 5,   0.05, 0,   0, 33), 0, "BEE", 5);
+	static public const GREENK:EnemyEnum =    new PlaneEnemyEnum(new ActorAttrs(  20, 1.5, 0.1,  0,   0, 10), 3, "GREENK", 5);
+	static public const MOTH:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs(  30, 3,   0.1,  0,   0, 15), 21, "MOTH", 10);
+	static public const OSPREY:EnemyEnum =    new PlaneEnemyEnum(new ActorAttrs( 100, 1.5, 0.15, 0,   0, 33), 9, "OSPREY", 15);
+	static public const BAT:EnemyEnum =       new PlaneEnemyEnum(new ActorAttrs( 100, 2,   0.05, 0,   0, 20), 6, "BAT", 15);
+	
 	// second tier - level 6
-	static public const GHOST:EnemyEnum =     new EnemyEnum(new ActorAttrs(  65, 3,   0.05, 0.1, 0, 50), 18, "GHOST", 25);
-	static public const GREENK2:EnemyEnum =   new EnemyEnum(new ActorAttrs(  80, 1.5, 0.1,  0,   0, 50),  4, "GREENK2", 15);
-	static public const CYGNUS:EnemyEnum =    new EnemyEnum(new ActorAttrs( 125, 6,   0.25, 0.05,0, 66), 15, "CYGNUS", 30);
-	static public const ROCINANTE:EnemyEnum = new EnemyEnum(new ActorAttrs( 180, 3,   0.25, 0.05,0, 66), 28, "ROCINANTE", 35);
-
+	static public const GHOST:EnemyEnum =     new PlaneEnemyEnum(new ActorAttrs(  65, 3,   0.05, 0.1, 0, 50), 18, "GHOST", 25);
+	static public const GREENK2:EnemyEnum =   new PlaneEnemyEnum(new ActorAttrs(  80, 1.5, 0.1,  0,   0, 50),  4, "GREENK2", 15);
+	static public const CYGNUS:EnemyEnum =    new PlaneEnemyEnum(new ActorAttrs( 125, 6,   0.25, 0.05,0, 66), 15, "CYGNUS", 30);
+	static public const ROCINANTE:EnemyEnum = new PlaneEnemyEnum(new ActorAttrs( 180, 3,   0.25, 0.05,0, 66), 28, "ROCINANTE", 35);
+	
 	// next tier - level 9
-	static public const BEE2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 120, 5,   0.05, 0.02,0, 50), 1,  "BEE2", 50);
-	static public const FLY:EnemyEnum =       new EnemyEnum(new ActorAttrs( 180, 1.5, 0.2,  0,   0, 75), 12, "FLY", 20); 
-	static public const MOTH2:EnemyEnum =     new EnemyEnum(new ActorAttrs( 180, 4,   0.1,  0,   0, 66), 22, "MOTH2", 45);
-	static public const BAT2:EnemyEnum =      new EnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2", 65);
-	static public const BLUEK:EnemyEnum =     new EnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0, 75), 5,  "BLUEK", 30);
-
-	static public const CYGNUS2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0,125), 16, "CYGNUS2", 100);
-
+	static public const BEE2:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs( 120, 5,   0.05, 0.02,0, 50), 1,  "BEE2", 50);
+	static public const FLY:EnemyEnum =       new PlaneEnemyEnum(new ActorAttrs( 180, 1.5, 0.2,  0,   0, 75), 12, "FLY", 20); 
+	static public const MOTH2:EnemyEnum =     new PlaneEnemyEnum(new ActorAttrs( 180, 4,   0.1,  0,   0, 66), 22, "MOTH2", 45);
+	static public const BAT2:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs( 300, 2,   0.05, 0,   0, 20), 7,  "BAT2", 65);
+	static public const BLUEK:EnemyEnum =     new PlaneEnemyEnum(new ActorAttrs( 250, 1.5, 0.1,  0,   0, 75), 5,  "BLUEK", 30);
+	
+	static public const CYGNUS2:EnemyEnum =   new PlaneEnemyEnum(new ActorAttrs( 400, 6,   0.25, 0.05,0,125), 16, "CYGNUS2", 100);
+	
 	// tier level 14 -> final
-	static public const OSPREY2:EnemyEnum =   new EnemyEnum(new ActorAttrs( 400, 1.5, 0.15, 0.05,0,100), 10, "OSPREY2", 100);
-	static public const ROCINANTE2:EnemyEnum =new EnemyEnum(new ActorAttrs( 600, 3,   0.25, 0.05,0,125), 29, "ROCINANTE2", 125);
-	static public const BAT3:EnemyEnum =      new EnemyEnum(new ActorAttrs( 600, 2,   0.05, 0,   0, 20),  8, "BAT3", 125);
-	static public const GHOST2:EnemyEnum =    new EnemyEnum(new ActorAttrs( 500, 3,   0.05, 0.1, 0, 50), 19, "GHOST2", 110);
-	static public const PIKE:EnemyEnum =      new EnemyEnum(new ActorAttrs( 500, 2,   0.1,  0,   0, 100),32, "PIKE", 80);
-	static public const CYGNUS3:EnemyEnum =   new EnemyEnum(new ActorAttrs( 800, 6,   0.25, 0.05,0,125), 17, "CYGNUS3", 150);
+	static public const OSPREY2:EnemyEnum =   new PlaneEnemyEnum(new ActorAttrs( 400, 1.5, 0.15, 0.05,0,100), 10, "OSPREY2", 100);
+	static public const ROCINANTE2:EnemyEnum =new PlaneEnemyEnum(new ActorAttrs( 600, 3,   0.25, 0.05,0,125), 29, "ROCINANTE2", 125);
+	static public const BAT3:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs( 600, 2,   0.05, 0,   0, 20),  8, "BAT3", 125);
+	static public const GHOST2:EnemyEnum =    new PlaneEnemyEnum(new ActorAttrs( 500, 3,   0.05, 0.1, 0, 50), 19, "GHOST2", 110);
+	static public const PIKE:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs( 500, 2,   0.1,  0,   0, 100),32, "PIKE", 80);
+	static public const CYGNUS3:EnemyEnum =   new PlaneEnemyEnum(new ActorAttrs( 800, 6,   0.25, 0.05,0,125), 17, "CYGNUS3", 150);
 	
 	// final tier cast
-	static public const BEE3:EnemyEnum =      new EnemyEnum(new ActorAttrs( 500, 5,   0.05, 0,   0, 100), 2,  "BEE3", 400);
-	static public const FLY3:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 1.5, 0.1,  0,   0, 100), 14, "FLY3", 200);
-	static public const ESOX:EnemyEnum =      new EnemyEnum(new ActorAttrs(1000, 2,   0.1,  0,   0, 100), 33, "ESOX", 400);
-	static public const STEALTH:EnemyEnum =   new EnemyEnum(new ActorAttrs(1000, 4,   0.1,  0,   0, 150), 26, "STEALTH", 500);
-	static public const GHOST3:EnemyEnum =    new EnemyEnum(new ActorAttrs(1000, 3,   0.05, 0.1, 0, 150), 20, "GHOST3", 400);
-	static public const OSPREY3:EnemyEnum =   new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3", 600);
-	static public const OSPREY3_CLOAK:EnemyEnum 
-											= new EnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3_C", 800);
+	static public const BEE3:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs( 500, 5,   0.05, 0,   0, 100), 2,  "BEE3", 400);
+	static public const FLY3:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs(1000, 1.5, 0.1,  0,   0, 100), 14, "FLY3", 200);
+	static public const ESOX:EnemyEnum =      new PlaneEnemyEnum(new ActorAttrs(1000, 2,   0.1,  0,   0, 100), 33, "ESOX", 400);
+	static public const STEALTH:EnemyEnum =   new PlaneEnemyEnum(new ActorAttrs(1000, 4,   0.1,  0,   0, 150), 26, "STEALTH", 500);
+	static public const GHOST3:EnemyEnum =    new PlaneEnemyEnum(new ActorAttrs(1000, 3,   0.05, 0.1, 0, 150), 20, "GHOST3", 400);
+	static public const OSPREY3:EnemyEnum =   new PlaneEnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3", 600);
+	static public const OSPREY3_CLOAK:EnemyEnum = new PlaneEnemyEnum(new ActorAttrs(2000, 2,   1,    0,   0, 200), 11, "OSPREY3_C", 800);
 
-	// enemy weapons //////////////////////////////////////////////////////////
+	// weapons //////////////////////////////////////////////////////////
 	static private const BEE_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 20, 0, -10, 0, 1);
 	static private const MOTH_BULLETSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.BULLET, 10, 0, -20, 0, 1);
 	static private const OSPREY_LASERSOURCE:Array =
@@ -185,7 +191,6 @@ final class EnemyEnum
 	static private const BAT_ROCKETSOURCE:Array = 
 		[	new AmmoFireSource(AmmoType.ROCKET, 20, -20, -10, 0, 3),
 			new AmmoFireSource(AmmoType.ROCKET, 20,  20, -10, 0, 3)];
-
 	static private const GHOST_SOURCE:Array = 
 		[	new AmmoFireSource(AmmoType.LASER, 15, -10, -5),
 			new AmmoFireSource(AmmoType.LASER, 15,  10, -5)];
@@ -195,7 +200,6 @@ final class EnemyEnum
 	static private const ROCINANTE_FUSION:Array = 
 		[	new AmmoFireSource(AmmoType.FUSION, 40, -25, 0, 0),
 			new AmmoFireSource(AmmoType.FUSION, 40,  25, 0, 0)];
-
 	// level 9
 	static private const MOTH2_BULLETSOURCE:Array = 
 		[	new AmmoFireSource(AmmoType.BULLET, 40, 0, -20, 5, 2),
@@ -209,14 +213,12 @@ final class EnemyEnum
 			new AmmoFireSource(AmmoType.ROCKET, 40,  20,   5, 0, 3),
 			new AmmoFireSource(AmmoType.ROCKET, 40,  20, -10, 0, 3)];
 	static private const BLUEK_FUSIONSOURCE:AmmoFireSource = new AmmoFireSource(AmmoType.FUSION, 66, 0, -15);
-
 	static private const CYGNUS2_LASERSOURCE:Array = 
 		[	new AmmoFireSource(AmmoType.LASER, 40, -25,  0, 0, 0),
 			new AmmoFireSource(AmmoType.LASER, 40,  25,  0, 0, 0),
 			new AmmoFireSource(AmmoType.LASER, 40, -19, -5, 0, 0),
 			new AmmoFireSource(AmmoType.LASER, 40,  19, -5, 0, 0)
 		];
-
 	// level 14 ///////////////////////////////////////////////////////////////////////////
 	static private const OSPREY2_SOURCE:Array =
 		[	new AmmoFireSource(AmmoType.LASER, 33, -37, -32, 0, 5),
@@ -246,7 +248,6 @@ final class EnemyEnum
 			new AmmoFireSource(AmmoType.LASER, 20,  19, -5, 0, 3),
 			new AmmoFireSource(AmmoType.LASER, 20,  24, 0, 0, 3),
 			new AmmoFireSource(AmmoType.LASER, 20,  30, 5, 0, 3)];
-
 	// top tier
 	static private const BEE3_BULLETSOURCE:Array =
 		[	new AmmoFireSource(AmmoType.BULLET, 30, -15, 0, -10, 4), 
@@ -282,23 +283,28 @@ final class EnemyEnum
 			new AmmoFireSource(AmmoType.LASER, 40,  23, -35, 0, 4),
 			new AmmoFireSource(AmmoType.LASER, 40,  43, -35, 0, 4),
 			new AmmoFireSource(AmmoType.LASER, 40,  63, -35, 0, 4)];
-	public function create():Actor
+	
+	public function PlaneEnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String, value:uint = 5)
+	{
+		super(attrs, assetIndex, name, value);
+	}
+	protected override function create_impl():Actor
 	{
 		var a:Actor = new Actor(ActorAssetManager.createShip(assetIndex), attrs);
 		var tmp:IBehavior;
 		switch (this) {  
-			//KAI: omg i've never seen anything like this, lol, alternative to creating classes
-			// how about a map of functors or function objects instead?
-		case EnemyEnum.BEE:
+		//KAI: omg i've never seen anything like this, lol, alternative to creating classes
+		// how about anonymous functions instead?
+		case BEE:
 			a.behavior = attackAndFlee(BEE_BULLETSOURCE, 3000, 1000, 1000);
 			break;
-		case EnemyEnum.GREENK:
+		case GREENK:
 			a.behavior = HOME;
 			break;
-		case EnemyEnum.MOTH:
+		case MOTH:
 			a.behavior = attackAndFlee(MOTH_BULLETSOURCE, 5000);
 			break;
-		case EnemyEnum.OSPREY:
+		case OSPREY:
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY_LASERSOURCE, 1000, 3000),
 				new AlternatingBehavior( 
@@ -308,7 +314,7 @@ final class EnemyEnum
 				)
 			);
 			break;
-		case EnemyEnum.BAT:
+		case BAT:
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[0], 2000, 4000),
 				BehaviorFactory.createAutofire(BAT_ROCKETSOURCE[1], 2000, 4000),
@@ -318,19 +324,19 @@ final class EnemyEnum
 					BehaviorFactory.strafe)
 			);
 			break;
-		case EnemyEnum.GREENK2:
+		case GREENK2:
 			a.behavior = HOME;
 			break;
-		case EnemyEnum.GHOST:
+		case GHOST:
 			a.behavior = new AlternatingBehavior( 
-					1500, 4500,
-					HOME,
-					BehaviorFactory.strafe,
-					new CompositeBehavior(BehaviorFactory.facePlayer, BehaviorFactory.speedDecay,
-						                  BehaviorFactory.createAutofire(GHOST_SOURCE, 1000, 1000))
+				1500, 4500,
+				HOME,
+				BehaviorFactory.strafe,
+				new CompositeBehavior(BehaviorFactory.facePlayer, BehaviorFactory.speedDecay,
+					BehaviorFactory.createAutofire(GHOST_SOURCE, 1000, 1000))
 			);
 			break;
-		case EnemyEnum.CYGNUS:
+		case CYGNUS:
 			a.behavior = new AlternatingBehavior(
 				2000, 6000,
 				new CompositeBehavior(
@@ -339,7 +345,7 @@ final class EnemyEnum
 				BehaviorFactory.facePlayer
 			);
 			break;
-		case EnemyEnum.ROCINANTE:
+		case ROCINANTE:
 			a.behavior = new AlternatingBehavior(
 				1000, 3000,
 				FLEE,
@@ -350,16 +356,16 @@ final class EnemyEnum
 			break;
 		
 		////////// level 9 ///////////////////////////////
-		case EnemyEnum.FLY:
+		case FLY:
 			a.behavior = HOME;
 			break;
-		case EnemyEnum.MOTH2:
+		case MOTH2:
 			a.behavior = attackAndFlee(MOTH2_BULLETSOURCE, 2000);
 			break;
-		case EnemyEnum.BLUEK:
+		case BLUEK:
 			a.behavior = new CompositeBehavior(HOME, BehaviorFactory.createAutofire(BLUEK_FUSIONSOURCE, 1000, 10000));
 			break;
-		case EnemyEnum.BAT2:
+		case BAT2:
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(BAT2_ROCKETSOURCE[0], 2000, 4000),
 				BehaviorFactory.createAutofire(BAT2_ROCKETSOURCE[1], 2000, 4000),
@@ -374,7 +380,7 @@ final class EnemyEnum
 				)
 			);
 			break;
-		case EnemyEnum.BEE2:
+		case BEE2:
 			a.behavior = new AlternatingBehavior(
 				1500, 4500,
 				HOME,
@@ -382,7 +388,7 @@ final class EnemyEnum
 				FLEE
 			);
 			break;
-		case EnemyEnum.CYGNUS2:
+		case CYGNUS2:
 			a.behavior = new AlternatingBehavior(
 				2000, 6000,
 				new CompositeBehavior(
@@ -392,18 +398,18 @@ final class EnemyEnum
 			);
 			break;
 		///////////// level 14 //////////////////////
-		case EnemyEnum.OSPREY2:
+		case OSPREY2:
 			tmp = BehaviorFactory.createAutofire(OSPREY2_SOURCE, 1000, 1000);
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.facePlayer,
 				new AlternatingBehavior(
-						1000,1500,
-						new CompositeBehavior(BehaviorFactory.speedDecay, tmp),
-						HOME
+					1000,1500,
+					new CompositeBehavior(BehaviorFactory.speedDecay, tmp),
+					HOME
 				)
 			);
 			break;
-		case EnemyEnum.ROCINANTE2:
+		case ROCINANTE2:
 			a.behavior = new AlternatingBehavior(
 				1000, 3000,
 				FLEE,
@@ -412,7 +418,7 @@ final class EnemyEnum
 					BehaviorFactory.createAutofire(ROCINANTE_FUSION, 1000, 4000))
 			);
 			break;
-		case EnemyEnum.BAT3:
+		case BAT3:
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(BAT3_BULLETSOURCE[0], 2000, 4000),
 				BehaviorFactory.createAutofire(BAT3_BULLETSOURCE[1], 2000, 4000),
@@ -427,13 +433,13 @@ final class EnemyEnum
 				)
 			);
 			break;
-		case EnemyEnum.GHOST2:
+		case GHOST2:
 			a.behavior = new CompositeBehavior( 
 				BehaviorFactory.strafe,
 				BehaviorFactory.createAutofire(GHOST2_SOURCE, 1000, 4000)
 			);
 			break;
-		case EnemyEnum.PIKE:
+		case PIKE:
 			a.behavior = new CompositeBehavior( 
 				new AlternatingBehavior(
 					1000, 2500,
@@ -445,7 +451,7 @@ final class EnemyEnum
 				BehaviorFactory.createAutofire(PIKE_SOURCE, 1000, 15000)
 			)
 			break;
-		case EnemyEnum.CYGNUS3:
+		case CYGNUS3:
 			a.behavior = new AlternatingBehavior(
 				2000, 6000,
 				new CompositeBehavior(
@@ -455,20 +461,20 @@ final class EnemyEnum
 			);
 			break;
 		///////////// final tier ////////////////////
-		case EnemyEnum.BEE3:
+		case BEE3:
 			a.behavior = attackAndFlee(BEE3_BULLETSOURCE, 3000, 1000, 1000);
 			break;
-		case EnemyEnum.FLY3:
+		case FLY3:
 			a.behavior = new CompositeBehavior(HOME, BehaviorFactory.createAutofire(FLY3_ROCKETSOURCE, 5000, 10000));
 			break;
-		case EnemyEnum.ESOX:
+		case ESOX:
 			a.behavior = new AlternatingBehavior(
 				1000, 8000,
 				new CompositeBehavior(HOME, BehaviorFactory.createAutofire((Math.random() > .5) ? ESOX_SOURCE : ESOX_SOURCE2, 500, 10000)),
 				FLEEFACING
 			);
 			break;
-		case EnemyEnum.STEALTH:
+		case STEALTH:
 			a.behavior = new AlternatingBehavior(
 				1000, 8000,
 				new CompositeBehavior(BehaviorFactory.fadeIn, BehaviorFactory.strafe,
@@ -481,7 +487,7 @@ final class EnemyEnum
 				new CompositeBehavior(BehaviorFactory.fade, FLEEFACING)
 			);
 			break;
-		case EnemyEnum.GHOST3:
+		case GHOST3:
 			a.behavior = new AlternatingBehavior( 
 				1500, 4500,
 				HOME,
@@ -490,7 +496,7 @@ final class EnemyEnum
 					BehaviorFactory.createAutofire(GHOST3_SOURCE, 1000, 1000))
 			);
 			break;
-		case EnemyEnum.OSPREY3:
+		case OSPREY3:
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY3_SOURCE, 1000, 2000),
 				new AlternatingBehavior( 
@@ -500,7 +506,7 @@ final class EnemyEnum
 				)
 			);
 			break;
-		case EnemyEnum.OSPREY3_CLOAK:
+		case OSPREY3_CLOAK:
 			a.behavior = new CompositeBehavior(
 				BehaviorFactory.createAutofire(OSPREY3_SOURCE, 1000, 4000),
 				BehaviorFactory.fade,
@@ -514,6 +520,33 @@ final class EnemyEnum
 			break;
 		}
 		return a;
+	}
+}
+final class TankEnemyEnum extends EnemyEnum
+{
+	// first tier cast
+	static public const TANK1:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 500, 1,   0.01, 0,   0,100), 0, "TANK1", 100);
+	// second tier - level 6
+	// next tier - level 9
+	// tier level 14 -> final
+	// final tier cast
+	public function TankEnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String, value:uint = 5)
+	{
+		super(attrs, assetIndex, name, value);
+	}
+	protected override function create_impl():Actor
+	{
+		var retval:Actor;
+		var vehicle:GameScriptPlayerVehicle;
+		switch(this) {
+		case TANK1:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(0), TankPartData.getTurret(0));
+			retval = vehicle.actor;
+			retval.behavior = HOME;
+			break;
+		}
+		retval.healthMeterEnabled = true; // because it's from the player factory - this needs refactoring
+		return retval;
 	}
 }
 final class Utils
