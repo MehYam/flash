@@ -60,7 +60,7 @@ package scripts
 				s_levels = { planes: parseLevels(Levels.planeLevels), tanks: parseLevels(Levels.tankLevels) };
 			}
 			
-			const tank:Boolean = (i%2) != 0;
+			const tank:Boolean = (i%2) == 0;
 			const level:uint = i/2;
 			const waves:Array = tank ? s_levels.tanks[level] : s_levels.planes[level]; 
 			

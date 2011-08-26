@@ -70,7 +70,7 @@ package ui.dialogs
 					}
 					else if (level <= UserData.instance.levelsBeaten)
 					{
-						addLevelButtonIcon(btn, (level % 2) != 0);
+						addLevelButtonIcon(btn, (level % 2) == 0);
 						if (level < UserData.instance.levelsBeaten)
 						{
 							addLevelButtonCheck(btn);

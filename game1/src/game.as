@@ -86,8 +86,8 @@ package
 			_hudLayer = new Sprite;
 			parent.addChild(_hudLayer);
 
-//			toTitleScreen();
-			startLevel(0);
+			toTitleScreen();
+//			startLevel(0);
 		}
 		private var _title:TitleScreen;
 		private function toTitleScreen(fadeIn:Boolean = false):void
