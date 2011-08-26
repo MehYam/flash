@@ -189,6 +189,14 @@ package ui.dialogs
 			addChild(garage);
 			Util.listen(garage, MouseEvent.CLICK, onTankGarage);
 
+			// hack to make rollovers on these buttons work
+			hangar.name = "1";
+			garage.name = "0";
+			Util.listen(hangar, MouseEvent.ROLL_OVER, onRollOver);
+			Util.listen(garage, MouseEvent.ROLL_OVER, onRollOver);
+			Util.listen(hangar, MouseEvent.ROLL_OUT, onRollOut);
+			Util.listen(garage, MouseEvent.ROLL_OUT, onRollOut);
+			
 			_vehicleParent = new Sprite;
 			_vehicleParent.x = hangar.x + hangar.width + 5;
 			_vehicleParent.y = (garage.y + garage.height + hangar.y)/2;
@@ -198,7 +206,7 @@ package ui.dialogs
 			_arrow.scaleX = 0.3;
 			_arrow.scaleY = 1;
 			_arrow.rotation = 270;
-//			_arrow.alpha = 0.8;
+			_arrow.visible = false;
 
 			var goldReportParent:Sprite = new Sprite;
 

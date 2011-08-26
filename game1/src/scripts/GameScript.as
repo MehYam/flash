@@ -33,7 +33,7 @@ package scripts
 				}
 				else
 				{
-					var wave:Array = []
+					var wave:Array = [];
 					var spawns:Array = line.split(";");
 					for each (var spawn:String in spawns)
 					{
@@ -690,9 +690,16 @@ final class TankEnemyEnum extends EnemyEnum
 	// first tier cast
 	static public const TANK1:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 200, 1,   0.01, 0,   0,100), 0, "TANK1", 100);
 	// second tier - level 6
+	static public const TANK2:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 300, 1,   0.01, 0,   0,100), 0, "TANK2", 100);
 	// next tier - level 9
+	static public const TANK3:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 500, 1,   0.01, 0,   0,100), 0, "TANK3", 100);
 	// tier level 14 -> final
-	// final tier cast
+	static public const TANK4:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 600, 1,   0.01, 0,   0,100), 0, "TANK4", 100);
+	// final tier cast - these are bosses
+	static public const TANK5:EnemyEnum =     new TankEnemyEnum(new ActorAttrs(1000, 1,   0.01, 0,   0,100), 0, "TANK5", 100);
+	static public const TANK6:EnemyEnum =     new TankEnemyEnum(new ActorAttrs(4000, 1,   0.01, 0,   0,100), 0, "TANK6", 100);
+	static public const TANK7:EnemyEnum =     new TankEnemyEnum(new ActorAttrs(5000, 1,   0.01, 0,   0,100), 0, "TANK7", 100);
+	
 	public function TankEnemyEnum(attrs:ActorAttrs, assetIndex:uint, name:String, value:uint = 5)
 	{
 		super(attrs, assetIndex, name, value);
@@ -704,10 +711,28 @@ final class TankEnemyEnum extends EnemyEnum
 		switch(this) {
 		case TANK1:
 			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(0), TankPartData.getTurret(0));
-			retval = vehicle.actor;
-			retval.behavior = new TankPatrolBehavior(vehicle.weapon);
+			break;
+		case TANK2:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(1), TankPartData.getTurret(1));
+			break;
+		case TANK3:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(1), TankPartData.getTurret(0));
+			break;
+		case TANK4:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(1), TankPartData.getTurret(3));
+			break;
+		case TANK5:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(2), TankPartData.getTurret(3));
+			break;
+		case TANK6:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(3), TankPartData.getTurret(3));
+			break;
+		case TANK7:
+			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(4), TankPartData.getTurret(4));
 			break;
 		}
+		retval = vehicle.actor;
+		retval.behavior = new TankPatrolBehavior(vehicle.weapon);
 		retval.healthMeterEnabled = true; // because it's from the player factory - this needs refactoring
 		return retval;
 	}
