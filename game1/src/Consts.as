@@ -11,7 +11,10 @@ package
 		{
 			return frames * 1000 / FRAMERATE;
 		}
-		
+		static public function isTankLevel(level:uint):Boolean
+		{
+			return (level % 2) == 0;
+		}
 		static public const CREDIT_FIELD_COLOR:uint = 0xffcc33;
 		
 		static public const LEVELS:uint = 35;

@@ -6,7 +6,9 @@ package ui.dialogs
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
+	import flash.filters.BitmapFilter;
 	import flash.filters.DropShadowFilter;
+	import flash.filters.GlowFilter;
 	import flash.geom.Rectangle;
 	import flash.text.TextFormat;
 	
@@ -17,6 +19,7 @@ package ui.dialogs
 	import karnold.utils.Util;
 	
 	import scripts.TankActor;
+	
 	import ui.GameButton;
 	import ui.GlobalUIEvent;
 	import ui.UIUtil;
@@ -70,13 +73,15 @@ package ui.dialogs
 					}
 					else if (level <= UserData.instance.levelsBeaten)
 					{
-						addLevelButtonIcon(btn, (level % 2) == 0);
+						addLevelButtonIcon(btn, Consts.isTankLevel(level));
 						if (level < UserData.instance.levelsBeaten)
 						{
 							addLevelButtonCheck(btn);
 						}
 					}
 					Util.listen(btn, MouseEvent.CLICK, onLevel);
+					Util.listen(btn, MouseEvent.ROLL_OUT, onRollOut);
+					Util.listen(btn, MouseEvent.ROLL_OVER, onRollOver);
 					
 					addChild(btn);
 					_buttons.push(btn);
@@ -111,6 +116,7 @@ package ui.dialogs
 			
 			tank.scaleX = tank.scaleY = 0.75;
 			_vehicleParent.addChild(tank);
+			_vehicleParent.addChild(_arrow);
 		}
 		static private function addLevelButtonIcon(btn:DisplayObjectContainer, tank:Boolean):void
 		{
@@ -158,13 +164,14 @@ package ui.dialogs
 				var icon:DisplayObject = btn.getChildByName(ICON_NAME);
 				if (!icon)
 				{
-					addLevelButtonIcon(btn, (i % 2) != 0);
+					addLevelButtonIcon(btn, Consts.isTankLevel(i));
 				}
 			}
 		}
 		private var _gold:ShadowTextField;
-		private var _goldParent:Sprite;
-		private var _vehicleParent:Sprite;
+		private var _goldParent:DisplayObjectContainer;
+		private var _vehicleParent:DisplayObjectContainer;
+		private var _arrow:DisplayObject;
 		private function addBottomInterface():void
 		{
 			var hangar:DisplayObject = GameButton.create("Plane Hangar", true, 20, 1);
@@ -186,6 +193,12 @@ package ui.dialogs
 			_vehicleParent.x = hangar.x + hangar.width + 5;
 			_vehicleParent.y = (garage.y + garage.height + hangar.y)/2;
 			addChild(_vehicleParent);
+			
+			_arrow = AssetManager.instance.arrow();
+			_arrow.scaleX = 0.3;
+			_arrow.scaleY = 1;
+			_arrow.rotation = 270;
+//			_arrow.alpha = 0.8;
 
 			var goldReportParent:Sprite = new Sprite;
 
@@ -257,6 +270,18 @@ package ui.dialogs
 
 			_selection = parseInt(DisplayObject(e.currentTarget).name);
 			dispatchEvent(new Event(Event.SELECT));	
+		}
+		private function onRollOver(e:Event):void
+		{
+			const selection:uint = parseInt(DisplayObject(e.currentTarget).name);
+			const child:DisplayObject = _vehicleParent.getChildAt(1 - selection % 2);
+			_arrow.visible = true;
+			_arrow.x = child.x;
+			_arrow.y = child.y + _arrow.height;
+		}
+		private function onRollOut(e:Event):void
+		{
+			_arrow.visible = false;
 		}
 		private function onQuit(e:Event):void
 		{
