@@ -103,6 +103,7 @@ import scripts.IGameScript;
 import scripts.IPenetratingAmmo;
 import scripts.ShieldActor;
 import scripts.SmallExplosionActor;
+import scripts.TankActor;
 
 class EnemyEnum
 {
@@ -522,6 +523,148 @@ final class PlaneEnemyEnum extends EnemyEnum
 		return a;
 	}
 }
+
+final class RotateToBehavior implements IBehavior, ICompletable
+{
+	private var _speed:Number = 1;
+	private var _point:Point;
+	private var _complete:Boolean;
+	public function set point(p:Point):void
+	{
+		_point = p;
+		_complete = false;
+	}
+	public function set speed(s:Number):void
+	{
+		_speed = s;
+	}
+	public function get complete():Boolean
+	{
+		return _complete;
+	}
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		const diff:Number = Utils.getRotationDiff(actor.worldPos, actor.displayObject.rotation, _point); 
+		if (diff > 0.01)
+		{
+			actor.displayObject.rotation += _speed; 
+		}
+		else if (diff < -0.01)
+		{
+			actor.displayObject.rotation -= _speed; 
+		}
+		else
+		{
+			_complete = true;
+		}
+	}
+}
+final class HomeBehavior implements IBehavior, ICompletable
+{
+	private var _pointDirty:Boolean = true;
+	private var _point:Point;
+	private var _complete:Boolean;
+	public function set point(p:Point):void
+	{
+		_point = p;
+		_pointDirty = true;
+		_complete = false;
+	}
+	public function get complete():Boolean
+	{
+		return _complete;
+	}
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		if (_pointDirty)
+		{
+			const radians:Number = MathUtil.getRadiansBetweenPoints(actor.worldPos, _point);
+			actor.speed.x = -Math.sin(radians) * actor.attrs.MAX_SPEED;
+			actor.speed.y = Math.cos(radians) * actor.attrs.MAX_SPEED;
+			
+			_pointDirty = false;  // not quite right - this needs to be set to true if *any* of the relevant data changes, actor worldpos, etc
+
+			BehaviorFactory.faceForward.onFrame(game, actor);
+		}
+		if (MathUtil.distanceBetweenPoints(actor.worldPos, _point) < 10)
+		{
+			actor.speed.x = 0;
+			actor.speed.y = 0;
+			_complete = true;
+		}
+	}	
+}
+final class PatrolBehavior implements IBehavior
+{
+	private var _state:uint = 0;
+	private var _destination:Point;
+	private var _last:uint = 0;
+	
+	private var _rotateTo:RotateToBehavior = new RotateToBehavior;
+	private var _home:HomeBehavior = new HomeBehavior;
+	private function pickNew(bounds:Bounds):void
+	{
+		_destination.x = MathUtil.random(bounds.left, bounds.right);
+		_destination.y = MathUtil.random(bounds.top, bounds.bottom);
+		_rotateTo.point = _destination;
+		_home.point = _destination;
+	}
+	public function onFrame(game:IGame, actor:Actor):void
+	{
+		//////////////////////////
+		// 1. patrol
+		if (!_destination)
+		{
+			_destination = new Point;
+			_rotateTo.speed = 0.5;
+
+			pickNew(game.worldBounds);
+			
+			// immediately face player
+			BehaviorFactory.facePlayer.onFrame(game, actor);
+		}
+		if (!_rotateTo.complete)
+		{
+			_rotateTo.onFrame(game, actor);
+		}
+		else if (!_home.complete)
+		{
+			_home.onFrame(game, actor);
+		}
+		else
+		{
+			pickNew(game.worldBounds);
+		}
+
+		///////////////////////////////
+		// 2. Aim and fire
+if (actor.health != actor.attrs.MAX_HEALTH) {actor.speed.x = 0; actor.speed.y = 0;}
+		
+		
+		var tank:TankActor = actor as TankActor;
+		if (tank)
+		{
+			const turretRadians:Number = MathUtil.degreesToRadians(tank.turretRotation); 
+			const goalTurretRadians:Number = MathUtil.getRadiansBetweenPoints(game.player.worldPos, actor.worldPos);
+
+			const diff:Number = MathUtil.diffRadians(turretRadians, goalTurretRadians);
+			if (diff > 0.1)
+			{
+				tank.turretRotation += 1; 
+			}
+			else if (diff < 0.1)
+			{
+				tank.turretRotation -= 1; 
+			}
+			if (getTimer() - _last > 2000)
+			{
+//				trace("delta", deltaAngle, "current, goal", turretAngle, goalTurretAngle);
+//				_last = getTimer();
+			}
+		}
+	}
+}
+
 final class TankEnemyEnum extends EnemyEnum
 {
 	// first tier cast
@@ -542,7 +685,7 @@ final class TankEnemyEnum extends EnemyEnum
 		case TANK1:
 			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(0), TankPartData.getTurret(0));
 			retval = vehicle.actor;
-			retval.behavior = HOME;
+			retval.behavior = new PatrolBehavior;
 			break;
 		}
 		retval.healthMeterEnabled = true; // because it's from the player factory - this needs refactoring
@@ -576,6 +719,12 @@ final class Utils
 		placeAtRandomEdge(a, game.worldBounds);
 		game.addEnemy(a);
 		return a;
+	}
+	static public function getRotationDiff(from:Point, currentDegrees:Number, to:Point):Number
+	{
+		const radians:Number = MathUtil.degreesToRadians(currentDegrees); 
+		const goalRadians:Number = MathUtil.getRadiansBetweenPoints(to, from);
+		return MathUtil.diffRadians(radians, goalRadians);
 	}
 }
 

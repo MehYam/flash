@@ -45,6 +45,15 @@ package scripts
 		{
 			return _turret.rotation + displayObject.rotation;
 		}
+		// useful because it's more realistic to rotate a turret in terms of its hull when swivelling it
+		public function set turretRotationRelativeToHull(degrees:Number):void
+		{
+			_turret.rotation = degrees;
+		}
+		public function get turretRotationRelativeToHull():Number
+		{
+			return _turret.rotation;
+		}
 		public override function getBaseFiringAngle(source:AmmoFireSource):Number
 		{
 			return source.turret ? turretRotation : displayObject.rotation;

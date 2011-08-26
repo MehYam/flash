@@ -20,6 +20,7 @@ package karnold.utils
 			const shift:Number = Math.pow(10, decimalPlaces);
 			return Math.round(num * shift) / shift;
 		}
+		// angles and trig
 		static private const RADIANS_TO_DEGREES:Number = 180/Math.PI;
 		static private const DEGREES_TO_RADIANS:Number = Math.PI/180;
 		static public function getDegreesRotation(deltaX:Number, deltaY:Number):Number
@@ -30,9 +31,25 @@ package karnold.utils
 		{
 			return Math.atan2(deltaX, -deltaY);
 		}
+		static public function getDegreesBetweenPoints(a:Point, b:Point):Number
+		{
+			const deltaX:Number = a.x - b.x;
+			const deltaY:Number = a.y - b.y;
+			return getDegreesRotation(deltaX, deltaY);
+		}
+		static public function getRadiansBetweenPoints(a:Point, b:Point):Number
+		{
+			const deltaX:Number = a.x - b.x;
+			const deltaY:Number = a.y - b.y;
+			return getRadiansRotation(deltaX, deltaY);
+		}
 		static public function degreesToRadians(degrees:Number):Number
 		{
 			return degrees * DEGREES_TO_RADIANS;
+		}
+		static public function radiansToDegrees(radians:Number):Number
+		{
+			return radians * RADIANS_TO_DEGREES;
 		}
 		static public function rotatePoint(origin:Point, point:Point, degrees:Number):void
 		{
@@ -42,6 +59,12 @@ package karnold.utils
 			
 			point.x = Math.cos(radians)*deltaX - Math.sin(radians)*deltaY + origin.x;
 			point.y = Math.sin(radians)*deltaX + Math.cos(radians)*deltaY + origin.y;
+		}
+		// returns a signed difference between two angles useful for evolving one to the other
+		static public function diffRadians(source:Number, target:Number):Number
+		{
+			const rawDiff:Number = target - source;
+			return Math.atan2(Math.sin(rawDiff), Math.cos(rawDiff));
 		}
 		static public function distanceBetweenPoints(a:Point, b:Point):Number
 		{

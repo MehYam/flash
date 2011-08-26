@@ -231,9 +231,7 @@ final class FacePlayerBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const deltaX:Number = game.player.worldPos.x - actor.worldPos.x;
-		const deltaY:Number = game.player.worldPos.y - actor.worldPos.y;
-		actor.displayObject.rotation = MathUtil.getDegreesRotation(deltaX, deltaY);
+		actor.displayObject.rotation = MathUtil.getDegreesBetweenPoints(game.player.worldPos, actor.worldPos); 
 	}
 }
 
@@ -257,9 +255,7 @@ final class GravityPush implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
-		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansBetweenPoints(actor.worldPos, game.player.worldPos);
 		
 		const accelX:Number = Math.sin(radians) * actor.attrs.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * actor.attrs.ACCELERATION;
@@ -276,9 +272,7 @@ final class GravityPullBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
-		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansBetweenPoints(actor.worldPos, game.player.worldPos);
 		
 		const accelX:Number = Math.sin(radians) * actor.attrs.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * actor.attrs.ACCELERATION;
@@ -295,9 +289,7 @@ final class FollowBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
-		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansBetweenPoints(actor.worldPos, game.player.worldPos);
 		
 		actor.speed.x = actor.attrs.MAX_SPEED * -Math.sin(radians);
 		actor.speed.y = actor.attrs.MAX_SPEED * Math.cos(radians);
@@ -308,9 +300,7 @@ final class StrafeBehavior implements IBehavior
 {
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const deltaX:Number = actor.worldPos.x - game.player.worldPos.x;
-		const deltaY:Number = actor.worldPos.y - game.player.worldPos.y;
-		const radians:Number = MathUtil.getRadiansRotation(deltaX, deltaY);
+		const radians:Number = MathUtil.getRadiansBetweenPoints(actor.worldPos, game.player.worldPos);
 		
 		const accelX:Number = Math.sin(radians) * actor.attrs.ACCELERATION;
 		const accelY:Number = -Math.cos(radians) * actor.attrs.ACCELERATION;

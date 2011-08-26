@@ -60,7 +60,7 @@ package scripts
 				}
 				displayObject.rotation = Math.random() * 360;
 			}
-			displayObject.scaleX = displayObject.scaleY = .8;
+//			displayObject.scaleX = displayObject.scaleY = .8;
 		}
 		public override function onFrame(game:IGame):void
 		{
