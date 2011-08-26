@@ -86,7 +86,8 @@ package
 			_hudLayer = new Sprite;
 			parent.addChild(_hudLayer);
 
-			toTitleScreen();
+//			toTitleScreen();
+			startLevel(0);
 		}
 		private var _title:TitleScreen;
 		private function toTitleScreen(fadeIn:Boolean = false):void
@@ -310,7 +311,7 @@ package
 					Util.setPoint(_lastCameraPos, _cameraPos);
 					_tiles.setCamera(_cameraPos);
 				}
-				_radar.plot(_player, 0x87DDFF);
+				_radar.plot(_player, 0x00ff00);
 			}
 
 			if (!_mobsStunned)

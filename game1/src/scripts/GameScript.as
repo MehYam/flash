@@ -594,8 +594,13 @@ final class HomeBehavior implements IBehavior, ICompletable
 		}
 	}	
 }
-final class PatrolBehavior implements IBehavior
+final class TankPatrolBehavior implements IBehavior
 {
+	private var _weapon:IBehavior;
+	public function TankPatrolBehavior(weapon:IBehavior):void
+	{
+		_weapon = weapon;
+	}
 	private var _state:uint = 0;
 	private var _destination:Point;
 	private var _last:uint = 0;
@@ -609,6 +614,10 @@ final class PatrolBehavior implements IBehavior
 		_rotateTo.point = _destination;
 		_home.point = _destination;
 	}
+	static private const FIRE_DURATION_MAX:uint = 2000;
+	static private const WAIT_DURATION_MAX:uint = 5000;
+	private var _burstLimiter:RateLimiter = new RateLimiter(1000, FIRE_DURATION_MAX);
+	private var _firing:Boolean = false;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
 		//////////////////////////
@@ -638,28 +647,39 @@ final class PatrolBehavior implements IBehavior
 
 		///////////////////////////////
 		// 2. Aim and fire
-if (actor.health != actor.attrs.MAX_HEALTH) {actor.speed.x = 0; actor.speed.y = 0;}
-		
-		
+		//if (actor.health != actor.attrs.MAX_HEALTH) {actor.speed.x = 0; actor.speed.y = 0;}
 		var tank:TankActor = actor as TankActor;
 		if (tank)
 		{
-			const turretRadians:Number = MathUtil.degreesToRadians(tank.turretRotation); 
-			const goalTurretRadians:Number = MathUtil.getRadiansBetweenPoints(game.player.worldPos, actor.worldPos);
+			const diff:Number = Utils.getRotationDiff(tank.worldPos, tank.turretRotation, game.player.worldPos);
+			if (diff > 0.01)
+			{
+				tank.turretRotationRelativeToHull += 1; 
+			}
+			else if (diff < 0.01)
+			{
+				tank.turretRotationRelativeToHull -= 1; 
+			}
 
-			const diff:Number = MathUtil.diffRadians(turretRadians, goalTurretRadians);
-			if (diff > 0.1)
+			// this could really be a "burst" behavior.  We want to fire for a while,
+			// then stop for a while
+			if (!_firing && Math.abs(diff) < 0.1 && _burstLimiter.now)
 			{
-				tank.turretRotation += 1; 
+				_firing = true;
+
+				_burstLimiter.maxRate = FIRE_DURATION_MAX;
+				_burstLimiter.reset();
 			}
-			else if (diff < 0.1)
+			if (_firing)
 			{
-				tank.turretRotation -= 1; 
-			}
-			if (getTimer() - _last > 2000)
-			{
-//				trace("delta", deltaAngle, "current, goal", turretAngle, goalTurretAngle);
-//				_last = getTimer();
+				_weapon.onFrame(game, actor);
+				if (_burstLimiter.now)
+				{
+					_firing = false;
+
+					_burstLimiter.maxRate = WAIT_DURATION_MAX;
+					_burstLimiter.reset();
+				}
 			}
 		}
 	}
@@ -668,7 +688,7 @@ if (actor.health != actor.attrs.MAX_HEALTH) {actor.speed.x = 0; actor.speed.y = 
 final class TankEnemyEnum extends EnemyEnum
 {
 	// first tier cast
-	static public const TANK1:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 500, 1,   0.01, 0,   0,100), 0, "TANK1", 100);
+	static public const TANK1:EnemyEnum =     new TankEnemyEnum(new ActorAttrs( 200, 1,   0.01, 0,   0,100), 0, "TANK1", 100);
 	// second tier - level 6
 	// next tier - level 9
 	// tier level 14 -> final
@@ -685,7 +705,7 @@ final class TankEnemyEnum extends EnemyEnum
 		case TANK1:
 			vehicle = GameScriptPlayerFactory.getTank(TankPartData.getHull(0), TankPartData.getTurret(0));
 			retval = vehicle.actor;
-			retval.behavior = new PatrolBehavior;
+			retval.behavior = new TankPatrolBehavior(vehicle.weapon);
 			break;
 		}
 		retval.healthMeterEnabled = true; // because it's from the player factory - this needs refactoring
@@ -1021,10 +1041,17 @@ class WaveBasedGameScript extends BaseScript
 			{
 				actor.behavior = new DeathAnimationBehavior;
 			}
+			else if (actor is TankActor)
+			{
+				DeathAnimationBehavior.randomLargeExplosion(game, actor);
+				DeathAnimationBehavior.randomLargeExplosion(game, actor);
+				DeathAnimationBehavior.randomLargeExplosion(game, actor);
+			}
 			else
 			{
 				ExplosionActor.launch(game, actor.worldPos.x, actor.worldPos.y);
 			}
+
 			if (isPlayer && actor.alive)
 			{
 				game.stunMobs();
@@ -1108,22 +1135,24 @@ class WaveBasedGameScript extends BaseScript
 	}
 }
 
+// KAI: this is really a "spawner"-like activity.  randomLargeExplosion could be an argument
 final class DeathAnimationBehavior implements IBehavior
 {
-	private var _next:uint = 0;
+	private var _limiter:RateLimiter = new RateLimiter(0, 300);
 	private var _remaining:uint = 7;
 	public function onFrame(game:IGame, actor:Actor):void
 	{
-		const now:uint = getTimer();
-		if (now > _next && _remaining)
+		if (_limiter.now && _remaining)
 		{
-			ExplosionActor.launch(game, 
-				actor.worldPos.x + ((Math.random() - 0.5) * actor.displayObject.width), 
-				actor.worldPos.y + ((Math.random() - 0.5) * actor.displayObject.height));
-			
-			_next = now + (Math.random() * 300);
+			randomLargeExplosion(game, actor);
 			--_remaining;
 		}
+	}
+	public static function randomLargeExplosion(game:IGame, actor:Actor):void
+	{
+		ExplosionActor.launch(game, 
+			actor.worldPos.x + ((Math.random() - 0.5) * actor.displayObject.width), 
+			actor.worldPos.y + ((Math.random() - 0.5) * actor.displayObject.height));
 	}
 }
 

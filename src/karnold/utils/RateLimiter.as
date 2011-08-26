@@ -18,10 +18,18 @@ package karnold.utils
 		{
 			return start + _rateMin + (_rateMax - _rateMin)*Math.random();
 		}
+		/**
+		 * Disposes of the current interval and calculates a new one
+		 */
 		public function reset():void
 		{
 			_next = calcNext(getTimer());
 		}
+		/**
+		 *  <code>now</code> returns <code>true</code> when the interval has elapsed.  It automatically calculates the next interval when this occurs, so callers need only check <code>now</code> repeatedly to detect time slots.
+		 * 
+		 * @return <code>true</code> when the interval has elapsed   
+		 */
 		public function get now():Boolean
 		{
 			const now:int = getTimer();
@@ -43,6 +51,10 @@ package karnold.utils
 		public function get maxRate():uint
 		{
 			return _rateMax;
+		}
+		public function set maxRate(m:uint):void
+		{
+			_rateMax = m;
 		}
 	}
 }
