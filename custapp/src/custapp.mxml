@@ -13,11 +13,15 @@
 		</s:layout>
 	</s:ButtonBar>		
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
+		<s:NavigatorContent label="DROP OFF">
+			<local:DropOff width="100%"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="PICK UP">
+			<s:Button label="pick up placeholder UI"/>
+		</s:NavigatorContent>
 		<s:NavigatorContent label="CUSTOMERS">
 			<local:CustomerList width="100%" height="100%"/>
 		</s:NavigatorContent>
-		<s:NavigatorContent label="DROP OFF"/>
-		<s:NavigatorContent label="PICK UP"/>
 		<s:NavigatorContent label="Database Browser">
 			<local:DatabaseBrowser/>
 		</s:NavigatorContent>
@@ -38,6 +42,11 @@
 				rect.x = (Capabilities.screenResolutionX - rect.width) / 2;
 				rect.y = (Capabilities.screenResolutionY - rect.height) / 2;
 				nativeWindow.bounds = rect;
+			}
+			
+			private function onDropOff():void
+			{
+				
 			}
 		]]>
 	</fx:Script>
