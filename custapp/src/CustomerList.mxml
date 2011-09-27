@@ -3,52 +3,35 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Declarations>
-		<s:ArrayCollection id="customers">
-			<fx:Object> 
-				<fx:Customer>Joe Smith</fx:Customer> 
-				<fx:Phone>6509966759</fx:Phone> 
-				<fx:ID>00001</fx:ID> 
-			</fx:Object> 
-			<fx:Object> 
-				<fx:Customer>Sandra Jones</fx:Customer> 
-				<fx:Phone>4155556666</fx:Phone> 
-				<fx:ID>00002</fx:ID> 
-			</fx:Object> 
-			<fx:Object> 
-				<fx:Customer>Ellie</fx:Customer> 
-				<fx:Phone>5249967</fx:Phone> 
-				<fx:ID>00003</fx:ID> 
-			</fx:Object> 
-			<fx:Object> 
-				<fx:Customer>Frank George</fx:Customer> 
-				<fx:Phone>2123334444</fx:Phone> 
-				<fx:ID>00004</fx:ID> 
-			</fx:Object> 
-			<fx:Object> 
-				<fx:Customer>Emilio Foo</fx:Customer> 
-				<fx:Phone>4441123454</fx:Phone> 
-				<fx:ID>00005</fx:ID> 
-			</fx:Object> 
-			<fx:Object> 
-				<fx:Customer>Mr. Nice Guy</fx:Customer> 
-				<fx:Phone>6501235544</fx:Phone> 
-				<fx:ID>00006</fx:ID> 
-			</fx:Object> 
-			<fx:Object> 
-				<fx:Customer>Mrs. Nice Guy</fx:Customer> 
-				<fx:Phone>6501235544</fx:Phone> 
-				<fx:ID>00007</fx:ID> 
-			</fx:Object> 
-		</s:ArrayCollection>
 	</fx:Declarations>
 	<s:HGroup width="100%">
-		<s:Button label="ADD NEW"/>
+		<s:Button label="ADD NEW" click="onAddCustomer()"/>
 		<s:Label text="Search:" verticalAlign="middle" height="100%" paddingLeft="20"/>
 		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
 	</s:HGroup>
-	<s:DataGrid width="100%" height="100%" sortableColumns="true" dataProvider="{customers}"/>
+	<s:DataGrid
+		id="customerGrid"
+		width="100%" height="100%" 
+		sortableColumns="true" 
+		dataProvider="{Data.instance.customers}"
+		doubleClick="onEditCustomer()"
+		doubleClickEnabled="true"
+	>
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="last" headerText="Last Name"/>
+				<s:GridColumn dataField="first" headerText="First Name"/>
+				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn dataField="phone" headerText="Phone"/>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
 	<fx:Script>
 		<![CDATA[
+			import mx.core.IFlexDisplayObject;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.TitleWindow;
 			static private function matches(item:String, pattern:String):Boolean
 			{
 				return item && (item.toUpperCase().indexOf(pattern) >= 0);
@@ -56,11 +39,31 @@
 			private function onFilterChange():void
 			{
 				const pattern:String = filter.text.toUpperCase(); 
-				customers.filterFunction = function(item:Object):Boolean
+				Data.instance.customers.filterFunction = function(item:Object):Boolean
 				{
-					return matches(item.Customer, pattern) || matches(item.Phone, pattern) || matches(item.ID, pattern); 
+					return matches(item.first, pattern) || matches(item.last, pattern) || matches(item.id, pattern) || matches(item.phone, pattern); 
 				};
-				customers.refresh();
+				Data.instance.customers.refresh();
+			}
+			private function showEditCustomer(title:String):EditCustomer
+			{
+				var retval:EditCustomer = new EditCustomer;
+				var popup:TitleWindow = new TitleWindow;
+				popup.title = title;
+				popup.addElement(retval);
+				PopUpManager.addPopUp(popup, this, true)
+				PopUpManager.centerPopUp(popup);
+				
+				return retval;
+			}
+			private function onAddCustomer():void
+			{
+				showEditCustomer("Add Customer");
+			}
+			private function onEditCustomer():void
+			{
+				var form:EditCustomer = showEditCustomer("Edit Customer");
+				form.data = customerGrid.selectedItem; 
 			}
 		]]>
 	</fx:Script>

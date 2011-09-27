@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:String id="title">Customer Details</fx:String>
+	</fx:Declarations>
+	<s:Form>
+		<s:FormHeading label="{title}"/>
+		<s:FormItem label="ID">
+			<s:TextInput id="custID" text="000010" editable="false"/>
+			<s:helpContent>
+				<s:Label text="(assigned automatically)"/>
+			</s:helpContent>
+		</s:FormItem>
+		<s:FormItem label="First Name">
+			<s:TextInput id="first"/>
+		</s:FormItem>
+		<s:FormItem label="Last Name">
+			<s:TextInput id="last"/>
+		</s:FormItem>
+		<s:FormItem label="Phone">
+			<s:TextInput id="phone"/>
+		</s:FormItem>
+		<s:FormItem label="Notes">
+			<s:TextArea id="notes"/>
+		</s:FormItem>
+		<s:HGroup width="100%" horizontalAlign="center">
+			<s:Button label="Done"/>
+			<s:Button label="Cancel"/>
+		</s:HGroup>
+	</s:Form>
+	<fx:Script>
+		<![CDATA[
+			public function set data(obj:Object):void
+			{
+				first.text = obj.first;
+				last.text = obj.last;
+				phone.text = obj.phone;
+				notes.text = obj.notes;
+				custID.text = obj.id;
+			}
+			public function get data():Object
+			{
+				var retval:Object = 
+				{
+					first: first.text,
+					last: last.text,
+					phone: phone.text,
+					notes: notes.text,
+					id: custID.text
+				};
+				return retval;
+			}
+		]]>
+	</fx:Script>
+</s:Group>
