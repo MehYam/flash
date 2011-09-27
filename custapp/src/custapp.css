@@ -1,0 +1,11 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+s|WindowedApplication 
+{
+	/*
+	skinClass:ClassReference("spark.skins.spark.SparkChromeWindowedApplicationSkin");
+	*/
+	font-size:16pt;
+}

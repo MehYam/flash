@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<s:ArrayCollection id="customers">
+			<fx:Object> 
+				<fx:Customer>Joe Smith</fx:Customer> 
+				<fx:Phone>6509966759</fx:Phone> 
+				<fx:ID>00001</fx:ID> 
+			</fx:Object> 
+			<fx:Object> 
+				<fx:Customer>Sandra Jones</fx:Customer> 
+				<fx:Phone>4155556666</fx:Phone> 
+				<fx:ID>00002</fx:ID> 
+			</fx:Object> 
+			<fx:Object> 
+				<fx:Customer>Ellie</fx:Customer> 
+				<fx:Phone>5249967</fx:Phone> 
+				<fx:ID>00003</fx:ID> 
+			</fx:Object> 
+			<fx:Object> 
+				<fx:Customer>Frank George</fx:Customer> 
+				<fx:Phone>2123334444</fx:Phone> 
+				<fx:ID>00004</fx:ID> 
+			</fx:Object> 
+			<fx:Object> 
+				<fx:Customer>Emilio Foo</fx:Customer> 
+				<fx:Phone>4441123454</fx:Phone> 
+				<fx:ID>00005</fx:ID> 
+			</fx:Object> 
+			<fx:Object> 
+				<fx:Customer>Mr. Nice Guy</fx:Customer> 
+				<fx:Phone>6501235544</fx:Phone> 
+				<fx:ID>00006</fx:ID> 
+			</fx:Object> 
+			<fx:Object> 
+				<fx:Customer>Mrs. Nice Guy</fx:Customer> 
+				<fx:Phone>6501235544</fx:Phone> 
+				<fx:ID>00007</fx:ID> 
+			</fx:Object> 
+		</s:ArrayCollection>
+	</fx:Declarations>
+	<s:HGroup width="100%">
+		<s:Button label="ADD NEW"/>
+		<s:Label text="Search:" verticalAlign="middle" height="100%" paddingLeft="20"/>
+		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
+	</s:HGroup>
+	<s:DataGrid width="100%" height="100%" sortableColumns="true" dataProvider="{customers}"/>
+	<fx:Script>
+		<![CDATA[
+			static private function matches(item:String, pattern:String):Boolean
+			{
+				return item && (item.toUpperCase().indexOf(pattern) >= 0);
+			}
+			private function onFilterChange():void
+			{
+				const pattern:String = filter.text.toUpperCase(); 
+				customers.filterFunction = function(item:Object):Boolean
+				{
+					return matches(item.Customer, pattern) || matches(item.Phone, pattern) || matches(item.ID, pattern); 
+				};
+				customers.refresh();
+			}
+		]]>
+	</fx:Script>
+</s:VGroup>

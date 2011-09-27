@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*">
+	<fx:Style source="custapp.css"/>
+	<fx:Declarations>
+	</fx:Declarations>
+	<s:layout><s:HorizontalLayout paddingTop="10" paddingLeft="10" paddingBottom="10" paddingRight="10" gap="0"/></s:layout>
+	<s:ButtonBar id="stateChooser" dataProvider="{stack}">
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+	</s:ButtonBar>		
+	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
+		<s:NavigatorContent label="CUSTOMERS">
+			<local:CustomerList width="100%" height="100%"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="DROP OFF"/>
+		<s:NavigatorContent label="PICK UP"/>
+		<s:NavigatorContent label="Database Browser">
+			<local:DatabaseBrowser/>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Stuff">
+			<s:Button label="placeholder"/>
+		</s:NavigatorContent>
+	</mx:ViewStack>
+	<fx:Script>
+		<![CDATA[
+			import mx.core.IFlexDisplayObject;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.TitleWindow;
+			private function onClick():void
+			{
+				if (stack.selectedIndex == 1)
+				{
+					var popup:IFlexDisplayObject = new TitleWindow;
+					PopUpManager.addPopUp(popup, this)
+					PopUpManager.centerPopUp(popup);
+				}
+			}
+		]]>
+	</fx:Script>
+</s:WindowedApplication>

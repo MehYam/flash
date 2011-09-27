@@ -6,27 +6,27 @@ Purchased upgrades to the Bee add more firepower, movement, and a little armor, 
 <desc plane="1" unlockText="Required to unlock all Fighter-class planes">The Wasp is a respectable step up from Bee, adding some movement speed and doubling firepower with a dual cannons.
 Purchase of the Wasp is recommended, as it also gives contestants access to the Bat, the first in the line of the larger, more powerful Fighter-class ships.</desc>
 
-<desc plane="2" unlockText="Required for all high-level Rogue-class ships">All contestants serious about winning the tournament in a Rogue-class ship will spend time flying the Hornet.  The fastest of the Stinger line, the Hornet decimates low to mid-level opponents with its speed, and serves as a good training ship for the more expensive Rogue-class ships.
+<desc plane="2" unlockText="Unlocks three high-level Rogue-class ships">All contestants serious about winning the tournament in a Rogue-class ship will spend time flying the Hornet.  The fastest of the Stinger line, the Hornet decimates low to mid-level opponents with its speed, and serves as a good training ship for the more expensive Rogue-class ships.
 Purchasing this also unlocks the Raven, Ghost, and Cyg lines in the Rogue family.</desc>
 
-<desc plane="3">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have high armor and protective shields that can be used in different ways to harm opponents.  Some ships add conventional weapons as well.
+<desc plane="3" unlockText="Required to unlock higher level Melee planes">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have high armor and protective shields that can be used in different ways to harm opponents.  Some ships add conventional weapons as well.
 The Jem's shield takes some time to recharge, and is relatively weak, but can be flung at opponents at moderate range.
 Upgrades to the Jem will unlock more powerful Melee-class ships.</desc>
 
-<desc plane="4">This upgrade to the Jem line beefs up speed, armor, and shields.
+<desc plane="4" unlockText="Required to unlock higher level Melee planes">This upgrade to the Jem line beefs up speed, armor, and shields.
 Contestants flying the Jem line (and all Melee ships) should focus on timing;  quiet moments are opportunities to ditch a damaged shield, preferably flinging it at a crowd while a new one recharges.
 Jem pilots can also learn the art of reflecting ammo.  This is especially effective when reflecting back fusion or high-speed rockets, or facing down faster opponents.</desc>
 
-<desc plane="5" unlockText="Required for all high-level Melee-class planes">The final Jem ship adds some light fore and aft lasers, giving opponents something else to think about and pilots something else to do while shields recharge.  
+<desc plane="5" unlockText="Unlocks three high-level Melee-class planes">The final Jem ship adds some light fore and aft lasers, giving opponents something else to think about and pilots something else to do while shields recharge.  
 Aside from boosting stats all around, purchase of this Jem unlocks the three advanced Melee lines of ships: Atac, Esox, and Dipt.</desc>
 
-<desc plane="6">Fighter-class ships like those in the Bat line fall in the middle between Rogue and Melee vessels.  They're nimbler than Melees, but weighed down more than Rogues with added armor and weapons.  The sturdiness of these ships can be traced back to their military origins, which have allowed them to be tournament-ready with little modification.
+<desc plane="6" unlockText="Required to unlock higher level Fighter planes">Fighter-class ships like those in the Bat line fall in the middle between Rogue and Melee vessels.  They're nimbler than Melees, but weighed down more than Rogues with added armor and weapons.  The sturdiness of these ships can be traced back to their military origins, which have allowed them to be tournament-ready with little modification.
 This entry-level Bat fires powerful rockets, but has touchy firing system with an unsteady launch rate.</desc>
 
-<desc plane="7">The first upgraded Bat model combines quad rocket launchers with improved speed for a brutal attack from the back line.
+<desc plane="7" unlockText="Required to unlock higher level Fighter planes">The first upgraded Bat model combines quad rocket launchers with improved speed for a brutal attack from the back line.
 Although Fighter-class ships are often heavily armored, with some models it's still a good idea to keep distance from opponents, and let the ranged weapons do their work.</desc>
 
-<desc plane="8" unlockText="Higher level Fighter-class ships">Aside more armor, damage, and better cornering, the top Bat ship also seems to have fixed the firing problem.
+<desc plane="8" unlockText="Unlocks three Fighter-class planes">Aside more armor, damage, and better cornering, the top Bat ship also seems to have fixed the firing problem.
 Owners of Bat III will have access to the three top-level Fighter-class lines: the Osp, Stealth, and Ghost.</desc>
 
 <desc plane="9">Made from ex-military bombers, the Osp line is the heaviest and slowest moving among the Fighter-class planes.  Strong lasers replace the bombs to make this craft practical for low-altitude close quarters combat.</desc>
