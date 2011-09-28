@@ -23,6 +23,7 @@
 				<s:GridColumn dataField="first" headerText="First Name"/>
 				<s:GridColumn dataField="id" headerText="ID"/>
 				<s:GridColumn dataField="phone" headerText="Phone"/>
+				<s:GridColumn dataField="email" headerText="Email"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
@@ -45,6 +46,7 @@
 				};
 				Data.instance.customers.refresh();
 			}
+			private var _currentPopup:IFlexDisplayObject;
 			private function showEditCustomer(title:String):EditCustomer
 			{
 				var retval:EditCustomer = new EditCustomer;
@@ -53,8 +55,28 @@
 				popup.addElement(retval);
 				PopUpManager.addPopUp(popup, this, true)
 				PopUpManager.centerPopUp(popup);
-				
+				_currentPopup = popup;
+
+				popup.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
+				retval.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
+				retval.addEventListener(Event.COMPLETE, onEditCustomerApply, false, 0, true);
 				return retval;
+			}
+			private function hideEditCustomer():void
+			{
+				if (_currentPopup)
+				{
+					PopUpManager.removePopUp(_currentPopup);
+					_currentPopup = null;
+				}
+			}
+			private function onEditCustomerQuit(e:Event):void
+			{
+				hideEditCustomer();
+			}
+			private function onEditCustomerApply(e:Event):void
+			{
+				hideEditCustomer();
 			}
 			private function onAddCustomer():void
 			{

@@ -23,12 +23,15 @@
 		<s:FormItem label="Phone">
 			<s:TextInput id="phone"/>
 		</s:FormItem>
+		<s:FormItem label="Email">
+			<s:TextInput id="email"/>
+		</s:FormItem>
 		<s:FormItem label="Notes">
 			<s:TextArea id="notes"/>
 		</s:FormItem>
 		<s:HGroup width="100%" horizontalAlign="center">
-			<s:Button label="Done"/>
-			<s:Button label="Cancel"/>
+			<s:Button label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
+			<s:Button label="Cancel" click="dispatchEvent(new Event(Event.CLOSE))"/>
 		</s:HGroup>
 	</s:Form>
 	<fx:Script>
@@ -38,6 +41,7 @@
 				first.text = obj.first;
 				last.text = obj.last;
 				phone.text = obj.phone;
+				email.text = obj.email;
 				notes.text = obj.notes;
 				custID.text = obj.id;
 			}
@@ -48,6 +52,7 @@
 					first: first.text,
 					last: last.text,
 					phone: phone.text,
+					email: email.text,
 					notes: notes.text,
 					id: custID.text
 				};

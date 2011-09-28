@@ -15,6 +15,7 @@
 			<s:ArrayList>
 				<s:GridColumn dataField="name" headerText="Item"/>
 				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn dataField="colors" headerText="Style"/>
 				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}"/>
 			</s:ArrayList>
 		</s:columns>
@@ -47,6 +48,22 @@
 					_items.removeItemAt(index);
 					_items.refresh();
 				}
+			}
+			public function addProperty(prop:String):void
+			{
+				var item:Object = grid.selectedItem;
+				if (item.colors)
+				{
+					if (item.colors.indexOf(prop) == -1)
+					{
+						item.colors += ", " + prop;
+					}
+				}
+				else
+				{
+					item.colors = prop;
+				}
+				_items.refresh();
 			}
 			public function get total():Number
 			{

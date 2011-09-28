@@ -6,7 +6,13 @@
 	<fx:Declarations>
 		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
-	<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+	<s:HGroup>
+		
+	</s:HGroup>
+	<s:HGroup>
+		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+		<s:TileGroup id="colorButtons" horizontalGap="1" verticalGap="1"/>
+	</s:HGroup>
 	<s:HGroup>
 		<s:Label text="Items:"/>
 		<s:Label id="items" text="0" fontWeight="bold"/>
@@ -19,6 +25,7 @@
 			import flash.text.engine.FontWeight;
 			
 			import mx.binding.utils.BindingUtils;
+			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
 			
 			import spark.components.Button;
@@ -52,10 +59,36 @@
 				_clearButton = clearButton;
 				
 				BindingUtils.bindSetter(onSelectionUpdate, order.grid, "selectedIndex");
+				
+				for each (var color:Object in Data.instance.colors.source)
+				{
+					var colorButton:Button = new Button;
+					colorButton.setStyle("color", color.color);
+					colorButton.setStyle("fontWeight", FontWeight.BOLD);
+					colorButton.label = color.name;
+					colorButton.height = 50;
+					colorButton.width = 100;
+					colorButton.name = color.name;
+					colorButton.addEventListener(MouseEvent.CLICK, onColorProperty, false, 0, true);
+					
+					colorButtons.addElement(colorButton);
+				}
+				for each (var pattern:String in Data.instance.patterns.source)
+				{
+					var patternButton:Button = new Button;
+					patternButton.setStyle("fontSize", 12);
+					patternButton.label = pattern;
+					patternButton.height = 50;
+					patternButton.width = 100;
+					patternButton.name = pattern;
+					patternButton.addEventListener(MouseEvent.CLICK, onColorProperty, false, 0, true);
+					
+					colorButtons.addElement(patternButton);
+				}
 			}
 			private function onSelectionUpdate(foo:int):void
 			{
-				_clearButton.enabled = foo >= 0;
+				_clearButton.enabled = colorButtons.enabled = foo >= 0;
 			}
 			private function onItem(e:Event):void
 			{
@@ -73,6 +106,20 @@
 			{
 				order.removeItem(order.selectedIndex);
 				order.grid.selectedIndex = order.grid.dataProvider.length - 1;
+				
+				updateTotal();
+				
+				// shouldn't have to do this because we're binding to the selectedIndex property,
+				// but for some reason that property doesn't fire when it gets set to -1
+				if (!order.numItems)
+				{
+					onSelectionUpdate(-1);
+				}
+			}
+			private function onColorProperty(e:Event):void
+			{
+				const color:String = IFlexDisplayObject(e.target).name;
+				order.addProperty(color);
 			}
 			private function updateTotal():void
 			{
