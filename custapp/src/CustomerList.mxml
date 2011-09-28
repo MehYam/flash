@@ -29,9 +29,12 @@
 	</s:DataGrid>
 	<fx:Script>
 		<![CDATA[
+			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
+			import mx.events.CloseEvent;
 			import mx.managers.PopUpManager;
 			
+			import spark.components.SkinnableContainer;
 			import spark.components.TitleWindow;
 			static private function matches(item:String, pattern:String):Boolean
 			{
@@ -72,10 +75,33 @@
 			}
 			private function onEditCustomerQuit(e:Event):void
 			{
-				hideEditCustomer();
+				var source:EditCustomer = e.target as EditCustomer;
+				if (!source)
+				{
+					source = EditCustomer(SkinnableContainer(e.target).getElementAt(SkinnableContainer(e.target).numElements - 1));
+				}
+				if (source.dirty)
+				{
+					Alert.show("Abandon customer changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onEditCustomerReallyQuit, null, Alert.NO);
+				}
+				else
+				{
+					hideEditCustomer();
+				}
+			}
+			private function onEditCustomerReallyQuit(e:CloseEvent):void
+			{
+				if (e.detail == Alert.YES)
+				{
+					hideEditCustomer();
+				}
 			}
 			private function onEditCustomerApply(e:Event):void
 			{
+				var editCustomer:EditCustomer = EditCustomer(e.target);
+				Data.instance.customers[customerGrid.selectedIndex] = editCustomer.data;
+				Data.instance.customers.refresh();
+
 				hideEditCustomer();
 			}
 			private function onAddCustomer():void
@@ -84,8 +110,8 @@
 			}
 			private function onEditCustomer():void
 			{
-				var form:EditCustomer = showEditCustomer("Edit Customer");
-				form.data = customerGrid.selectedItem; 
+				var edit:EditCustomer = showEditCustomer("Edit Customer");
+				edit.data = customerGrid.selectedItem; 
 			}
 		]]>
 	</fx:Script>

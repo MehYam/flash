@@ -6,7 +6,7 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<fx:String id="title">Customer Details</fx:String>
 	</fx:Declarations>
-	<s:Form>
+	<s:Form id="form">
 		<s:FormHeading label="{title}"/>
 		<s:FormItem label="ID">
 			<s:TextInput id="custID" text="000010" editable="false"/>
@@ -15,19 +15,19 @@
 			</s:helpContent>
 		</s:FormItem>
 		<s:FormItem label="First Name">
-			<s:TextInput id="first"/>
+			<s:TextInput id="first" change="onChange(event)"/>
 		</s:FormItem>
 		<s:FormItem label="Last Name">
-			<s:TextInput id="last"/>
+			<s:TextInput id="last" change="onChange(event)"/>
 		</s:FormItem>
 		<s:FormItem label="Phone">
-			<s:TextInput id="phone"/>
+			<s:TextInput id="phone" change="onChange(event)"/>
 		</s:FormItem>
 		<s:FormItem label="Email">
-			<s:TextInput id="email"/>
+			<s:TextInput id="email" change="onChange(event)"/>
 		</s:FormItem>
 		<s:FormItem label="Notes">
-			<s:TextArea id="notes"/>
+			<s:TextArea id="notes" change="onChange(event)"/>
 		</s:FormItem>
 		<s:HGroup width="100%" horizontalAlign="center">
 			<s:Button label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
@@ -36,6 +36,12 @@
 	</s:Form>
 	<fx:Script>
 		<![CDATA[
+			private var _dirty:Boolean = false;
+			public function get dirty():Boolean { return _dirty; }
+			private function onChange(e:Event):void
+			{
+				_dirty = true;
+			}
 			public function set data(obj:Object):void
 			{
 				first.text = obj.first;
