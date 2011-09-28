@@ -4,12 +4,20 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 creationComplete="onInit()">
 	<fx:Declarations>
+		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:DataGrid
 		id="grid"
 		width="100%" height="100%" 
 		sortableColumns="true"
 	>
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="name" headerText="Item"/>
+				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}"/>
+			</s:ArrayList>
+		</s:columns>
 	</s:DataGrid>
 	<fx:Script>
 		<![CDATA[
@@ -24,6 +32,38 @@
 			{
 				_items.addItem(item);
 				_items.refresh();
+				
+				var content:Group = grid.grid;
+				content.verticalScrollPosition = content.contentHeight - content.height;
+				// strange compiler error on this line?!
+//				grid.grid.verticalScrollPosition = grid.grid.contentHeight – grid.grid.height;
+				
+				grid.selectedIndex = grid.dataProvider.length - 1;
+			}
+			public function removeItem(index:int):void
+			{
+				if (index >= 0)
+				{
+					_items.removeItemAt(index);
+					_items.refresh();
+				}
+			}
+			public function get total():Number
+			{
+				var retval:Number = 0;
+				for each (var item:Object in _items.source)
+				{
+					retval += item.price;
+				}
+				return retval;
+			}
+			public function get numItems():int
+			{
+				return _items.length
+			}
+			public function get selectedIndex():int
+			{
+				return grid.selectedIndex;
 			}
 		]]>
 	</fx:Script>
