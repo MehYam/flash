@@ -50,20 +50,22 @@
 				Data.instance.customers.refresh();
 			}
 			private var _currentPopup:IFlexDisplayObject;
-			private function showEditCustomer(title:String):EditCustomer
+			private function showEditCustomer(addMode:Boolean):void
 			{
-				var retval:EditCustomer = new EditCustomer;
+				var edit:EditCustomer = new EditCustomer;
+				edit.addMode = addMode;
+
 				var popup:TitleWindow = new TitleWindow;
-				popup.title = title;
-				popup.addElement(retval);
+				popup.addElement(edit);
 				PopUpManager.addPopUp(popup, this, true)
 				PopUpManager.centerPopUp(popup);
 				_currentPopup = popup;
 
+				edit.data = addMode ? { id: Data.instance.nextID } : customerGrid.selectedItem; 
+
 				popup.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
-				retval.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
-				retval.addEventListener(Event.COMPLETE, onEditCustomerApply, false, 0, true);
-				return retval;
+				edit.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
+				edit.addEventListener(Event.COMPLETE, onEditCustomerApply, false, 0, true);
 			}
 			private function hideEditCustomer():void
 			{
@@ -99,19 +101,28 @@
 			private function onEditCustomerApply(e:Event):void
 			{
 				var editCustomer:EditCustomer = EditCustomer(e.target);
-				Data.instance.customers[customerGrid.selectedIndex] = editCustomer.data;
+				if (editCustomer.addMode)
+				{
+					Data.instance.customers.addItem(editCustomer.data);
+					
+					//KAI: select the customer and scroll to it - or, keep the customer record and return it
+					// so the caller of this has something to do
+				}
+				else
+				{
+					Data.instance.customers[customerGrid.selectedIndex] = editCustomer.data;
+				}
 				Data.instance.customers.refresh();
 
 				hideEditCustomer();
 			}
 			private function onAddCustomer():void
 			{
-				showEditCustomer("Add Customer");
+				showEditCustomer(true);
 			}
 			private function onEditCustomer():void
 			{
-				var edit:EditCustomer = showEditCustomer("Edit Customer");
-				edit.data = customerGrid.selectedItem; 
+				showEditCustomer(false);
 			}
 		]]>
 	</fx:Script>

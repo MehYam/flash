@@ -6,7 +6,7 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<fx:String id="title">Customer Details</fx:String>
 	</fx:Declarations>
-	<s:Form id="form">
+	<s:Form id="form" defaultButton="{done}">
 		<s:FormHeading label="{title}"/>
 		<s:FormItem label="ID">
 			<s:TextInput id="custID" text="000010" editable="false"/>
@@ -30,7 +30,7 @@
 			<s:TextArea id="notes" change="onChange(event)"/>
 		</s:FormItem>
 		<s:HGroup width="100%" horizontalAlign="center">
-			<s:Button label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
+			<s:Button id="done" label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
 			<s:Button label="Cancel" click="dispatchEvent(new Event(Event.CLOSE))"/>
 		</s:HGroup>
 	</s:Form>
@@ -38,6 +38,17 @@
 		<![CDATA[
 			private var _dirty:Boolean = false;
 			public function get dirty():Boolean { return _dirty; }
+			
+			private var _addMode:Boolean = false;
+			public function set addMode(b:Boolean):void
+			{
+				_addMode = b;
+				title = b ? "Add Customer" : "Edit Customer";
+			}
+			public function get addMode():Boolean
+			{
+				return _addMode;
+			}
 			private function onChange(e:Event):void
 			{
 				_dirty = true;

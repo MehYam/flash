@@ -18,6 +18,7 @@ package
 		public const patterns:ArrayList = new ArrayList([]);
 		
 		private var _id:int = 0;
+		public function get nextID():int { return _id++; }
 		private function addCustomer(first:String, last:String, phone:String, email:String, notes:String):void
 		{
 			customers.addItem({ first:first, last:last, phone:phone, email:email, notes:notes, id:_id++});
