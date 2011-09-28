@@ -11,9 +11,9 @@ package
 			return s_instance;
 		}
 
+		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const customers:ArrayCollection = new ArrayCollection([]);
 		public const items:ArrayCollection = new ArrayCollection([]);
-		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
 		

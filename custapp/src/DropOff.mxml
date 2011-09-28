@@ -19,7 +19,7 @@
 		<s:Label text="Total:"/>
 		<s:Label id="total" text="0" fontWeight="bold"/>
 	</s:HGroup>
-	<local:OrderList id="order" width="100%" height="100%"/>
+	<local:ItemList id="order" width="100%" height="100%"/>
 	<fx:Script>
 		<![CDATA[
 			import flash.text.engine.FontWeight;
