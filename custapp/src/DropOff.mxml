@@ -51,6 +51,7 @@
 			
 			import spark.components.Button;
 			
+			import ui.Dialog;
 			import ui.MultilineButtonSkin;
 			
 			private var _clearButton:IUIComponent;
@@ -152,14 +153,13 @@
 			private var _currentPopup:IFlexDisplayObject;
 			private function onSelectCustomer():void
 			{
-				var popup:TitleWindow = new TitleWindow;
+				var popup:Dialog = new Dialog;
 				popup.title = "Choose Customer";
-				popup.showCloseButton = true;
 				popup.width = 700;
 				popup.height = 500;
 				_customerList.percentHeight = 100;
 				_customerList.percentWidth = 100;
-				popup.addElement(_customerList);
+				popup.bodyContent = _customerList;
 				
 				
 				PopUpManager.addPopUp(popup, this, true);

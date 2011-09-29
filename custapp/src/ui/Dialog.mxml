@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10"/>
+	</s:layout>
+	<s:HGroup width="100%" horizontalAlign="center">
+		<s:Button id="done" label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
+		<s:Button label="Cancel" click="dispatchEvent(new Event(Event.CLOSE))"/>
+	</s:HGroup>
+	<fx:Script>
+		<![CDATA[
+			import mx.core.IVisualElement;
+			public function set bodyContent(content:IVisualElement):void
+			{
+				addElementAt(content, 0);
+			}
+			public function get bodyContent():IVisualElement
+			{
+				return numElements > 1 ? getElementAt(0) : null;
+			}
+		]]>
+	</fx:Script>
+</s:TitleWindow>

@@ -2,8 +2,7 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx">
-	<fx:Declarations>
-	</fx:Declarations>
+	<fx:Declarations></fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Button label="ADD NEW" click="onAddCustomer()"/>
 		<s:Label text="Search:" verticalAlign="middle" height="100%" paddingLeft="20"/>
@@ -14,7 +13,7 @@
 		width="100%" height="100%" 
 		sortableColumns="true" 
 		dataProvider="{Data.instance.customers}"
-		doubleClick="onEditCustomer()"
+		doubleClick="onDoubleClick()"
 		doubleClickEnabled="true"
 	>
 		<s:columns>
@@ -36,6 +35,8 @@
 			
 			import spark.components.SkinnableContainer;
 			import spark.components.TitleWindow;
+			
+			import ui.Dialog;
 			static private function matches(item:String, pattern:String):Boolean
 			{
 				return item && (item.toUpperCase().indexOf(pattern) >= 0);
@@ -59,8 +60,8 @@
 				var edit:EditCustomer = new EditCustomer;
 				edit.addMode = addMode;
 
-				var popup:TitleWindow = new TitleWindow;
-				popup.addElement(edit);
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = edit;
 				popup.title = addMode ? "Add Customer" : "Edit Customer";
 
 				PopUpManager.addPopUp(popup, this, true)
@@ -70,8 +71,7 @@
 				edit.data = addMode ? { id: Data.instance.nextID } : customerGrid.selectedItem; 
 
 				popup.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
-				edit.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
-				edit.addEventListener(Event.COMPLETE, onEditCustomerApply, false, 0, true);
+				popup.addEventListener(Event.COMPLETE, onEditCustomerApply, false, 0, true);
 			}
 			private function hideEditCustomer():void
 			{
@@ -83,7 +83,7 @@
 			}
 			private function onEditCustomerQuit(e:Event):void
 			{
-				var source:EditCustomer = e.target as EditCustomer;
+				var source:EditCustomer = Dialog(e.target).bodyContent as EditCustomer;
 				if (!source)
 				{
 					source = EditCustomer(SkinnableContainer(e.target).getElementAt(SkinnableContainer(e.target).numElements - 1));
@@ -106,7 +106,7 @@
 			}
 			private function onEditCustomerApply(e:Event):void
 			{
-				var editCustomer:EditCustomer = EditCustomer(e.target);
+				var editCustomer:EditCustomer = EditCustomer(Dialog(e.target).bodyContent);
 				if (editCustomer.addMode)
 				{
 					const newCustomer:Object = editCustomer.data;
@@ -128,7 +128,7 @@
 			{
 				showEditCustomer(true);
 			}
-			private function onEditCustomer():void
+			private function onDoubleClick():void
 			{
 				showEditCustomer(false);
 			}

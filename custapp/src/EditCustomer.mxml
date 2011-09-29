@@ -6,7 +6,7 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<fx:String id="title">Customer Details</fx:String>
 	</fx:Declarations>
-	<s:Form id="form" defaultButton="{done}">
+	<s:Form id="form">
 		<s:FormHeading label="{title}"/>
 		<s:FormItem label="ID">
 			<s:TextInput id="custID" text="000010" editable="false"/>
@@ -29,10 +29,6 @@
 		<s:FormItem label="Notes">
 			<s:TextArea id="notes" change="onChange(event)" heightInLines="5"/>
 		</s:FormItem>
-		<s:HGroup width="100%" horizontalAlign="center">
-			<s:Button id="done" label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
-			<s:Button label="Cancel" click="dispatchEvent(new Event(Event.CLOSE))"/>
-		</s:HGroup>
 	</s:Form>
 	<fx:Script>
 		<![CDATA[
