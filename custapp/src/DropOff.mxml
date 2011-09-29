@@ -7,7 +7,8 @@
 		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:HGroup>
-		<s:TextInput id="customer" fontWeight="bold" editable="false" prompt="Select a customer" click="onSelectCustomer()"/>
+<!--		<s:TextInput id="customer" width="150" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>-->
+		<s:Label id="customer" height="100%" verticalAlign="middle" fontWeight="bold" text="Select Customer..." click="onSelectCustomer()"/>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
 		<mx:DateField id="date"/>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
@@ -167,12 +168,20 @@
 				_currentPopup = popup;
 
 				popup.addEventListener(Event.CLOSE, onCustomerChosen, false, 0, true);
-				_customerList.addEventListener(Event.CLOSE, onCustomerChosen, false, 0, true);
-				_customerList.addEventListener(Event.COMPLETE, onCustomerChosen, false, 0, true);
+				popup.addEventListener(Event.COMPLETE, onCustomerChosen, false, 0, true);
 			}
 			private function onCustomerChosen(e:Event):void
 			{
+				if (e.type == Event.COMPLETE)
+				{
+					const customerObj:Object = _customerList.selectedCustomer;
+					if (customerObj)
+					{
+						customer.text = customerObj.last + " " + customerObj.first + " " + customerObj.phone;
+					}
+				}
 				PopUpManager.removePopUp(_currentPopup);
+				_currentPopup = null;
 			}
 		]]>
 	</fx:Script>

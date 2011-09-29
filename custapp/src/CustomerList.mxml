@@ -132,6 +132,11 @@
 			{
 				showEditCustomer(false);
 			}
+			
+			public function get selectedCustomer():Object
+			{
+				return customerGrid.selectedItem;
+			}
 		]]>
 	</fx:Script>
 </s:VGroup>

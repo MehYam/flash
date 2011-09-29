@@ -44,6 +44,13 @@ package
 			addCustomer("Captain", "America", "6508876655", null, null);
 			addCustomer("The", "Dude", "3412543123", "lebowsky@bowling.com", "Frequent rug cleanings");
 			addCustomer("", "Foo", "1231234", null, null);
+			addCustomer("Joe", "Smith", "6509966710", "joe@joe.com", null);
+			addCustomer("Sandra", "Jones", "4155556677", null, null);
+			addCustomer("Joe", "Everybody", "2342356", null, null);
+			addCustomer("Steve", "Nobody", "2123334488", null, null);
+			addCustomer("Captain", "America", "6508876622", null, null);
+			addCustomer("The", "Dude", "3412543124", "lebowsky@bowling.com", "Frequent rug cleanings");
+			addCustomer("", "Foo", "12345678", null, null);
 
 			addItem("Tee Shirt", 5);
 			addItem("Pants", 7);
