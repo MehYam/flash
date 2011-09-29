@@ -7,7 +7,25 @@
 		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:HGroup>
-		
+		<s:TextInput id="customer" fontWeight="bold" editable="false" prompt="Select a customer" click="onSelectCustomer()"/>
+		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
+		<mx:DateField id="date"/>
+		<s:DropDownList id="time" selectedIndex="4">
+			<s:dataProvider>
+				<mx:ArrayList>
+					<fx:String>9am</fx:String>
+					<fx:String>10am</fx:String>
+					<fx:String>11am</fx:String>
+					<fx:String>12pm</fx:String>
+					<fx:String>1pm</fx:String>
+					<fx:String>2pm</fx:String>
+					<fx:String>3pm</fx:String>
+					<fx:String>4pm</fx:String>
+					<fx:String>5pm</fx:String>
+					<fx:String>6pm</fx:String>
+				</mx:ArrayList>
+			</s:dataProvider>
+		</s:DropDownList>
 	</s:HGroup>
 	<s:HGroup>
 		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
@@ -25,8 +43,10 @@
 			import flash.text.engine.FontWeight;
 			
 			import mx.binding.utils.BindingUtils;
+			import mx.containers.TitleWindow;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
+			import mx.managers.PopUpManager;
 			
 			import spark.components.Button;
 			
@@ -125,6 +145,33 @@
 			{
 				items.text = String(order.numItems);
 				total.text = formatter.format(order.total);
+			}
+
+			private var _customerList:CustomerList = new CustomerList;
+			private var _currentPopup:IFlexDisplayObject;
+			private function onSelectCustomer():void
+			{
+				var popup:TitleWindow = new TitleWindow;
+				popup.title = "Choose Customer";
+				popup.showCloseButton = true;
+				popup.width = 700;
+				popup.height = 500;
+				_customerList.percentHeight = 100;
+				_customerList.percentWidth = 100;
+				popup.addElement(_customerList);
+				
+				
+				PopUpManager.addPopUp(popup, this, true);
+				PopUpManager.centerPopUp(popup);
+				_currentPopup = popup;
+
+				popup.addEventListener(Event.CLOSE, onCustomerChosen, false, 0, true);
+				_customerList.addEventListener(Event.CLOSE, onCustomerChosen, false, 0, true);
+				_customerList.addEventListener(Event.COMPLETE, onCustomerChosen, false, 0, true);
+			}
+			private function onCustomerChosen(e:Event):void
+			{
+				PopUpManager.removePopUp(_currentPopup);
 			}
 		]]>
 	</fx:Script>

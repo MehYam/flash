@@ -27,7 +27,7 @@
 			<s:TextInput id="email" change="onChange(event)"/>
 		</s:FormItem>
 		<s:FormItem label="Notes">
-			<s:TextArea id="notes" change="onChange(event)"/>
+			<s:TextArea id="notes" change="onChange(event)" heightInLines="5"/>
 		</s:FormItem>
 		<s:HGroup width="100%" horizontalAlign="center">
 			<s:Button id="done" label="Done" click="dispatchEvent(new Event(Event.COMPLETE))"/>
@@ -43,7 +43,6 @@
 			public function set addMode(b:Boolean):void
 			{
 				_addMode = b;
-				title = b ? "Add Customer" : "Edit Customer";
 			}
 			public function get addMode():Boolean
 			{

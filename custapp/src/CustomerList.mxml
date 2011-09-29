@@ -57,6 +57,8 @@
 
 				var popup:TitleWindow = new TitleWindow;
 				popup.addElement(edit);
+				popup.title = addMode ? "Add Customer" : "Edit Customer";
+
 				PopUpManager.addPopUp(popup, this, true)
 				PopUpManager.centerPopUp(popup);
 				_currentPopup = popup;
@@ -103,7 +105,9 @@
 				var editCustomer:EditCustomer = EditCustomer(e.target);
 				if (editCustomer.addMode)
 				{
-					Data.instance.customers.addItem(editCustomer.data);
+					const newCustomer:Object = editCustomer.data;
+					Data.instance.customers.addItem(newCustomer);
+					customerGrid.selectedItem = newCustomer;
 					
 					//KAI: select the customer and scroll to it - or, keep the customer record and return it
 					// so the caller of this has something to do
