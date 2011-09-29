@@ -2,13 +2,16 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 creationComplete="onInit()" xmlns:local="*">
+		 creationComplete="onInit()" xmlns:local="*"
+		 paddingBottom="5"
+		 paddingTop="5"
+		 paddingLeft="5"
+		 paddingRight="5">
 	<fx:Declarations>
 		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:HGroup>
-<!--		<s:TextInput id="customer" width="150" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>-->
-		<s:Label id="customer" height="100%" verticalAlign="middle" fontWeight="bold" text="Select Customer..." click="onSelectCustomer()"/>
+		<s:TextInput id="customer" width="300" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
 		<mx:DateField id="date"/>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
@@ -30,6 +33,7 @@
 		</s:DropDownList>
 	</s:HGroup>
 	<s:HGroup>
+		<s:VGroup id="commandButtons" gap="1"/>
 		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
 		<s:TileGroup id="colorButtons" horizontalGap="1" verticalGap="1"/>
 	</s:HGroup>
@@ -56,8 +60,35 @@
 			import ui.MultilineButtonSkin;
 			
 			private var _clearButton:IUIComponent;
+			private var _commandButtonInfo:Array =
+			[
+				{ name: "SAVE", color: 0x00ff00},
+				{ name: "PRINT TAG", color: 0x0000ff },
+				{ name: "PRINT RECEIPT", color: 0x0000ff },
+				{ name: "CLEAR", color: 0xff0000},
+				{ name: "CLEAR ITEM", color: 0xff0000 }
+			];
 			private function onInit():void
 			{
+				// Command buttons ///////////////////////////////////////////////
+				// KAI: why not just do this as mxml?
+				// KAI: doesn't this belong in createChildren?
+				for each (var cmd:Object in _commandButtonInfo)
+				{
+					var cmdButton:Button = new Button;
+					cmdButton.width = 100;
+					cmdButton.height = 50;
+					cmdButton.setStyle("color", cmd.color);
+					cmdButton.setStyle("fontWeight", FontWeight.BOLD);
+					cmdButton.label = cmd.name;
+
+					commandButtons.addElement(cmdButton);
+				}
+				
+//				cmdButton.addEventListener(MouseEvent.CLICK, onRemoveItem, false, 0, true);
+//				_clearButton = cmdButton;
+				
+				// Item buttons ////////////////////////////////////////////////
 				for each (var item:Object in Data.instance.items)
 				{
 					var button:Button = new Button;
@@ -70,16 +101,6 @@
 
 					itemButtons.addElement(button);
 				}
-				var clearButton:Button = new Button;
-				clearButton.height = 100;
-				clearButton.width = 100;
-				clearButton.setStyle("color", 0xff0000);
-				clearButton.setStyle("fontWeight", FontWeight.BOLD);
-				clearButton.label = "REMOVE";
-				
-				clearButton.addEventListener(MouseEvent.CLICK, onRemoveItem, false, 0, true);
-				itemButtons.addElement(clearButton);
-				_clearButton = clearButton;
 				
 				BindingUtils.bindSetter(onSelectionUpdate, order.grid, "selectedIndex");
 				
@@ -111,7 +132,7 @@
 			}
 			private function onSelectionUpdate(foo:int):void
 			{
-				_clearButton.enabled = colorButtons.enabled = foo >= 0;
+//				_clearButton.enabled = colorButtons.enabled = foo >= 0;
 			}
 			private function onItem(e:Event):void
 			{

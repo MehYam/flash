@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx">
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 paddingBottom="5"
+		 paddingTop="5"
+		 paddingLeft="5"
+		 paddingRight="5"
+		 >
 	<fx:Declarations></fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Button label="ADD NEW" click="onAddCustomer()"/>
@@ -57,7 +62,7 @@
 			private var _currentPopup:IFlexDisplayObject;
 			private function showEditCustomer(addMode:Boolean):void
 			{
-				var edit:EditCustomer = new EditCustomer;
+				var edit:CustomerEditor = new CustomerEditor;
 				edit.addMode = addMode;
 
 				var popup:Dialog = new Dialog;
@@ -83,10 +88,10 @@
 			}
 			private function onEditCustomerQuit(e:Event):void
 			{
-				var source:EditCustomer = Dialog(e.target).bodyContent as EditCustomer;
+				var source:CustomerEditor = Dialog(e.target).bodyContent as CustomerEditor;
 				if (!source)
 				{
-					source = EditCustomer(SkinnableContainer(e.target).getElementAt(SkinnableContainer(e.target).numElements - 1));
+					source = CustomerEditor(SkinnableContainer(e.target).getElementAt(SkinnableContainer(e.target).numElements - 1));
 				}
 				if (source.dirty)
 				{
@@ -106,7 +111,7 @@
 			}
 			private function onEditCustomerApply(e:Event):void
 			{
-				var editCustomer:EditCustomer = EditCustomer(Dialog(e.target).bodyContent);
+				var editCustomer:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
 				if (editCustomer.addMode)
 				{
 					const newCustomer:Object = editCustomer.data;
@@ -132,7 +137,6 @@
 			{
 				showEditCustomer(false);
 			}
-			
 			public function get selectedCustomer():Object
 			{
 				return customerGrid.selectedItem;
