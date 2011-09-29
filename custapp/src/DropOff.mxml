@@ -10,6 +10,7 @@
 		<s:TextInput id="customer" fontWeight="bold" editable="false" prompt="Select a customer" click="onSelectCustomer()"/>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
 		<mx:DateField id="date"/>
+		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
 		<s:DropDownList id="time" selectedIndex="4">
 			<s:dataProvider>
 				<mx:ArrayList>

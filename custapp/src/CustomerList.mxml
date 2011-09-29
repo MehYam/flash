@@ -45,7 +45,11 @@
 				const pattern:String = filter.text.toUpperCase(); 
 				Data.instance.customers.filterFunction = function(item:Object):Boolean
 				{
-					return matches(item.first, pattern) || matches(item.last, pattern) || matches(item.id, pattern) || matches(item.phone, pattern); 
+					return matches(item.first, pattern) || 
+						matches(item.last, pattern) || 
+						matches(item.id, pattern) || 
+						matches(item.phone, pattern) || 
+						matches(item.email, pattern); 
 				};
 				Data.instance.customers.refresh();
 			}

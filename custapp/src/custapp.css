@@ -10,3 +10,8 @@ local|custapp
 	*/
 	font-size:16pt;
 }
+
+s|DropDownList
+{
+	skinClass: ClassReference("ui.StretchyDropDownListSkin");
+}
