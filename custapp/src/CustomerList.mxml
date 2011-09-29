@@ -60,7 +60,7 @@
 				Data.instance.customers.refresh();
 			}
 			private var _currentPopup:IFlexDisplayObject;
-			private function showEditCustomer(addMode:Boolean):void
+			private function showCustomerEditor(addMode:Boolean):void
 			{
 				var edit:CustomerEditor = new CustomerEditor;
 				edit.addMode = addMode;
@@ -75,10 +75,10 @@
 
 				edit.data = addMode ? { id: Data.instance.nextID } : customerGrid.selectedItem; 
 
-				popup.addEventListener(Event.CLOSE, onEditCustomerQuit, false, 0, true);
-				popup.addEventListener(Event.COMPLETE, onEditCustomerApply, false, 0, true);
+				popup.addEventListener(Event.CLOSE, onCustomerEditorQuit, false, 0, true);
+				popup.addEventListener(Event.COMPLETE, onCustomerEditorApply, false, 0, true);
 			}
-			private function hideEditCustomer():void
+			private function hideCustomerEditor():void
 			{
 				if (_currentPopup)
 				{
@@ -86,7 +86,7 @@
 					_currentPopup = null;
 				}
 			}
-			private function onEditCustomerQuit(e:Event):void
+			private function onCustomerEditorQuit(e:Event):void
 			{
 				var source:CustomerEditor = Dialog(e.target).bodyContent as CustomerEditor;
 				if (!source)
@@ -95,47 +95,48 @@
 				}
 				if (source.dirty)
 				{
-					Alert.show("Abandon customer changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onEditCustomerReallyQuit, null, Alert.NO);
+					Alert.show("Abandon customer changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onCustomerEditorReallyQuit, null, Alert.NO);
 				}
 				else
 				{
-					hideEditCustomer();
+					hideCustomerEditor();
 				}
 			}
-			private function onEditCustomerReallyQuit(e:CloseEvent):void
+			private function onCustomerEditorReallyQuit(e:CloseEvent):void
 			{
 				if (e.detail == Alert.YES)
 				{
-					hideEditCustomer();
+					hideCustomerEditor();
 				}
 			}
-			private function onEditCustomerApply(e:Event):void
+			private function onCustomerEditorApply(e:Event):void
 			{
-				var editCustomer:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
-				if (editCustomer.addMode)
+				var edit:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
+				if (edit.addMode)
 				{
-					const newCustomer:Object = editCustomer.data;
+					const newCustomer:Object = edit.data;
 					Data.instance.customers.addItem(newCustomer);
 					customerGrid.selectedItem = newCustomer;
 					
+					dispatchEvent(new Event(Event.COMPLETE));
 					//KAI: select the customer and scroll to it - or, keep the customer record and return it
 					// so the caller of this has something to do
 				}
 				else
 				{
-					Data.instance.customers[customerGrid.selectedIndex] = editCustomer.data;
+					Data.instance.customers[customerGrid.selectedIndex] = edit.data;
 				}
 				Data.instance.customers.refresh();
 
-				hideEditCustomer();
+				hideCustomerEditor();
 			}
 			private function onAddCustomer():void
 			{
-				showEditCustomer(true);
+				showCustomerEditor(true);
 			}
 			private function onDoubleClick():void
 			{
-				showEditCustomer(false);
+				showCustomerEditor(false);
 			}
 			public function get selectedCustomer():Object
 			{

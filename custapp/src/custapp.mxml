@@ -14,7 +14,7 @@
 	</s:ButtonBar>		
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
 		<s:NavigatorContent label="DROP OFF">
-			<local:ItemListEditor width="100%"/>
+			<local:OrderEditor width="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="PICK UP">
 			<s:Button label="pick up placeholder UI"/>

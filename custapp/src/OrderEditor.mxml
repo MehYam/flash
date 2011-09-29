@@ -59,14 +59,14 @@
 			import ui.Dialog;
 			import ui.MultilineButtonSkin;
 			
-			private var _clearButton:IUIComponent;
+			private var _clearItemButton:IUIComponent;
 			private var _commandButtonInfo:Array =
 			[
-				{ name: "SAVE", color: 0x00ff00},
-				{ name: "PRINT TAG", color: 0x0000ff },
-				{ name: "PRINT RECEIPT", color: 0x0000ff },
-				{ name: "CLEAR", color: 0xff0000},
-				{ name: "CLEAR ITEM", color: 0xff0000 }
+				{ name: "SAVE", color: 0x00ff00, handler: onSave},
+				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
+				{ name: "PRINT RECEIPT", color: 0x0000ff, handler: onPrintReceipt },
+				{ name: "CLEAR ITEM", color: 0xff0000, handler: onClearItem },
+				{ name: "CLEAR ALL", color: 0xff0000, handler: onClearAll }
 			];
 			private function onInit():void
 			{
@@ -76,17 +76,22 @@
 				for each (var cmd:Object in _commandButtonInfo)
 				{
 					var cmdButton:Button = new Button;
-					cmdButton.width = 100;
+					cmdButton.width = 125;
 					cmdButton.height = 50;
 					cmdButton.setStyle("color", cmd.color);
 					cmdButton.setStyle("fontWeight", FontWeight.BOLD);
 					cmdButton.label = cmd.name;
 
+					if (cmd.handler)
+					{
+						cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
+					}
+					if (cmd.handler == onClearItem)
+					{
+						_clearItemButton = cmdButton
+					}
 					commandButtons.addElement(cmdButton);
 				}
-				
-//				cmdButton.addEventListener(MouseEvent.CLICK, onRemoveItem, false, 0, true);
-//				_clearButton = cmdButton;
 				
 				// Item buttons ////////////////////////////////////////////////
 				for each (var item:Object in Data.instance.items)
@@ -130,9 +135,25 @@
 					colorButtons.addElement(patternButton);
 				}
 			}
+			private function onSave(e:Event):void
+			{
+				
+			}
+			private function onPrintTag(e:Event):void
+			{
+				
+			}
+			private function onPrintReceipt(e:Event):void
+			{
+				
+			}
+			private function onClearAll(e:Event):void
+			{
+				
+			}
 			private function onSelectionUpdate(foo:int):void
 			{
-//				_clearButton.enabled = colorButtons.enabled = foo >= 0;
+				_clearItemButton.enabled = colorButtons.enabled = foo >= 0;
 			}
 			private function onItem(e:Event):void
 			{
@@ -146,7 +167,7 @@
 					}
 				}
 			}
-			private function onRemoveItem(e:Event):void
+			private function onClearItem(e:Event):void
 			{
 				order.removeItem(order.selectedIndex);
 				order.grid.selectedIndex = order.grid.dataProvider.length - 1;

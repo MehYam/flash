@@ -18,11 +18,16 @@
 			import mx.core.IVisualElement;
 			public function set bodyContent(content:IVisualElement):void
 			{
+				content.addEventListener(Event.COMPLETE, bounceComplete, false, 0, true);
 				addElementAt(content, 0);
 			}
 			public function get bodyContent():IVisualElement
 			{
 				return numElements > 1 ? getElementAt(0) : null;
+			}
+			private function bounceComplete(e:Event):void
+			{
+				dispatchEvent(new Event(Event.COMPLETE));
 			}
 		]]>
 	</fx:Script>
