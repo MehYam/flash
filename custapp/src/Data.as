@@ -17,10 +17,29 @@ package
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
 
-//		static public function createOrder(customerID:int, date:):Object
-//		{
-//			
-//		}
+		static public const ORDER_STATE_NEW:int = 1;
+		static public const ORDER_STATE_READY:int = 2;
+		static public const ORDER_STATE_PAID:int = 3;
+		static public const ORDER_STATE_PICKED_UP:int = 4;
+		static public const ORDER_STATE_COMPLETE:int = 5;
+		public function createOrder(customerID:int, date:Number, time:String, items:Array):Object
+		{
+			var retval:Object =
+			{
+				id: nextID,
+				customerID: customerID,
+				date: date,
+				time: time,
+				creationTime: new Date().date,
+
+				ready: false,
+				paid: false,
+				pickedUp: false,
+				
+				items: items
+			};
+			return retval;
+		}
 
 		private var _id:int = 0;
 		public function get nextID():int { return _id++; }
@@ -79,6 +98,24 @@ package
 			addPattern("Striped");
 			addPattern("Paisely");
 			addPattern("Patterned");
+			
+			for (var i:uint = 0; i < 10; ++i)
+			{
+				var order:Object = createOrder(Math.random() * customers.length, new Date().date + (Math.random() * 10), "12pm", []);
+				orders.addItem(order);
+			}
+		}
+		public function getCustomer(customerID:int):Object
+		{
+			// KAI: replace w/ constant-time lookup
+			for each (var customer:Object in customers)
+			{
+				if (customer.id == customerID)
+				{
+					return customer;
+				}
+			}
+			return null;
 		}
 	}
 }

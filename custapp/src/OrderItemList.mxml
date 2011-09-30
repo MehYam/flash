@@ -30,14 +30,17 @@
 			}
 			public function addItem(item:Object):void
 			{
-				_items.addItem(item);
+				var copy:Object =  // KAI: better way to do this, in my library
+					{
+						name: item.name,
+						id: item.id,
+						price: item.price
+					};
+				_items.addItem(copy);
 				_items.refresh();
 				
 				grid.selectedIndex = _items.length - 1;
 				grid.ensureCellIsVisible(_items.length - 1);
-//				var content:Group = grid.grid;
-//				content.verticalScrollPosition = content.contentHeight - content.height;
-//				grid.grid.verticalScrollPosition = grid.grid.contentHeight – grid.grid.height; // strange compiler error on this line?!
 			}
 			public function removeItem(index:int):void
 			{
@@ -79,6 +82,10 @@
 			public function get selectedIndex():int
 			{
 				return grid.selectedIndex;
+			}
+			public function get items():Array
+			{
+				return _items.toArray();
 			}
 		]]>
 	</fx:Script>

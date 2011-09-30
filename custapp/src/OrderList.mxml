@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:HGroup width="100%">
+		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
+		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+	</s:HGroup>
+	<s:Line width="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
+	<s:DataGrid
+		id="orders"
+		width="100%" height="100%" 
+		sortableColumns="true" 
+		dataProvider="{Data.instance.orders}"
+		doubleClick="onDoubleClick()"
+		doubleClickEnabled="true"
+		>
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer ID"/>
+				<s:GridColumn labelFunction="timeLabelFunction" headerText="Dropped Off"/>
+				<s:GridColumn labelFunction="pickupDateFunction" headerText="Pick Up Due"/>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.containers.Grid;
+			private function customerLabelFunction(orderObj:Object, column:GridColumn):String
+			{
+				const customerObj:Object = Data.instance.getCustomer(orderObj.customerID);
+				return customerObj.last + ", " + customerObj.first + ", " + customerObj.phone;
+			}
+			private function timeLabelFunction(orderObj:Object, column:GridColumn):String
+			{
+				var date:Date = new Date;
+				date.date = orderObj.creationTime;
+				return date.toDateString() + ", " + date.toTimeString();
+			}
+			private function pickupDateFunction(orderObj:Object, column:GridColumn):String
+			{
+				var date:Date = new Date;
+				date.date = orderObj.date;
+				return date.toDateString() + ", " + orderObj.time;
+			}
+			private function onFilterChange():void
+			{
+				
+			}
+			private function onDoubleClick():void
+			{
+				
+			}
+		]]>
+	</fx:Script>
+</s:VGroup>
