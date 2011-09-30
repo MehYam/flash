@@ -61,19 +61,18 @@ package
 		}
 		public function Data()
 		{
-			addCustomer("Joe", "Smith", "6509966759", "joe@joe.com", null);
-			addCustomer("Sandra", "Jones", "4155556666", null, null);
-			addCustomer("Joe", "Everybody", "2342345", null, null);
+			addCustomer("Joe", "Smith", "6509966759", "joe@yahoo.com", null);
+			addCustomer("Sandra", "Jones", "4155556666", "sandra@foo.com", null);
+			addCustomer("Joe", "Somebody", "2342345", null, null);
 			addCustomer("Steve", "Nobody", "2123334444", null, null);
-			addCustomer("Captain", "America", "6508876655", null, null);
+			addCustomer("Captain", "Ahab", "6508876655", null, null);
 			addCustomer("The", "Dude", "3412543123", "lebowsky@bowling.com", "Frequent rug cleanings");
-			addCustomer("", "Foo", "1231234", null, null);
-			addCustomer("Joe", "Smith", "6509966710", "joe@joe.com", null);
-			addCustomer("Sandra", "Jones", "4155556677", null, null);
-			addCustomer("Joe", "Everybody", "2342356", null, null);
-			addCustomer("Steve", "Nobody", "2123334488", null, null);
-			addCustomer("Captain", "America", "6508876622", null, null);
-			addCustomer("The", "Dude", "3412543124", "lebowsky@bowling.com", "Frequent rug cleanings");
+			addCustomer("Abraham", "Lincoln", "6509966710", "joe@joe.com", null);
+			addCustomer("Green", "Lantern", "4155556677", "green@blah.com", null);
+			addCustomer("Steve", "Vai", "2342356", null, null);
+			addCustomer("George", "Hung", "2123334488", null, null);
+			addCustomer("Dave", "Letterman", "6508876622", null, null);
+			addCustomer("Johnny", "Carson", "3412543124", "lebowsky@bowling.com", "Frequent rug cleanings");
 			addCustomer("", "Foo", "12345678", null, null);
 
 			addItem("Tee Shirt", 5);

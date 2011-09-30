@@ -16,12 +16,12 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
-		<mx:DateField id="date" width="160" labelFunction="dateFormatter"/>
+		<mx:DateField id="date" width="160"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
-		<s:DropDownList id="time" selectedIndex="4">
+		<s:DropDownList id="time" selectedIndex="4" height="25">
 			<s:dataProvider>
 				<mx:ArrayList>
 					<fx:String>9am</fx:String>
@@ -71,6 +71,7 @@
 			
 			import mx.binding.utils.BindingUtils;
 			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
 			import mx.managers.PopUpManager;
@@ -83,7 +84,7 @@
 			private var _clearItemButton:IUIComponent;
 			private var _commandButtonInfo:Array =
 			[
-				{ name: "NEW", color: 0x00ff00, handler: onClearAll },
+				{ name: "SAVE", color: 0x00ff00, handler: onSave },
 				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
 				{ name: "PRINT RECEIPT", color: 0x0000ff, handler: onPrintReceipt },
 				{ name: "CLEAR ITEM", color: 0xff0000, handler: onClearItem }
@@ -159,8 +160,15 @@
 			}
 			private function onSave(e:Event):void
 			{
-				const order:Object = Data.instance.createOrder(_currentCustomer.id, date.selectedDate.date, time.selectedItem, order.items);
-				Data.instance.orders.addItem(order);
+				if (!_currentCustomer)
+				{
+					Alert.show("Choose customer before saving", "Customer Missing");
+				}
+				else
+				{
+					const order:Object = Data.instance.createOrder(_currentCustomer.id, date.selectedDate.date, time.selectedItem, order.items);
+					Data.instance.orders.addItem(order);
+				}
 			}
 			private function onPrintTag(e:Event):void
 			{
@@ -259,7 +267,7 @@
 			}
 			private function dateFormatter(date:Date):String
 			{
-				return date ? date.toDateString() : "--";
+				return date ? date.toDateString() : "";
 			}
 		]]>
 	</fx:Script>

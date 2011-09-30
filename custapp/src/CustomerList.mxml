@@ -2,10 +2,11 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:ui="ui.*"
 		 paddingBottom="5"
 		 paddingTop="5"
 		 paddingLeft="5"
-		 paddingRight="5"
+		 paddingRight="5" 
 		 >
 	<fx:Declarations></fx:Declarations>
 	<s:HGroup width="100%">
@@ -14,7 +15,7 @@
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<s:Button label="ADD NEW" click="onAddCustomer()"/>
+		<ui:Button label="ADD NEW" click="onAddCustomer()"/>
 	</s:HGroup>
 	<s:DataGrid
 		id="customerGrid"
@@ -129,6 +130,9 @@
 			}
 			private function onAddCustomer():void
 			{
+				filter.text = "";
+				onFilterChange();
+				
 				showCustomerEditor(true);
 			}
 			private function onDoubleClick():void

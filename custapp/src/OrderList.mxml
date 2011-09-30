@@ -52,13 +52,13 @@
 			private function customerLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				const customerObj:Object = Data.instance.getCustomer(orderObj.customerID);
-				return customerObj.last + ", " + customerObj.first + ", " + customerObj.phone;
+				return customerObj ? (customerObj.last + ", " + customerObj.first + ", " + customerObj.phone) : "";
 			}
 			private function dropOffLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				var date:Date = new Date;
 				date.date = orderObj.creationTime;
-				return date.toDateString() + ", " + date.toTimeString();
+				return date.toLocaleString();
 			}
 			private function pickUpLabelFunction(orderObj:Object, column:GridColumn):String
 			{
