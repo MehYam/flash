@@ -16,7 +16,7 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
-		<mx:DateField id="date"/>
+		<mx:DateField id="date" width="160" labelFunction="dateFormatter"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
@@ -64,7 +64,7 @@
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
-	<local:ItemList id="order" width="100%" height="100%"/>
+	<local:OrderItemList id="order" width="100%" height="100%"/>
 	<fx:Script>
 		<![CDATA[
 			import flash.text.engine.FontWeight;
@@ -255,6 +255,10 @@
 				customer.text = null;
 				date.showToday = true;
 				
+			}
+			private function dateFormatter(date:Date):String
+			{
+				return date ? date.toDateString() : "--";
 			}
 		]]>
 	</fx:Script>
