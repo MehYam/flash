@@ -7,11 +7,11 @@
 	<fx:Declarations>
 	</fx:Declarations>
 	<s:layout><s:HorizontalLayout paddingTop="10" paddingLeft="10" paddingBottom="10" paddingRight="10" gap="0"/></s:layout>
-	<s:ButtonBar id="stateChooser" dataProvider="{stack}">
+	<s:TabBar id="stateChooser" dataProvider="{stack}">
 		<s:layout>
-			<s:VerticalLayout/>
+			<s:TileLayout verticalGap="0" horizontalGap="0" columnWidth="125" rowHeight="60" requestedColumnCount="1"/>
 		</s:layout>
-	</s:ButtonBar>		
+	</s:TabBar>		
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
 		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%"/>

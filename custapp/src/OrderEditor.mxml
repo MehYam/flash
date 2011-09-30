@@ -12,8 +12,14 @@
 	</fx:Declarations>
 	<s:HGroup>
 		<s:TextInput id="customer" width="300" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
 		<mx:DateField id="date"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
 		<s:DropDownList id="time" selectedIndex="4">
 			<s:dataProvider>
@@ -32,17 +38,32 @@
 			</s:dataProvider>
 		</s:DropDownList>
 	</s:HGroup>
-	<s:HGroup>
-		<s:VGroup id="commandButtons" gap="1"/>
-		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
-		<s:TileGroup id="colorButtons" horizontalGap="1" verticalGap="1"/>
-	</s:HGroup>
+	<s:Line width="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
 	<s:HGroup>
 		<s:Label text="Items:"/>
 		<s:Label id="items" text="0" fontWeight="bold"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
 		<s:Label text="Total:"/>
 		<s:Label id="total" text="0" fontWeight="bold"/>
 	</s:HGroup>
+	<s:HGroup>
+		<s:VGroup id="commandButtons" gap="1"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:TileGroup id="colorButtons" horizontalGap="1" verticalGap="1"/>
+	</s:HGroup>
+	<s:Line width="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
 	<local:ItemList id="order" width="100%" height="100%"/>
 	<fx:Script>
 		<![CDATA[
@@ -62,11 +83,10 @@
 			private var _clearItemButton:IUIComponent;
 			private var _commandButtonInfo:Array =
 			[
-				{ name: "SAVE", color: 0x00ff00, handler: onSave},
+				{ name: "NEW", color: 0x00ff00, handler: onClearAll },
 				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
 				{ name: "PRINT RECEIPT", color: 0x0000ff, handler: onPrintReceipt },
-				{ name: "CLEAR ITEM", color: 0xff0000, handler: onClearItem },
-				{ name: "CLEAR ALL", color: 0xff0000, handler: onClearAll }
+				{ name: "CLEAR ITEM", color: 0xff0000, handler: onClearItem }
 			];
 			private function onInit():void
 			{
@@ -109,6 +129,7 @@
 				
 				BindingUtils.bindSetter(onSelectionUpdate, order.grid, "selectedIndex");
 				
+				// Colors and properties //////////////////////////////////
 				for each (var color:Object in Data.instance.colors.source)
 				{
 					var colorButton:Button = new Button;
@@ -134,6 +155,7 @@
 					
 					colorButtons.addElement(patternButton);
 				}
+				date.selectedDate = new Date;
 			}
 			private function onSave(e:Event):void
 			{
@@ -212,6 +234,7 @@
 				popup.addEventListener(Event.CLOSE, onCustomerChosen, false, 0, true);
 				popup.addEventListener(Event.COMPLETE, onCustomerChosen, false, 0, true);
 			}
+			private var _currentCustomer:Object;
 			private function onCustomerChosen(e:Event):void
 			{
 				if (e.type == Event.COMPLETE)
@@ -220,10 +243,18 @@
 					if (customerObj)
 					{
 						customer.text = customerObj.last + " " + customerObj.first + " " + customerObj.phone;
+						_currentCustomer = customerObj;
 					}
 				}
 				PopUpManager.removePopUp(_currentPopup);
 				_currentPopup = null;
+			}
+			private function reset():void
+			{
+				_currentCustomer = null;
+				customer.text = null;
+				date.showToday = true;
+				
 			}
 		]]>
 	</fx:Script>

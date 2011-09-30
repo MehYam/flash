@@ -9,9 +9,12 @@
 		 >
 	<fx:Declarations></fx:Declarations>
 	<s:HGroup width="100%">
-		<s:Button label="ADD NEW" click="onAddCustomer()"/>
-		<s:Label text="Search:" verticalAlign="middle" height="100%" paddingLeft="20"/>
+		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
 		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:Button label="ADD NEW" click="onAddCustomer()"/>
 	</s:HGroup>
 	<s:DataGrid
 		id="customerGrid"
@@ -117,17 +120,15 @@
 					const newCustomer:Object = edit.data;
 					Data.instance.customers.addItem(newCustomer);
 					customerGrid.selectedItem = newCustomer;
-					
+					customerGrid.ensureCellIsVisible(customerGrid.selectedIndex);
+						
 					dispatchEvent(new Event(Event.COMPLETE));
-					//KAI: select the customer and scroll to it - or, keep the customer record and return it
-					// so the caller of this has something to do
 				}
 				else
 				{
 					Data.instance.customers[customerGrid.selectedIndex] = edit.data;
 				}
 				Data.instance.customers.refresh();
-
 				hideCustomerEditor();
 			}
 			private function onAddCustomer():void

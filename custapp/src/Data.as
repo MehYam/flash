@@ -16,7 +16,12 @@ package
 		public const items:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
-		
+
+//		static public function createOrder(customerID:int, date:):Object
+//		{
+//			
+//		}
+
 		private var _id:int = 0;
 		public function get nextID():int { return _id++; }
 		private function addCustomer(first:String, last:String, phone:String, email:String, notes:String):void
