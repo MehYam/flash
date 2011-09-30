@@ -45,20 +45,16 @@
 			import spark.components.TitleWindow;
 			
 			import ui.Dialog;
-			static private function matches(item:String, pattern:String):Boolean
-			{
-				return item && (item.toUpperCase().indexOf(pattern) >= 0);
-			}
 			private function onFilterChange():void
 			{
 				const pattern:String = filter.text.toUpperCase(); 
 				Data.instance.customers.filterFunction = function(item:Object):Boolean
 				{
-					return matches(item.first, pattern) || 
-						matches(item.last, pattern) || 
-						matches(item.id, pattern) || 
-						matches(item.phone, pattern) || 
-						matches(item.email, pattern); 
+					return Utils.matches(item.first, pattern) || 
+						Utils.matches(item.last, pattern) || 
+						Utils.matches(item.id, pattern) || 
+						Utils.matches(item.phone, pattern) || 
+						Utils.matches(item.email, pattern); 
 				};
 				Data.instance.customers.refresh();
 			}

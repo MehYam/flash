@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		  xmlns:s="library://ns.adobe.com/flex/spark" 
-		  xmlns:mx="library://ns.adobe.com/flex/mx">
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  paddingTop="5"
+		  paddingBottom="5"
+		  paddingLeft="5"
+		  paddingRight="5"
+		  >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
 		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
+	</s:HGroup>
+	<s:HGroup width="100%">
+		<s:CheckBox label="Show Completed" selected="false"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
+		<s:CheckBox label="Show Overdue" selected="true"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:CheckBox label="Show Ready" selected="true"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -26,9 +39,9 @@
 		<s:columns>
 			<s:ArrayList>
 				<s:GridColumn dataField="id" headerText="ID"/>
-				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer ID"/>
-				<s:GridColumn labelFunction="timeLabelFunction" headerText="Dropped Off"/>
-				<s:GridColumn labelFunction="pickupDateFunction" headerText="Pick Up Due"/>
+				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
+				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
+				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
@@ -41,13 +54,13 @@
 				const customerObj:Object = Data.instance.getCustomer(orderObj.customerID);
 				return customerObj.last + ", " + customerObj.first + ", " + customerObj.phone;
 			}
-			private function timeLabelFunction(orderObj:Object, column:GridColumn):String
+			private function dropOffLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				var date:Date = new Date;
 				date.date = orderObj.creationTime;
 				return date.toDateString() + ", " + date.toTimeString();
 			}
-			private function pickupDateFunction(orderObj:Object, column:GridColumn):String
+			private function pickUpLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				var date:Date = new Date;
 				date.date = orderObj.date;
@@ -55,7 +68,12 @@
 			}
 			private function onFilterChange():void
 			{
-				
+				const pattern:String = filter.text.toUpperCase(); 
+				Data.instance.orders.filterFunction = function(item:Object):Boolean
+				{
+					return Utils.matches(customerLabelFunction(item, null), pattern); 
+				};
+				Data.instance.orders.refresh();
 			}
 			private function onDoubleClick():void
 			{
