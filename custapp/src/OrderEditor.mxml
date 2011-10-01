@@ -2,7 +2,8 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 creationComplete="onInit()" xmlns:local="*"
+		 xmlns:local="*"
+		 creationComplete="onInit()" 
 		 paddingBottom="5"
 		 paddingTop="5"
 		 paddingLeft="5"
@@ -42,6 +43,11 @@
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
 	<s:HGroup>
+		<s:Label text="Ticket:"/>
+		<s:Label id="orderID" fontWeight="bold"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
 		<s:Label text="Items:"/>
 		<s:Label id="items" text="0" fontWeight="bold"/>
 		<s:Line height="100%">
@@ -64,9 +70,12 @@
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
-	<local:OrderItemList id="order" width="100%" height="100%"/>
+	<local:OrderItemList id="itemList" width="100%" height="100%"/>
 	<fx:Script>
 		<![CDATA[
+			import data.Data;
+			import data.Order;
+			
 			import flash.text.engine.FontWeight;
 			
 			import mx.binding.utils.BindingUtils;
@@ -84,10 +93,10 @@
 			private var _clearItemButton:IUIComponent;
 			private var _commandButtonInfo:Array =
 			[
-				{ name: "SAVE", color: 0x00ff00, handler: onSave },
-				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
-				{ name: "PRINT RECEIPT", color: 0x0000ff, handler: onPrintReceipt },
-				{ name: "CLEAR ITEM", color: 0xff0000, handler: onClearItem }
+				{ name: "PRINT TAG", color: 0x0000cc, handler: onPrintTag },
+				{ name: "PRINT RCPT", color: 0x0000cc, handler: onPrintReceipt },
+				{ name: "CLEAR ITEM", color: 0xcc0000, handler: onClearItem },
+				{ name: "NEW", color: 0x00aa00, handler: onSave }
 			];
 			private function onInit():void
 			{
@@ -128,7 +137,7 @@
 					itemButtons.addElement(button);
 				}
 				
-				BindingUtils.bindSetter(onSelectionUpdate, order.grid, "selectedIndex");
+				BindingUtils.bindSetter(onSelectionUpdate, itemList.grid, "selectedIndex");
 				
 				// Colors and properties //////////////////////////////////
 				for each (var color:Object in Data.instance.colors.source)
@@ -157,26 +166,52 @@
 					colorButtons.addElement(patternButton);
 				}
 				date.selectedDate = new Date;
+
+				newOrder();
+			}
+			private function newOrder():void
+			{
+				order = Data.instance.createOrder(0, new Date().date, "12pm", []);
 			}
 			private function onSave(e:Event):void
 			{
-				if (!_currentCustomer)
+				if (!_order.customerID)
 				{
 					Alert.show("Choose customer before saving", "Customer Missing");
 				}
 				else
 				{
-					const order:Object = Data.instance.createOrder(_currentCustomer.id, date.selectedDate.date, time.selectedItem, order.items);
-					Data.instance.orders.addItem(order);
+					Data.instance.orders.addItem(_order);
+					newOrder();					
 				}
 			}
 			private function onPrintTag(e:Event):void
 			{
+				var label:Label = new Label;
+				label.height = 100;
+				label.setStyle("verticalAlign", "middle");
+				label.text = "---Printing tag " + _order.id + " for " + customer.text + "---";
 				
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = label;
+				popup.autoClose = true;
+				
+				PopUpManager.addPopUp(popup, this);
+				PopUpManager.centerPopUp(popup);
 			}
 			private function onPrintReceipt(e:Event):void
 			{
+				var label:Label = new Label;
+				label.height = 100;
+				label.setStyle("verticalAlign", "middle");
+				label.text = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
 				
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = label;
+				popup.autoClose = true;
+				
+				PopUpManager.addPopUp(popup, this);
+				PopUpManager.centerPopUp(popup);
 			}
 			private function onClearAll(e:Event):void
 			{
@@ -192,7 +227,7 @@
 				{
 					if (item.id == parseInt(e.target.name))
 					{
-						order.addItem(item);
+						itemList.addItem(item);
 						updateTotal();
 						break;
 					}
@@ -200,14 +235,14 @@
 			}
 			private function onClearItem(e:Event):void
 			{
-				order.removeItem(order.selectedIndex);
-				order.grid.selectedIndex = order.grid.dataProvider.length - 1;
+				itemList.removeItem(itemList.selectedIndex);
+				itemList.grid.selectedIndex = itemList.grid.dataProvider.length - 1;
 				
 				updateTotal();
 				
 				// shouldn't have to do this because we're binding to the selectedIndex property,
 				// but for some reason that property doesn't fire when it gets set to -1
-				if (!order.numItems)
+				if (!itemList.numItems)
 				{
 					onSelectionUpdate(-1);
 				}
@@ -215,12 +250,12 @@
 			private function onColorProperty(e:Event):void
 			{
 				const color:String = IFlexDisplayObject(e.target).name;
-				order.addProperty(color);
+				itemList.addProperty(color);
 			}
 			private function updateTotal():void
 			{
-				items.text = String(order.numItems);
-				total.text = formatter.format(order.total);
+				items.text = String(itemList.numItems);
+				total.text = formatter.format(itemList.total);
 			}
 
 			private var _customerList:CustomerList = new CustomerList;
@@ -243,7 +278,10 @@
 				popup.addEventListener(Event.CLOSE, onCustomerChosen, false, 0, true);
 				popup.addEventListener(Event.COMPLETE, onCustomerChosen, false, 0, true);
 			}
-			private var _currentCustomer:Object;
+			static private function formatCustomer(customerObj:Object):String
+			{
+				return customerObj.last + ", " + customerObj.first + " " + customerObj.phone;
+			}
 			private function onCustomerChosen(e:Event):void
 			{
 				if (e.type == Event.COMPLETE)
@@ -251,23 +289,38 @@
 					const customerObj:Object = _customerList.selectedCustomer;
 					if (customerObj)
 					{
-						customer.text = customerObj.last + ", " + customerObj.first + " " + customerObj.phone;
-						_currentCustomer = customerObj;
+						customer.text = formatCustomer(customerObj);
+						_order.customerID = customerObj.id;
 					}
 				}
 				PopUpManager.removePopUp(_currentPopup);
 				_currentPopup = null;
 			}
-			private function reset():void
-			{
-				_currentCustomer = null;
-				customer.text = null;
-				date.showToday = true;
-				
-			}
 			private function dateFormatter(date:Date):String
 			{
 				return date ? date.toDateString() : "";
+			}
+			
+			private var _order:Order;
+			public function set order(o:Order):void
+			{
+				_order = o;
+
+				orderID.text = String(o.id);
+				customer.text = o.customerID ? formatCustomer(Data.instance.getCustomer(o.customerID)) : null;
+				
+				var d:Date = new Date();
+				d.date = o.date;
+
+				date.selectedDate = d;
+				time.selectedItem = o.time;
+				itemList.items = o.items;
+				
+				updateTotal();
+			}
+			public function get order():Order
+			{
+				return _order;
 			}
 		]]>
 	</fx:Script>

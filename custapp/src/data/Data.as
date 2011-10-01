@@ -1,4 +1,4 @@
-package
+package data
 {
 	import mx.collections.ArrayCollection;
 	import mx.collections.ArrayList;
@@ -22,22 +22,14 @@ package
 		static public const ORDER_STATE_PAID:int = 3;
 		static public const ORDER_STATE_PICKED_UP:int = 4;
 		static public const ORDER_STATE_COMPLETE:int = 5;
-		public function createOrder(customerID:int, date:Number, time:String, items:Array):Object
+		public function createOrder(customerID:int, date:Number, time:String, items:Array):Order
 		{
-			var retval:Object =
-			{
-				id: nextID,
-				customerID: customerID,
-				date: date,
-				time: time,
-				creationTime: new Date().date,
-
-				ready: false,
-				paid: false,
-				pickedUp: false,
-				
-				items: items
-			};
+			var retval:Order = new Order;
+			retval.id = nextID;
+			retval.customerID = customerID;
+			retval.date = date;
+			retval.time = time;
+			retval.items = items;
 			return retval;
 		}
 
@@ -82,11 +74,11 @@ package
 			addItem("Coat", 10.50);
 			addItem("Suit, 3pc", 27.50);
 			
-			addColor("Red", 0xff0000);
-			addColor("Green", 0x00ff00);
-			addColor("Blue", 0x0000ff);
-			addColor("Yellow", 0xffff00);
-			addColor("Purple", 0xff00ff);
+			addColor("Red", 0xbb0000);
+			addColor("Green", 0x00bb00);
+			addColor("Blue", 0x0000bb);
+			addColor("Yellow", 0xcccc00);
+			addColor("Purple", 0xbb00bb);
 			addColor("Orange", 0xff7700);
 			addColor("White", 0xffffff);
 			addColor("Gray", 0x777777);

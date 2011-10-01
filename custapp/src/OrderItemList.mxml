@@ -28,6 +28,10 @@
 			{
 				grid.dataProvider = _items;
 			}
+			public function clear():void
+			{
+				_items.removeAll();
+			}
 			public function addItem(item:Object):void
 			{
 				var copy:Object =  // KAI: better way to do this, in my library
@@ -86,6 +90,11 @@
 			public function get items():Array
 			{
 				return _items.toArray();
+			}
+			public function set items(i:Array):void
+			{
+				_items.source = i;
+				_items.refresh();
 			}
 		]]>
 	</fx:Script>

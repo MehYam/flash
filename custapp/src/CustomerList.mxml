@@ -37,6 +37,7 @@
 	</s:DataGrid>
 	<fx:Script>
 		<![CDATA[
+			import data.Data;
 			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
 			import mx.events.CloseEvent;

@@ -38,7 +38,7 @@
 		>
 		<s:columns>
 			<s:ArrayList>
-				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn dataField="id" headerText="Ticket"/>
 				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
 				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
 				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
@@ -48,7 +48,13 @@
 
 	<fx:Script>
 		<![CDATA[
+			import data.Data;
+			import data.Order;
+			
 			import mx.containers.Grid;
+			import mx.managers.PopUpManager;
+			
+			import ui.Dialog;
 			private function customerLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				const customerObj:Object = Data.instance.getCustomer(orderObj.customerID);
@@ -71,13 +77,21 @@
 				const pattern:String = filter.text.toUpperCase(); 
 				Data.instance.orders.filterFunction = function(item:Object):Boolean
 				{
-					return Utils.matches(customerLabelFunction(item, null), pattern); 
+					return Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(Order(item).id), pattern); 
 				};
 				Data.instance.orders.refresh();
 			}
 			private function onDoubleClick():void
 			{
+				//KAI: null check
+				var orderEditor:OrderEditor = new OrderEditor;
+				orderEditor.order = Order(orders.selectedItem);
 				
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = orderEditor;
+popup.autoClose = true;
+				PopUpManager.addPopUp(popup, this);
+				PopUpManager.centerPopUp(popup);
 			}
 		]]>
 	</fx:Script>
