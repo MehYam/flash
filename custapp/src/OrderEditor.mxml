@@ -3,11 +3,12 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:local="*"
-		 creationComplete="onInit()" 
 		 paddingBottom="5"
 		 paddingTop="5"
 		 paddingLeft="5"
-		 paddingRight="5">
+		 paddingRight="5"
+		 creationComplete="onInit()" 
+		 >
 	<fx:Declarations>
 		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
@@ -96,7 +97,7 @@
 				{ name: "PRINT TAG", color: 0x0000cc, handler: onPrintTag },
 				{ name: "PRINT RCPT", color: 0x0000cc, handler: onPrintReceipt },
 				{ name: "CLEAR ITEM", color: 0xcc0000, handler: onClearItem },
-				{ name: "NEW", color: 0x00aa00, handler: onSave }
+				{ name: "SAVE", color: 0x00aa00, handler: onSave }
 			];
 			private function onInit():void
 			{
@@ -181,7 +182,7 @@
 				}
 				else
 				{
-					Data.instance.orders.addItem(_order);
+					Data.instance.orders.addItem(order);
 					newOrder();					
 				}
 			}
@@ -268,6 +269,7 @@
 				popup.height = 500;
 				_customerList.percentHeight = 100;
 				_customerList.percentWidth = 100;
+				_customerList.doubleClickEdits = false;
 				popup.bodyContent = _customerList;
 				
 				
@@ -320,6 +322,10 @@
 			}
 			public function get order():Order
 			{
+				//KAI: lazy write, sure, but this is kinda lame
+				_order.date = date.selectedDate.date;
+				_order.time = time.selectedItem;
+				_order.items = itemList.items;
 				return _order;
 			}
 		]]>

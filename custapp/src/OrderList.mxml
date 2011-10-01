@@ -6,6 +6,7 @@
 		  paddingBottom="5"
 		  paddingLeft="5"
 		  paddingRight="5"
+		  creationComplete="filter.setFocus()"
 		  >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->

@@ -6,7 +6,8 @@
 		 paddingBottom="5"
 		 paddingTop="5"
 		 paddingLeft="5"
-		 paddingRight="5" 
+		 paddingRight="5"
+		 creationComplete="filter.setFocus()"
 		 >
 	<fx:Declarations></fx:Declarations>
 	<s:HGroup width="100%">
@@ -38,6 +39,7 @@
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
+			
 			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
 			import mx.events.CloseEvent;
@@ -136,13 +138,25 @@
 				
 				showCustomerEditor(true);
 			}
+			private var _doubleClickEdits:Boolean = true;
 			private function onDoubleClick():void
 			{
-				showCustomerEditor(false);
+				if (_doubleClickEdits)
+				{
+					showCustomerEditor(false);
+				}
+				else
+				{
+					dispatchEvent(new Event(Event.COMPLETE));
+				}
 			}
 			public function get selectedCustomer():Object
 			{
 				return customerGrid.selectedItem;
+			}
+			public function set doubleClickEdits(b:Boolean):void
+			{
+				_doubleClickEdits = b;
 			}
 		]]>
 	</fx:Script>
