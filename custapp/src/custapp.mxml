@@ -37,16 +37,12 @@
 			private function onInit():void
 			{
 				var rect:Rectangle = new Rectangle;
-				rect.width = Capabilities.screenResolutionX * .75;
-				rect.height = Capabilities.screenResolutionY * .75;
-				rect.x = (Capabilities.screenResolutionX - rect.width) / 2;
-				rect.y = (Capabilities.screenResolutionY - rect.height) / 2;
-				nativeWindow.bounds = rect;
-			}
-			
-			private function onDropOff():void
-			{
-				
+//				rect.width = Capabilities.screenResolutionX * .85;
+//				rect.height = Capabilities.screenResolutionY * .85;
+//				rect.x = (Capabilities.screenResolutionX - rect.width) / 2;
+//				rect.y = (Capabilities.screenResolutionY - rect.height) / 2;
+//				nativeWindow.bounds = rect;
+				nativeWindow.maximize();
 			}
 		]]>
 	</fx:Script>

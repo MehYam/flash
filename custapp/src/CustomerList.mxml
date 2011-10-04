@@ -72,7 +72,7 @@
 				popup.bodyContent = edit;
 				popup.title = addMode ? "Add Customer" : "Edit Customer";
 
-				PopUpManager.addPopUp(popup, this, true)
+				PopUpManager.addPopUp(popup, stage, true)
 				PopUpManager.centerPopUp(popup);
 				_currentPopup = popup;
 

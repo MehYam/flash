@@ -15,10 +15,10 @@
 		<s:columns>
 			<s:ArrayList>
 				<s:GridColumn dataField="name" headerText="Item" editable="false"/>
-				<s:GridColumn dataField="id" headerText="ID" editable="false"/>
+				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40"/>
 				<s:GridColumn dataField="colors" headerText="Style"/>
 				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}"/>
-				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No."/>
+				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No." width="40"/>
 				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{formatter}" editable="false"/>
 			</s:ArrayList>
 		</s:columns>

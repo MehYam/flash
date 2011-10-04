@@ -16,7 +16,9 @@ package data
 
 		public var items:ListCollectionView;
 		public var paid:Number = 0;
-		
+
+		public var history:Array = [];
+
 		public function get total():Number
 		{
 			var retval:Number = 0;

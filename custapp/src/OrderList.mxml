@@ -9,7 +9,7 @@
 		  creationComplete="filter.setFocus()"
 		  >
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
@@ -43,6 +43,8 @@
 				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
 				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
 				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
+				<s:GridColumn dataField="total" headerText="Total" formatter="{formatter}"/>
+				<s:GridColumn dataField="paid" headerText="Paid" formatter="{formatter}"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
@@ -86,13 +88,17 @@
 			{
 				//KAI: null check
 				var orderEditor:OrderEditor = new OrderEditor;
-				orderEditor.order = Order(orders.selectedItem);
+				const order:Order = Order(orders.selectedItem);
+				orderEditor.order = order;
 				
 				var popup:Dialog = new Dialog;
 				popup.bodyContent = orderEditor;
+				popup.title = customerLabelFunction(order, null) + " Total:" + formatter.format(order.total) + ", Paid:" + formatter.format(order.paid); 
+					
 popup.autoClose = true;
-				PopUpManager.addPopUp(popup, this);
+				PopUpManager.addPopUp(popup, parent);
 				PopUpManager.centerPopUp(popup);
+				popup.y = 50;
 			}
 		]]>
 	</fx:Script>

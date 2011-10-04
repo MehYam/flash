@@ -67,6 +67,7 @@ package data
 			addCustomer("Johnny", "Carson", "3412543124", "lebowsky@bowling.com", "Frequent rug cleanings");
 			addCustomer("", "Foo", "12345678", null, null);
 
+			addItem("Misc.", 1);
 			addItem("Tee Shirt", 5);
 			addItem("Pants", 7);
 			addItem("Vest", 10);

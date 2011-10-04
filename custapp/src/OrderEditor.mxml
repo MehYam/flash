@@ -182,7 +182,10 @@
 				}
 				date.selectedDate = new Date;
 
-				newOrder();
+				if (!_order)
+				{
+					newOrder();
+				}
 			}
 			private function newOrder():void
 			{
@@ -214,7 +217,7 @@
 				popup.bodyContent = label;
 				popup.autoClose = true;
 				
-				PopUpManager.addPopUp(popup, this);
+				PopUpManager.addPopUp(popup, stage);
 				PopUpManager.centerPopUp(popup);
 			}
 			private function onPrintReceipt(e:Event):void
@@ -228,7 +231,7 @@
 				popup.bodyContent = label;
 				popup.autoClose = true;
 				
-				PopUpManager.addPopUp(popup, this);
+				PopUpManager.addPopUp(popup, stage);
 				PopUpManager.centerPopUp(popup);
 			}
 			private function onSelectionUpdate(foo:int):void
@@ -276,6 +279,8 @@
 				items.text = String(_order.items.length);
 				total.text = formatter.format(_order.total);
 				paid.text = formatter.format(_order.paid);
+				
+				paid.setStyle("color", order.total == _order.paid ? 0x00ee00 : 0xff0000);
 			}
 
 			private var _customerList:CustomerList = new CustomerList;
@@ -291,7 +296,7 @@
 				_customerList.doubleClickEdits = false;
 				popup.bodyContent = _customerList;
 				
-				
+
 				PopUpManager.addPopUp(popup, this, true);
 				PopUpManager.centerPopUp(popup);
 				_currentPopup = popup;
