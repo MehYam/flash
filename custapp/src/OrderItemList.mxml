@@ -14,12 +14,12 @@
 	>
 		<s:columns>
 			<s:ArrayList>
-				<s:GridColumn dataField="name" headerText="Item" />
-				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn dataField="name" headerText="Item" editable="false"/>
+				<s:GridColumn dataField="id" headerText="ID" editable="false"/>
 				<s:GridColumn dataField="colors" headerText="Style"/>
-				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}" editable="true"/>
-				<s:GridColumn labelFunction="countLabelFunction" headerText="No."/>
-				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{formatter}"/>
+				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}"/>
+				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No."/>
+				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{formatter}" editable="false"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
