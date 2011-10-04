@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+>
+	<s:HGroup verticalAlign="middle" height="100%" gap="2" paddingLeft="4">
+		<s:Label text="{data.count}"/>
+		<s:Button color="#00ee00" label="+" fontWeight="bold" height="30" width="30" click="inc()"/>
+		<s:Button color="#ff0000" label="-" fontWeight="bold" height="30" width="30" click="dec()"/>
+	</s:HGroup>
+	<fx:Script>
+		<![CDATA[
+			static public const INC:String = "IncDecItemRenderer.INC";
+			static public const DEC:String = "IncDecItemRenderer.DEC";
+			private function inc():void
+			{
+			}
+			private function dec():void
+			{
+			}
+		]]>
+	</fx:Script>
+</s:GridItemRenderer>

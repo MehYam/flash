@@ -91,12 +91,14 @@
 			import ui.Dialog;
 			import ui.MultilineButtonSkin;
 			
-			private var _clearItemButton:IUIComponent;
+			private var _quantityButtons:Vector.<IUIComponent> = new Vector.<IUIComponent>(2);
 			private var _commandButtonInfo:Array =
 			[
+				{ name: "PAY", color: 0x0000ff, handler: onPay },
 				{ name: "PRINT TAG", color: 0x0000cc, handler: onPrintTag },
 				{ name: "PRINT RCPT", color: 0x0000cc, handler: onPrintReceipt },
-				{ name: "CLEAR ITEM", color: 0xcc0000, handler: onClearItem },
+				{ name: "ITEM + 1", color: 0x00aa00, handler: onIncItem },
+				{ name: "ITEM - 1", color: 0xff0000, handler: onDecItem },
 				{ name: "SAVE", color: 0x00aa00, handler: onSave }
 			];
 			private function onInit():void
@@ -116,10 +118,14 @@
 					if (cmd.handler)
 					{
 						cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
-					}
-					if (cmd.handler == onClearItem)
-					{
-						_clearItemButton = cmdButton
+						if (cmd.handler == onDecItem)
+						{
+							_quantityButtons[0] = cmdButton;
+						}
+						else if (cmd.handler == onIncItem)
+						{
+							_quantityButtons[1] = cmdButton;
+						}
 					}
 					commandButtons.addElement(cmdButton);
 				}
@@ -186,6 +192,9 @@
 					newOrder();					
 				}
 			}
+			private function onPay(e:Event):void
+			{
+			}
 			private function onPrintTag(e:Event):void
 			{
 				var label:Label = new Label;
@@ -214,13 +223,9 @@
 				PopUpManager.addPopUp(popup, this);
 				PopUpManager.centerPopUp(popup);
 			}
-			private function onClearAll(e:Event):void
-			{
-				
-			}
 			private function onSelectionUpdate(foo:int):void
 			{
-				_clearItemButton.enabled = colorButtons.enabled = foo >= 0;
+				_quantityButtons[0].enabled = _quantityButtons[1].enabled = colorButtons.enabled = foo >= 0;
 			}
 			private function onItem(e:Event):void
 			{
@@ -234,19 +239,17 @@
 					}
 				}
 			}
-			private function onClearItem(e:Event):void
+			private function onIncItem(e:Event):void
 			{
-				itemList.removeItem(itemList.selectedIndex);
-				itemList.grid.selectedIndex = itemList.grid.dataProvider.length - 1;
-				
+				itemList.incItem(itemList.selectedIndex);
+				updateTotal();
+			}
+			private function onDecItem(e:Event):void
+			{
+				itemList.decItem(itemList.selectedIndex);
 				updateTotal();
 				
-				// shouldn't have to do this because we're binding to the selectedIndex property,
-				// but for some reason that property doesn't fire when it gets set to -1
-				if (!itemList.numItems)
-				{
-					onSelectionUpdate(-1);
-				}
+				onSelectionUpdate(itemList.selectedIndex);
 			}
 			private function onColorProperty(e:Event):void
 			{

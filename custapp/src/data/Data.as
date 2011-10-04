@@ -73,6 +73,9 @@ package data
 			addItem("Jacket", 9.50);
 			addItem("Coat", 10.50);
 			addItem("Suit, 3pc", 27.50);
+			addItem("Socks", 2.50);
+			addItem("Scarf", 5.50);
+			addItem("Tie", 3.00);
 			
 			addColor("Red", 0xbb0000);
 			addColor("Green", 0x00bb00);

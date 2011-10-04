@@ -56,18 +56,18 @@
 			import mx.managers.PopUpManager;
 			
 			import ui.Dialog;
-			private function customerLabelFunction(orderObj:Object, column:GridColumn):String
+			static private function customerLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				const customerObj:Object = Data.instance.getCustomer(orderObj.customerID);
 				return customerObj ? (customerObj.last + ", " + customerObj.first + ", " + customerObj.phone) : "";
 			}
-			private function dropOffLabelFunction(orderObj:Object, column:GridColumn):String
+			static private function dropOffLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				var date:Date = new Date;
 				date.date = orderObj.creationTime;
 				return date.toLocaleString();
 			}
-			private function pickUpLabelFunction(orderObj:Object, column:GridColumn):String
+			static private function pickUpLabelFunction(orderObj:Object, column:GridColumn):String
 			{
 				var date:Date = new Date;
 				date.date = orderObj.date;

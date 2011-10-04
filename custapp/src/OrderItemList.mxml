@@ -9,14 +9,17 @@
 	<s:DataGrid
 		id="grid"
 		width="100%" height="100%" 
-		sortableColumns="true"
+		sortableColumns="false"
+		editable="true"
 	>
 		<s:columns>
 			<s:ArrayList>
-				<s:GridColumn dataField="name" headerText="Item"/>
+				<s:GridColumn dataField="name" headerText="Item" />
 				<s:GridColumn dataField="id" headerText="ID"/>
 				<s:GridColumn dataField="colors" headerText="Style"/>
-				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}"/>
+				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}" editable="true"/>
+				<s:GridColumn labelFunction="countLabelFunction" headerText="No."/>
+				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{formatter}"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
@@ -28,16 +31,27 @@
 			{
 				grid.dataProvider = _items;
 			}
+			static private function totalLabelFunction(itemObj:Object, column:GridColumn):String
+			{
+				return column.formatter.format(itemObj.price * itemObj.count);
+			}
+			static private function countLabelFunction(itemObj:Object, column:GridColumn):String
+			{
+				// a number formatter would be a cooler way of doing this, and should be more immune to things like sorting, etc
+				return "x" + itemObj.count;
+			}
 			public function clear():void
 			{
 				_items.removeAll();
 			}
 			public function addItem(item:Object):void
 			{
+				// increment the number on the last item if it's the same
 				var copy:Object =  // KAI: better way to do this, in my library
 					{
 						name: item.name,
 						id: item.id,
+						count: 1,
 						price: item.price
 					};
 				_items.addItem(copy);
@@ -46,13 +60,23 @@
 				grid.selectedIndex = _items.length - 1;
 				grid.ensureCellIsVisible(_items.length - 1);
 			}
-			public function removeItem(index:int):void
+			public function incItem(index:int):void
 			{
-				if (index >= 0)
+				var item:Object = _items.getItemAt(index);
+				++item.count;
+				
+				_items.refresh();
+			}
+			public function decItem(index:int):void
+			{
+				var item:Object = _items.getItemAt(index);
+				--item.count;
+
+				if (item.count <= 0)
 				{
 					_items.removeItemAt(index);
-					_items.refresh();
 				}
+				_items.refresh();
 			}
 			public function addProperty(prop:String):void
 			{
@@ -75,13 +99,18 @@
 				var retval:Number = 0;
 				for each (var item:Object in _items.source)
 				{
-					retval += item.price;
+					retval += (item.price * item.count);
 				}
 				return retval;
 			}
 			public function get numItems():int
 			{
-				return _items.length;
+				var retval:Number = 0;
+				for each (var item:Object in _items.source)
+				{
+					retval += item.count;
+				}
+				return retval;
 			}
 			public function get selectedIndex():int
 			{
