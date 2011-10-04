@@ -9,7 +9,9 @@
 		 paddingRight="5"
 		 creationComplete="filter.setFocus()"
 		 >
-	<fx:Declarations></fx:Declarations>
+	<fx:Declarations>
+		<s:NumberFormatter id="phoneFormatter" groupingPattern="4;3;3" groupingSeparator="-" fractionalDigits="0"/>
+	</fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
 		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
@@ -31,7 +33,7 @@
 				<s:GridColumn dataField="last" headerText="Last Name"/>
 				<s:GridColumn dataField="first" headerText="First Name"/>
 				<s:GridColumn dataField="id" headerText="ID"/>
-				<s:GridColumn dataField="phone" headerText="Phone"/>
+				<s:GridColumn dataField="phone" headerText="Phone" formatter="{phoneFormatter}"/>
 				<s:GridColumn dataField="email" headerText="Email"/>
 			</s:ArrayList>
 		</s:columns>
@@ -72,7 +74,7 @@
 				popup.bodyContent = edit;
 				popup.title = addMode ? "Add Customer" : "Edit Customer";
 
-				PopUpManager.addPopUp(popup, stage, true)
+				PopUpManager.addPopUp(popup, this, true)
 				PopUpManager.centerPopUp(popup);
 				_currentPopup = popup;
 

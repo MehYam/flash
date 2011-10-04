@@ -217,7 +217,7 @@
 				popup.bodyContent = label;
 				popup.autoClose = true;
 				
-				PopUpManager.addPopUp(popup, stage);
+				PopUpManager.addPopUp(popup, this);
 				PopUpManager.centerPopUp(popup);
 			}
 			private function onPrintReceipt(e:Event):void
@@ -231,7 +231,7 @@
 				popup.bodyContent = label;
 				popup.autoClose = true;
 				
-				PopUpManager.addPopUp(popup, stage);
+				PopUpManager.addPopUp(popup, this);
 				PopUpManager.centerPopUp(popup);
 			}
 			private function onSelectionUpdate(foo:int):void
