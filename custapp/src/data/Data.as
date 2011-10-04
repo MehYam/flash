@@ -29,7 +29,7 @@ package data
 			retval.customerID = customerID;
 			retval.date = date;
 			retval.time = time;
-			retval.items = items;
+			retval.items = new ArrayCollection(items);
 			return retval;
 		}
 

@@ -44,6 +44,20 @@
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
 	<s:HGroup>
+		<s:VGroup id="commandButtons" gap="1"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:TileGroup id="colorButtons" horizontalGap="1" verticalGap="1"/>
+	</s:HGroup>
+	<s:Line width="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
+	<s:HGroup>
 		<s:Label text="Ticket:"/>
 		<s:Label id="orderID" fontWeight="bold"/>
 		<s:Line height="100%">
@@ -56,17 +70,11 @@
 		</s:Line>
 		<s:Label text="Total:"/>
 		<s:Label id="total" text="0" fontWeight="bold"/>
-	</s:HGroup>
-	<s:HGroup>
-		<s:VGroup id="commandButtons" gap="1"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
-		<s:Line height="100%">
-			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
-		</s:Line>
-		<s:TileGroup id="colorButtons" horizontalGap="1" verticalGap="1"/>
+		<s:Label text="Paid:"/>
+		<s:Label id="paid" text="0" fontWeight="bold" color="#00ff00"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -94,11 +102,11 @@
 			private var _quantityButtons:Vector.<IUIComponent> = new Vector.<IUIComponent>(2);
 			private var _commandButtonInfo:Array =
 			[
-				{ name: "PAY", color: 0x0000ff, handler: onPay },
-				{ name: "PRINT TAG", color: 0x0000cc, handler: onPrintTag },
-				{ name: "PRINT RCPT", color: 0x0000cc, handler: onPrintReceipt },
+				{ name: "-PAY-", color: 0x0000cc, handler: onPay },
+				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
+				{ name: "PRINT RCPT", color: 0x0000ff, handler: onPrintReceipt },
 				{ name: "ITEM + 1", color: 0x00aa00, handler: onIncItem },
-				{ name: "ITEM - 1", color: 0xff0000, handler: onDecItem },
+				{ name: "ITEM - 1", color: 0xbb0000, handler: onDecItem },
 				{ name: "SAVE", color: 0x00aa00, handler: onSave }
 			];
 			private function onInit():void
@@ -229,37 +237,45 @@
 			}
 			private function onItem(e:Event):void
 			{
+				var index:int = 0;
 				for each (var item:Object in Data.instance.items.source)
 				{
 					if (item.id == parseInt(e.target.name))
 					{
-						itemList.addItem(item);
+						_order.addItem(item);
+
+						itemList.selectedIndex = _order.items.length - 1;
 						updateTotal();
 						break;
 					}
+					++index;
 				}
 			}
 			private function onIncItem(e:Event):void
 			{
-				itemList.incItem(itemList.selectedIndex);
+				_order.incItem(itemList.selectedIndex);
 				updateTotal();
 			}
 			private function onDecItem(e:Event):void
 			{
-				itemList.decItem(itemList.selectedIndex);
+				_order.decItem(itemList.selectedIndex);
 				updateTotal();
 				
 				onSelectionUpdate(itemList.selectedIndex);
 			}
 			private function onColorProperty(e:Event):void
 			{
-				const color:String = IFlexDisplayObject(e.target).name;
-				itemList.addProperty(color);
+				if (itemList.selectedIndex >= 0)
+				{
+					const color:String = IFlexDisplayObject(e.target).name;
+					_order.addProperty(itemList.selectedIndex, color);
+				}
 			}
 			private function updateTotal():void
 			{
-				items.text = String(itemList.numItems);
-				total.text = formatter.format(itemList.total);
+				items.text = String(_order.items.length);
+				total.text = formatter.format(_order.total);
+				paid.text = formatter.format(_order.paid);
 			}
 
 			private var _customerList:CustomerList = new CustomerList;
@@ -325,10 +341,9 @@
 			}
 			public function get order():Order
 			{
-				//KAI: lazy write, sure, but this is kinda lame
+				//KAI: better binding could get rid of this
 				_order.date = date.selectedDate.date;
 				_order.time = time.selectedItem;
-				_order.items = itemList.items;
 				return _order;
 			}
 		]]>
