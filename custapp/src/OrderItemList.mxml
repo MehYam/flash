@@ -4,7 +4,6 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 creationComplete="onInit()">
 	<fx:Declarations>
-		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:DataGrid
 		id="grid"
@@ -17,9 +16,9 @@
 				<s:GridColumn dataField="name" headerText="Item" editable="false"/>
 				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40"/>
 				<s:GridColumn dataField="colors" headerText="Style"/>
-				<s:GridColumn dataField="price" headerText="Price" formatter="{formatter}"/>
+				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}"/>
 				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No." width="40"/>
-				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{formatter}" editable="false"/>
+				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{Utils.currencyFormatter}" editable="false"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>

@@ -15,3 +15,8 @@ s|DropDownList
 {
 	skinClass: ClassReference("ui.StretchyDropDownListSkin");
 }
+
+.numberLabel
+{
+	font-weight:bold;
+}

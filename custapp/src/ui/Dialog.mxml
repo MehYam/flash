@@ -5,14 +5,16 @@
 			   close="doAutoClose()"
 			   >
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:String id="completeLabel">Done</fx:String>
+		<fx:String id="cancelLabel">Cancel</fx:String>
 	</fx:Declarations>
 	<s:layout>
 		<s:VerticalLayout paddingBottom="10"/>
 	</s:layout>
+	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%" horizontalAlign="center">
-		<ui:Button id="done" label="Done" click="dispatchEvent(new Event(Event.COMPLETE)); doAutoClose();"/>
-		<ui:Button label="Cancel" click="dispatchEvent(new Event(Event.CLOSE)); doAutoClose();"/>
+		<ui:Button id="done" label="{completeLabel}" click="dispatchEvent(new CloseEvent(Event.COMPLETE)); doAutoClose();"/>
+		<ui:Button label="{cancelLabel}" click="dispatchEvent(new CloseEvent(Event.CLOSE)); doAutoClose();"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
@@ -29,7 +31,7 @@
 			}
 			private function bounceComplete(e:Event):void
 			{
-				dispatchEvent(new Event(Event.COMPLETE));
+				dispatchEvent(new CloseEvent(Event.COMPLETE));
 			}
 			
 			private var _autoClose:Boolean = false;

@@ -10,7 +10,6 @@
 		 creationComplete="onInit()" 
 		 >
 	<fx:Declarations>
-		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:HGroup>
 		<s:TextInput id="customer" width="300" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
@@ -59,22 +58,22 @@
 	</s:Line>
 	<s:HGroup>
 		<s:Label text="Ticket:"/>
-		<s:Label id="orderID" fontWeight="bold"/>
+		<s:Label id="orderID" styleName="numberLabel"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Items:"/>
-		<s:Label id="items" text="0" fontWeight="bold"/>
+		<s:Label id="items" text="0" styleName="numberLabel"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Total:"/>
-		<s:Label id="total" text="0" fontWeight="bold"/>
+		<s:Label id="total" text="0" styleName="numberLabel"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Paid:"/>
-		<s:Label id="paid" text="0" fontWeight="bold" color="#00ff00"/>
+		<s:Label id="paid" text="0" styleName="numberLabel" color="#00ff00"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -143,7 +142,7 @@
 				{
 					var button:Button = new Button;
 					button.setStyle("skinClass", MultilineButtonSkin);
-					button.label = item.name + "\n" + formatter.format(item.price);
+					button.label = item.name + "\n" + Utils.currencyFormatter.format(item.price);
 					button.height = 100;
 					button.width = 100;
 					button.name = item.id;
@@ -186,7 +185,7 @@
 				{
 					newOrder();
 				}
-			}
+			} 
 			private function newOrder():void
 			{
 				order = Data.instance.createOrder(0, new Date().date, "12pm", []);
@@ -205,6 +204,38 @@
 			}
 			private function onPay(e:Event):void
 			{
+				var pay:PayUI = new PayUI;
+				pay.total = _order.total;
+				pay.owing = _order.total - _order.paid;
+					
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = pay;
+				popup.autoClose = true;
+				popup.title = "Pay";
+				popup.completeLabel = "PAY";
+				
+				var dobj:DisplayObject = DisplayObject(e.currentTarget);
+				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y + dobj.height)));
+				
+				popup.x = dest.x;
+				popup.y = dest.y;
+				
+				PopUpManager.addPopUp(popup, this, true);
+				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
+			}
+			private function onPayComplete(e:Event):void
+			{
+				const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
+				const change:Number = pay.paying - pay.owing; 
+
+				_order.paid = Math.min(_order.total, _order.paid + pay.paying);
+				
+				updateTotal();
+
+				if (change > 0)
+				{
+					Alert.show("Change of " + Utils.currencyFormatter.format(change) + " goes to customer.", "Change");
+				}
 			}
 			private function onPrintTag(e:Event):void
 			{
@@ -277,8 +308,8 @@
 			private function updateTotal():void
 			{
 				items.text = String(_order.items.length);
-				total.text = formatter.format(_order.total);
-				paid.text = formatter.format(_order.paid);
+				total.text = Utils.currencyFormatter.format(_order.total);
+				paid.text = Utils.currencyFormatter.format(_order.paid);
 				
 				paid.setStyle("color", order.total == _order.paid ? 0x00ee00 : 0xff0000);
 			}

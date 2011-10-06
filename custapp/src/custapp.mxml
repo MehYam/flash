@@ -22,11 +22,11 @@
 		<s:NavigatorContent label="CUSTOMERS">
 			<local:CustomerList width="100%" height="100%"/>
 		</s:NavigatorContent>
+		<s:NavigatorContent label="Pay UI">
+			<local:PayUI/>
+		</s:NavigatorContent>
 		<s:NavigatorContent label="Database Browser">
 			<local:DatabaseBrowser/>
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Stuff">
-			<s:Button label="placeholder"/>
 		</s:NavigatorContent>
 	</mx:ViewStack>
 	<fx:Script>

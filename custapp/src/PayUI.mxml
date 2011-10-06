@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 paddingBottom="5" paddingTop="5" paddingLeft="5" paddingRight="5"
+		 >
+	<fx:Declarations>
+		<fx:Number id="total">0</fx:Number>
+		<fx:Number id="owing">0</fx:Number>
+		<fx:Number id="paying">0</fx:Number>
+	</fx:Declarations>
+	<s:HGroup width="100%" horizontalAlign="right">
+		<s:Label text="Total:"/>
+		<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>
+	</s:HGroup>
+	<s:HGroup width="100%" horizontalAlign="right">
+		<s:Label text="Owing:"/>
+		<s:Label id="owingLabel"  text="{Utils.currencyFormatter.format(owing)}" styleName="numberLabel"/>
+	</s:HGroup>
+	<s:HGroup width="100%" horizontalAlign="right">
+		<s:Label text="Change:"/>
+		<s:Label id="changeLabel"  text="{Utils.currencyFormatter.format(paying - owing)}" styleName="numberLabel"/>
+	</s:HGroup>
+	<s:TextInput id="payingLabel" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" width="146"/>
+	<s:TileGroup id="buttons"/>
+	<fx:Script>
+		<![CDATA[
+			import data.Order;
+			
+			import mx.controls.Button;
+			public function set order(o:Order):void
+			{
+				totalLabel.text = Utils.currencyFormatter.format(o.total);
+				owingLabel.text = Utils.currencyFormatter.format(o.total - o.paid);
+			}
+			static private const BUTTONS:Array = 
+			[
+				{ amount: 0.01 },
+				{ amount: 0.1 },
+				{ amount: 0.25 },
+				{ amount: 1 },
+				{ amount: 5 },
+				{ amount: 10 },
+				{ amount: 20 },
+				{ amount: 50 }
+			];
+			protected override function createChildren():void
+			{
+				super.createChildren();
+				
+				var button:Button;
+				button = new Button;
+				button.label = "Exact";
+				buttons.addElement(button);
+				button.addEventListener(MouseEvent.CLICK, onExactAmount, false, 0, true);
+				
+				button = new Button;
+				button.label = "Clear";
+				button.setStyle("color", 0xdd0000);
+				buttons.addElement(button);
+				button.addEventListener(MouseEvent.CLICK, onClearAmount, false, 0, true);
+				for each (var b:Object in BUTTONS)
+				{
+					button = new Button;
+					button.label = "+" + b.amount;
+					button.name = String(b.amount);
+					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
+					
+					buttons.addElement(button);
+				}
+			}
+			private function onAddButton(e:Event):void
+			{
+				paying += parseFloat(DisplayObject(e.currentTarget).name);
+			}
+			private function onExactAmount(e:Event):void
+			{
+				paying = owing;
+			}
+			private function onClearAmount(e:Event):void
+			{
+				paying = 0;
+			}
+		]]>
+	</fx:Script>
+</s:VGroup>

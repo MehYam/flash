@@ -9,7 +9,6 @@
 		  creationComplete="filter.setFocus()"
 		  >
 	<fx:Declarations>
-		<s:CurrencyFormatter id="formatter" useCurrencySymbol="true"/>
 	</fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
@@ -43,8 +42,8 @@
 				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
 				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
 				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
-				<s:GridColumn dataField="total" headerText="Total" formatter="{formatter}"/>
-				<s:GridColumn dataField="paid" headerText="Paid" formatter="{formatter}"/>
+				<s:GridColumn dataField="total" headerText="Total" formatter="{Utils.currencyFormatter}"/>
+				<s:GridColumn dataField="paid" headerText="Paid" formatter="{Utils.currencyFormatter}"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
@@ -93,7 +92,7 @@
 				
 				var popup:Dialog = new Dialog;
 				popup.bodyContent = orderEditor;
-				popup.title = customerLabelFunction(order, null) + " Total:" + formatter.format(order.total) + ", Paid:" + formatter.format(order.paid); 
+				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
 					
 popup.autoClose = true;
 				PopUpManager.addPopUp(popup, parent);
