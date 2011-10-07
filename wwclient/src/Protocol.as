@@ -19,7 +19,7 @@ package
 		{
 			if (_handler)
 			{
-				_handler.scoreWord("player" + Math.random()*10, word, word.length * 10);
+				_handler.scoreWord("kai", word, word.length * 10);
 			}
 		}
 		public function submitChat(text:String):void

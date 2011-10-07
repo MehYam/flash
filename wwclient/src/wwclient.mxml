@@ -1,47 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/halo" xmlns:local="*"
-			   addedToStage="onComplete()"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   xmlns:local="*"
 			   implements="IProtocolHandler"
+			   addedToStage="onComplete()"
 >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:VGroup width="100%" height="100%">
-		<s:HGroup width="100%" height="100%">
-			<s:List id="playerList"/>
-			<local:LetterGrid id="letterGrid" minWidth="100" width="100%" height="100%"/>
-<!--			<mx:DataGrid id="wordHistory" height="100%">
-				<mx:columns>
-					<mx:DataGridColumn headerText="Player" dataField="player"/>
-					<mx:DataGridColumn headerText="Word" dataField="word"/>
-					<mx:DataGridColumn headerText="Score" dataField="score"/>
-				</mx:columns>
-			</mx:DataGrid>
--->		</s:HGroup>
-		<s:TextArea id="wordEntry" height="5%" width="100%"/>
-		<s:TextArea id="chatLog" height="40%" width="100%"/>
-	</s:VGroup>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		@namespace local "*";
+		.letterTileStyle, .letterTileStyleMarked
+		{
+			color: #cccccc;
+			font-family: "verdana";
+			font-size: "36";
+			font-weight: bold;
+		}
+		.letterTileStyleMarked
+		{
+			color: #ff0000;
+		}	
+		.wordEntry
+		{
+			font-family: "verdana";
+			font-size: "17";
+			font-weight:bold;
+		}
+	</fx:Style>
+	<s:layout><s:VerticalLayout paddingBottom="10" paddingTop="10" paddingRight="10" paddingLeft="10" /></s:layout>
+	<s:Group width="100%">
+		<s:layout><s:BasicLayout/></s:layout>
+		<s:VGroup>
+			<local:LetterGrid left="0" id="letterGrid"/>
+			<s:TextInput id="wordEntry" width="100%" styleName="wordEntry" textAlign="center"/>
+		</s:VGroup>
+		<s:DataGrid right="0" id="wordHistory" height="100%" color="#dddddd" alternatingRowColors="[#66829f,#486781]" verticalScrollPolicy="on" skinClass="WordHistoryGridSkin" tabFocusEnabled="false">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn minWidth="50" headerText="Time" dataField="time"/>
+					<s:GridColumn minWidth="100" headerText="Player" dataField="player"/>
+					<s:GridColumn minWidth="100" headerText="Word" dataField="word"/>
+					<s:GridColumn minWidth="100" headerText="Score" dataField="score"/>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+	</s:Group>
+	<s:HGroup width="100%">
+		<s:List id="playerList" height="100%"  tabFocusEnabled="false"/>
+		<s:VGroup width="100%">
+			<s:TextInput id="chatInput" width="100%"/>
+			<s:TextArea id="chatLog" width="100%" height="100%" tabFocusEnabled="false" editable="false"/>
+		</s:VGroup>
+	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
+			import flash.utils.getTimer;
+			
+			import mx.collections.ArrayCollection;
 			import mx.collections.ArrayList;
 			
 			import spark.events.TextOperationEvent;
+			import spark.filters.DropShadowFilter;
 
 			private var _protocol:Protocol = new Protocol;
+			static private const DROP:Array = [ new DropShadowFilter(3, 45, 0xffffff) ]; 
 			private function onComplete():void
 			{
-//				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKey, false, 0, true);
-//				stage.addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
-				
-//				stage.focus = wordEntry;
 				wordEntry.setFocus();
 				
 				wordEntry.addEventListener(KeyboardEvent.KEY_DOWN, onWordEntryKeydown, false, 0, true);
 				wordEntry.addEventListener(TextOperationEvent.CHANGE, onWordEntryChange, false, 0, true);
-//				wordHistory.dataProvider = _wordHistoryData;
+				wordHistory.dataProvider = _wordHistoryData;
 				playerList.dataProvider = _playerListData;
+				
+				wordHistory.filters = DROP;
 				
 				_protocol.handler = this;
 			}
@@ -88,17 +124,25 @@
 			}
 
 			// IProtocolHandler
-			private var _wordHistoryData:ArrayList = new ArrayList;
+			private var _wordHistoryData:ArrayCollection = new ArrayCollection;
 			public function scoreWord(player:String, word:String, points:int):void
 			{
+				const ticks:uint = getTimer();
+				const min:String = String(int(ticks/60000));
+				const sec:uint = ticks/1000 % 60;
+				
 				//KAI: give that a type so that it can be profiled
 				_wordHistoryData.addItem(
 					{
 						player: player,
 						word: word,
-						score: points
+						score: points,
+						time: min + ":" + (sec < 10 ? ("0" + sec) : String(sec)) 
 					}
 				);
+				_wordHistoryData.refresh();
+				wordHistory.ensureCellIsVisible(_wordHistoryData.length - 1);
+//				wordHistory.grid.verticalScrollPosition = wordHistory.grid.contentHeight - wordHistory.grid.height + 10;
 			}
 
 			private var _playerListData:ArrayList = new ArrayList;
