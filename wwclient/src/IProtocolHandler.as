@@ -5,7 +5,7 @@ package
 		function scoreWord(player:String, word:String, points:int):void;
 		function addPlayer(player:String, points:int):void;
 		function removePlayer(player:String, points:int):void;
-//		function chatText(...);
+		function chatText(player:String, text:String):void;
 //		function startGame(...);
 //		function endGame(...);
 //		function startRound(...);

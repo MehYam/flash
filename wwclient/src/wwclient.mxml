@@ -13,12 +13,17 @@
 		@namespace s "library://ns.adobe.com/flex/spark";
 		@namespace mx "library://ns.adobe.com/flex/mx";
 		@namespace local "*";
+		local|wwclient
+		{
+			font-family: "embeddedMyriad";
+			font-size: 12;
+		}
 		.letterTileStyle, .letterTileStyleMarked
 		{
 			color: #cccccc;
-			font-family: "verdana";
-			font-size: "36";
-			font-weight: bold;
+			font-family: "embeddedMyriad";
+			font-weight:bold;
+			font-size: 36;
 		}
 		.letterTileStyleMarked
 		{
@@ -26,17 +31,32 @@
 		}	
 		.wordEntry
 		{
-			font-family: "verdana";
-			font-size: "17";
+			font-family: "embeddedMyriad";
+			font-size: 18;
 			font-weight:bold;
 		}
+		.chatLog
+		{
+			font-family: "embeddedMyriad";
+		}
+		@font-face {
+			src:url("../../src/fonts/MyriadWebPro.ttf");
+			fontFamily: embeddedMyriad;
+			embedAsCFF: true;
+		}	
+		@font-face {
+			src:url("../../src/fonts/MyriadWebPro-Bold.ttf");
+			fontFamily: embeddedMyriad;
+			font-weight:bold;
+			embedAsCFF: true;
+		}	
 	</fx:Style>
 	<s:layout><s:VerticalLayout paddingBottom="10" paddingTop="10" paddingRight="10" paddingLeft="10" /></s:layout>
 	<s:Group width="100%">
 		<s:layout><s:BasicLayout/></s:layout>
 		<s:VGroup>
 			<local:LetterGrid left="0" id="letterGrid"/>
-			<s:TextInput id="wordEntry" width="100%" styleName="wordEntry" textAlign="center"/>
+			<s:TextInput id="wordEntry" width="100%" styleName="wordEntry" textAlign="center" typographicCase="uppercase"/>
 		</s:VGroup>
 		<s:DataGrid right="0" id="wordHistory" height="100%" color="#dddddd" alternatingRowColors="[#66829f,#486781]" verticalScrollPolicy="on" skinClass="WordHistoryGridSkin" tabFocusEnabled="false">
 			<s:columns>
@@ -49,11 +69,14 @@
 			</s:columns>
 		</s:DataGrid>
 	</s:Group>
-	<s:HGroup width="100%">
+	<s:HGroup width="100%" height="100%">
 		<s:List id="playerList" height="100%"  tabFocusEnabled="false"/>
-		<s:VGroup width="100%">
-			<s:TextInput id="chatInput" width="100%"/>
-			<s:TextArea id="chatLog" width="100%" height="100%" tabFocusEnabled="false" editable="false"/>
+		<s:VGroup width="100%" height="100%">
+			<s:HGroup width="100%">
+				<s:Label text="Chat:" height="100%" verticalAlign="middle"/>
+				<s:TextInput id="chatInput" width="100%" keyDown="onChatKeyDown(event)"/>
+			</s:HGroup>
+			<s:TextArea id="chatLog" styleName="chatLog" width="100%" height="100%" tabFocusEnabled="false" editable="false"/>
 		</s:VGroup>
 	</s:HGroup>
 	<fx:Script>
@@ -67,7 +90,7 @@
 			import spark.filters.DropShadowFilter;
 
 			private var _protocol:Protocol = new Protocol;
-			static private const DROP:Array = [ new DropShadowFilter(3, 45, 0xffffff) ]; 
+			static private const DROP:Array = [ new DropShadowFilter(3, 45, 0xffffff, 0.4) ]; 
 			private function onComplete():void
 			{
 				wordEntry.setFocus();
@@ -80,14 +103,6 @@
 				wordHistory.filters = DROP;
 				
 				_protocol.handler = this;
-			}
-			private function onKey(e:Event):void
-			{
-				trace(e);
-			}
-			private function onClick(e:Event):void
-			{
-				trace(e);
 			}
 
 			private var _lastValidWord:String;
@@ -123,6 +138,17 @@
 				}
 			}
 
+			private function onChatKeyDown(e:KeyboardEvent):void
+			{
+				if (e.charCode == Keyboard.ENTER && chatInput.text.length)
+				{
+					const chatText:String = chatInput.text;
+					chatInput.text = null;
+					
+					_protocol.submitChat(chatText);
+				}
+			}
+			
 			// IProtocolHandler
 			private var _wordHistoryData:ArrayCollection = new ArrayCollection;
 			public function scoreWord(player:String, word:String, points:int):void
@@ -149,6 +175,13 @@
 			public function addPlayer(player:String, points:int):void
 			{
 				_playerListData.addItem({ label: player });
+			}
+			public function chatText(player:String, text:String):void
+			{
+				chatLog.text += player + ": " + text + "\n";
+				
+//				chatLog.scrollToRange();
+				chatLog.scroller.verticalScrollBar.value = chatLog.scroller.verticalScrollBar.maximum;
 			}
 			public function removePlayer(player:String, points:int):void
 			{

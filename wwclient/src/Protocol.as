@@ -24,7 +24,10 @@ package
 		}
 		public function submitChat(text:String):void
 		{
-			
+			if (_handler)
+			{
+				_handler.chatText("kai", text);
+			}
 		}
 	}
 }

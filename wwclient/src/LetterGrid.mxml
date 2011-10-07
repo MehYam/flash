@@ -7,16 +7,19 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:layout>
-		<s:BasicLayout/>
-	</s:layout>
-	<s:Rect radiusX="5" radiusY="5" width="100%" height="100%">
-		<s:stroke><s:SolidColorStroke color="0x7777ff" alpha="0.7" weight="1"/></s:stroke>
+	<s:Rect radiusX="5" radiusY="5" left="0" right="0" top="0" bottom="0">
+		<s:stroke><s:SolidColorStroke color="0xffffff" alpha="0.4" weight="3"/></s:stroke>
 		<s:fill><s:SolidColor color="0xffffff" alpha="0.2"/></s:fill>
 	</s:Rect>
+	<s:Group id="letterParent">
+		<s:layout>
+			<s:BasicLayout/>
+		</s:layout>
+	</s:Group>
 	<fx:Script>
 		<![CDATA[
 			import mx.core.UIComponent;
+			import mx.states.OverrideBase;
 			
 			import spark.components.Label;
 			import spark.filters.DropShadowFilter;
@@ -27,6 +30,8 @@
 
 			private static const DROP:Array = [ new DropShadowFilter(2, 45, 0x7777ff, 1, 1, 1) ];
 			private var _letters:LetterTable = new LetterTable; //KAI: should be passed in as a data provider
+			static private const LETTER_MARGIN:Number = 25;
+			static private const TILE_SIZE:Number = 65;
 			protected override function createChildren():void
 			{
 				super.createChildren();
@@ -40,13 +45,20 @@
 					label.text = _letters.getLetterLinear(i);
 					label.styleName = "letterTileStyle";
 					
-					label.y = 65 * int(i / COLS);
-					label.x = (i%COLS) * 65;
+					label.x = LETTER_MARGIN + TILE_SIZE * (i % COLS);
+					label.y = LETTER_MARGIN + TILE_SIZE * int(i / COLS);
 					
 					label.filters = DROP;
 
-					addElement(label);
+					letterParent.addElement(label);
 				}
+			}
+			protected override function measure():void
+			{
+				super.measure();
+				
+				measuredWidth += LETTER_MARGIN;
+				measuredHeight += LETTER_MARGIN;
 			}
 			
 			public function get letters():LetterTable
@@ -56,11 +68,11 @@
 			
 			private function onPathChanged(e:Event):void
 			{
-				if (ROWS*COLS <= numElements)
+				if (ROWS*COLS <= letterParent.numElements)
 				{
 					for (var i:int = 0; i < (ROWS*COLS); ++i)
 					{
-						var label:UIComponent = UIComponent(getChildAt(i));
+						var label:UIComponent = UIComponent(letterParent.getElementAt(i));
 						label.styleName = _letters.isMarked(i) ? "letterTileStyleMarked" : "letterTileStyle";
 					}
 				}
