@@ -11,7 +11,7 @@ package
 			_handler = h;
 			if (_handler)
 			{
-				_handler.addPlayer("kai", 0);
+				_handler.addPlayer("guest", 0);
 			}
 		}
 
@@ -19,14 +19,14 @@ package
 		{
 			if (_handler)
 			{
-				_handler.scoreWord("kai", word, word.length * 10);
+				_handler.scoreWord("guest", word, word.length * 10);
 			}
 		}
 		public function submitChat(text:String):void
 		{
 			if (_handler)
 			{
-				_handler.chatText("kai", text);
+				_handler.chatText("guest", text);
 			}
 		}
 	}

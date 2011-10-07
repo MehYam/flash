@@ -16,7 +16,7 @@
 		local|wwclient
 		{
 			font-family: "embeddedMyriad";
-			font-size: 12;
+			font-size: 13;
 		}
 		.letterTileStyle, .letterTileStyleMarked
 		{
@@ -39,6 +39,10 @@
 		{
 			font-family: "embeddedMyriad";
 		}
+		.textInputLabel
+		{
+			vertical-align: middle;
+		}
 		@font-face {
 			src:url("../../src/fonts/MyriadWebPro.ttf");
 			fontFamily: embeddedMyriad;
@@ -56,15 +60,27 @@
 		<s:layout><s:BasicLayout/></s:layout>
 		<s:VGroup>
 			<local:LetterGrid left="0" id="letterGrid"/>
-			<s:TextInput id="wordEntry" width="100%" styleName="wordEntry" textAlign="center" typographicCase="uppercase"/>
+			<s:HGroup width="100%">
+				<s:Label height="100%" text="Submit Word:" styleName="textInputLabel"/>
+				<s:TextInput id="wordEntry" width="100%" styleName="wordEntry" textAlign="center" typographicCase="uppercase"/>
+			</s:HGroup>
 		</s:VGroup>
 		<s:DataGrid right="0" id="wordHistory" height="100%" color="#dddddd" alternatingRowColors="[#66829f,#486781]" verticalScrollPolicy="on" skinClass="WordHistoryGridSkin" tabFocusEnabled="false">
 			<s:columns>
 				<s:ArrayList>
-					<s:GridColumn minWidth="50" headerText="Time" dataField="time"/>
-					<s:GridColumn minWidth="100" headerText="Player" dataField="player"/>
-					<s:GridColumn minWidth="100" headerText="Word" dataField="word"/>
-					<s:GridColumn minWidth="100" headerText="Score" dataField="score"/>
+					<s:GridColumn minWidth="45" maxWidth="100" headerText="Time" dataField="time"/>
+					<s:GridColumn minWidth="100" maxWidth="150" headerText="Player" dataField="player"/>
+					<s:GridColumn minWidth="100" maxWidth="150" headerText="Word" dataField="word"/>
+					<s:GridColumn minWidth="40" maxWidth="100" headerText="Score" dataField="score">
+						<s:itemRenderer>
+							<fx:Component>
+								<s:DefaultGridItemRenderer
+									fontWeight="bold"
+									textAlign="right"
+								/>
+							</fx:Component>
+						</s:itemRenderer>
+					</s:GridColumn>
 				</s:ArrayList>
 			</s:columns>
 		</s:DataGrid>

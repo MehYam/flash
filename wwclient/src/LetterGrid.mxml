@@ -28,7 +28,7 @@
 			private static const ROWS:int = 5;
 			private static const COLS:int = 5;
 
-			private static const DROP:Array = [ new DropShadowFilter(2, 45, 0x7777ff, 1, 1, 1) ];
+			private static const DROP:Array = [ new DropShadowFilter(2, 45, 0xffff00, 0.5, 1, 1) ];
 			private var _letters:LetterTable = new LetterTable; //KAI: should be passed in as a data provider
 			static private const LETTER_MARGIN:Number = 25;
 			static private const TILE_SIZE:Number = 65;
