@@ -1,25 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx">
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="onInit()"
+		 width="100%"
+		 >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:HGroup>
-		<s:Button label="Create Database" click="onCreate()"/>
-		<s:TextInput id="dbName" text="testdb.db"/>
-	</s:HGroup>
-	<s:HGroup>
-		<s:Button label="Create Table" click="onCreateTable()"/>
-		<s:TextInput id="tableName" text="table1"/>
-	</s:HGroup>
+	<s:TextArea id="queryText" width="100%"/>
+	<s:Button label="Run Query" click="onRunQuery()"/>
 	<fx:Script>
 		<![CDATA[
-			private function onCreate():void
+			private const _sqlc:SQLConnection = new SQLConnection();
+			private const _sqls:SQLStatement = new SQLStatement();
+
+			private function onInit():void
 			{
+				// first we need to set the file class for our database (in this example test.db). If the Database doesn't exists it will be created when we open it.
+				var db:File = File.applicationStorageDirectory.resolvePath("test.db");
+				// after we set the file for our database we need to open it with our SQLConnection.
+				_sqlc.openAsync(db);
+
+				// we need to set some event listeners so we know if we get an sql error, when the database is fully opened and to know when we recive a resault from an sql statment. The last one is uset to read data out of database.
+				_sqlc.addEventListener(SQLEvent.OPEN, onSQLOpen);
+				_sqlc.addEventListener(SQLErrorEvent.ERROR, onSQLError);
+				_sqls.addEventListener(SQLErrorEvent.ERROR, onSQLError);
+				_sqls.addEventListener(SQLEvent.RESULT, onSQLResult);
 			}
-			private function onCreateTable():void
+			private function onSQLOpen(e:SQLEvent):void
 			{
+				// when the database is opened we need to link the SQLStatment to our SQLConnection, so that sql statments for the right database.
+				// if you don't set this connection you will get an error when you execute sql statment.
+				_sqls.sqlConnection = _sqlc;
+				// in property text of our SQLStatment we write our sql command. We can also combine sql statments in our text property so that more than one statment can be executed at a time.
+				// in this sql statment we create table in our database with name "test_table" with three columns (id, first_name and last_name). Id is an integer that is auto incremented when each item is added. First_name and last_name are columns in which we can store text
+				// If you want to know more about sql statments search the web.
+				_sqls.text = "CREATE TABLE IF NOT EXISTS test_table ( id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT);";
+				// after we have connected sql statment to our sql connection and writen our sql commands we also need to execute our sql statment.
+				// nothing will change in database until we execute sql statment.
+				_sqls.execute();
+			}
+			private function onSQLError(e:SQLErrorEvent):void
+			{
+				trace("error:", e);
+			}
+			private function onSQLResult(e:SQLEvent):void
+			{
+				var data:Array = _sqls.getResult().data;
+				trace("data:", data);				
+			}
+			//// method to remove row from database.
+			//private function remove():void
+			//{
+			//	// sql statment to delete from our test_table the row that has the same number in number column as our selected row from datagrid
+			//	sqls.text = "DELETE FROM test_table WHERE id="+dp[dg.selectedIndex].id;
+			//	sqls.execute();
+			//	refresh();
+			//}
+			//private function addItem():void
+			//{
+			//	// in this sql statment we add item at the end of our table with values first_name.text in column first_name and last_name.text for column last_name
+			//	sqls.text = "INSERT INTO test_table (first_name, last_name) VALUES('"+first_name.text+"','"+last_name.text+"');";
+			//	sqls.execute();
+			//	
+			//	refresh();
+			//}
+			private function onRunQuery():void
+			{
+				if ( !_sqls.executing )// we need to check if our sql statment is still executing our last sql command. If so we use Timer to try again in 10 milliseconds. If we wouldn't check we could get an error because SQLStatment can't execute two statments at the same time.
+				{
+					// sql statment which returns all the data from our "test_table". To retrive only data from first_name and last_name columns we would use "SELECT first_name,last_name FROM test_table"
+					_sqls.text = queryText.text;//"SELECT * FROM test_table"
+					_sqls.execute();
+				}
 			}
 		]]>
 	</fx:Script>
