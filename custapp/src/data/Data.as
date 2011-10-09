@@ -1,15 +1,22 @@
 package data
 {
+	import karnold.utils.SQLHelper;
+	
 	import mx.collections.ArrayCollection;
 	import mx.collections.ArrayList;
+	import mx.collections.IList;
 
-	public class Data
+	final public class Data
 	{
 		static public const BAR_HEIGHT:Number = 40;
 		
-		static private var s_instance:Data = new Data;
+		static private var s_instance:Data;
 		static public function get instance():Data
 		{
+			if (!s_instance)
+			{
+				s_instance = new Data;
+			}
 			return s_instance;
 		}
 
@@ -18,12 +25,6 @@ package data
 		public const items:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
-
-		static public const ORDER_STATE_NEW:int = 1;
-		static public const ORDER_STATE_READY:int = 2;
-		static public const ORDER_STATE_PAID:int = 3;
-		static public const ORDER_STATE_PICKED_UP:int = 4;
-		static public const ORDER_STATE_COMPLETE:int = 5;
 		public function createOrder(customerID:int, date:Number, time:String, items:Array):Order
 		{
 			var retval:Order = new Order;
@@ -35,15 +36,37 @@ package data
 			return retval;
 		}
 
+		static private function findRecordByID(collection:IList, obj:Object):int
+		{
+			for (var i:int = 0; i < collection.length; ++i)
+			{
+				const o:Object = collection.getItemAt(i);
+				if (o.id == obj.id)
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+
 		private var _id:int = 0;
 		public function get nextID():int { return _id++; }
-		private function addCustomer(first:String, last:String, phone:String, email:String, notes:String):void
+		public function writeCustomer(customer:Object):void
 		{
-			customers.addItem({ first:first, last:last, phone:phone, email:email, notes:notes, id:_id++});
+			const index:int = findRecordByID(customers, customer);
+			if (index == -1)
+			{
+				customers.addItem(customer);
+			}
+			else
+			{
+				customers.setItemAt(customer, index);
+			}
+			_sql.writeRecord(CUSTOMER_TABLE, customer); 
 		}
 		private function addItem(name:String, price:Number):void
 		{
-			items.addItem({ name:name, price:price, id:_id++ });
+			items.addItem({ name:name, price:price, id:nextID });
 		}
 		private function addColor(name:String, color:uint):void
 		{
@@ -53,22 +76,25 @@ package data
 		{
 			patterns.addItem(name);
 		}
+		
+		static private const CUSTOMER_TABLE:String = "customers";
+		static private const CUSTOMER_FIELDS:Array = 
+		[
+			{ name: "first", type: SQLHelper.TYPE_TEXT },
+			{ name: "last",  type: SQLHelper.TYPE_TEXT },
+			{ name: "phone", type: SQLHelper.TYPE_INTEGER },
+			{ name: "email", type: SQLHelper.TYPE_TEXT },
+			{ name: "notes", type: SQLHelper.TYPE_TEXT }
+		];
+		
+		private var _sql:SQLHelper = new SQLHelper;
 		public function Data()
 		{
-			addCustomer("Joe", "Smith", "6509966759", "joe@yahoo.com", null);
-			addCustomer("Sandra", "Jones", "4155556666", "sandra@foo.com", null);
-			addCustomer("Joe", "Somebody", "2342345", null, null);
-			addCustomer("Steve", "Nobody", "2123334444", null, null);
-			addCustomer("Captain", "Ahab", "6508876655", null, null);
-			addCustomer("The", "Dude", "3412543123", "lebowsky@bowling.com", "Frequent rug cleanings");
-			addCustomer("Abraham", "Lincoln", "6509966710", "joe@joe.com", null);
-			addCustomer("Green", "Lantern", "4155556677", "green@blah.com", null);
-			addCustomer("Steve", "Vai", "2342356", null, null);
-			addCustomer("George", "Hung", "2123334488", null, null);
-			addCustomer("Dave", "Letterman", "6508876622", null, null);
-			addCustomer("Johnny", "Carson", "3412543124", "lebowsky@bowling.com", "Frequent rug cleanings");
-			addCustomer("", "Foo", "12345678", null, null);
+			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS);
 
+//KAI: left off here + handling the 0 phone number issue w/ the table
+//			_sql.readTable(CUSTOMER_TABLE, onCustomers);
+			
 			addItem("Misc.", 1);
 			addItem("Tee Shirt", 5);
 			addItem("Pants", 7);

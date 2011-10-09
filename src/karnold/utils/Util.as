@@ -14,7 +14,7 @@ package karnold.utils
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
 	
-	public class Util
+	final public class Util
 	{
 		static public function tr(str:String):void
 		{

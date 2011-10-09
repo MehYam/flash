@@ -119,7 +119,7 @@
 				if (edit.addMode)
 				{
 					const newCustomer:Object = edit.data;
-					Data.instance.customers.addItem(newCustomer);
+					Data.instance.writeCustomer(newCustomer);
 					customerGrid.selectedItem = newCustomer;
 					customerGrid.ensureCellIsVisible(customerGrid.selectedIndex);
 						

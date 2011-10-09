@@ -3,7 +3,7 @@ package
 	import spark.formatters.CurrencyFormatter;
 	import spark.formatters.NumberFormatter;
 
-	public class Utils
+	final public class Utils
 	{
 		public function Utils()
 		{

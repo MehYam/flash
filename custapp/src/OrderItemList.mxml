@@ -22,8 +22,8 @@
 				<s:GridColumn dataField="name" headerText="Item" editable="false" width="150"/>
 				<s:GridColumn dataField="colors" headerText="Styles, Notes"/>
 				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}" itemRenderer="{priceColumnRenderer}" width="150"/>
-				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No." width="50"/>
-				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{Utils.currencyFormatter}" editable="false" itemRenderer="{priceColumnRenderer}" width="150"/>
+				<s:GridColumn dataField="count" headerText="No." labelFunction="countLabelFunction" width="50"/>
+				<s:GridColumn headerText="Total" labelFunction="totalLabelFunction" formatter="{Utils.currencyFormatter}" editable="false" itemRenderer="{priceColumnRenderer}" width="150"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>

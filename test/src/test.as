@@ -35,6 +35,7 @@ package
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	import flash.utils.describeType;
 	
 	import karnold.utils.Util;
 
@@ -70,130 +71,17 @@ package
 //			testArray();
 //			testBlurFilterRasterizationBounds();
 //			testTint();
-			deleteMe();
+			testEnumeratingObjectMembers();
 		}
-		private var xml:XML = <data>
-<planes>
-<plane n='Bee'          a='0'  rad='12' dmg='0.05' rate='0.3'  arm='0.05' speed='0.4'  cost='1000'   unl='0' up='2'  c='0' l="0"/>
-<plane n='Wasp'         a='1'  rad='12' dmg='0.1'  rate='0.3'  arm='0.05' speed='0.5'  cost='2000'   unl='0' up='0'  c='0' l="1"/>
-<plane n='Hornet'       a='2'  rad='12' dmg='0.15' rate='0.3'  arm='0.1'  speed='0.6'  cost='2000'   unl='0' up='0'  c='0' l="2"/>
-<plane n='Jem'          a='3'  rad='12' dmg='0.1'  rate='0.1'  arm='0.2'  speed='0.1'  cost='2000'   unl='0' up='2'  c='1' l="0"/>
-<plane n='Jem II'       a='4'  rad='12' dmg='0.15' rate='0.2'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'  c='1' l="1"/>
-<plane n='Jem VSBL'     a='5'  rad='12' dmg='0.2'  rate='0.3'  arm='0.2'  speed='0.2'  cost='2000'   unl='0' up='0'  c='2' l="2"/>
-<plane n='Bat'          a='6'  rad='20' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.2'  cost='3000'   unl='1' up='2'  c='3' l="0"/>
-<plane n='Bat II'       a='7'  rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="1"/>
-<plane n='Bat III'      a='8'  rad='23' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="2"/>
-<plane n='Osp'       a='9'  rad='35' dmg='0.4'  rate='0.3'  arm='0.4'  speed='0.8'  cost='4000'   unl='8' up='2'  c='3' l="3"/>
-<plane n='Osp II'    a='10' rad='35' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="4"/>
-<plane n='Osp III'   a='11' rad='38' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="5"/>
-<plane n='Dipt'      a='12' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='5000'   unl='5' up='2'  c='1' l="3"/>
-<plane n='Dipt X'    a='13' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='1' l="4"/>
-<plane n='Dipt XI'   a='14' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='1' l="5"/>
-<plane n='Cyg X-1'   a='15' rad='27' dmg='0.4'  rate='0.3'  arm='0.3'  speed='0.8'  cost='6000'   unl='2' up='2'  c='0' l="3"/>
-<plane n='Cyg X-2'   a='16' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="4"/>
-<plane n='Cyg X-3'   a='17' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="5"/>
-<plane n='Ghost'        a='18' rad='18' dmg='0.4'  rate='0.3'  arm='0.6'  speed='0.8'  cost='7000'   unl='8' up='2'  c='3' l="3"/>
-<plane n='Phantom'      a='19' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="4"/>
-<plane n='Spectre'      a='20' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="5"/>
-<plane n='Atac'      a='21' rad='20' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='8000'   unl='5' up='2'  c='2' l="3"/>
-<plane n='Atac II'   a='22' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="4"/>
-<plane n='Atac III'  a='23' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="5"/>
-<plane n='???'          a='24' rad='20' dmg='0.4'  rate='0.3'  arm='0.1'  speed='0.8'  cost='9000'   unl='0' up='0' nosale='true'  c='2' l="8"/>
-<plane n='Vee'     a='25' rad='30' dmg='0.4'  rate='0.3'  arm='0.02' speed='0.8'  cost='10000'  unl='8' up='2'  c='3' l="3"/>
-<plane n='Vee T'     a='26' rad='30' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="4"/>
-<plane n='Vee X'     a='27' rad='27' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='3' l="5"/>
-<plane n='Roc'    a='28' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='11000'  unl='2' up='2'  c='0' l="3"/>
-<plane n='Roc II' a='29' rad='21' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="4"/>
-<plane n='Roc III' a='30' rad='22' dmg='0.4' rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="5"/>
-<plane n='Esox'         a='31' rad='21' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='5' up='2'  c='2' l="3"/>
-<plane n='Pike'         a='32' rad='22' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="4"/>
-<plane n='Musky'        a='33' rad='24' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='2' l="5"/>
-<plane n='Raven'        a='34' rad='16' dmg='0.4'  rate='0.3'  arm='0.5'  speed='0.8'  cost='12000'  unl='2' up='2'  c='0' l="3"/>
-<plane n='Corvid'       a='35' rad='18' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="4"/>
-<plane n='NvrMor'    a='36' rad='20' dmg='0.4'  rate='0.3'  arm='0.2'  speed='0.8'  cost='2000'   unl='0' up='0'  c='0' l="5"/>
-</planes>
-<descs>
-<desc plane="0">The Bee is the basic ship in the Stinger line required by all tournament contestants.  Your... "new Bee" has been fitted with a low-energy cannon, and like all Rogue-class ships, it prioritizes maneuverability and damage over armor.
-Purchased upgrades to the Bee add more firepower, movement, and a little armor, but most importantly, unlock the purchase of higher level ships and classes.</desc>
-
-<desc plane="1">The Wasp is a respectable step up from Bee, adding some movement speed and doubling firepower with a dual cannons.
-Purchase of the Wasp also gives contestants access to the Bat, the first in the line of the larger, more powerful Fighter-class ships.</desc>
-
-<desc plane="2">All contestants serious about winning the tournament in a Rogue-class ship will spend time flying the Hornet.  The fastest of the Stinger line, the Hornet decimates low to mid-level opponents with its speed, and serves as a good training ship for the more expensive Rogue-class ships.
-Purchasing this also unlocks the Raven, Roc, and Cyg lines in the Rogue family.</desc>
-
-<desc plane="3">The first of the class of Melee ships, the Jems are actually mining and drilling vessels repurposed into tournament death machines.  All Melee ships have high armor and protective shields that can be used in different ways to harm opponents.  Some ships add conventional weapons as well.
-The Jem's shield takes some time to recharge, and is relatively weak, but can be flung at opponents at moderate range.
-Upgrades to the Jem will unlock more powerful Melee-class ships.</desc>
-
-<desc plane="4">This upgrade to the Jem line beefs up speed, armor, and shields.
-Contestants flying the Jem line (and all Melee ships) soon learn the art of timing;  quiet moments are opportunities to ditch a damaged shield, preferably flinging it at a crowd while a new one recharges.
-Jem pilots also learn the art of reflecting ammo.  This is especially effective when reflecting back fusion or high-speed rockets, or facing down faster opponents.</desc>
-
-<desc plane="5">The final Jem ship adds some light fore and aft lasers, giving opponents something else to think about and pilots something else to do while shields recharge.  
-Aside from boosting stats all around, purchase of this Jem unlocks the three advanced Melee lines of ships: Atac, Esox, and Dipt.</desc>
-
-<desc plane="6">Fighter-class ships like those in the Bat line fall in the middle between Rogue and Melee vessels.  They're generally nimbler than Melees, but slower than Rogues due to added armor and weapons.  The sturdiness of these ships can be traced back to their military origins, which have allowed them to be tournament-ready with little modification.
-This entry-level Bat fires powerful rockets, but has touchy firing system with an unpredictable launch rate.  Halting fire in order to keep a crucial shot ready is sometimes a good idea.</desc>
-
-<desc plane="7">The first upgraded Bat model combines quad rocket launchers with improved speed for a brutal attack from the back line.
-Although Fighter-class ships are often heavily armored, with some models it's still a good idea to keep distance from opponents, and let the ranged weapons do their work.</desc>
-
-<desc plane="8">Aside more armor, damage, and better cornering, the top Bat ship also seems to have fixed the firing problem.
-Owners of Bat III will have access to the three top-level Fighter-class lines: the Osp, Stealth, and Ghost.</desc>
-
-<desc plane="34">Fans of the Stinger ships usually upgrade to the Raven line, built for agility and targeting.  The fastest ships in the tournament, they were built to strafe around opponents, sniping them from all angles.  The speed comes at the price of armor;  so enjoy melting hulls with this ship, just don't take damage like you dish it out.</desc>
-
-<desc plane="35">The second in the Raven line is the Corvid, with upgraded speed and dual cannon fittings.</desc>
-
-<desc plane="36">"Nevermore" was a nickname that stuck and became the official title for the final Raven ship.  The ultimate vehicle for speed freaks and adrenaline junkies, this plane will take them down before they know you've fired.  Armor is lacking, by request of the skilled pilots who don't need it.</desc>
-
-<desc plane="28">You will assume control in the Roc.  This ship line uses devastating twin fusion cannons, and is relatively heavy armored for a Rogue-class.  This makes it the slowest of the Rogues, although it's still pretty nimble.
-The key to using fusion effectively is to charge it as much as possible before firing it.  Watch the charge indicator and don't hold it for too long, however, as an overloading cannon will damage the ship over time.
-This ship takes a little practice to master, but nothing matches the pleasure of destroying an entire cluster of enemies with a well-charge fusion blast.</desc>
-
-<desc plane="29">No surprises here, the Roc II is a slightly faster, stronger, and more deadly version of the first model.</desc>
-
-<desc plane="30">No surprises here either, the Roc III is a slightly faster, stronger, and more deadly version of the second model, by exactly "I" amount.  Seriously, the brochure says that.</desc>
-
-<desc plane="15">Give your enemies a world of doubt and fear in a Cyg ship.  These ships walk the middle ground between the speed of the Ravens and the firepower and armor of the Rocs.</desc>
-
-<desc plane="16">Upgraded and more lasers - your foes' ships cannot resist her long.</desc>
-
-<desc plane="17">Six lasers, we couldn't believe it either.  But there they are, melting your face.</desc>
-
-<desc plane="12">The strange design of the Dipt line, the only pure-Melee class, was aimed at intimidating other pilots at close range.  It's the most armored ship in the tournament, and so can withstand brutal hits even while shields are recharging.</desc>
-
-<desc plane="13">What kind of twisted individual flies around in a ship that looks like a deer fly?  You, you're that kind of twisted, because you like shields and messing people up.</desc>
-
-<desc plane="14">The third Dipt is the toughest ship, with the strongest shields in the tournament.</desc>
-
-<desc plane="21">Atac ships are Melee/Rogue hybrids.  They compromise armor, stability, and shield strength for more maneuverability and light ranged weaponry.  Being able to fire from a distance while shielded is a pretty compelling combination for many tournament contestants.</desc>
-
-<desc plane="22">The second Atac demonstrates the line's reputation for versatility, given its powerful long range rockets and decent shield.</desc>
-
-<desc plane="23">They said it couldn't be done, but the pinnacle of the Atac line features a powerful mono fusion cannon in addition to other upgrades.  Weight of the fusion weaponry has limited the shield strength and armor, but this is still the most versatile ship in the field.  It's the only flying vessel that allows the pilot to aim in two directions at once.
-However, pilots have to constantly manage the decision between powering up a fusion shot vs. refreshing a battered shield.</desc>
-
-<desc plane="31">The Esox line of ships most closely resemble their cheaper Jem cousins.  Fitted with strong shields, armor, and up to six multiple lasers, they're built to cut through foes easily at short and medium range.</desc>
-
-<desc plane="32">Moar lasors!</desc>
-
-<desc plane="33">The top Esox is the ultimate expression of the original Jem intent.  You could probably mine with this ship, but make sure the other miners have cleared out first.</desc>
-
-</descs>
-</data>;
-		private function deleteMe():void
+		private function testEnumeratingObjectMembers():void
 		{
-			for each (var item:XML in xml.planes.children())
-			{
-				var foo:Array = 
-					[item.@n, item.@a, item.@rad, item.@arm, item.@dmg, item.@rate, item.@speed, item.@cost,
-					 item.@unl, item.@up, item.@c, item.@l, item.@nosale];
+			var obj:Object = new ClassToEnumerate;
+			for(var id:String in obj) {
+				var value:Object = obj[id];
 				
-				trace(foo.join("\t"));
+				trace(id + " = " + value);
 			}
-	
+			trace(describeType(obj));
 		}
 		private function testTint():void
 		{
@@ -880,8 +768,6 @@ import flash.display.MovieClip;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-import org.osmf.layout.AbsoluteLayoutFacet;
-
 internal final class FOO {}
 internal final class BAR {}
 internal final class BLARF {}
@@ -947,4 +833,12 @@ class ObjectWithSettersForSerialization
 		_foo = foo;
 		_bar = bar;
 	}
+}
+
+final class ClassToEnumerate
+{
+	public var field1:String = "foo";
+	public var field2:uint = 0;
+	public var field3:Number = 5;
+	public var field4:String = "bar";
 }

@@ -23,9 +23,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>[source path] karnold</name>
+			<name>[source path] src</name>
 			<type>2</type>
-			<locationURI>DOCUMENTS/flash/src/karnold</locationURI>
+			<locationURI>DOCUMENTS/flash/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
