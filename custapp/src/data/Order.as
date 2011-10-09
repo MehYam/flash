@@ -1,84 +1,78 @@
 package data
 {
-	import mx.collections.IList;
-	import mx.collections.ListCollectionView;
+	import mx.collections.ArrayCollection;
 
 	public class Order
 	{
-		public var creationTime:Number = new Date().date;
+		public var creationTime:Number = new Date().time;
 
 		public var id:int;
 		public var customerID:int;
-		public var date:Number = creationTime;
-		public var time:String;
+		public var pickupDate:Number = creationTime;
+		public var pickupTime:String;
 		public var ready:Boolean;
 		public var pickedUp:Boolean;
 
-		public var items:ListCollectionView;
 		public var paid:Number = 0;
 
+		public var items:ArrayCollection;
 		public var history:Array = [];
 
 		public function get total():Number
 		{
 			var retval:Number = 0;
-			for each (var item:Object in items)
+			for each (var item:LineItem in items)
 			{
-				retval += (item.price * item.count);
+				retval += (item.price * item.quantity);
 			}
 			return retval;
 		}
 		public function get numItems():Number
 		{
 			var retval:Number = 0;
-			for each (var item:Object in items)
+			for each (var item:LineItem in items)
 			{
-				retval += item.count;
+				retval += item.quantity;
 			}
 			return retval;
 		}
 		public function addProperty(itemIndex:int, prop:String):void
 		{
-			var item:Object = items.getItemAt(itemIndex);
-			if (item.colors)
+			var item:LineItem = LineItem(items.getItemAt(itemIndex));
+			if (item.description)
 			{
-				if (item.colors.indexOf(prop) == -1)
+				if (item.description.indexOf(prop) == -1)
 				{
-					item.colors += ", " + prop;
+					item.description += ", " + prop;
 				}
 			}
 			else
 			{
-				item.colors = prop;
+				item.description = prop;
 			}
 			items.refresh();
 		}
-		public function addItem(item:Object):void
+		public function addLineItem(itemID:int):void
 		{
-			// increment the number on the last item if it's the same
-			var copy:Object =  // KAI: better way to do this, in my library
-				{
-					name: item.name,
-						id: item.id,
-						count: 1,
-						price: item.price
-				};
-			items.addItem(copy);
+			const rawItem:Object = Data.instance.getRawItem(itemID);
+			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.name, rawItem.price);
+
+			items.addItem(lineItem);
 			items.refresh();
 		}
 		public function incItem(index:int):void
 		{
-			var item:Object = items.getItemAt(index);
-			++item.count;
+			var item:LineItem = LineItem(items.getItemAt(index));
+			++item.quantity;
 			
 			items.refresh();
 		}
 		public function decItem(index:int):void
 		{
-			var item:Object = items.getItemAt(index);
-			--item.count;
+			var item:LineItem = LineItem(items.getItemAt(index));
+			--item.quantity;
 			
-			if (item.count <= 0)
+			if (item.quantity <= 0)
 			{
 				items.removeItemAt(index);
 			}

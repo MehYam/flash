@@ -7,7 +7,12 @@
 		<fx:Component id="priceColumnRenderer">
 			<s:DefaultGridItemRenderer
 				textAlign="right"
-				/>
+			/>
+		</fx:Component>
+		<fx:Component id="priceColumnHeaderRenderer">
+			<s:DefaultGridItemRenderer
+				textAlign="right"
+			/>
 		</fx:Component>
 	</fx:Declarations>
 	<s:DataGrid
@@ -20,25 +25,27 @@
 			<s:ArrayList>
 				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40"/>
 				<s:GridColumn dataField="name" headerText="Item" editable="false" width="150"/>
-				<s:GridColumn dataField="colors" headerText="Styles, Notes"/>
 				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}" itemRenderer="{priceColumnRenderer}" width="150"/>
-				<s:GridColumn dataField="count" headerText="No." labelFunction="countLabelFunction" width="50"/>
+				<s:GridColumn dataField="quantity" headerText="No." labelFunction="countLabelFunction" width="50"/>
 				<s:GridColumn headerText="Total" labelFunction="totalLabelFunction" formatter="{Utils.currencyFormatter}" editable="false" itemRenderer="{priceColumnRenderer}" width="150"/>
+				<s:GridColumn dataField="description" headerText="Description"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
 	<fx:Script>
 		<![CDATA[
+			import data.LineItem;
+			
 			import mx.collections.IList;
 			private function onInit():void			{			}
-			static private function totalLabelFunction(itemObj:Object, column:GridColumn):String
+			static private function totalLabelFunction(itemObj:LineItem, column:GridColumn):String
 			{
-				return column.formatter.format(itemObj.price * itemObj.count);
+				return column.formatter.format(itemObj.price * itemObj.quantity);
 			}
-			static private function countLabelFunction(itemObj:Object, column:GridColumn):String
+			static private function countLabelFunction(itemObj:LineItem, column:GridColumn):String
 			{
 				// a number formatter would be a cooler way of doing this, and should be more immune to things like sorting, etc
-				return "x" + itemObj.count;
+				return "x" + itemObj.quantity;
 			}
 			public function get selectedIndex():int
 			{

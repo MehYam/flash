@@ -6,7 +6,12 @@ package data
 	import mx.collections.ArrayCollection;
 	import mx.collections.ArrayList;
 	import mx.collections.IList;
+	import mx.collections.ListCollectionView;
 
+	//
+	// KAI: fundamental flaw here is that ID key management is not handled by the database, but this code itself.
+	// Are you supposed to look up the key that the database generated after creating a new record?  In any case,
+	// this current scheme would break if multiple instances of the program were being used concurrently.
 	final public class Data
 	{
 		static public const BAR_HEIGHT:Number = 40;
@@ -26,44 +31,82 @@ package data
 		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
-		public function createOrder(customerID:int, date:Number, time:String, items:Array):Order
+		public function createOrder(customerID:int, pickupDate:Number, pickupTime:String):Order
 		{
 			var retval:Order = new Order;
 			retval.id = nextID;
 			retval.customerID = customerID;
-			retval.date = date;
-			retval.time = time;
-			retval.items = new ArrayCollection(items);
+			retval.pickupDate = pickupDate;
+			retval.pickupTime = pickupTime;
+			
+			retval.items = new ArrayCollection([]);
 			return retval;
 		}
-
-		static private function findRecordByID(collection:IList, obj:Object):int
+		public function createLineItem(itemID:int, orderID:int, name:String, price:Number):LineItem
 		{
-			for (var i:int = 0; i < collection.length; ++i)
-			{
-				const o:Object = collection.getItemAt(i);
-				if (o.id == obj.id)
-				{
-					return i;
-				}
-			}
-			return -1;
+			var retval:LineItem = new LineItem;
+			retval.id = nextID;
+			retval.itemID = itemID;
+			retval.orderID = orderID;
+			retval.price = price;
+			retval.name = name;
+			retval.quantity = 1;
+			return retval;
 		}
 
 		private var _id:int = 0;
 		public function get nextID():int { return _id++; }
 		public function writeCustomer(customer:Object):void
 		{
-			const index:int = findRecordByID(customers, customer);
+			writeRecord(CUSTOMER_TABLE, customers, customer);
+		}
+		public function writeOrder(order:Order):void
+		{
+			writeRecord(ORDER_TABLE, orders, order);
+			for each (var lineItem:LineItem in order.items)
+			{
+				//KAI: alternative is to read to/write from the line item list separately, which would make it
+				// easier to implement partial saving of orders-in-progress
+				_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
+			}
+		}
+		public function getCustomer(customerID:int):Object
+		{
+			return lookupObjectByID(customers, customerID);
+		}
+		public function getRawItem(itemID:int):Object
+		{
+			return lookupObjectByID(items, itemID);
+		}
+		static private function lookupObjectByID(collection:IList, id:int):Object
+		{
+			const index:int = lookupIndexByID(collection, id);
+			return index >= 0 ? collection.getItemAt(index) : null;
+		}
+		static private function lookupIndexByID(collection:IList, id:int):int
+		{
+			for (var i:int = 0; i < collection.length; ++i)
+			{
+				const o:Object = collection.getItemAt(i);
+				if (o.id == id)
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+		private function writeRecord(table:String, collection:IList, obj:Object):void
+		{
+			const index:int = lookupIndexByID(collection, obj.id);
 			if (index == -1)
 			{
-				customers.addItem(customer);
+				collection.addItem(obj);
 			}
 			else
 			{
-				customers.setItemAt(customer, index);
+				collection.setItemAt(obj, index);
 			}
-			_sql.writeRecord(CUSTOMER_TABLE, customer); 
+			_sql.writeRecord(table, obj); 
 		}
 		private function addItem(name:String, price:Number):void
 		{
@@ -78,6 +121,7 @@ package data
 			patterns.addItem(name);
 		}
 		
+		/// Database table descriptions ///////////////////////////////////////////////////////
 		static private const CUSTOMER_TABLE:String = "customers";
 		static private const CUSTOMER_FIELDS:Array = 
 		[
@@ -96,10 +140,21 @@ package data
 		static private const ORDER_TABLE:String = "orders";
 		static private const ORDER_FIELDS:Array =
 		[
+			{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "pickupDate", type: SQLHelper.TYPE_REAL },
+			{ name: "pickupTime", type: SQLHelper.TYPE_TEXT },
+			{ name: "ready", type: SQLHelper.TYPE_BOOLEAN },
+			{ name: "pickedUp", type: SQLHelper.TYPE_BOOLEAN },
+			{ name: "paid", type: SQLHelper.TYPE_REAL }
 		];
 		static private const ORDER_ITEMS_TABLE:String = "order_items";
 		static private const ORDER_ITEM_FIELDS:Array =
 		[
+			{ name: "itemID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "price", type: SQLHelper.TYPE_REAL },
+			{ name: "quantity", type: SQLHelper.TYPE_INTEGER },
+			{ name: "description", type: SQLHelper.TYPE_TEXT }
 		];
 		
 		private var _sql:SQLHelper = new SQLHelper;
@@ -109,9 +164,9 @@ package data
 
 			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS);
 			_sql.createTable(ITEM_TABLE, ITEM_FIELDS);
+			_sql.createTable(ORDER_TABLE, ORDER_FIELDS);
+			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS);
 
-			_sql.readTable(CUSTOMER_TABLE, onCustomers);
-			
 //			addItem("Misc.", 1);
 //			addItem("Tee Shirt", 5);
 //			addItem("Pants", 7);
@@ -123,8 +178,10 @@ package data
 //			addItem("Scarf", 5.50);
 //			addItem("Tie", 3.00);
 
+			_sql.readTable(CUSTOMER_TABLE, onCustomers);
 			_sql.readTable(ITEM_TABLE, onItems);
-
+			_sql.readTable(ORDER_TABLE, onOrders);
+	
 			addColor("Red", 0xbb0000);
 			addColor("Green", 0x00bb00);
 			addColor("Blue", 0x0000bb);
@@ -140,30 +197,51 @@ package data
 			addPattern("Striped");
 			addPattern("Paisely");
 			addPattern("Patterned");
-			
-			for (var i:uint = 0; i < 10; ++i)
-			{
-				var order:Object = createOrder(Math.random() * customers.length, new Date().date + (Math.random() * 10), "12pm", []);
-				orders.addItem(order);
-			}
 		}
-		private function loadDataToCollection(collection:ArrayCollection, data:Array, name:String):void
+		private function loadDataToCollection(collection:ArrayCollection, data:Array, tableName:String):void
 		{
-			Util.ASSERT(collection.length == 0, "Table '" + name + "' being read twice?");
+			Util.ASSERT(collection.length == 0, "Table '" + tableName + "' being read twice?");
 			if (data)
 			{
 				for each (var record:Object in data)
 				{
 					if (record.id >= _id)
 					{
-						++_id;
+						_id = record.id + 1;
 					}
 				}
 				collection.source = data;
 			}
 			else
 			{
-				trace("No data for table '" + name + "'");
+				trace("No data for table '" + tableName + "'");
+			}
+		}
+		private function loadTypedDataToCollection(collection:ArrayCollection, data:Array, tableName:String, fields:Array, classForTypedObject:Class):void
+		{
+			//KAI: some copy pasta here
+			Util.ASSERT(collection.length == 0, "Table '" + tableName + "' being read twice?");
+			if (data)
+			{
+				var hydratedObjects:Array = [];
+				for each (var record:Object in data)
+				{
+					if (record.id >= _id)
+					{
+						++_id;
+					}
+					var typed:Object = new classForTypedObject;
+					for each (var field:Object in fields)
+					{
+						typed[field.name] = field.type == SQLHelper.TYPE_BOOLEAN ? !!record[field.name] : record[field.name]; 
+					}
+					hydratedObjects.push(typed);
+				}
+				collection.source = hydratedObjects;
+			}
+			else
+			{
+				trace("No data for table '" + tableName + "'");
 			}
 		}
 		private function onCustomers(data:Array):void
@@ -174,19 +252,30 @@ package data
 		{
 			loadDataToCollection(items, data, ITEM_TABLE);
 		}
-		public function getCustomer(customerID:int):Object
+		private function onOrders(data:Array):void
 		{
-			// KAI: replace w/ constant-time lookup
-			for each (var customer:Object in customers)
+			loadTypedDataToCollection(orders, data, ORDER_TABLE, ORDER_FIELDS, Order);
+			for each (var order:Order in orders)
 			{
-				if (customer.id == customerID)
+				_sql.readTableForColumn(ORDER_ITEMS_TABLE, "orderID", order.id, onOrderItems);
+			}
+		}
+		private function onOrderItems(d:Array):void
+		{
+			if (d && d.length)
+			{
+				const orderID:int = d[0].orderID;
+				const order:Order = lookupObjectByID(orders, orderID) as Order;
+				if (order)
 				{
-					return customer;
+					loadTypedDataToCollection(order.items, d, ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS, LineItem);
+				}
+				else
+				{
+					trace("no order for items with orderID", orderID);
 				}
 			}
-			return null;
 		}
-		
 	}
 }
 

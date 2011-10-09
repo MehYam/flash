@@ -57,29 +57,29 @@
 			import mx.managers.PopUpManager;
 			
 			import ui.Dialog;
-			static private function customerLabelFunction(orderObj:Object, column:GridColumn):String
+			static private function customerLabelFunction(orderObj:Order, column:GridColumn):String
 			{
 				const customerObj:Object = Data.instance.getCustomer(orderObj.customerID);
-				return customerObj ? (customerObj.last + ", " + customerObj.first + ", " + customerObj.phone) : "";
+				return customerObj ? (customerObj.last + ", " + customerObj.first + ", " + Utils.phoneFormatter.format(customerObj.phone)) : "";
 			}
-			static private function dropOffLabelFunction(orderObj:Object, column:GridColumn):String
+			static private function dropOffLabelFunction(orderObj:Order, column:GridColumn):String
 			{
 				var date:Date = new Date;
-				date.date = orderObj.creationTime;
+				date.time = orderObj.creationTime;
 				return date.toLocaleString();
 			}
-			static private function pickUpLabelFunction(orderObj:Object, column:GridColumn):String
+			static private function pickUpLabelFunction(orderObj:Order, column:GridColumn):String
 			{
 				var date:Date = new Date;
-				date.date = orderObj.date;
-				return date.toDateString() + ", " + orderObj.time;
+				date.time = orderObj.pickupDate;
+				return date.toDateString() + ", " + orderObj.pickupTime;
 			}
 			private function onFilterChange():void
 			{
 				const pattern:String = filter.text.toUpperCase(); 
-				Data.instance.orders.filterFunction = function(item:Object):Boolean
+				Data.instance.orders.filterFunction = function(item:Order):Boolean
 				{
-					return Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(Order(item).id), pattern); 
+					return Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(item.id), pattern); 
 				};
 				Data.instance.orders.refresh();
 			}

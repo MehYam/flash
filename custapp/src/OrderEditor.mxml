@@ -188,7 +188,7 @@
 			} 
 			private function newOrder():void
 			{
-				order = Data.instance.createOrder(0, new Date().date, "12pm", []);
+				order = Data.instance.createOrder(0, new Date().time, "12pm");
 			}
 			private function onSave(e:Event):void
 			{
@@ -198,7 +198,7 @@
 				}
 				else
 				{
-					Data.instance.orders.addItem(order);
+					Data.instance.writeOrder(order);
 					newOrder();					
 				}
 			}
@@ -271,18 +271,13 @@
 			}
 			private function onItem(e:Event):void
 			{
-				var index:int = 0;
-				for each (var item:Object in Data.instance.items.source)
+				const rawItem:Object = Data.instance.getRawItem(parseInt(e.target.name));
+				if (rawItem)
 				{
-					if (item.id == parseInt(e.target.name))
-					{
-						_order.addItem(item);
+					_order.addLineItem(rawItem.id);
 
-						itemList.selectedIndex = _order.items.length - 1;
-						updateTotal();
-						break;
-					}
-					++index;
+					itemList.selectedIndex = _order.items.length - 1;
+					updateTotal();
 				}
 			}
 			private function onIncItem(e:Event):void
@@ -336,7 +331,7 @@
 			}
 			static private function formatCustomer(customerObj:Object):String
 			{
-				return customerObj.last + ", " + customerObj.first + " " + customerObj.phone;
+				return customerObj.last + ", " + customerObj.first + " " + Utils.phoneFormatter.format(customerObj.phone);
 			}
 			private function onCustomerChosen(e:Event):void
 			{
@@ -366,10 +361,10 @@
 				customer.text = o.customerID ? formatCustomer(Data.instance.getCustomer(o.customerID)) : null;
 				
 				var d:Date = new Date();
-				d.date = o.date;
+				d.time = o.pickupDate;
 
 				date.selectedDate = d;
-				time.selectedItem = o.time;
+				time.selectedItem = o.pickupTime;
 				itemList.items = o.items;
 				
 				updateTotal();
@@ -377,8 +372,8 @@
 			public function get order():Order
 			{
 				//KAI: better binding could get rid of this
-				_order.date = date.selectedDate.date;
-				_order.time = time.selectedItem;
+				_order.pickupDate = date.selectedDate.time;
+				_order.pickupTime = time.selectedItem;
 				return _order;
 			}
 		]]>

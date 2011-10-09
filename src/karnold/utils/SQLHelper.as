@@ -19,6 +19,7 @@ package karnold.utils
 		
 		static public const TYPE_NULL:String = "NULL";
 		static public const TYPE_INTEGER:String = "INTEGER";
+		static public const TYPE_BOOLEAN:String = "INTEGER";  // implemented as 0/1
 		static public const TYPE_REAL:String = "REAL";
 		static public const TYPE_TEXT:String = "TEXT";
 		static public const TYPE_BLOB:String = "BLOB";
@@ -58,9 +59,13 @@ package karnold.utils
 			
 			queueCommand(cmd, null);
 		}
-		public function readTable(name:String, callback:Function):void
+		public function readTable(table:String, callback:Function):void
 		{
-			queueCommand("SELECT * FROM " + name, callback);
+			queueCommand("SELECT * FROM " + table, callback);
+		}
+		public function readTableForColumn(table:String, forColumn:String, forValue:int, callback:Function):void
+		{
+			queueCommand("SELECT * FROM " + table + " WHERE " + forColumn + "=" + forValue, callback);
 		}
 		public function writeRecord(tableName:String, obj:Object):void
 		{
@@ -96,14 +101,16 @@ package karnold.utils
 		private var _queue:Vector.<Command> = new Vector.<Command>;
 		private function queueCommand(cmd:String, callback:Function):void
 		{
+			++_total;
 			_queue.push(new Command(cmd, callback));
 			runNext();
 		}
 		//	sqls.text = "DELETE FROM test_table WHERE id="+dp[dg.selectedIndex].id;
 		//	sqls.text = "INSERT INTO test_table (first_name, last_name) VALUES('"+first_name.text+"','"+last_name.text+"');";
+		private var _total:uint = 0;
 		private function runNext():void
 		{
-			trace("running next w/", _queue.length, "remaining");
+			trace("SQLHelper.runNext() ", _queue.length, "queued, so far", _total);
 			if (_queue.length && _sqls.sqlConnection && !_sqls.executing)
 			{
 				const command:Command = _queue[0];
@@ -113,17 +120,18 @@ package karnold.utils
 		}
 		private function onSQLError(e:SQLErrorEvent):void
 		{
-			trace("error:", e);
+			const command:Command = _queue.shift();
+			trace("onSQLError for", command.cmdText);
+			trace(e, e.error);
 			
-			_queue.shift();
 			runNext();
 		}
 		private function onSQLResult(e:SQLEvent):void
 		{
 			const data:Array = _sqls.getResult().data;
-			trace("data:", data);
-			
 			const command:Command = _queue.shift();
+
+			trace("onSQLResult", (data ? data.length : "null"), "results for", command.cmdText);
 			if (command.callback != null)
 			{
 				command.callback(data);
