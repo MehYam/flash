@@ -1,6 +1,7 @@
 package data
 {
 	import karnold.utils.SQLHelper;
+	import karnold.utils.Util;
 	
 	import mx.collections.ArrayCollection;
 	import mx.collections.ArrayList;
@@ -15,14 +16,14 @@ package data
 		{
 			if (!s_instance)
 			{
-				s_instance = new Data;
+				s_instance = new Data(SingletonClass);
 			}
 			return s_instance;
 		}
 
-		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const customers:ArrayCollection = new ArrayCollection([]);
 		public const items:ArrayCollection = new ArrayCollection([]);
+		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
 		public function createOrder(customerID:int, date:Number, time:String, items:Array):Order
@@ -66,7 +67,7 @@ package data
 		}
 		private function addItem(name:String, price:Number):void
 		{
-			items.addItem({ name:name, price:price, id:nextID });
+			_sql.writeRecord(ITEM_TABLE, { name:name, price:price, id:nextID });
 		}
 		private function addColor(name:String, color:uint):void
 		{
@@ -86,26 +87,44 @@ package data
 			{ name: "email", type: SQLHelper.TYPE_TEXT },
 			{ name: "notes", type: SQLHelper.TYPE_TEXT }
 		];
+		static private const ITEM_TABLE:String = "items";
+		static private const ITEM_FIELDS:Array = 
+		[
+			{ name: "name", type: SQLHelper.TYPE_TEXT },
+			{ name: "price", type: SQLHelper.TYPE_REAL }
+		];
+		static private const ORDER_TABLE:String = "orders";
+		static private const ORDER_FIELDS:Array =
+		[
+		];
+		static private const ORDER_ITEMS_TABLE:String = "order_items";
+		static private const ORDER_ITEM_FIELDS:Array =
+		[
+		];
 		
 		private var _sql:SQLHelper = new SQLHelper;
-		public function Data()
+		public function Data(singletonClass:Class)
 		{
-			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS);
+			if (singletonClass != SingletonClass) throw "hey this is a singleton";
 
-//KAI: left off here + handling the 0 phone number issue w/ the table
-//			_sql.readTable(CUSTOMER_TABLE, onCustomers);
+			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS);
+			_sql.createTable(ITEM_TABLE, ITEM_FIELDS);
+
+			_sql.readTable(CUSTOMER_TABLE, onCustomers);
 			
-			addItem("Misc.", 1);
-			addItem("Tee Shirt", 5);
-			addItem("Pants", 7);
-			addItem("Vest", 10);
-			addItem("Jacket", 9.50);
-			addItem("Coat", 10.50);
-			addItem("Suit, 3pc", 27.50);
-			addItem("Socks", 2.50);
-			addItem("Scarf", 5.50);
-			addItem("Tie", 3.00);
-			
+//			addItem("Misc.", 1);
+//			addItem("Tee Shirt", 5);
+//			addItem("Pants", 7);
+//			addItem("Vest", 10);
+//			addItem("Jacket", 9.50);
+//			addItem("Coat", 10.50);
+//			addItem("Suit, 3pc", 27.50);
+//			addItem("Socks", 2.50);
+//			addItem("Scarf", 5.50);
+//			addItem("Tie", 3.00);
+
+			_sql.readTable(ITEM_TABLE, onItems);
+
 			addColor("Red", 0xbb0000);
 			addColor("Green", 0x00bb00);
 			addColor("Blue", 0x0000bb);
@@ -128,6 +147,33 @@ package data
 				orders.addItem(order);
 			}
 		}
+		private function loadDataToCollection(collection:ArrayCollection, data:Array, name:String):void
+		{
+			Util.ASSERT(collection.length == 0, "Table '" + name + "' being read twice?");
+			if (data)
+			{
+				for each (var record:Object in data)
+				{
+					if (record.id >= _id)
+					{
+						++_id;
+					}
+				}
+				collection.source = data;
+			}
+			else
+			{
+				trace("No data for table '" + name + "'");
+			}
+		}
+		private function onCustomers(data:Array):void
+		{
+			loadDataToCollection(customers, data, CUSTOMER_TABLE);
+		}
+		private function onItems(data:Array):void
+		{
+			loadDataToCollection(items, data, ITEM_TABLE);
+		}
 		public function getCustomer(customerID:int):Object
 		{
 			// KAI: replace w/ constant-time lookup
@@ -140,5 +186,8 @@ package data
 			}
 			return null;
 		}
+		
 	}
 }
+
+internal final class SingletonClass {}

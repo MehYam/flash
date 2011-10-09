@@ -5,7 +5,13 @@ package karnold.utils
 	import flash.events.SQLErrorEvent;
 	import flash.events.SQLEvent;
 	import flash.filesystem.File;
-	
+
+	//
+	// This thing queues up calls to an asynchronous SQL store and invokes them serially, allowing
+	// callbacks to be called with the result.  Multiple instances of this targetting the same
+	// database and tables should theoretically work, although this thing currently just swallows
+	// errors.  Not sure this is the best way to integrate with SQLite from AS3 (first attempt at 
+	// something like this), but it's simple and safe.
 	final public class SQLHelper
 	{
 		private const _sqlc:SQLConnection = new SQLConnection();
@@ -50,7 +56,11 @@ package karnold.utils
 			}
 			cmd += ")";
 			
-			queueCommand(cmd);
+			queueCommand(cmd, null);
+		}
+		public function readTable(name:String, callback:Function):void
+		{
+			queueCommand("SELECT * FROM " + name, callback);
 		}
 		public function writeRecord(tableName:String, obj:Object):void
 		{
@@ -76,20 +86,19 @@ package karnold.utils
 				}
 			}
 			cmd += ")" + cmdValues + ")";
-			queueCommand(cmd);
+			queueCommand(cmd, null);
 		}
 		private function onSQLOpen(e:SQLEvent):void
 		{
 			_sqls.sqlConnection = _sqlc;
 			runNext();
 		}
-		private var _queue:Vector.<String> = new Vector.<String>;
-		private function queueCommand(cmd:String):void
+		private var _queue:Vector.<Command> = new Vector.<Command>;
+		private function queueCommand(cmd:String, callback:Function):void
 		{
-			_queue.push(cmd);
+			_queue.push(new Command(cmd, callback));
 			runNext();
 		}
-		//"SELECT * FROM test_table"
 		//	sqls.text = "DELETE FROM test_table WHERE id="+dp[dg.selectedIndex].id;
 		//	sqls.text = "INSERT INTO test_table (first_name, last_name) VALUES('"+first_name.text+"','"+last_name.text+"');";
 		private function runNext():void
@@ -97,21 +106,40 @@ package karnold.utils
 			trace("running next w/", _queue.length, "remaining");
 			if (_queue.length && _sqls.sqlConnection && !_sqls.executing)
 			{
-				_sqls.text = _queue.shift();
+				const command:Command = _queue[0];
+				_sqls.text = command.cmdText;
 				_sqls.execute();
 			}
 		}
 		private function onSQLError(e:SQLErrorEvent):void
 		{
 			trace("error:", e);
+			
+			_queue.shift();
 			runNext();
 		}
 		private function onSQLResult(e:SQLEvent):void
 		{
-			var data:Array = _sqls.getResult().data;
+			const data:Array = _sqls.getResult().data;
 			trace("data:", data);
 			
+			const command:Command = _queue.shift();
+			if (command.callback != null)
+			{
+				command.callback(data);
+			}
 			runNext();
 		}
+	}
+}
+
+internal final class Command
+{
+	public var cmdText:String;
+	public var callback:Function;
+	public function Command(cmdText:String, callback:Function)
+	{
+		this.cmdText = cmdText;
+		this.callback = callback;
 	}
 }
