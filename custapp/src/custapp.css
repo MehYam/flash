@@ -8,7 +8,8 @@ local|custapp
 	/*
 	skinClass:ClassReference("spark.skins.spark.SparkChromeWindowedApplicationSkin");
 	*/
-	font-size:16pt;
+	font-size:18pt;
+	font-family:embeddedMyriad;
 }
 
 s|DropDownList
@@ -20,3 +21,15 @@ s|DropDownList
 {
 	font-weight:bold;
 }
+
+@font-face {
+	src:url("../../src/fonts/MyriadWebPro.ttf");
+	fontFamily: embeddedMyriad;
+	embedAsCFF: true;
+}	
+@font-face {
+	src:url("../../src/fonts/MyriadWebPro-Bold.ttf");
+	fontFamily: embeddedMyriad;
+	font-weight:bold;
+	embedAsCFF: true;
+}	

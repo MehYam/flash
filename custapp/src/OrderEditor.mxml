@@ -12,17 +12,17 @@
 	<fx:Declarations>
 	</fx:Declarations>
 	<s:HGroup>
-		<s:TextInput id="customer" width="300" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
+		<s:TextInput id="customer" width="300" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()" height="100%"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
-		<mx:DateField id="date" width="160"/>
+		<mx:DateField id="date" width="160" fontFamily="Arial" fontSize="10" scaleX="2" scaleY="2"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
-		<s:DropDownList id="time" selectedIndex="4" height="25">
+		<s:DropDownList id="time" selectedIndex="4" height="100%">
 			<s:dataProvider>
 				<mx:ArrayList>
 					<fx:String>9am</fx:String>

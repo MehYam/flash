@@ -5,6 +5,8 @@ package data
 
 	public class Data
 	{
+		static public const BAR_HEIGHT:Number = 40;
+		
 		static private var s_instance:Data = new Data;
 		static public function get instance():Data
 		{
@@ -84,7 +86,7 @@ package data
 			addColor("Yellow", 0xcccc00);
 			addColor("Purple", 0xbb00bb);
 			addColor("Orange", 0xff7700);
-			addColor("White", 0xffffff);
+			addColor("White", 0xcccccc);
 			addColor("Gray", 0x777777);
 			addColor("Black", 0x000000);
 			

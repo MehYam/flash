@@ -13,11 +13,13 @@
 	</s:layout>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%" horizontalAlign="center">
-		<ui:Button id="done" label="{completeLabel}" click="dispatchEvent(new CloseEvent(Event.COMPLETE)); doAutoClose();"/>
-		<ui:Button label="{cancelLabel}" click="dispatchEvent(new CloseEvent(Event.CLOSE)); doAutoClose();"/>
+		<ui:Button id="done" label="{completeLabel}" height="{Data.BAR_HEIGHT}" click="dispatchEvent(new CloseEvent(Event.COMPLETE)); doAutoClose();"/>
+		<ui:Button label="{cancelLabel}" height="{Data.BAR_HEIGHT}" click="dispatchEvent(new CloseEvent(Event.CLOSE)); doAutoClose();"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
+			import data.Data;
+			
 			import mx.core.IVisualElement;
 			import mx.managers.PopUpManager;
 			public function set bodyContent(content:IVisualElement):void

@@ -4,6 +4,11 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 creationComplete="onInit()">
 	<fx:Declarations>
+		<fx:Component id="priceColumnRenderer">
+			<s:DefaultGridItemRenderer
+				textAlign="right"
+				/>
+		</fx:Component>
 	</fx:Declarations>
 	<s:DataGrid
 		id="grid"
@@ -13,12 +18,12 @@
 	>
 		<s:columns>
 			<s:ArrayList>
-				<s:GridColumn dataField="name" headerText="Item" editable="false"/>
 				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40"/>
-				<s:GridColumn dataField="colors" headerText="Style"/>
-				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}"/>
-				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No." width="40"/>
-				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{Utils.currencyFormatter}" editable="false"/>
+				<s:GridColumn dataField="name" headerText="Item" editable="false" width="150"/>
+				<s:GridColumn dataField="colors" headerText="Styles, Notes"/>
+				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}" itemRenderer="{priceColumnRenderer}" width="150"/>
+				<s:GridColumn dataField="count" labelFunction="countLabelFunction" headerText="No." width="50"/>
+				<s:GridColumn labelFunction="totalLabelFunction" headerText="Total" formatter="{Utils.currencyFormatter}" editable="false" itemRenderer="{priceColumnRenderer}" width="150"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>

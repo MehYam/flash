@@ -1,6 +1,7 @@
 package
 {
 	import spark.formatters.CurrencyFormatter;
+	import spark.formatters.NumberFormatter;
 
 	public class Utils
 	{
@@ -20,6 +21,18 @@ package
 				s_cf.useCurrencySymbol = true;
 			}
 			return s_cf;
+		}
+		static private var s_pf:NumberFormatter;
+		static public function get phoneFormatter():NumberFormatter
+		{
+			if (!s_pf)
+			{
+				s_pf = new NumberFormatter();
+				s_pf.groupingPattern = "4;3;3";
+				s_pf.groupingSeparator = "-";
+				s_pf.fractionalDigits = 0;
+			}
+			return s_pf;
 		}
 	}
 }

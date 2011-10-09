@@ -9,16 +9,15 @@
 		 paddingRight="5"
 		 creationComplete="filter.setFocus()"
 		 >
-	<fx:Declarations>
-		<s:NumberFormatter id="phoneFormatter" groupingPattern="4;3;3" groupingSeparator="-" fractionalDigits="0"/>
-	</fx:Declarations>
+	<fx:Declarations/>
 	<s:HGroup width="100%">
-		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
-		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
-		<s:Line height="100%">
+		<s:Label text="Search:" height="100%" verticalAlign="middle"/>
+		<s:TextInput id="filter" width="100%" height="100%" prompt="enter partial name, number or customer ID" change="onFilterChange()"/>
+		<s:Line height="{Data.BAR_HEIGHT}">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<ui:Button label="ADD NEW" click="onAddCustomer()"/>
+		<ui:Button label="ADD NEW" height="100%" click="onAddCustomer()"/>
+		<ui:Button label="DELETE" height="100%" color="0xff0000"/>
 	</s:HGroup>
 	<s:DataGrid
 		id="customerGrid"
@@ -33,7 +32,7 @@
 				<s:GridColumn dataField="last" headerText="Last Name"/>
 				<s:GridColumn dataField="first" headerText="First Name"/>
 				<s:GridColumn dataField="id" headerText="ID"/>
-				<s:GridColumn dataField="phone" headerText="Phone" formatter="{phoneFormatter}"/>
+				<s:GridColumn dataField="phone" headerText="Phone" formatter="{Utils.phoneFormatter}"/>
 				<s:GridColumn dataField="email" headerText="Email"/>
 			</s:ArrayList>
 		</s:columns>

@@ -85,6 +85,9 @@
 			</s:columns>
 		</s:DataGrid>
 	</s:Group>
+	<s:Line width="100%">
+			<s:stroke><s:SolidColorStroke color="#ffffff" weight="1" alpha="0.3"/></s:stroke>
+	</s:Line>
 	<s:HGroup width="100%" height="100%">
 		<s:List id="playerList" height="100%"  tabFocusEnabled="false"/>
 		<s:VGroup width="100%" height="100%">
