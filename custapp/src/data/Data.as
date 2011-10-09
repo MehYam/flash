@@ -38,8 +38,6 @@ package data
 			retval.customerID = customerID;
 			retval.pickupDate = pickupDate;
 			retval.pickupTime = pickupTime;
-			
-			retval.items = new ArrayCollection([]);
 			return retval;
 		}
 		public function createLineItem(itemID:int, orderID:int, name:String, price:Number):LineItem
@@ -231,9 +229,10 @@ package data
 						++_id;
 					}
 					var typed:Object = new classForTypedObject;
+					typed.id = record.id;
 					for each (var field:Object in fields)
 					{
-						typed[field.name] = field.type == SQLHelper.TYPE_BOOLEAN ? !!record[field.name] : record[field.name]; 
+						typed[field.name] = record[field.name]; 
 					}
 					hydratedObjects.push(typed);
 				}

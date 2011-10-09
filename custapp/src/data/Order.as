@@ -15,7 +15,7 @@ package data
 
 		public var paid:Number = 0;
 
-		public var items:ArrayCollection;
+		public var items:ArrayCollection = new ArrayCollection([]);
 		public var history:Array = [];
 
 		public function get total():Number
