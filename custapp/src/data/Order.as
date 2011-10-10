@@ -12,11 +12,12 @@ package data
 		public var pickupTime:String;
 		public var ready:Boolean;
 		public var pickedUp:Boolean;
-
 		public var paid:Number = 0;
 
+		// not serialized
 		public var items:ArrayCollection = new ArrayCollection([]);
 		public var history:Array = [];
+		public var lineItemRecordsToPurge:Vector.<int>; // constructed lazily
 
 		public function get total():Number
 		{
@@ -75,6 +76,11 @@ package data
 			if (item.quantity <= 0)
 			{
 				items.removeItemAt(index);
+				if (!lineItemRecordsToPurge)
+				{
+					lineItemRecordsToPurge = new Vector.<int>;
+				}
+				lineItemRecordsToPurge.push(item.id);
 			}
 			items.refresh();
 		}

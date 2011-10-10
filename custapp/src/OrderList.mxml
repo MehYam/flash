@@ -59,6 +59,8 @@
 			import data.Order;
 			
 			import mx.containers.Grid;
+			import mx.controls.Alert;
+			import mx.core.IFlexDisplayObject;
 			import mx.managers.PopUpManager;
 			
 			import ui.Dialog;
@@ -89,6 +91,7 @@
 				};
 				Data.instance.orders.refresh();
 			}
+			private var _currentPopup:IFlexDisplayObject;
 			private function onDoubleClick():void
 			{
 				//KAI: null check
@@ -99,11 +102,35 @@
 				var popup:Dialog = new Dialog;
 				popup.bodyContent = orderEditor;
 				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
-					
-popup.autoClose = true;
+
+				_currentPopup = popup;
 				PopUpManager.addPopUp(popup, parent);
 				PopUpManager.centerPopUp(popup);
 				popup.y = 50;
+				
+				popup.addEventListener(Event.CLOSE, onOrderEditorQuit, false, 0, true);
+				popup.addEventListener(Event.COMPLETE, onOrderEditorApply, false, 0, true);
+			}
+			private function onOrderEditorQuit(e:Event):void
+			{
+				Alert.show("Abandon order changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onOrderEditorReallyQuit, null, Alert.NO);
+			}
+			private function onOrderEditorReallyQuit(e:Event):void
+			{
+				hideEditor();
+			}
+			private function onOrderEditorApply(e:Event):void
+			{
+				const source:OrderEditor = OrderEditor(Dialog(e.target).bodyContent);
+				Data.instance.writeOrder(source.order);
+			}
+			private function hideEditor():void
+			{
+				if (_currentPopup)
+				{
+					PopUpManager.removePopUp(_currentPopup);
+					_currentPopup = null;
+				}
 			}
 		]]>
 	</fx:Script>

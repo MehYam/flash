@@ -100,11 +100,7 @@
 			}
 			private function onCustomerEditorQuit(e:Event):void
 			{
-				var source:CustomerEditor = Dialog(e.target).bodyContent as CustomerEditor;
-				if (!source)
-				{
-					source = CustomerEditor(SkinnableContainer(e.target).getElementAt(SkinnableContainer(e.target).numElements - 1));
-				}
+				const source:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
 				if (source.dirty)
 				{
 					Alert.show("Abandon customer changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onCustomerEditorReallyQuit, null, Alert.NO);

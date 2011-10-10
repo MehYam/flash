@@ -93,6 +93,11 @@ package karnold.utils
 			cmd += ")" + cmdValues + ")";
 			queueCommand(cmd, null);
 		}
+		public function deleteRecord(tableName:String, objID:int):void
+		{
+			var cmd:String = "DELETE FROM " + tableName + " WHERE id=" + objID;
+			queueCommand(cmd, null);
+		}
 		private function onSQLOpen(e:SQLEvent):void
 		{
 			_sqls.sqlConnection = _sqlc;
@@ -110,7 +115,7 @@ package karnold.utils
 		private var _total:uint = 0;
 		private function runNext():void
 		{
-			trace("SQLHelper.runNext() ", _queue.length, "queued, so far", _total);
+			trace("SQLHelper.runNext", _queue.length, "queued, so far", _total);
 			if (_queue.length && _sqls.sqlConnection && !_sqls.executing)
 			{
 				const command:Command = _queue[0];

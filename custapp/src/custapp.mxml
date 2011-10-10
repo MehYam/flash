@@ -37,12 +37,13 @@
 			private function onInit():void
 			{
 				var rect:Rectangle = new Rectangle;
-//				rect.width = Capabilities.screenResolutionX * .85;
-//				rect.height = Capabilities.screenResolutionY * .85;
-//				rect.x = (Capabilities.screenResolutionX - rect.width) / 2;
-//				rect.y = (Capabilities.screenResolutionY - rect.height) / 2;
-//				nativeWindow.bounds = rect;
-				nativeWindow.maximize();
+
+				rect.width = Capabilities.screenResolutionX;
+				rect.height = Capabilities.screenResolutionY * .85;
+				rect.x = (Capabilities.screenResolutionX - rect.width) / 2;
+				rect.y = 0;
+				nativeWindow.bounds = rect;
+//				nativeWindow.maximize();
 			}
 		]]>
 	</fx:Script>

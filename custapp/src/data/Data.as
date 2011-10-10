@@ -9,9 +9,11 @@ package data
 	import mx.collections.ListCollectionView;
 
 	//
-	// KAI: fundamental flaw here is that ID key management is not handled by the database, but this code itself.
-	// Are you supposed to look up the key that the database generated after creating a new record?  In any case,
-	// this current scheme would break if multiple instances of the program were being used concurrently.
+	// KAI: fundamental flaw here is that we're helping the database out too much (assigning our own IDs, 
+	// caching too much, etc).  Would have been easier if we had just let the database do everything, and
+	// gone with more of a write->read->dataProvider model.
+	//
+	// Also, we're not doing things atomically enough (i.e. purging line items after writing record changes)
 	final public class Data
 	{
 		static public const BAR_HEIGHT:Number = 40;
@@ -67,6 +69,18 @@ package data
 				// easier to implement partial saving of orders-in-progress
 				_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
 			}
+			if (order.lineItemRecordsToPurge)
+			{
+				for each (var lineItemID:int in order.lineItemRecordsToPurge)
+				{
+					deleteLineItem(lineItemID);
+				}
+				order.lineItemRecordsToPurge.length = 0;
+			}
+		}
+		private function deleteLineItem(lineItemID:int):void
+		{
+			_sql.deleteRecord(ORDER_ITEMS_TABLE, lineItemID);
 		}
 		public function getCustomer(customerID:int):Object
 		{
