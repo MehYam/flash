@@ -21,13 +21,17 @@
 		<s:Label text="Change:"/>
 		<s:Label id="changeLabel"  text="{Utils.currencyFormatter.format(paying - owing)}" styleName="numberLabel"/>
 	</s:HGroup>
-	<s:TextInput id="payingLabel" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" width="146"/>
-	<s:TileGroup id="buttons"/>
+	<s:TextInput width="100%" id="payingInput" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="onFocusOut()"/>
+	<s:TileGroup id="buttons" rowHeight="40"/>
 	<fx:Script>
 		<![CDATA[
 			import data.Order;
 			
-			import mx.controls.Button;
+			import flash.globalization.CurrencyParseResult;
+			
+			import spark.components.Button;
+			import spark.primitives.Rect;
+			
 			public function set order(o:Order):void
 			{
 				totalLabel.text = Utils.currencyFormatter.format(o.total);
@@ -36,6 +40,7 @@
 			static private const BUTTONS:Array = 
 			[
 				{ amount: 0.01 },
+				{ amount: 0.05 },
 				{ amount: 0.1 },
 				{ amount: 0.25 },
 				{ amount: 1 },
@@ -47,6 +52,8 @@
 			protected override function createChildren():void
 			{
 				super.createChildren();
+
+				buttons.addElement(new Rect);
 				
 				var button:Button;
 				button = new Button;
@@ -59,10 +66,11 @@
 				button.setStyle("color", 0xdd0000);
 				buttons.addElement(button);
 				button.addEventListener(MouseEvent.CLICK, onClearAmount, false, 0, true);
+				
 				for each (var b:Object in BUTTONS)
 				{
 					button = new Button;
-					button.label = "+" + b.amount;
+					button.label = "+" + (b.amount < 1 ? (b.amount*100 + "c") : ("$" + b.amount));
 					button.name = String(b.amount);
 					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
 					
@@ -80,6 +88,40 @@
 			private function onClearAmount(e:Event):void
 			{
 				paying = 0;
+			}
+			private function onKeyDown(e:KeyboardEvent):void
+			{
+				if (e.keyCode == Keyboard.ENTER)
+				{
+					setFocus();
+				}
+			}
+			private var _prevValue:Number = 0;
+			private function onFocusIn():void
+			{
+				_prevValue = paying;
+			}
+			private function onFocusOut():void
+			{
+				var result:CurrencyParseResult = Utils.currencyFormatter.parse(payingInput.text);
+				if (!isNaN(result.value))
+				{
+					if (paying == result.value)
+					{
+						// need to kick the binding to make it work else it leaves the old value
+						paying = result.value + 1;
+						paying = result.value;
+					}
+					else
+					{
+						paying = result.value;
+					}
+				}
+				else
+				{
+					paying = _prevValue + 1;
+					paying = _prevValue;
+				}
 			}
 		]]>
 	</fx:Script>

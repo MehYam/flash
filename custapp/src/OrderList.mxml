@@ -9,6 +9,11 @@
 		  creationComplete="filter.setFocus()"
 		  >
 	<fx:Declarations>
+		<fx:Component id="priceColumnRenderer">
+			<s:DefaultGridItemRenderer
+				textAlign="right"
+				/>
+		</fx:Component>
 	</fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
@@ -42,8 +47,8 @@
 				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
 				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
 				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
-				<s:GridColumn dataField="total" headerText="Total" formatter="{Utils.currencyFormatter}"/>
-				<s:GridColumn dataField="paid" headerText="Paid" formatter="{Utils.currencyFormatter}"/>
+				<s:GridColumn dataField="total" headerText="Total" formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
+				<s:GridColumn dataField="paid" headerText="Paid" formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
@@ -79,7 +84,8 @@
 				const pattern:String = filter.text.toUpperCase(); 
 				Data.instance.orders.filterFunction = function(item:Order):Boolean
 				{
-					return Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(item.id), pattern); 
+					const customer:Object = Data.instance.getCustomer(item.customerID);
+					return Utils.matches(customer.phone, pattern) || Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(item.id), pattern); 
 				};
 				Data.instance.orders.refresh();
 			}

@@ -68,16 +68,25 @@
 			{
 				var edit:CustomerEditor = new CustomerEditor;
 				edit.addMode = addMode;
-
+				
 				var popup:Dialog = new Dialog;
 				popup.bodyContent = edit;
-				popup.title = addMode ? "Add Customer" : "Edit Customer";
 
 				PopUpManager.addPopUp(popup, this, true)
 				PopUpManager.centerPopUp(popup);
 				_currentPopup = popup;
 
-				edit.data = addMode ? { id: Data.instance.nextID } : customerGrid.selectedItem; 
+				if (addMode)
+				{
+					popup.title = "Add Customer";
+					const phoneSoFar:int = int(filter.text);
+					edit.data = { id: Data.instance.nextID, phone: (phoneSoFar || undefined) };
+				}
+				else
+				{
+					popup.title = "Edit Customer";
+					edit.data = customerGrid.selectedItem;
+				}
 
 				popup.addEventListener(Event.CLOSE, onCustomerEditorQuit, false, 0, true);
 				popup.addEventListener(Event.COMPLETE, onCustomerEditorApply, false, 0, true);
@@ -134,10 +143,10 @@
 			}
 			private function onAddCustomer():void
 			{
+				showCustomerEditor(true);
+
 				filter.text = "";
 				onFilterChange();
-				
-				showCustomerEditor(true);
 			}
 			private var _doubleClickEdits:Boolean = true;
 			private function onDoubleClick():void
