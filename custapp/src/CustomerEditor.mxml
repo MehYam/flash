@@ -32,6 +32,7 @@
 	</s:Form>
 	<fx:Script>
 		<![CDATA[
+			import karnold.utils.Util;
 			private var _dirty:Boolean = false;
 			public function get dirty():Boolean { return _dirty; }
 			
@@ -52,7 +53,7 @@
 			{
 				first.text = obj.first;
 				last.text = obj.last;
-				phone.text = obj.phone;
+				phone.text = Utils.phoneFormatter.format(obj.phone);
 				email.text = obj.email;
 				notes.text = obj.notes;
 				custID.text = obj.id;
@@ -63,7 +64,7 @@
 				{
 					first: first.text,
 					last: last.text,
-					phone: phone.text,
+					phone: Utils.extractDigits(phone.text),
 					email: email.text,
 					notes: notes.text,
 					id: custID.text

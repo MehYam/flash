@@ -56,11 +56,11 @@ package data
 		public function get nextID():int { return _id++; }
 		public function writeCustomer(customer:Object):void
 		{
-			writeRecord(CUSTOMER_TABLE, customers, customer);
+			writeRecordAndCache(CUSTOMER_TABLE, customers, customer);
 		}
 		public function writeOrder(order:Order):void
 		{
-			writeRecord(ORDER_TABLE, orders, order);
+			writeRecordAndCache(ORDER_TABLE, orders, order);
 			for each (var lineItem:LineItem in order.items)
 			{
 				//KAI: alternative is to read to/write from the line item list separately, which would make it
@@ -93,7 +93,7 @@ package data
 			}
 			return -1;
 		}
-		private function writeRecord(table:String, collection:IList, obj:Object):void
+		private function writeRecordAndCache(table:String, collection:IList, obj:Object):void
 		{
 			const index:int = lookupIndexByID(collection, obj.id);
 			if (index == -1)
@@ -125,7 +125,7 @@ package data
 		[
 			{ name: "first", type: SQLHelper.TYPE_TEXT },
 			{ name: "last",  type: SQLHelper.TYPE_TEXT },
-			{ name: "phone", type: SQLHelper.TYPE_INTEGER },
+			{ name: "phone", type: SQLHelper.TYPE_TEXT },
 			{ name: "email", type: SQLHelper.TYPE_TEXT },
 			{ name: "notes", type: SQLHelper.TYPE_TEXT }
 		];
@@ -165,7 +165,7 @@ package data
 			_sql.createTable(ORDER_TABLE, ORDER_FIELDS);
 			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS);
 
-//			addItem("Misc.", 1);
+//			addItem("Custom", 1);
 //			addItem("Tee Shirt", 5);
 //			addItem("Pants", 7);
 //			addItem("Vest", 10);

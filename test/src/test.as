@@ -71,7 +71,13 @@ package
 //			testArray();
 //			testBlurFilterRasterizationBounds();
 //			testTint();
-			testEnumeratingObjectMembers();
+//			testEnumeratingObjectMembers();
+			testRegularExpressions();
+		}
+		private function testRegularExpressions():void
+		{
+			// strip out all numeric chars from a string
+			trace("this3is0a223-555-111test1234".replace(/[^0-9]/g, ""));
 		}
 		private function testEnumeratingObjectMembers():void
 		{

@@ -79,8 +79,7 @@
 				if (addMode)
 				{
 					popup.title = "Add Customer";
-					const phoneSoFar:int = int(filter.text);
-					edit.data = { id: Data.instance.nextID, phone: (phoneSoFar || undefined) };
+					edit.data = { id: Data.instance.nextID, phone: (filter.text || undefined) };
 				}
 				else
 				{
@@ -124,19 +123,16 @@
 			}
 			private function onCustomerEditorApply(e:Event):void
 			{
-				var edit:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
+				const edit:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
+				const newCustomer:Object = edit.data;
+
+				Data.instance.writeCustomer(newCustomer);
 				if (edit.addMode)
 				{
-					const newCustomer:Object = edit.data;
-					Data.instance.writeCustomer(newCustomer);
 					customerGrid.selectedItem = newCustomer;
 					customerGrid.ensureCellIsVisible(customerGrid.selectedIndex);
 						
 					dispatchEvent(new Event(Event.COMPLETE));
-				}
-				else
-				{
-					Data.instance.customers[customerGrid.selectedIndex] = edit.data;
 				}
 				Data.instance.customers.refresh();
 				hideCustomerEditor();

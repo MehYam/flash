@@ -34,5 +34,9 @@ package
 			}
 			return s_pf;
 		}
+		static public function extractDigits(str:String):String
+		{
+			return str.replace(/[^0-9]/g, "");
+		}
 	}
 }
