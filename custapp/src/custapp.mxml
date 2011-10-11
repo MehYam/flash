@@ -2,6 +2,7 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*"
+					   showStatusBar="false"
 					   creationComplete="onInit()">
 	<fx:Style source="custapp.css"/>
 	<fx:Declarations>
@@ -14,7 +15,7 @@
 	</s:TabBar>		
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
 		<s:NavigatorContent label="DROP OFF">
-			<local:OrderEditor width="100%"/>
+			<local:OrderEditor width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="PICK UP">
 			<local:OrderList width="100%" height="100%"/>
@@ -43,7 +44,7 @@
 				rect.x = (Capabilities.screenResolutionX - rect.width) / 2;
 				rect.y = 0;
 				nativeWindow.bounds = rect;
-//				nativeWindow.maximize();
+				nativeWindow.maximize();
 			}
 		]]>
 	</fx:Script>

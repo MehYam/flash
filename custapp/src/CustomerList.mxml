@@ -17,7 +17,7 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<ui:Button label="ADD NEW" height="100%" click="onAddCustomer()"/>
-		<ui:Button label="DELETE" height="100%" color="0xff0000"/>
+		<!--<ui:Button label="DELETE" height="100%" color="0xff0000"/>-->
 	</s:HGroup>
 	<s:DataGrid
 		id="customerGrid"

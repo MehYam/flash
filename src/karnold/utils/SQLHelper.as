@@ -43,14 +43,19 @@ package karnold.utils
 		 * 
 		 * @param name - name of the table in the database
 		 * @param fields - array of { name: fieldName, type: fieldType } objects where fieldType is one of the TYPE_* constants.
+		 * @param autoID - sets up an auto-incrementing ID field on records, does not read the ID field when writing
 		 * Each object requires a unique .id value.
 		 * 
 		 */
-		public function createTable(name:String, fields:Array):void
+		public function createTable(name:String, fields:Array, autoID:Boolean):void
 		{
-			_tableFields[name] = fields;
+			_tableFields[name] = new TableEntry(fields, autoID);
 			
 			var cmd:String = "CREATE TABLE IF NOT EXISTS " + name + " ( id INTEGER PRIMARY KEY";
+			if (autoID)
+			{
+				cmd += " AUTOINCREMENT";
+			}
 			for each (var field:Object in fields)
 			{
 				cmd += ", " + field.name + " " + field.type;
@@ -69,28 +74,31 @@ package karnold.utils
 		}
 		public function writeRecord(tableName:String, obj:Object):void
 		{
-			const fields:Array = _tableFields[tableName];
-			if (!fields)
+			const table:TableEntry = _tableFields[tableName];
+			if (!table)
 			{
 				throw Error("Unrecognized table " + tableName);
 			}
-			var cmd:String = "INSERT OR REPLACE INTO " + tableName + " (\"id\"";
-			var cmdValues:String = "VALUES (" + obj.id;
-			for each (var field:Object in fields)
+			var cmdFields:Vector.<String> = new Vector.<String>;
+			var cmdValues:Vector.<String> = new Vector.<String>;
+			if (!table.autoID)
 			{
-				cmd += ", \"" + field.name + "\"";
-				cmdValues += ", ";
-				const val:String = obj[field.name];
-				if (field.type == TYPE_TEXT)
-				{
-					cmdValues += "\"" + val + "\"";
-				}
-				else
-				{
-					cmdValues += val;
-				}
+				cmdFields.push('"id"');
+				cmdValues.push(obj.id);
 			}
-			cmd += ")" + cmdValues + ")";
+			for each (var field:Object in table.fields)
+			{
+				cmdFields.push('"' + field.name + '"');
+
+				const val:String = obj[field.name];
+				cmdValues.push(field.type == TYPE_TEXT ? ('"' + val + '"') : val);
+			}
+			var cmd:String = table.autoID ? "INSERT INTO " : "INSERT OR REPLACE INTO ";
+			cmd += tableName + " (" + cmdFields.join(", ") + ")";;
+			if (cmdValues.length)
+			{
+				cmd += " VALUES (" + cmdValues.join(", ") + ")";
+			}
 			queueCommand(cmd, null);
 		}
 		public function deleteRecord(tableName:String, objID:int):void
@@ -110,8 +118,6 @@ package karnold.utils
 			_queue.push(new Command(cmd, callback));
 			runNext();
 		}
-		//	sqls.text = "DELETE FROM test_table WHERE id="+dp[dg.selectedIndex].id;
-		//	sqls.text = "INSERT INTO test_table (first_name, last_name) VALUES('"+first_name.text+"','"+last_name.text+"');";
 		private var _total:uint = 0;
 		private function runNext():void
 		{
@@ -154,5 +160,16 @@ internal final class Command
 	{
 		this.cmdText = cmdText;
 		this.callback = callback;
+	}
+}
+
+internal final class TableEntry
+{
+	public var fields:Array;
+	public var autoID:Boolean;
+	public function TableEntry(fields:Array, autoID:Boolean)
+	{
+		this.fields = fields;
+		this.autoID = autoID;
 	}
 }

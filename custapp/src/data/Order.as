@@ -14,9 +14,13 @@ package data
 		public var pickedUp:Boolean;
 		public var paid:Number = 0;
 
-		// not serialized
+		// serialized out manually in the writeOrder call
 		public var items:ArrayCollection = new ArrayCollection([]);
-		public var history:Array = [];
+
+		// serialized in lazily
+		public var history:ArrayCollection = new ArrayCollection([]);
+		
+		// not serialized
 		public var lineItemRecordsToPurge:Vector.<int>; // constructed lazily
 
 		public function get total():Number

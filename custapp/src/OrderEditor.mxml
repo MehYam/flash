@@ -79,6 +79,10 @@
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
 	<local:OrderItemList id="itemList" width="100%" height="100%"/>
+	<s:Line width="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
+	<local:OrderHistoryList id="historyList" width="100%" height="40%"/>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
@@ -106,7 +110,7 @@
 				{ name: "PRINT RCPT", color: 0x0000ff, handler: onPrintReceipt },
 				{ name: "ITEM + 1", color: 0x00aa00, handler: onIncItem },
 				{ name: "ITEM - 1", color: 0xbb0000, handler: onDecItem },
-				{ name: "SAVE", color: 0x00aa00, handler: onSave }
+				{ name: "NEW", color: 0x00aa00, handler: onSave }
 			];
 			private function onInit():void
 			{
@@ -236,14 +240,21 @@
 				{
 					Alert.show("Change of " + Utils.currencyFormatter.format(change) + " goes to customer.", "Change");
 				}
+				Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total);
+				Data.instance.writeOrder(_order);
 			}
 			private function onPrintTag(e:Event):void
 			{
 				var label:Label = new Label;
 				label.height = 100;
 				label.setStyle("verticalAlign", "middle");
-				label.text = "---Printing tag " + _order.id + " for " + customer.text + "---";
 				
+				const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "---";
+				label.text = msg;
+
+				Data.instance.writeOrderHistory(_order, msg);
+				Data.instance.writeOrder(_order);
+
 				var popup:Dialog = new Dialog;
 				popup.bodyContent = label;
 				popup.autoClose = true;
@@ -256,8 +267,13 @@
 				var label:Label = new Label;
 				label.height = 100;
 				label.setStyle("verticalAlign", "middle");
-				label.text = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
-				
+
+				const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
+				label.text = msg;
+
+				Data.instance.writeOrderHistory(_order, msg);
+				Data.instance.writeOrder(_order);
+
 				var popup:Dialog = new Dialog;
 				popup.bodyContent = label;
 				popup.autoClose = true;
@@ -317,9 +333,9 @@
 				popup.title = "Choose Customer";
 				popup.width = 700;
 				popup.height = 500;
+				_customerList.doubleClickEdits = false;
 				_customerList.percentHeight = 100;
 				_customerList.percentWidth = 100;
-				_customerList.doubleClickEdits = false;
 				popup.bodyContent = _customerList;
 
 				PopUpManager.addPopUp(popup, this, true);
@@ -356,6 +372,7 @@
 			public function set order(o:Order):void
 			{
 				_order = o;
+				Data.instance.loadOrderHistory(_order);
 
 				orderID.text = String(o.id);
 				customer.text = o.customerID ? formatCustomer(Data.instance.getCustomer(o.customerID)) : null;
@@ -368,6 +385,8 @@
 				itemList.items = o.items;
 				
 				updateTotal();
+				
+				historyList.history = order.history;
 			}
 			public function get order():Order
 			{

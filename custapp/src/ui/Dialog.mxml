@@ -11,6 +11,7 @@
 	<s:layout>
 		<s:VerticalLayout paddingBottom="10"/>
 	</s:layout>
+	<!--	<s:Group id="contentParent" width="100%" height="100%"/>-->
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%" horizontalAlign="center">
 		<ui:Button id="done" label="{completeLabel}" height="{Data.BAR_HEIGHT}" click="dispatchEvent(new CloseEvent(Event.COMPLETE)); doAutoClose();"/>
@@ -25,11 +26,12 @@
 			public function set bodyContent(content:IVisualElement):void
 			{
 				content.addEventListener(Event.COMPLETE, bounceComplete, false, 0, true);
+
 				addElementAt(content, 0);
 			}
 			public function get bodyContent():IVisualElement
 			{
-				return numElements > 1 ? getElementAt(0) : null;
+				return getElementAt(0);
 			}
 			private function bounceComplete(e:Event):void
 			{

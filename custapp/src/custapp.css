@@ -22,6 +22,11 @@ s|DropDownList
 	font-weight:bold;
 }
 
+local|OrderHistoryList
+{
+	font-size:12pt;
+}
+
 mx|Alert
 {
 	font-size:18pt;

@@ -14,6 +14,9 @@ package data
 	// gone with more of a write->read->dataProvider model.
 	//
 	// Also, we're not doing things atomically enough (i.e. purging line items after writing record changes)
+	//
+	// Also, we're modifying internal data because of binding but not immediately reflecting those changes
+	// back to the database in the Order/OrderEditor case.  Seems rickety.
 	final public class Data
 	{
 		static public const BAR_HEIGHT:Number = 40;
@@ -76,6 +79,33 @@ package data
 					deleteLineItem(lineItemID);
 				}
 				order.lineItemRecordsToPurge.length = 0;
+			}
+		}
+		public function writeOrderHistory(order:Order, message:String):void
+		{
+			const obj:Object =
+			{
+				orderID: order.id,
+				date:    new Date().time,
+				action:  message
+			}
+			writeRecordAndCache(ORDER_HISTORY_TABLE, order.history, obj);
+			
+		}
+		public function loadOrderHistory(order:Order):void
+		{
+			if (!order.history.length)
+			{
+				_sql.readTableForColumn(ORDER_HISTORY_TABLE, "orderID", order.id, 
+					function(result:Array):void
+					{
+						if (result)
+						{
+							order.history.source = result.concat(order.history.source);
+							order.history.refresh();
+						}
+					}
+				);
 			}
 		}
 		private function deleteLineItem(lineItemID:int):void
@@ -168,16 +198,23 @@ package data
 			{ name: "quantity", type: SQLHelper.TYPE_INTEGER },
 			{ name: "description", type: SQLHelper.TYPE_TEXT }
 		];
-		
+		static private const ORDER_HISTORY_TABLE:String = "order_history";
+		static private const ORDER_HISTORY_FIELDS:Array = 
+		[
+			{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "date", type: SQLHelper.TYPE_INTEGER },
+			{ name: "action", type: SQLHelper.TYPE_TEXT }
+		];
 		private var _sql:SQLHelper = new SQLHelper;
 		public function Data(singletonClass:Class)
 		{
 			if (singletonClass != SingletonClass) throw "hey this is a singleton";
 
-			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS);
-			_sql.createTable(ITEM_TABLE, ITEM_FIELDS);
-			_sql.createTable(ORDER_TABLE, ORDER_FIELDS);
-			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS);
+			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS, false);
+			_sql.createTable(ITEM_TABLE, ITEM_FIELDS, false);
+			_sql.createTable(ORDER_TABLE, ORDER_FIELDS, false);
+			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS, false);
+			_sql.createTable(ORDER_HISTORY_TABLE, ORDER_HISTORY_FIELDS, true);
 
 //			addItem("Custom", 1);
 //			addItem("Tee Shirt", 5);

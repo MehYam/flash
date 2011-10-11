@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+	</fx:Declarations>
+	<s:DataGrid width="100%" height="100%" id="grid" editable="false">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="date" headerText="Date" labelFunction="{dateLabelFunction}" width="200"/>
+				<s:GridColumn dataField="action" headerText="Action"/>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			public function set history(coll:ArrayCollection):void
+			{
+				grid.dataProvider = coll;
+			}
+			static private const s_reuseDate:Date = new Date;
+			static private function dateLabelFunction(obj:Object, unused:GridColumn):String
+			{
+				s_reuseDate.time = obj.date;
+				return s_reuseDate.toUTCString();
+			}
+		]]>
+	</fx:Script>
+</s:Group>
