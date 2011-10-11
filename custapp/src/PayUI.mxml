@@ -22,9 +22,10 @@
 		<s:Label id="changeLabel"  text="{Utils.currencyFormatter.format(paying - owing)}" styleName="numberLabel"/>
 	</s:HGroup>
 	<s:TextInput width="100%" id="payingInput" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="onFocusOut()"/>
-	<s:TileGroup id="buttons" rowHeight="40"/>
+	<s:TileGroup id="buttons" rowHeight="{Data.BAR_HEIGHT}"/>
 	<fx:Script>
 		<![CDATA[
+			import data.Data;
 			import data.Order;
 			
 			import flash.globalization.CurrencyParseResult;

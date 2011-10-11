@@ -52,14 +52,18 @@
 			import ui.Dialog;
 			private function onFilterChange():void
 			{
-				const pattern:String = filter.text.toUpperCase(); 
-				Data.instance.customers.filterFunction = function(item:Object):Boolean
+				const pattern:Array = filter.text.toUpperCase().split(" "); 
+				Data.instance.customers.filterFunction = function(customer:Object):Boolean
 				{
-					return Utils.matches(item.first, pattern) || 
-						Utils.matches(item.last, pattern) || 
-						Utils.matches(item.id, pattern) || 
-						Utils.matches(item.phone, pattern) || 
-						Utils.matches(item.email, pattern); 
+					// AND on all words, each pattern part must match something
+					for each (var patternPart:String in pattern)
+					{
+						if (!Utils.customerMatchesPattern(customer, patternPart))
+						{
+							return false;
+						}
+					}
+					return true;
 				};
 				Data.instance.customers.refresh();
 			}

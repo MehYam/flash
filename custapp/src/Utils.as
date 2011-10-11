@@ -42,5 +42,13 @@ package
 		{
 			return days * 24 * 60 * 60 * 1000;
 		}
+		static public function customerMatchesPattern(customer:Object, pattern:String):Boolean
+		{
+			return matches(customer.first, pattern) || 
+				matches(customer.last, pattern) || 
+				matches(customer.id, pattern) || 
+				matches(customer.phone, pattern) || 
+				matches(customer.email, pattern);
+		}
 	}
 }

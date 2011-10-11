@@ -17,7 +17,7 @@
 	</fx:Declarations>
 	<s:HGroup width="100%">
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
-		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
+		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" height="{Data.BAR_HEIGHT}" change="onFilterChange()"/>
 	</s:HGroup>
 	<s:HGroup width="100%">
 		<s:CheckBox id="limitDatesCheckbox" label="Limit Dates:" selected="true" height="100%" change="onFilterChange()"/>
@@ -96,21 +96,36 @@
 			}
 			private function onFilterChange():void
 			{
-				const pattern:String = filter.text.toUpperCase(); 
+				const pattern:Array = filter.text.toUpperCase().split(" "); 
 				Data.instance.orders.filterFunction = function(item:Order):Boolean
 				{
-					const customer:Object = Data.instance.getCustomer(item.customerID);
-					const textualMatch:Boolean = !customer || Utils.matches(customer.phone, pattern) || Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(item.id), pattern);
-
-					var dateMatch:Boolean = true;
 					if (limitDatesCheckbox.selected)
 					{
 						const fromDate:Number = dateFrom.selectedDate.time;
 						const toDate:Number = dateTo.selectedDate.time + Utils.daysToTime(1);
-						dateMatch = (fromDate <= item.pickupTime && toDate >= item.pickupTime) ||
-							        (fromDate <= item.creationTime && toDate >= item.creationTime);
+						const dateMatch:Boolean = 
+							(fromDate <= item.pickupTime && toDate >= item.pickupTime) ||
+							(fromDate <= item.creationTime && toDate >= item.creationTime);
+						
+						if (!dateMatch)
+						{
+							return false;
+						}
 					}
-					return textualMatch && dateMatch; 
+					
+					const customer:Object = Data.instance.getCustomer(item.customerID);
+					if (customer)
+					{
+						// AND on all words, each pattern part must match something
+						for each (var patternPart:String in pattern)
+						{
+							if (!(Utils.customerMatchesPattern(customer, patternPart) || Utils.matches(String(item.id), patternPart)))
+							{
+								return false;
+							}
+						}
+					}
+					return true;
 				};
 				Data.instance.orders.refresh();
 			}
@@ -123,6 +138,7 @@
 				orderEditor.order = order;
 				orderEditor.percentHeight = 100;
 				orderEditor.percentWidth = 100;
+				orderEditor.asPopup = true;
 				
 				var popup:Dialog = new Dialog;
 				popup.height = height;

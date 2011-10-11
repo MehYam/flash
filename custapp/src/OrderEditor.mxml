@@ -10,6 +10,7 @@
 		 creationComplete="onInit()" 
 		 >
 	<fx:Declarations>
+		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
 	<s:HGroup>
 		<s:TextInput id="customer" width="300" height="100%" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
@@ -32,7 +33,16 @@
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+		<s:VGroup gap="0">
+			<s:TabBar height="50" fontWeight="bold">
+				<mx:ArrayCollection>
+					<fx:String>Dry Clean</fx:String> 
+					<fx:String>Laundry</fx:String> 
+					<fx:String>Alteration</fx:String> 
+				</mx:ArrayCollection>
+			</s:TabBar>
+			<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+		</s:VGroup>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
@@ -111,7 +121,7 @@
 				{ name: "PRINT RCPT", color: 0x0000ff, handler: onPrintReceipt },
 				{ name: "ITEM + 1", color: 0x00aa00, handler: onIncItem },
 				{ name: "ITEM - 1", color: 0xbb0000, handler: onDecItem },
-				{ name: "NEW", color: 0x00aa00, handler: onSave }
+				{ name: "NEW", color: 0x00aa00, handler: onSave, mainFrameOnly: true }
 			];
 			private function onInit():void
 			{
@@ -120,6 +130,10 @@
 				// KAI: doesn't this belong in createChildren?
 				for each (var cmd:Object in _commandButtonInfo)
 				{
+					if (asPopup && cmd.mainFrameOnly)
+					{
+						continue;
+					}
 					var cmdButton:Button = new Button;
 					cmdButton.width = 125;
 					cmdButton.height = 50;
