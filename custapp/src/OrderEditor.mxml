@@ -198,7 +198,10 @@
 				pickupTime.hours = 12;
 
 				order = Data.instance.createOrder(0, pickupTime.time);
-				Data.instance.writeOrderHistory(order, "order created");
+				if (!order.history.length)
+				{
+					Data.instance.writeOrderHistory(order, "order created");
+				}
 			}
 			private function onSave(e:Event):void
 			{
