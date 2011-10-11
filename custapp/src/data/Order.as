@@ -8,8 +8,7 @@ package data
 
 		public var id:int;
 		public var customerID:int;
-		public var pickupDate:Number = creationTime;
-		public var pickupTime:String;
+		public var pickupTime:Number = creationTime;
 		public var ready:Boolean;
 		public var pickedUp:Boolean;
 		public var paid:Number = 0;

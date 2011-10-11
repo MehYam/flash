@@ -17,27 +17,12 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
-		<mx:DateField id="date" width="160" fontFamily="Arial" fontSize="10" scaleX="2" scaleY="2"/>
+		<mx:DateField id="date" width="160" scaleX="2" scaleY="2"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
-		<s:DropDownList id="time" selectedIndex="4" height="100%">
-			<s:dataProvider>
-				<mx:ArrayList>
-					<fx:String>9am</fx:String>
-					<fx:String>10am</fx:String>
-					<fx:String>11am</fx:String>
-					<fx:String>12pm</fx:String>
-					<fx:String>1pm</fx:String>
-					<fx:String>2pm</fx:String>
-					<fx:String>3pm</fx:String>
-					<fx:String>4pm</fx:String>
-					<fx:String>5pm</fx:String>
-					<fx:String>6pm</fx:String>
-				</mx:ArrayList>
-			</s:dataProvider>
-		</s:DropDownList>
+		<s:DropDownList id="time" dataProvider="{timeValues}" selectedIndex="4" height="100%"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -91,6 +76,7 @@
 			import flash.text.engine.FontWeight;
 			
 			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayList;
 			import mx.containers.TitleWindow;
 			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
@@ -101,7 +87,22 @@
 			
 			import ui.Dialog;
 			import ui.MultilineButtonSkin;
-			
+
+			static private const timeValues:ArrayList = new ArrayList(
+				[
+					{ label: "9am", value: 9 },
+					{ label: "10am", value: 10 },
+					{ label: "11am", value: 11 },
+					{ label: "12pm", value: 12 },
+					{ label: "1pm", value: 13 },
+					{ label: "2pm", value: 14 },
+					{ label: "3pm", value: 15 },
+					{ label: "4pm", value: 16 },
+					{ label: "5pm", value: 17 },
+					{ label: "6pm", value: 18 },
+					{ label: "7pm", value: 19 }
+				]
+			);
 			private var _quantityButtons:Vector.<IUIComponent> = new Vector.<IUIComponent>(2);
 			private var _commandButtonInfo:Array =
 			[
@@ -192,7 +193,12 @@
 			} 
 			private function newOrder():void
 			{
-				order = Data.instance.createOrder(0, new Date().time, "12pm");
+				var pickupTime:Date = new Date();
+				pickupTime.time += Utils.daysToTime(2);
+				pickupTime.hours = 12;
+
+				order = Data.instance.createOrder(0, pickupTime.time);
+				Data.instance.writeOrderHistory(order, "order created");
 			}
 			private function onSave(e:Event):void
 			{
@@ -378,10 +384,14 @@
 				customer.text = o.customerID ? formatCustomer(Data.instance.getCustomer(o.customerID)) : null;
 				
 				var d:Date = new Date();
-				d.time = o.pickupDate;
-
+				d.time = o.pickupTime;
 				date.selectedDate = d;
-				time.selectedItem = o.pickupTime;
+
+				const min:int = timeValues.getItemAt(0).value;
+				const max:int = timeValues.getItemAt(timeValues.length-1).value;
+				const hour:int = Math.min(Math.max(min, d.hours), max);
+				time.selectedIndex = hour - min;
+				
 				itemList.items = o.items;
 				
 				updateTotal();
@@ -391,8 +401,7 @@
 			public function get order():Order
 			{
 				//KAI: better binding could get rid of this
-				_order.pickupDate = date.selectedDate.time;
-				_order.pickupTime = time.selectedItem;
+				_order.pickupTime = date.selectedDate.setHours(time.selectedItem.value);
 				return _order;
 			}
 		]]>

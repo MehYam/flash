@@ -38,5 +38,9 @@ package
 		{
 			return str.replace(/[^0-9]/g, "");
 		}
+		static public function daysToTime(days:Number):Number
+		{
+			return days * 24 * 60 * 60 * 1000;
+		}
 	}
 }

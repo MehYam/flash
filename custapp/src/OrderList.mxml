@@ -20,15 +20,16 @@
 		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" change="onFilterChange()"/>
 	</s:HGroup>
 	<s:HGroup width="100%">
-		<s:CheckBox label="Show Completed" selected="false"/>
+		<s:CheckBox id="limitDatesCheckbox" label="Limit Dates:" selected="true" height="100%"/>
+		<s:HGroup enabled="{limitDatesCheckbox.selected}">
+			<mx:DateField id="dateFrom" width="160" scaleX="1.8" scaleY="1.8"/>
+			<s:Label text="To:" verticalAlign="middle" height="100%"/>
+			<mx:DateField id="dateTo" width="160" scaleX="1.8" scaleY="1.8"/>
+		</s:HGroup>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<s:CheckBox label="Show Overdue" selected="true"/>
-		<s:Line height="100%">
-			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
-		</s:Line>
-		<s:CheckBox label="Show Ready" selected="true"/>
+		<s:CheckBox label="Show Already Paid" selected="true" height="100%"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -78,8 +79,8 @@
 			static private function pickUpLabelFunction(orderObj:Order, column:GridColumn):String
 			{
 				var date:Date = new Date;
-				date.time = orderObj.pickupDate;
-				return date.toDateString() + ", " + orderObj.pickupTime;
+				date.time = orderObj.pickupTime;
+				return date.toString();
 			}
 			private function onFilterChange():void
 			{
@@ -87,7 +88,7 @@
 				Data.instance.orders.filterFunction = function(item:Order):Boolean
 				{
 					const customer:Object = Data.instance.getCustomer(item.customerID);
-					return Utils.matches(customer.phone, pattern) || Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(item.id), pattern); 
+					return !customer || Utils.matches(customer.phone, pattern) || Utils.matches(customerLabelFunction(item, null), pattern) || Utils.matches(String(item.id), pattern); 
 				};
 				Data.instance.orders.refresh();
 			}

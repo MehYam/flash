@@ -23,7 +23,7 @@
 			static private function dateLabelFunction(obj:Object, unused:GridColumn):String
 			{
 				s_reuseDate.time = obj.date;
-				return s_reuseDate.toUTCString();
+				return s_reuseDate.toDateString() + " " + s_reuseDate.toTimeString();
 			}
 		]]>
 	</fx:Script>

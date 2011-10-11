@@ -30,7 +30,13 @@ local|OrderHistoryList
 mx|Alert
 {
 	font-size:18pt;
-	font-family:Arial;
+	font-family:Verdana;
+}
+
+mx|DateField
+{
+	font-size:10pt;
+	font-family:Verdana;
 }
 
 @font-face {

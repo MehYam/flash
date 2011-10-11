@@ -36,12 +36,11 @@ package data
 		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
-		public function createOrder(customerID:int, pickupDate:Number, pickupTime:String):Order
+		public function createOrder(customerID:int, pickupTime:Number):Order
 		{
 			var retval:Order = new Order;
 			retval.id = nextID;
 			retval.customerID = customerID;
-			retval.pickupDate = pickupDate;
 			retval.pickupTime = pickupTime;
 			return retval;
 		}
@@ -183,8 +182,8 @@ package data
 		static private const ORDER_FIELDS:Array =
 		[
 			{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
-			{ name: "pickupDate", type: SQLHelper.TYPE_REAL },
-			{ name: "pickupTime", type: SQLHelper.TYPE_TEXT },
+			{ name: "creationTime", type: SQLHelper.TYPE_INTEGER },
+			{ name: "pickupTime", type: SQLHelper.TYPE_INTEGER },
 			{ name: "ready", type: SQLHelper.TYPE_BOOLEAN },
 			{ name: "pickedUp", type: SQLHelper.TYPE_BOOLEAN },
 			{ name: "paid", type: SQLHelper.TYPE_REAL }
