@@ -4,7 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Declarations>
 	</fx:Declarations>
-	<s:DataGrid width="100%" height="100%" id="grid" editable="false">
+	<s:DataGrid width="100%" height="100%" id="grid" editable="false" skinClass="ui.HeaderlessDataGridSkin">
 		<s:columns>
 			<s:ArrayList>
 				<s:GridColumn dataField="date" headerText="Date" labelFunction="{dateLabelFunction}" width="200"/>
@@ -15,6 +15,8 @@
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
+			
+			import ui.HeaderlessDataGridSkin;
 			public function set history(coll:ArrayCollection):void
 			{
 				grid.dataProvider = coll;

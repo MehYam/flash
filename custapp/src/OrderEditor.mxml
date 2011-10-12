@@ -212,10 +212,6 @@
 				pickupTime.hours = 12;
 
 				order = Data.instance.createOrder(0, pickupTime.time);
-				if (!order.history.length)
-				{
-					Data.instance.writeOrderHistory(order, "order created");
-				}
 			}
 			private function onSave(e:Event):void
 			{
@@ -417,6 +413,8 @@
 			}
 			public function get order():Order
 			{
+				Data.instance.writeOrderHistory(order, "order saved");
+
 				//KAI: better binding could get rid of this
 				_order.pickupTime = date.selectedDate.setHours(time.selectedItem.value);
 				return _order;
