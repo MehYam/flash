@@ -47,7 +47,7 @@ package data
 			if (_paid != value)
 			{
 				_paid = value;
-				_dirty = true;
+				dirty = true;
 			}
 		}
 		public function get pickedUp():Boolean
@@ -59,7 +59,7 @@ package data
 			if (_pickedUp != value)
 			{
 				_pickedUp = value;
-				_dirty = true;
+				dirty = true;
 			}
 		}
 		public function get ready():Boolean
@@ -71,7 +71,7 @@ package data
 			if (_ready != value)
 			{
 				_ready = value;
-				_dirty = true;
+				dirty = true;
 			}
 		}
 		public function get pickupTime():Number
@@ -83,7 +83,7 @@ package data
 			if (_pickupTime != value)
 			{
 				_pickupTime = value;
-				_dirty = true;
+				dirty = true;
 			}
 		}
 		public function get customerID():int
@@ -95,7 +95,7 @@ package data
 			if (_customerID != value)
 			{
 				_customerID = value;
-				_dirty = true;
+				dirty = true;
 			}
 		}
 
@@ -125,13 +125,13 @@ package data
 				if (item.description.indexOf(prop) == -1)
 				{
 					item.description += ", " + prop;
-					_dirty = true;
+					dirty = true;
 				}
 			}
 			else
 			{
 				item.description = prop;
-				_dirty = true;
+				dirty = true;
 			}
 			_items.refresh();
 		}
@@ -141,7 +141,7 @@ package data
 			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.name, rawItem.price);
 
 			_items.addItem(lineItem);
-			_dirty = true;
+			dirty = true;
 			_items.refresh();
 		}
 		public function incItem(index:int):void
@@ -149,7 +149,7 @@ package data
 			var item:LineItem = LineItem(_items.getItemAt(index));
 			++item.quantity;
 
-			_dirty = true;
+			dirty = true;
 			_items.refresh();
 		}
 		public function decItem(index:int):void
@@ -157,7 +157,7 @@ package data
 			var item:LineItem = LineItem(_items.getItemAt(index));
 			--item.quantity;
 		
-			_dirty = true;
+			dirty = true;
 			if (item.quantity <= 0)
 			{
 				_items.removeItemAt(index);

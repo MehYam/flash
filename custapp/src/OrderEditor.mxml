@@ -87,8 +87,6 @@
 			
 			import mx.binding.utils.BindingUtils;
 			import mx.collections.ArrayList;
-			import mx.containers.TitleWindow;
-			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
 			import mx.managers.PopUpManager;
@@ -115,15 +113,19 @@
 				]
 			);
 			private var _quantityButtons:Vector.<IUIComponent> = new Vector.<IUIComponent>(2);
-			private var _commandButtonInfo:Array =
+			private const _commandButtonInfo:Array =
 			[
 				{ name: "-PAY-", color: 0x0000cc, handler: onPay },
 				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
 				{ name: "PRINT RCPT", color: 0x0000ff, handler: onPrintReceipt },
 				{ name: "ITEM + 1", color: 0x00aa00, handler: onIncItem },
-				{ name: "ITEM - 1", color: 0xbb0000, handler: onDecItem },
-				{ name: "NEW", color: 0x00aa00, handler: onSave, mainFrameOnly: true }
+				{ name: "ITEM - 1", color: 0xbb0000, handler: onDecItem }
 			];
+			private const _newButton:Object =
+				{ name: "NEW", color: 0x00aa00, handler: onNew };
+			private const _closeButton:Object =
+				{ name: "CLOSE", color: 0x00aa00, handler: onClose };
+			
 			private function onInit():void
 			{
 				// Command buttons ///////////////////////////////////////////////
@@ -131,31 +133,9 @@
 				// KAI: doesn't this belong in createChildren?
 				for each (var cmd:Object in _commandButtonInfo)
 				{
-					if (asPopup && cmd.mainFrameOnly)
-					{
-						continue;
-					}
-					var cmdButton:Button = new Button;
-					cmdButton.width = 125;
-					cmdButton.height = 50;
-					cmdButton.setStyle("color", cmd.color);
-					cmdButton.setStyle("fontWeight", FontWeight.BOLD);
-					cmdButton.label = cmd.name;
-
-					if (cmd.handler)
-					{
-						cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
-						if (cmd.handler == onDecItem)
-						{
-							_quantityButtons[0] = cmdButton;
-						}
-						else if (cmd.handler == onIncItem)
-						{
-							_quantityButtons[1] = cmdButton;
-						}
-					}
-					commandButtons.addElement(cmdButton);
+					addButton(cmd);
 				}
+				addButton(asPopup ? _closeButton : _newButton);
 				
 				// Item buttons ////////////////////////////////////////////////
 				for each (var item:Object in Data.instance.items)
@@ -206,6 +186,29 @@
 					newOrder();
 				}
 			} 
+			private function addButton(cmd:Object):void
+			{
+				var cmdButton:Button = new Button;
+				cmdButton.width = 125;
+				cmdButton.height = 50;
+				cmdButton.setStyle("color", cmd.color);
+				cmdButton.setStyle("fontWeight", FontWeight.BOLD);
+				cmdButton.label = cmd.name;
+				
+				if (cmd.handler)
+				{
+					cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
+					if (cmd.handler == onDecItem)
+					{
+						_quantityButtons[0] = cmdButton;
+					}
+					else if (cmd.handler == onIncItem)
+					{
+						_quantityButtons[1] = cmdButton;
+					}
+				}
+				commandButtons.addElement(cmdButton);
+			}
 			private function newOrder():void
 			{
 				var pickupTime:Date = new Date();
@@ -213,11 +216,55 @@
 				pickupTime.hours = 12;
 
 				order = Data.instance.createOrder(0, pickupTime.time);
+				order.dirty = false;
 			}
-			private function onSave(e:Event):void
+			private function onNew(e:Event):void
 			{
-				Data.instance.writeOrder(_order);
-				newOrder();					
+				if (_order.dirty)
+				{
+					Dialog.alert(this, "Order has been edited.  Save changes?", "Save changes?", Dialog.STANDARD_SAVE_BTNS, onSavePrompt);
+				}
+				else
+				{
+					newOrder();
+				}
+			}
+			private function onClose(e:Event):void
+			{
+				if (_order.dirty)
+				{
+					Dialog.alert(this, "Order has been edited.  Save changes?", "Save changes?", Dialog.STANDARD_SAVE_BTNS, onSavePrompt);
+				}
+				else
+				{
+					dispatchEvent(new Event(Event.COMPLETE));
+				}
+			}
+			private function onSavePrompt(e:DialogEvent):void
+			{
+				var close:Boolean = false;
+				switch (e.cause) {
+				case Dialog.BTN_SAVE:
+					Data.instance.writeOrder(_order);
+					close = true;
+					break;
+				case Dialog.BTN_DONT_SAVE:
+					close = true;
+					break;
+				case Dialog.BTN_CANCEL:
+					break;
+				}
+				if (close)
+				{
+					if (asPopup)
+					{
+						dispatchEvent(new Event(Event.COMPLETE));
+					}
+					else
+					{
+						newOrder();
+					}
+				}
 			}
 			static private const BTN_PAY:String = "Pay";
 			private function onPay(e:Event):void
@@ -257,47 +304,25 @@
 					{
 						Dialog.alert(this, "Change of " + Utils.currencyFormatter.format(change) + " goes to customer.", "Make Change", [Dialog.BTN_DONE]);
 					}
-					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total);
+					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change));
 					Data.instance.writeOrder(_order);
 				}
 			}
 			private function onPrintTag(e:Event):void
 			{
-				var label:Label = new Label;
-				label.height = 100;
-				label.setStyle("verticalAlign", "middle");
-				
 				const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "---";
-				label.text = msg;
+				Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 
 				Data.instance.writeOrderHistory(_order, msg);
 				Data.instance.writeOrder(_order);
-
-				var popup:Dialog = new Dialog;
-				popup.bodyContent = label;
-				popup.autoClose = true;
-				
-				PopUpManager.addPopUp(popup, this);
-				PopUpManager.centerPopUp(popup);
 			}
 			private function onPrintReceipt(e:Event):void
 			{
-				var label:Label = new Label;
-				label.height = 100;
-				label.setStyle("verticalAlign", "middle");
-
 				const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
-				label.text = msg;
+				Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
 
 				Data.instance.writeOrderHistory(_order, msg);
 				Data.instance.writeOrder(_order);
-
-				var popup:Dialog = new Dialog;
-				popup.bodyContent = label;
-				popup.autoClose = true;
-				
-				PopUpManager.addPopUp(popup, this);
-				PopUpManager.centerPopUp(popup);
 			}
 			private function onSelectionUpdate(foo:int):void
 			{

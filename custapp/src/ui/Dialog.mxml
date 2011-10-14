@@ -21,10 +21,16 @@
 			import mx.managers.PopUpManager;
 			
 			import spark.components.Label;
-			
+
+			//
+			// Some buttons you can use to do common things.  BTN_DONE is returned if the content
+			// dispatches a Event.COMPLETE.  BTN_CANCEL is returned if the dialog is ESC'ed or X button'ed.
 			static public const BTN_DONE:String = "Done";
 			static public const BTN_CANCEL:String = "Cancel";
-
+			static public const BTN_SAVE:String = "Save";
+			static public const BTN_DONT_SAVE:String = "Don't Save";
+			static public const STANDARD_SAVE_BTNS:Array = [BTN_SAVE, BTN_DONT_SAVE, BTN_CANCEL];
+			
 			//
 			// Pass in null for the button labels to hide either of them, or null for the callback if you don't
 			// need it
@@ -40,6 +46,7 @@
 				var popup:Dialog = new Dialog;
 				popup.autoClose = true;
 				popup.bodyContent = label;
+				popup.title = caption;
 				if (callback != null)
 				{
 					popup.addEventListener(Event.COMPLETE, callback, false, 0, true);

@@ -316,11 +316,10 @@ package data
 			loadTypedDataToCollection(orders, data, ORDER_TABLE, ORDER_FIELDS, Order);
 			for each (var order:Order in orders)
 			{
-				// artificially insert the "created" record.  This is a horrible hack, but this whole data/db handling is hacked to fuck anyway
-				order.history.addItem(createOrderHistory(order.id, order.creationTime, "created"));
-				
 				// load the items for each order
 				_sql.readTableForColumn(ORDER_ITEMS_TABLE, "orderID", order.id, onOrderItems);
+				
+				order.dirty = false;
 			}
 		}
 		private function onOrderItems(d:Array):void

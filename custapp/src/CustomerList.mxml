@@ -106,8 +106,6 @@
 					_currentPopup = null;
 				}
 			}
-			static private const BTN_SAVE:String = "Save";
-			static private const BTN_DONT_SAVE:String = "Don't Save";
 			private function onCustomerEditorButton(e:DialogEvent):void
 			{
 				if (e.cause == BTN_SAVE_CUSTOMER || e.cause == BTN_ADD_CUSTOMER)
@@ -120,7 +118,7 @@
 					const source:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
 					if (source.dirty)
 					{
-						Dialog.alert(this, "This customer has changed.  Save changes?", "Customer has changed", [BTN_SAVE, BTN_DONT_SAVE, Dialog.BTN_CANCEL], onCustomerEditorClosingPrompt); 
+						Dialog.alert(this, "This customer has changed.  Save changes?", "Customer has changed", Dialog.STANDARD_SAVE_BTNS, onCustomerEditorClosingPrompt); 
 					}
 					else
 					{
@@ -131,11 +129,11 @@
 			private function onCustomerEditorClosingPrompt(e:DialogEvent):void
 			{
 				switch(e.cause) {
-				case BTN_SAVE:
+				case Dialog.BTN_SAVE:
 					save();
 					hideCustomerEditor();
 					break;
-				case BTN_DONT_SAVE:
+				case Dialog.BTN_DONT_SAVE:
 					hideCustomerEditor();
 					break;
 				case Dialog.BTN_CANCEL:
