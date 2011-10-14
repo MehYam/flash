@@ -50,6 +50,7 @@
 			import spark.components.TitleWindow;
 			
 			import ui.Dialog;
+			import ui.DialogEvent;
 			private function onFilterChange():void
 			{
 				const pattern:Array = filter.text.toUpperCase().split(" "); 
@@ -67,7 +68,9 @@
 				};
 				Data.instance.customers.refresh();
 			}
-			private var _currentPopup:IFlexDisplayObject;
+			static private const BTN_ADD_CUSTOMER:String = "Add Customer";
+			static private const BTN_SAVE_CUSTOMER:String = "Save Customer";
+			private var _currentPopup:Dialog;
 			private function showCustomerEditor(addMode:Boolean):void
 			{
 				var edit:CustomerEditor = new CustomerEditor;
@@ -82,17 +85,18 @@
 
 				if (addMode)
 				{
-					popup.title = "Add Customer";
+					popup.title = "Add New Customer";
+					popup.addButton(BTN_ADD_CUSTOMER);
 					edit.data = { id: Data.instance.nextID, phone: (filter.text || undefined) };
 				}
 				else
 				{
 					popup.title = "Edit Customer";
+					popup.addButton(BTN_SAVE_CUSTOMER);
 					edit.data = customerGrid.selectedItem;
 				}
-
-				popup.addEventListener(Event.CLOSE, onCustomerEditorQuit, false, 0, true);
-				popup.addEventListener(Event.COMPLETE, onCustomerEditorApply, false, 0, true);
+				popup.addButton(Dialog.BTN_CANCEL);
+				popup.addEventListener(Event.COMPLETE, onCustomerEditorButton, false, 0, true);
 			}
 			private function hideCustomerEditor():void
 			{
@@ -102,40 +106,57 @@
 					_currentPopup = null;
 				}
 			}
-			private function onCustomerEditorQuit(e:Event):void
+			static private const BTN_SAVE:String = "Save";
+			static private const BTN_DONT_SAVE:String = "Don't Save";
+			private function onCustomerEditorButton(e:DialogEvent):void
 			{
-				const source:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
-				if (source.dirty)
+				if (e.cause == BTN_SAVE_CUSTOMER || e.cause == BTN_ADD_CUSTOMER)
 				{
-					Alert.show("Abandon customer changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onCustomerEditorReallyQuit, null, Alert.NO);
+					save();
+					hideCustomerEditor();
 				}
 				else
 				{
-					hideCustomerEditor();
+					const source:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
+					if (source.dirty)
+					{
+						Dialog.alert(this, "This customer has changed.  Save changes?", "Customer has changed", [BTN_SAVE, BTN_DONT_SAVE, Dialog.BTN_CANCEL], onCustomerEditorClosingPrompt); 
+					}
+					else
+					{
+						hideCustomerEditor();
+					}
 				}
 			}
-			private function onCustomerEditorReallyQuit(e:CloseEvent):void
+			private function onCustomerEditorClosingPrompt(e:DialogEvent):void
 			{
-				if (e.detail == Alert.YES)
-				{
+				switch(e.cause) {
+				case BTN_SAVE:
+					save();
 					hideCustomerEditor();
+					break;
+				case BTN_DONT_SAVE:
+					hideCustomerEditor();
+					break;
+				case Dialog.BTN_CANCEL:
+					// nothing, prompt dialog auto-hides
+					break;
 				}
 			}
-			private function onCustomerEditorApply(e:Event):void
+			private function save():void
 			{
-				const edit:CustomerEditor = CustomerEditor(Dialog(e.target).bodyContent);
+				const edit:CustomerEditor = CustomerEditor(_currentPopup.bodyContent)
 				const newCustomer:Object = edit.data;
-
+				
 				Data.instance.writeCustomer(newCustomer);
 				if (edit.addMode)
 				{
 					customerGrid.selectedItem = newCustomer;
 					customerGrid.ensureCellIsVisible(customerGrid.selectedIndex);
-						
+					
 					dispatchEvent(new Event(Event.COMPLETE));
 				}
 				Data.instance.customers.refresh();
-				hideCustomerEditor();
 			}
 			private function onAddCustomer():void
 			{

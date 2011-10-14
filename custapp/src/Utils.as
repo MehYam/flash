@@ -10,7 +10,7 @@ package
 		}
 		static public function matches(item:String, pattern:String):Boolean
 		{
-			return item && (item.toUpperCase().indexOf(pattern) >= 0);
+			return item && item.length && (item.toUpperCase().indexOf(pattern) >= 0);
 		}
 		static private var s_cf:CurrencyFormatter;
 		static public function get currencyFormatter():CurrencyFormatter

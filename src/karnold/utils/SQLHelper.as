@@ -119,9 +119,10 @@ package karnold.utils
 			runNext();
 		}
 		private var _total:uint = 0;
+		private var _errors:uint = 0;
 		private function runNext():void
 		{
-			trace("SQLHelper.runNext", _queue.length, "queued, so far", _total);
+			trace("SQLHelper.runNext", _queue.length, "queued, so far", _total, "errors", _errors);
 			if (_queue.length && _sqls.sqlConnection && !_sqls.executing)
 			{
 				const command:Command = _queue[0];
@@ -132,7 +133,7 @@ package karnold.utils
 		private function onSQLError(e:SQLErrorEvent):void
 		{
 			const command:Command = _queue.shift();
-			trace("onSQLError for", command.cmdText);
+			trace("onSQLError for", command.cmdText, "errors", ++_errors);
 			trace(e, e.error);
 			
 			runNext();

@@ -5,24 +5,93 @@
 			   close="doAutoClose()"
 			   >
 	<fx:Declarations>
-		<fx:String id="completeLabel">Done</fx:String>
-		<fx:String id="cancelLabel">Cancel</fx:String>
 	</fx:Declarations>
 	<s:layout>
 		<s:VerticalLayout paddingBottom="10"/>
 	</s:layout>
-	<!--	<s:Group id="contentParent" width="100%" height="100%"/>-->
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-	<s:HGroup width="100%" horizontalAlign="center">
-		<ui:Button id="done" label="{completeLabel}" height="{Data.BAR_HEIGHT}" click="dispatchEvent(new CloseEvent(Event.COMPLETE)); doAutoClose();"/>
-		<ui:Button label="{cancelLabel}" height="{Data.BAR_HEIGHT}" click="dispatchEvent(new CloseEvent(Event.CLOSE)); doAutoClose();"/>
+	<s:HGroup id="buttonParent" width="100%" horizontalAlign="center">
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
 			
 			import mx.core.IVisualElement;
+			import mx.events.CloseEvent;
 			import mx.managers.PopUpManager;
+			
+			import spark.components.Label;
+			
+			static public const BTN_DONE:String = "Done";
+			static public const BTN_CANCEL:String = "Cancel";
+
+			//
+			// Pass in null for the button labels to hide either of them, or null for the callback if you don't
+			// need it
+			static public function alert(parent:DisplayObject, caption:String, title:String, buttons:Array = null, callback:Function = null):void
+			{
+				var label:Label = new Label;
+				label.text = caption;
+				label.setStyle("paddingLeft", 20);
+				label.setStyle("paddingRight", 20);
+				label.setStyle("paddingTop", 20);
+				label.setStyle("paddingBottom", 20);
+				
+				var popup:Dialog = new Dialog;
+				popup.autoClose = true;
+				popup.bodyContent = label;
+				if (callback != null)
+				{
+					popup.addEventListener(Event.COMPLETE, callback, false, 0, true);
+				}
+				for each (var button:String in buttons)
+				{
+					popup.addButton(button);
+				}
+				
+				PopUpManager.addPopUp(popup, parent, true);
+				PopUpManager.centerPopUp(popup);
+			}
+			private var _buttonLabels:Vector.<String>;
+			protected override function createChildren():void
+			{
+				super.createChildren();
+				if (_buttonLabels)
+				{
+					for each (var label:String in _buttonLabels)
+					{
+						renderButton(label);
+					}
+					_buttonLabels = null;
+				}
+			}
+			public function addButton(label:String):void
+			{
+				if (buttonParent)
+				{
+					renderButton(label)
+				}
+				else
+				{
+					_buttonLabels.push(label);
+				}
+			}
+			private function renderButton(label:String):void
+			{
+				const button:Button = new ui.Button;
+				button.label = label;
+				button.height = Data.BAR_HEIGHT;
+				button.addEventListener(MouseEvent.CLICK, onButton, false, 0, true);
+				
+				buttonParent.addElement(button);
+			}
+			private function onButton(e:Event):void
+			{
+				const targ:Button = Button(e.currentTarget);
+				dispatchEvent(new DialogEvent(targ.label));
+				
+				doAutoClose();
+			}
 			public function set bodyContent(content:IVisualElement):void
 			{
 				content.addEventListener(Event.COMPLETE, bounceComplete, false, 0, true);
@@ -35,7 +104,7 @@
 			}
 			private function bounceComplete(e:Event):void
 			{
-				dispatchEvent(new CloseEvent(Event.COMPLETE));
+				dispatchEvent(new DialogEvent(Dialog.BTN_DONE));
 			}
 			
 			private var _autoClose:Boolean = false;

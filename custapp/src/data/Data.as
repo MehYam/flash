@@ -60,35 +60,45 @@ package data
 		public function get nextID():int { return _id++; }
 		public function writeCustomer(customer:Object):void
 		{
-			writeRecordAndCache(CUSTOMER_TABLE, customers, customer);
+			writeAndCacheRecord(CUSTOMER_TABLE, customers, customer);
 		}
 		public function writeOrder(order:Order):void
 		{
-			writeRecordAndCache(ORDER_TABLE, orders, order);
-			for each (var lineItem:LineItem in order.items)
+			if (order.dirty)
 			{
-				//KAI: alternative is to read to/write from the line item list separately, which would make it
-				// easier to implement partial saving of orders-in-progress
-				_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
-			}
-			if (order.lineItemRecordsToPurge)
-			{
-				for each (var lineItemID:int in order.lineItemRecordsToPurge)
+				writeOrderHistory(order, "order saved");
+				writeAndCacheRecord(ORDER_TABLE, orders, order);
+				for each (var lineItem:LineItem in order.items)
 				{
-					deleteLineItem(lineItemID);
+					//KAI: alternative is to read to/write from the line item list separately, which would make it
+					// easier to implement partial saving of orders-in-progress
+					_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
 				}
-				order.lineItemRecordsToPurge.length = 0;
+				if (order.lineItemRecordsToPurge)
+				{
+					for each (var lineItemID:int in order.lineItemRecordsToPurge)
+					{
+						deleteLineItem(lineItemID);
+					}
+					order.lineItemRecordsToPurge.length = 0;
+				}
+				order.dirty = false;
 			}
+		}
+		static private function createOrderHistory(id:int, time:Number, action:String):Object
+		{
+			const retval:Object =
+			{
+				orderID: id,
+				date:    time,
+				action:  action
+			};
+			return retval;
 		}
 		public function writeOrderHistory(order:Order, message:String):void
 		{
-			const obj:Object =
-			{
-				orderID: order.id,
-				date:    new Date().time,
-				action:  message
-			}
-			writeRecordAndCache(ORDER_HISTORY_TABLE, order.history, obj);
+			const obj:Object = createOrderHistory(order.id, new Date().time, message);
+			writeAndCacheRecord(ORDER_HISTORY_TABLE, order.history, obj);
 			
 		}
 		public function loadOrderHistory(order:Order):void
@@ -136,7 +146,7 @@ package data
 			}
 			return -1;
 		}
-		private function writeRecordAndCache(table:String, collection:IList, obj:Object):void
+		private function writeAndCacheRecord(table:String, collection:IList, obj:Object):void
 		{
 			const index:int = lookupIndexByID(collection, obj.id);
 			if (index == -1)
@@ -306,6 +316,10 @@ package data
 			loadTypedDataToCollection(orders, data, ORDER_TABLE, ORDER_FIELDS, Order);
 			for each (var order:Order in orders)
 			{
+				// artificially insert the "created" record.  This is a horrible hack, but this whole data/db handling is hacked to fuck anyway
+				order.history.addItem(createOrderHistory(order.id, order.creationTime, "created"));
+				
+				// load the items for each order
 				_sql.readTableForColumn(ORDER_ITEMS_TABLE, "orderID", order.id, onOrderItems);
 			}
 		}

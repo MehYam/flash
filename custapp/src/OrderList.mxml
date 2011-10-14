@@ -114,15 +114,12 @@
 					}
 					
 					const customer:Object = Data.instance.getCustomer(item.customerID);
-					if (customer)
+					// AND on all words, each pattern part must match something
+					for each (var patternPart:String in pattern)
 					{
-						// AND on all words, each pattern part must match something
-						for each (var patternPart:String in pattern)
+						if (!(Utils.matches(String(item.id), patternPart) || (customer && Utils.customerMatchesPattern(customer, patternPart))))
 						{
-							if (!(Utils.customerMatchesPattern(customer, patternPart) || Utils.matches(String(item.id), patternPart)))
-							{
-								return false;
-							}
+							return false;
 						}
 					}
 					return true;
@@ -130,6 +127,8 @@
 				Data.instance.orders.refresh();
 			}
 			private var _currentPopup:IFlexDisplayObject;
+			static private const BTN_SAVE:String = "Save";
+			static private const BTN_CANCEL:String = "Cancel";
 			private function onDoubleClick():void
 			{
 				//KAI: null check
@@ -142,7 +141,6 @@
 				
 				var popup:Dialog = new Dialog;
 				popup.height = height;
-
 				popup.bodyContent = orderEditor;
 				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
 
@@ -159,7 +157,7 @@
 			}
 			private function onOrderEditorQuit(e:Event):void
 			{
-				Alert.show("Abandon order changes without saving?", "Abandon changes?", Alert.YES | Alert.NO, this, onOrderEditorReallyQuit, null, Alert.NO);
+				Dialog.alert(this, "fix me", "fix me", [Dialog.BTN_DONE]);
 			}
 			private function onOrderEditorReallyQuit(e:Event):void
 			{

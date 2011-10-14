@@ -96,6 +96,7 @@
 			import spark.components.Button;
 			
 			import ui.Dialog;
+			import ui.DialogEvent;
 			import ui.MultilineButtonSkin;
 
 			static private const timeValues:ArrayList = new ArrayList(
@@ -215,16 +216,10 @@
 			}
 			private function onSave(e:Event):void
 			{
-				if (!_order.customerID)
-				{
-					Alert.show("Choose customer before saving", "Customer Missing");
-				}
-				else
-				{
-					Data.instance.writeOrder(order);
-					newOrder();					
-				}
+				Data.instance.writeOrder(_order);
+				newOrder();					
 			}
+			static private const BTN_PAY:String = "Pay";
 			private function onPay(e:Event):void
 			{
 				var pay:PayUI = new PayUI;
@@ -235,7 +230,8 @@
 				popup.bodyContent = pay;
 				popup.autoClose = true;
 				popup.title = "Pay";
-				popup.completeLabel = "PAY";
+				popup.addButton(BTN_PAY);
+				popup.addButton(Dialog.BTN_CANCEL);
 				
 				var dobj:DisplayObject = DisplayObject(e.currentTarget);
 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y + dobj.height)));
@@ -246,21 +242,24 @@
 				PopUpManager.addPopUp(popup, this, true);
 				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
 			}
-			private function onPayComplete(e:Event):void
+			private function onPayComplete(e:DialogEvent):void
 			{
-				const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
-				const change:Number = pay.paying - pay.owing; 
-
-				_order.paid = Math.min(_order.total, _order.paid + pay.paying);
-				
-				updateTotal();
-
-				if (change > 0)
+				if (e.cause == BTN_PAY)
 				{
-					Alert.show("Change of " + Utils.currencyFormatter.format(change) + " goes to customer.", "Change");
+					const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
+					const change:Number = pay.paying - pay.owing; 
+	
+					_order.paid = Math.min(_order.total, _order.paid + pay.paying);
+					
+					updateTotal();
+	
+					if (change > 0)
+					{
+						Dialog.alert(this, "Change of " + Utils.currencyFormatter.format(change) + " goes to customer.", "Make Change", [Dialog.BTN_DONE]);
+					}
+					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total);
+					Data.instance.writeOrder(_order);
 				}
-				Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total);
-				Data.instance.writeOrder(_order);
 			}
 			private function onPrintTag(e:Event):void
 			{
@@ -341,7 +340,7 @@
 				total.text = Utils.currencyFormatter.format(_order.total);
 				paid.text = Utils.currencyFormatter.format(_order.paid);
 				
-				paid.setStyle("color", order.total == _order.paid ? 0x00ee00 : 0xff0000);
+				paid.setStyle("color", _order.total == _order.paid ? 0x00ee00 : 0xff0000);
 			}
 
 			private var _customerList:CustomerList = new CustomerList;
@@ -413,8 +412,6 @@
 			}
 			public function get order():Order
 			{
-				Data.instance.writeOrderHistory(order, "order saved");
-
 				//KAI: better binding could get rid of this
 				_order.pickupTime = date.selectedDate.setHours(time.selectedItem.value);
 				return _order;
