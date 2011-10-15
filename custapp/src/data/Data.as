@@ -31,6 +31,7 @@ package data
 			return s_instance;
 		}
 
+		// Collections for UI components to bind to
 		public const customers:ArrayCollection = new ArrayCollection([]);
 		public const items:ArrayCollection = new ArrayCollection([]);
 		public const orders:ArrayCollection = new ArrayCollection([]);
@@ -186,7 +187,8 @@ package data
 		static private const ITEM_FIELDS:Array = 
 		[
 			{ name: "name", type: SQLHelper.TYPE_TEXT },
-			{ name: "price", type: SQLHelper.TYPE_REAL }
+			{ name: "price", type: SQLHelper.TYPE_REAL },
+			{ name: "category", type: SQLHelper.TYPE_TEXT }
 		];
 		static private const ORDER_TABLE:String = "orders";
 		static private const ORDER_FIELDS:Array =

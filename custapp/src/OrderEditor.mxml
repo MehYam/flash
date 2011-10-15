@@ -18,12 +18,12 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
-		<mx:DateField id="date" width="160" scaleX="2" scaleY="2"/>
+		<mx:DateField id="date" width="160" scaleX="2" scaleY="2" change="onTimeChange()"/>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
-		<s:DropDownList id="time" dataProvider="{timeValues}" selectedIndex="4" height="100%"/>
+		<s:DropDownList id="time" dataProvider="{timeValues}" selectedIndex="4" height="100%" change="onTimeChange()"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -89,9 +89,11 @@
 			import mx.collections.ArrayList;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
+			import mx.events.CalendarLayoutChangeEvent;
 			import mx.managers.PopUpManager;
 			
 			import spark.components.Button;
+			import spark.events.IndexChangeEvent;
 			
 			import ui.Dialog;
 			import ui.DialogEvent;
@@ -124,7 +126,7 @@
 			private const _newButton:Object =
 				{ name: "NEW", color: 0x00aa00, handler: onNew };
 			private const _closeButton:Object =
-				{ name: "CLOSE", color: 0x00aa00, handler: onClose };
+				{ name: "CLOSE", color: 0xbb0000, handler: onClose };
 			
 			private function onInit():void
 			{
@@ -351,6 +353,10 @@
 				
 				onSelectionUpdate(itemList.selectedIndex);
 			}
+			private function onTimeChange():void
+			{
+				_order.pickupTime = date.selectedDate.setHours(time.selectedItem.value);
+			}
 			private function onColorProperty(e:Event):void
 			{
 				if (itemList.selectedIndex >= 0)
@@ -437,8 +443,6 @@
 			}
 			public function get order():Order
 			{
-				//KAI: better binding could get rid of this
-				_order.pickupTime = date.selectedDate.setHours(time.selectedItem.value);
 				return _order;
 			}
 		]]>
