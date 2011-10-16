@@ -2,107 +2,73 @@ package data
 {
 	import mx.collections.ArrayCollection;
 
+	// a p.o.d
 	public class Order
 	{
 		public var id:int;
 		public var creationTime:Number = new Date().time;
 		
-		private var _customerID:int;
-		private var _pickupTime:Number = creationTime;
-		private var _ready:Boolean;
-		private var _pickedUp:Boolean;
-		private var _paid:Number = 0;
+		public var customerID:int;
+		public var pickupTime:Number = creationTime;
+		public var ready:Boolean;
+		public var pickedUp:Boolean;
+		public var paid:Number = 0;
 
 		// serialized out manually in the writeOrder call
-		private var _items:ArrayCollection = new ArrayCollection([]);
+		public const items:ArrayCollection = new ArrayCollection([]);
 
 		// serialized in lazily
-		public var history:ArrayCollection = new ArrayCollection([]);
-		
-		// not serialized
-		public var lineItemRecordsToPurge:Vector.<int>; // constructed lazily
+		public const history:ArrayCollection = new ArrayCollection([]);
 
-		private var _dirty:Boolean = false;
-		public function get dirty():Boolean
+		public function compare(rhs:Order):Boolean
 		{
-			return _dirty;
+			return rhs.id == id &&
+				rhs.creationTime == creationTime &&
+				rhs.customerID == customerID &&
+				rhs.pickupTime == pickupTime &&
+				rhs.ready == ready &&
+				rhs.pickedUp == pickedUp &&
+				rhs.paid == paid &&
+				compareItems(rhs);
 		}
-		public function set dirty(b:Boolean):void
+		private function compareItems(rhs:Order):Boolean
 		{
-			_dirty = b;
-		}
-		/**
-		 *
-		 * DO NOT MODIFY THIS DATA DIRECTLY - bad design but I'm forced to expose this for now.  Use the
-		 * LineItem methods of Order to modify line items. 
-		 * 
-		 */
-		public function get items():ArrayCollection { return _items; }
-		public function get paid():Number
-		{
-			return _paid;
-		}
-		public function set paid(value:Number):void
-		{
-			if (_paid != value)
+			if (rhs.items.length == items.length)
 			{
-				_paid = value;
-				dirty = true;
+				var i:uint = 0;
+				for each (var lineItem:LineItem in rhs.items)
+				{
+					if (!lineItem.compare(LineItem(items.getItemAt(i++))))
+					{
+						return false;
+					}
+				}
+				return true;
 			}
+			return false;
 		}
-		public function get pickedUp():Boolean
+		public function deepCopy():Order
 		{
-			return _pickedUp;
-		}
-		public function set pickedUp(value:Boolean):void
-		{
-			if (_pickedUp != value)
+			var newOrder:Order = new Order;
+			newOrder.creationTime = creationTime;
+			newOrder.customerID = customerID;
+			newOrder.history.source = history.source.slice();
+			newOrder.id = id;
+			newOrder.paid = paid;
+			newOrder.pickedUp = pickedUp;
+			newOrder.pickupTime = pickupTime;
+			newOrder.ready = ready;
+			for each (var lineItem:LineItem in items)
 			{
-				_pickedUp = value;
-				dirty = true;
+				newOrder.items.addItem(lineItem.deepCopy());
 			}
-		}
-		public function get ready():Boolean
-		{
-			return _ready;
-		}
-		public function set ready(value:Boolean):void
-		{
-			if (_ready != value)
-			{
-				_ready = value;
-				dirty = true;
-			}
-		}
-		public function get pickupTime():Number
-		{
-			return _pickupTime;
-		}
-		public function set pickupTime(value:Number):void
-		{
-			if (_pickupTime != value)
-			{
-				_pickupTime = value;
-				dirty = true;
-			}
-		}
-		public function get customerID():int
-		{
-			return _customerID;
-		}
-		public function set customerID(value:int):void
-		{
-			if (_customerID != value)
-			{
-				_customerID = value;
-				dirty = true;
-			}
+			return newOrder;
 		}
 
 		public function get total():Number
 		{
 			var retval:Number = 0;
-			for each (var item:LineItem in _items)
+			for each (var item:LineItem in items)
 			{
 				retval += (item.price * item.quantity);
 			}
@@ -111,7 +77,7 @@ package data
 		public function get numItems():Number
 		{
 			var retval:Number = 0;
-			for each (var item:LineItem in _items)
+			for each (var item:LineItem in items)
 			{
 				retval += item.quantity;
 			}
@@ -119,55 +85,45 @@ package data
 		}
 		public function addProperty(itemIndex:int, prop:String):void
 		{
-			var item:LineItem = LineItem(_items.getItemAt(itemIndex));
+			var item:LineItem = LineItem(items.getItemAt(itemIndex));
 			if (item.description)
 			{
 				if (item.description.indexOf(prop) == -1)
 				{
 					item.description += ", " + prop;
-					dirty = true;
 				}
 			}
 			else
 			{
 				item.description = prop;
-				dirty = true;
 			}
-			_items.refresh();
+			items.refresh();
 		}
 		public function addLineItem(itemID:int):void
 		{
 			const rawItem:Object = Data.instance.getRawItem(itemID);
 			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.name, rawItem.price);
 
-			_items.addItem(lineItem);
-			dirty = true;
-			_items.refresh();
+			items.addItem(lineItem);
+			items.refresh();
 		}
 		public function incItem(index:int):void
 		{
-			var item:LineItem = LineItem(_items.getItemAt(index));
+			var item:LineItem = LineItem(items.getItemAt(index));
 			++item.quantity;
 
-			dirty = true;
-			_items.refresh();
+			items.refresh();
 		}
 		public function decItem(index:int):void
 		{
-			var item:LineItem = LineItem(_items.getItemAt(index));
+			var item:LineItem = LineItem(items.getItemAt(index));
 			--item.quantity;
 		
-			dirty = true;
 			if (item.quantity <= 0)
 			{
-				_items.removeItemAt(index);
-				if (!lineItemRecordsToPurge)
-				{
-					lineItemRecordsToPurge = new Vector.<int>;
-				}
-				lineItemRecordsToPurge.push(item.id);
+				items.removeItemAt(index);
 			}
-			_items.refresh();
+			items.refresh();
 		}
 	}
 }

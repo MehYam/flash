@@ -1,5 +1,8 @@
 package data
 {
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	
 	import karnold.utils.SQLHelper;
 	import karnold.utils.Util;
 	
@@ -30,6 +33,11 @@ package data
 			}
 			return s_instance;
 		}
+
+		// passes a Event.COMPLETE once all Orders are created so that we know when it's safe to start
+		// allocating id's for them.  This is entirely a hack due to the fact that we're trying to make
+		// id's unique on the database's behalf instead of asking it to do that for us.
+		public const events:EventDispatcher = new EventDispatcher;
 
 		// Collections for UI components to bind to
 		public const customers:ArrayCollection = new ArrayCollection([]);
@@ -63,28 +71,33 @@ package data
 		{
 			writeAndCacheRecord(CUSTOMER_TABLE, customers, customer);
 		}
+		public function orderIsDirty(order:Order):Boolean
+		{
+			const rhs:Order = Order(lookupObjectByID(orders, order.id));
+			return !rhs || order.compare(rhs);
+		}
 		public function writeOrder(order:Order):void
 		{
-			if (order.dirty)
+			const original:Order = Order(lookupObjectByID(orders, order.id));
+
+			// write/rewrite line items
+			var lineItemLookup:Object = {};
+			for each (var lineItem:LineItem in order.items)
 			{
-				writeOrderHistory(order, "order saved");
-				writeAndCacheRecord(ORDER_TABLE, orders, order);
-				for each (var lineItem:LineItem in order.items)
-				{
-					//KAI: alternative is to read to/write from the line item list separately, which would make it
-					// easier to implement partial saving of orders-in-progress
-					_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
-				}
-				if (order.lineItemRecordsToPurge)
-				{
-					for each (var lineItemID:int in order.lineItemRecordsToPurge)
-					{
-						deleteLineItem(lineItemID);
-					}
-					order.lineItemRecordsToPurge.length = 0;
-				}
-				order.dirty = false;
+				lineItemLookup[lineItem.id] = true;
+				_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
 			}
+			// remove any that were deleted
+			for each (var lineItemID:int in original.items)
+			{
+				if (!lineItemLookup[lineItemID])
+				{
+					deleteLineItem(lineItemID);
+				}
+			}
+
+			writeAndCacheRecord(ORDER_TABLE, orders, order);
+			writeOrderHistory(order, "order saved");
 		}
 		static private function createOrderHistory(id:int, time:Number, action:String):Object
 		{
@@ -288,7 +301,7 @@ package data
 				{
 					if (record.id >= _id)
 					{
-						++_id;
+						_id = record.id + 1;
 					}
 					var typed:Object = new classForTypedObject;
 					typed.id = record.id;
@@ -313,6 +326,7 @@ package data
 		{
 			loadDataToCollection(items, data, ITEM_TABLE);
 		}
+		public var ordersHaveLoaded:Boolean = false;  // going to hell
 		private function onOrders(data:Array):void
 		{
 			loadTypedDataToCollection(orders, data, ORDER_TABLE, ORDER_FIELDS, Order);
@@ -320,9 +334,9 @@ package data
 			{
 				// load the items for each order
 				_sql.readTableForColumn(ORDER_ITEMS_TABLE, "orderID", order.id, onOrderItems);
-				
-				order.dirty = false;
 			}
+			events.dispatchEvent(new Event(Event.COMPLETE));
+			ordersHaveLoaded = true;
 		}
 		private function onOrderItems(d:Array):void
 		{

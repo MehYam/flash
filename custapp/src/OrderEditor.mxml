@@ -137,7 +137,11 @@
 				{
 					addButton(cmd);
 				}
-				addButton(asPopup ? _closeButton : _newButton);
+//				addButton(asPopup ? _closeButton : _newButton);
+				if (!asPopup)
+				{
+					addButton(_newButton);
+				}
 				
 				// Item buttons ////////////////////////////////////////////////
 				for each (var item:Object in Data.instance.items)
@@ -182,12 +186,22 @@
 					colorButtons.addElement(patternButton);
 				}
 				date.selectedDate = new Date;
-
 				if (!_order)
 				{
-					newOrder();
+					if (!Data.instance.ordersHaveLoaded)
+					{
+						Data.instance.events.addEventListener(Event.COMPLETE, onOrdersLoaded, false, 0, true);
+					}
+					else
+					{
+						onOrdersLoaded();
+					}
 				}
-			} 
+			}
+			private function onOrdersLoaded(e:Event = null):void
+			{
+				newOrder();
+			}
 			private function addButton(cmd:Object):void
 			{
 				var cmdButton:Button = new Button;
@@ -218,11 +232,10 @@
 				pickupTime.hours = 12;
 
 				order = Data.instance.createOrder(0, pickupTime.time);
-				order.dirty = false;
 			}
 			private function onNew(e:Event):void
 			{
-				if (_order.dirty)
+				if (orderIsDirty)
 				{
 					Dialog.alert(this, "Order has been edited.  Save changes?", "Save changes?", Dialog.STANDARD_SAVE_BTNS, onSavePrompt);
 				}
@@ -231,9 +244,13 @@
 					newOrder();
 				}
 			}
+			public function runDirtyPrompt():void
+			{
+				onClose(null);
+			}
 			private function onClose(e:Event):void
 			{
-				if (_order.dirty)
+				if (orderIsDirty)
 				{
 					Dialog.alert(this, "Order has been edited.  Save changes?", "Save changes?", Dialog.STANDARD_SAVE_BTNS, onSavePrompt);
 				}
@@ -247,7 +264,7 @@
 				var close:Boolean = false;
 				switch (e.cause) {
 				case Dialog.BTN_SAVE:
-					Data.instance.writeOrder(_order);
+					writeOrder();
 					close = true;
 					break;
 				case Dialog.BTN_DONT_SAVE:
@@ -307,7 +324,7 @@
 						Dialog.alert(this, "Change of " + Utils.currencyFormatter.format(change) + " goes to customer.", "Make Change", [Dialog.BTN_DONE]);
 					}
 					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change));
-					Data.instance.writeOrder(_order);
+					writeOrder();
 				}
 			}
 			private function onPrintTag(e:Event):void
@@ -316,7 +333,7 @@
 				Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 
 				Data.instance.writeOrderHistory(_order, msg);
-				Data.instance.writeOrder(_order);
+				writeOrder();
 			}
 			private function onPrintReceipt(e:Event):void
 			{
@@ -324,7 +341,7 @@
 				Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
 
 				Data.instance.writeOrderHistory(_order, msg);
-				Data.instance.writeOrder(_order);
+				writeOrder();
 			}
 			private function onSelectionUpdate(foo:int):void
 			{
@@ -416,18 +433,31 @@
 			{
 				return date ? date.toDateString() : "";
 			}
-			
+
+			private var _orderOriginal:Order;
 			private var _order:Order;
+			private function get orderIsDirty():Boolean
+			{
+				return !_order.compare(_orderOriginal);
+			}
+			private function writeOrder():void
+			{
+				if (orderIsDirty)
+				{
+					Data.instance.writeOrder(_order);
+				}
+			}
 			public function set order(o:Order):void
 			{
-				_order = o;
+				_orderOriginal = o;
+				_order = _orderOriginal.deepCopy(); // because we're implementing document.dirty save yes/no semantics
 				Data.instance.loadOrderHistory(_order);
 
-				orderID.text = String(o.id);
-				customer.text = o.customerID ? formatCustomer(Data.instance.getCustomer(o.customerID)) : null;
+				orderID.text = String(_order.id);
+				customer.text = _order.customerID ? formatCustomer(Data.instance.getCustomer(_order.customerID)) : null;
 				
 				var d:Date = new Date();
-				d.time = o.pickupTime;
+				d.time = _order.pickupTime;
 				date.selectedDate = d;
 
 				const min:int = timeValues.getItemAt(0).value;
@@ -435,7 +465,7 @@
 				const hour:int = Math.min(Math.max(min, d.hours), max);
 				time.selectedIndex = hour - min;
 				
-				itemList.items = o.items;
+				itemList.items = _order.items;
 				
 				updateTotal();
 				
