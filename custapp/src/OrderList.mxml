@@ -141,7 +141,6 @@
 				var popup:Dialog = new Dialog;
 				popup.height = height;
 				popup.bodyContent = orderEditor;
-				popup.addButton(Dialog.BTN_DONE);
 				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
 
 				_currentPopup = popup;
@@ -156,7 +155,7 @@
 			}
 			private function onOrderEditorClose(e:DialogEvent):void
 			{
-				if (e.cause == Dialog.BTN_CANCEL)
+				if (e.cause != Dialog.BTN_CANCEL)
 				{
 					// this is incredibly complicated, and is due to the fact that OrderEditor handles its own
 					// "are you sure" mechanism, but we'll get called back with onOrderEditorClose right away, potentially

@@ -137,11 +137,7 @@
 				{
 					addButton(cmd);
 				}
-//				addButton(asPopup ? _closeButton : _newButton);
-				if (!asPopup)
-				{
-					addButton(_newButton);
-				}
+				addButton(asPopup ? _closeButton : _newButton);
 				
 				// Item buttons ////////////////////////////////////////////////
 				for each (var item:Object in Data.instance.items)
