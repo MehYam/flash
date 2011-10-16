@@ -130,6 +130,8 @@
 			
 			private function onInit():void
 			{
+				addButton(asPopup ? _closeButton : _newButton);
+				
 				// Command buttons ///////////////////////////////////////////////
 				// KAI: why not just do this as mxml?
 				// KAI: doesn't this belong in createChildren?
@@ -137,7 +139,6 @@
 				{
 					addButton(cmd);
 				}
-				addButton(asPopup ? _closeButton : _newButton);
 				
 				// Item buttons ////////////////////////////////////////////////
 				for each (var item:Object in Data.instance.inventoryItems)
