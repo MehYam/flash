@@ -140,7 +140,7 @@
 				addButton(asPopup ? _closeButton : _newButton);
 				
 				// Item buttons ////////////////////////////////////////////////
-				for each (var item:Object in Data.instance.items)
+				for each (var item:Object in Data.instance.inventoryItems)
 				{
 					var button:Button = new Button;
 					button.setStyle("skinClass", MultilineButtonSkin);
@@ -203,8 +203,8 @@
 				var cmdButton:Button = new Button;
 				cmdButton.width = 125;
 				cmdButton.height = 50;
+				cmdButton.styleName = "commandButton";
 				cmdButton.setStyle("color", cmd.color);
-				cmdButton.setStyle("fontWeight", FontWeight.BOLD);
 				cmdButton.label = cmd.name;
 				
 				if (cmd.handler)
@@ -314,7 +314,7 @@
 			}
 			private function onItem(e:Event):void
 			{
-				const rawItem:Object = Data.instance.getRawItem(parseInt(e.target.name));
+				const rawItem:Object = Data.instance.getInventoryItem(parseInt(e.target.name));
 				if (rawItem)
 				{
 					_order.addLineItem(rawItem.id);

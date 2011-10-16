@@ -1,5 +1,6 @@
 package data
 {
+	// a p.o.d
 	public final class LineItem
 	{
 		public var id:int;
@@ -12,27 +13,5 @@ package data
 		
 		// not serialized, only for UI display
 		public var name:String;
-		
-		public function compare(rhs:LineItem):Boolean
-		{
-			return rhs.id == id &&
-				rhs.itemID == itemID &&
-				rhs.orderID == orderID &&
-				rhs.price == price &&
-				rhs.quantity == quantity &&
-				rhs.description == description;
-		}
-		public function deepCopy():LineItem
-		{
-			var retval:LineItem = new LineItem;
-			retval.id = id;
-			retval.itemID = itemID;
-			retval.orderID = orderID;
-			retval.price = price;
-			retval.quantity = quantity;
-			retval.description = description;
-			retval.name = name;
-			return retval;
-		}
 	}
 }

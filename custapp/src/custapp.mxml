@@ -14,6 +14,9 @@
 		</s:layout>
 	</s:TabBar>		
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
+		<s:NavigatorContent label="ITEMS">
+			<local:InventoryItemList width="50%" height="100%"/>
+		</s:NavigatorContent>
 		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%" height="100%"/>
 		</s:NavigatorContent>
@@ -22,9 +25,6 @@
 		</s:NavigatorContent>
 		<s:NavigatorContent label="CUSTOMERS">
 			<local:CustomerList width="100%" height="100%"/>
-		</s:NavigatorContent>
-		<s:NavigatorContent label="ITEMS">
-			<local:ItemList height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Database Browser">
 			<local:DatabaseBrowser/>

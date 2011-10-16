@@ -51,7 +51,7 @@
 			{
 				_dirty = true;
 			}
-			public function set data(obj:Object):void
+			public function set customer(obj:Object):void
 			{
 				first.text = obj.first;
 				last.text = obj.last;
@@ -60,7 +60,7 @@
 				notes.text = obj.notes;
 				custID.text = obj.id;
 			}
-			public function get data():Object
+			public function get customer():Object
 			{
 				var retval:Object = 
 				{

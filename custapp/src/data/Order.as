@@ -21,35 +21,18 @@ package data
 		// serialized in lazily
 		public const history:ArrayCollection = new ArrayCollection([]);
 
-		public function compare(rhs:Order):Boolean
-		{
-			return rhs.id == id &&
-				rhs.creationTime == creationTime &&
-				rhs.customerID == customerID &&
-				rhs.pickupTime == pickupTime &&
-				rhs.ready == ready &&
-				rhs.pickedUp == pickedUp &&
-				rhs.paid == paid &&
-				compareItems(rhs);
-		}
-		private function compareItems(rhs:Order):Boolean
-		{
-			if (rhs.items.length == items.length)
-			{
-				var i:uint = 0;
-				for each (var lineItem:LineItem in rhs.items)
-				{
-					if (!lineItem.compare(LineItem(items.getItemAt(i++))))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		}
-
-// works, but isn't used
+		// works, but isn't used
+//		public function compare(rhs:Order):Boolean
+//		{
+//			return rhs.id == id &&
+//				rhs.creationTime == creationTime &&
+//				rhs.customerID == customerID &&
+//				rhs.pickupTime == pickupTime &&
+//				rhs.ready == ready &&
+//				rhs.pickedUp == pickedUp &&
+//				rhs.paid == paid &&
+//				compareItems(rhs);
+//		}
 //		public function deepCopy():Order
 //		{
 //			var newOrder:Order = new Order;
@@ -104,7 +87,7 @@ package data
 		}
 		public function addLineItem(itemID:int):void
 		{
-			const rawItem:Object = Data.instance.getRawItem(itemID);
+			const rawItem:Object = Data.instance.getInventoryItem(itemID);
 			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.name, rawItem.price);
 
 			items.addItem(lineItem);

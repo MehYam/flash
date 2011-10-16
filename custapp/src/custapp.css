@@ -22,6 +22,15 @@ s|DropDownList
 	font-weight:bold;
 }
 
+.commandButton, .deleteButton
+{
+	font-weight:bold;
+}
+.deleteButton
+{
+	color:#dd0000;
+}
+
 local|OrderHistoryList
 {
 	font-size:12pt;

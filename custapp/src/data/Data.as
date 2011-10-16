@@ -41,7 +41,8 @@ package data
 
 		// Collections for UI components to bind to
 		public const customers:ArrayCollection = new ArrayCollection([]);
-		public const items:ArrayCollection = new ArrayCollection([]);
+		public const inventoryItems:ArrayCollection = new ArrayCollection([]);
+		public const inventoryItemCats:ArrayList = new ArrayList(["Dry Clean", "Laundry", "Alteration"]);
 		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
@@ -51,6 +52,15 @@ package data
 			retval.id = nextID;
 			retval.customerID = customerID;
 			retval.pickupTime = pickupTime;
+			return retval;
+		}
+		public function createInventoryItem(name:String, price:Number, category:String):InventoryItem
+		{
+			var retval:InventoryItem = new InventoryItem;
+			retval.id = nextID;
+			retval.name = name;
+			retval.price = price;
+			retval.category = category
 			return retval;
 		}
 		public function createLineItem(itemID:int, orderID:int, name:String, price:Number):LineItem
@@ -71,10 +81,9 @@ package data
 		{
 			writeAndCacheRecord(CUSTOMER_TABLE, customers, customer);
 		}
-		public function orderIsDirty(order:Order):Boolean
+		public function writeInventoryItem(item:InventoryItem):void
 		{
-			const rhs:Order = Order(lookupObjectByID(orders, order.id));
-			return !rhs || order.compare(rhs);
+			writeAndCacheRecord(ITEM_TABLE, inventoryItems, item);
 		}
 		public function writeOrder(order:Order):void
 		{
@@ -135,13 +144,20 @@ package data
 			orders.removeItemAt(lookupIndexByID(orders, order.id));
 			orders.refresh();
 		}
+		public function deleteInventoryItem(inventoryItem:InventoryItem):void
+		{
+			_sql.deleteRecord(ITEM_TABLE, inventoryItem.id);
+			
+			inventoryItems.removeItemAt(lookupIndexByID(inventoryItems, inventoryItem.id));
+			inventoryItems.refresh();
+		}
 		public function getCustomer(customerID:int):Object
 		{
 			return lookupObjectByID(customers, customerID);
 		}
-		public function getRawItem(itemID:int):Object
+		public function getInventoryItem(itemID:int):InventoryItem
 		{
-			return lookupObjectByID(items, itemID);
+			return InventoryItem(lookupObjectByID(inventoryItems, itemID));
 		}
 		static private function lookupObjectByID(collection:IList, id:int):Object
 		{
@@ -172,10 +188,6 @@ package data
 				collection.setItemAt(obj, index);
 			}
 			_sql.writeRecord(table, obj); 
-		}
-		private function addItem(name:String, price:Number):void
-		{
-			_sql.writeRecord(ITEM_TABLE, { name:name, price:price, id:nextID });
 		}
 		private function addColor(name:String, color:uint):void
 		{
@@ -324,7 +336,7 @@ package data
 		}
 		private function onItems(data:Array):void
 		{
-			loadDataToCollection(items, data, ITEM_TABLE);
+			loadTypedDataToCollection(inventoryItems, data, ITEM_TABLE, ITEM_FIELDS, InventoryItem);
 		}
 		public var ordersHaveLoaded:Boolean = false;  // going to hell
 		private function onOrders(data:Array):void
