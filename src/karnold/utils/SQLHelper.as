@@ -90,7 +90,7 @@ package karnold.utils
 			{
 				cmdFields.push('"' + field.name + '"');
 
-				const val:String = obj[field.name];
+				const val:String = obj[field.name] || "";
 				cmdValues.push(field.type == TYPE_TEXT ? ('"' + val + '"') : val);
 			}
 			var cmd:String = table.autoID ? "INSERT INTO " : "INSERT OR REPLACE INTO ";
