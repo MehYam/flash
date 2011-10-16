@@ -46,7 +46,7 @@
 				var popup:Dialog = new Dialog;
 				popup.autoClose = true;
 				popup.bodyContent = label;
-				popup.title = caption;
+				popup.title = title;
 				if (callback != null)
 				{
 					popup.addEventListener(Event.COMPLETE, callback, false, 0, true);

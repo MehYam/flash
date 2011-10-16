@@ -78,8 +78,6 @@ package data
 		}
 		public function writeOrder(order:Order):void
 		{
-			const original:Order = Order(lookupObjectByID(orders, order.id));
-
 			// write/rewrite line items
 			var lineItemLookup:Object = {};
 			for each (var lineItem:LineItem in order.items)
@@ -88,16 +86,13 @@ package data
 				_sql.writeRecord(ORDER_ITEMS_TABLE, lineItem);
 			}
 			// remove any that were deleted
-			for each (var lineItemID:int in original.items)
+			for each (var exLineItem:LineItem in order.deletedItems)
 			{
-				if (!lineItemLookup[lineItemID])
-				{
-					deleteLineItem(lineItemID);
-				}
+				_sql.deleteRecord(ORDER_ITEMS_TABLE, exLineItem.id);
 			}
+			order.deletedItems.length = 0;
 
 			writeAndCacheRecord(ORDER_TABLE, orders, order);
-			writeOrderHistory(order, "order saved");
 		}
 		static private function createOrderHistory(id:int, time:Number, action:String):Object
 		{
@@ -131,9 +126,14 @@ package data
 				);
 			}
 		}
-		private function deleteLineItem(lineItemID:int):void
+		public function deleteOrder(order:Order):void
 		{
-			_sql.deleteRecord(ORDER_ITEMS_TABLE, lineItemID);
+			_sql.deleteRecordsFor(ORDER_ITEMS_TABLE, "orderID", order.id);
+			_sql.deleteRecordsFor(ORDER_HISTORY_TABLE, "orderID", order.id);
+			_sql.deleteRecord(ORDER_TABLE, order.id);
+			
+			orders.removeItemAt(lookupIndexByID(orders, order.id));
+			orders.refresh();
 		}
 		public function getCustomer(customerID:int):Object
 		{

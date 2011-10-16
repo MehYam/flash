@@ -16,6 +16,7 @@ package data
 
 		// serialized out manually in the writeOrder call
 		public const items:ArrayCollection = new ArrayCollection([]);
+		public const deletedItems:Vector.<LineItem> = new Vector.<LineItem>;
 
 		// serialized in lazily
 		public const history:ArrayCollection = new ArrayCollection([]);
@@ -47,23 +48,25 @@ package data
 			}
 			return false;
 		}
-		public function deepCopy():Order
-		{
-			var newOrder:Order = new Order;
-			newOrder.creationTime = creationTime;
-			newOrder.customerID = customerID;
-			newOrder.history.source = history.source.slice();
-			newOrder.id = id;
-			newOrder.paid = paid;
-			newOrder.pickedUp = pickedUp;
-			newOrder.pickupTime = pickupTime;
-			newOrder.ready = ready;
-			for each (var lineItem:LineItem in items)
-			{
-				newOrder.items.addItem(lineItem.deepCopy());
-			}
-			return newOrder;
-		}
+
+// works, but isn't used
+//		public function deepCopy():Order
+//		{
+//			var newOrder:Order = new Order;
+//			newOrder.creationTime = creationTime;
+//			newOrder.customerID = customerID;
+//			newOrder.history.source = history.source.slice();
+//			newOrder.id = id;
+//			newOrder.paid = paid;
+//			newOrder.pickedUp = pickedUp;
+//			newOrder.pickupTime = pickupTime;
+//			newOrder.ready = ready;
+//			for each (var lineItem:LineItem in items)
+//			{
+//				newOrder.items.addItem(lineItem.deepCopy());
+//			}
+//			return newOrder;
+//		}
 
 		public function get total():Number
 		{
@@ -122,6 +125,7 @@ package data
 			if (item.quantity <= 0)
 			{
 				items.removeItemAt(index);
+				deletedItems.push(item);
 			}
 			items.refresh();
 		}

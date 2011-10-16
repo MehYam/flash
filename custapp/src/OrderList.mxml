@@ -34,13 +34,24 @@
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
+	<s:HGroup id="buttonParent" width="100%" height="{Data.BAR_HEIGHT}">
+		<s:Button height="100%" label="EDIT" fontWeight="bold" click="onEditOrder()"/>
+		<s:Line height="100%">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<s:Button height="100%" color="0xdd0000" label="DELETE" fontWeight="bold" click="onDeleteOrder()"/>
+	</s:HGroup>
+	<s:Line width="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
 	<s:DataGrid
 		id="orders"
 		width="100%" height="100%" 
 		sortableColumns="true" 
 		dataProvider="{Data.instance.orders}"
-		doubleClick="onDoubleClick()"
+		doubleClick="onEditOrder()"
 		doubleClickEnabled="true"
+		selectionChange="updateButtons()"
 		>
 		<s:columns>
 			<s:ArrayList>
@@ -64,6 +75,8 @@
 			import mx.core.IFlexDisplayObject;
 			import mx.managers.PopUpManager;
 			
+			import spark.events.GridSelectionEvent;
+			
 			import ui.Dialog;
 			import ui.DialogEvent;
 			private function onInit():void
@@ -77,6 +90,8 @@
 				date = new Date();
 				date.time += Utils.daysToTime(7);
 				dateTo.selectedDate = date;
+				
+				updateButtons();
 			}
 			static private function customerLabelFunction(orderObj:Order, column:GridColumn):String
 			{
@@ -126,14 +141,16 @@
 					return true;
 				};
 				Data.instance.orders.refresh();
+				
+				updateButtons();
 			}
 			private var _currentPopup:IFlexDisplayObject;
-			private function onDoubleClick():void
+			private function onEditOrder():void
 			{
 				//KAI: null check
 				var orderEditor:OrderEditor = new OrderEditor;
 				const order:Order = Order(orders.selectedItem);
-				orderEditor.order = order.deepCopy();
+				orderEditor.order = order;
 				orderEditor.percentHeight = 100;
 				orderEditor.percentWidth = 100;
 				orderEditor.asPopup = true;
@@ -141,6 +158,7 @@
 				var popup:Dialog = new Dialog;
 				popup.height = height;
 				popup.bodyContent = orderEditor;
+				popup.addButton(Dialog.BTN_DONE);
 				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
 
 				_currentPopup = popup;
@@ -150,21 +168,12 @@
 				// Fixed it with the popup.height setting above
 				PopUpManager.centerPopUp(popup);
 				popup.y = 0;
-
 				popup.addEventListener(Event.COMPLETE, onOrderEditorClose, false, 0, true);
 			}
 			private function onOrderEditorClose(e:DialogEvent):void
 			{
-				if (e.cause != Dialog.BTN_CANCEL)
-				{
-					// this is incredibly complicated, and is due to the fact that OrderEditor handles its own
-					// "are you sure" mechanism, but we'll get called back with onOrderEditorClose right away, potentially
-					OrderEditor(Dialog(_currentPopup).bodyContent).runDirtyPrompt();
-				}
-				else
-				{
-					hideEditor();
-				}
+				//KAI: I think autoClose will work instead
+				hideEditor();
 			}
 			private function hideEditor():void
 			{
@@ -172,6 +181,24 @@
 				{
 					PopUpManager.removePopUp(_currentPopup);
 					_currentPopup = null;
+				}
+			}
+			private function updateButtons():void
+			{
+				// can't find a way to get binding to do this w/o bugs
+				buttonParent.enabled = orders.selectedIndex >= 0;
+			}
+			static private const BTN_DELETE:String = "Yes, Delete Order";
+			private function onDeleteOrder():void
+			{
+				Dialog.alert(this, "Deleting this order is irreversable.  Proceed?", "Delete Order", [BTN_DELETE, Dialog.BTN_CANCEL], onDeletePrompt);
+			}
+			private function onDeletePrompt(e:DialogEvent):void
+			{
+				if (e.result == BTN_DELETE)
+				{
+					Data.instance.deleteOrder(Order(orders.selectedItem));
+					updateButtons();
 				}
 			}
 		]]>

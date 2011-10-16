@@ -16,7 +16,7 @@
 		<s:Line height="{Data.BAR_HEIGHT}">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<ui:Button label="ADD NEW" height="100%" click="onAddCustomer()"/>
+		<ui:Button label="ADD NEW" fontWeight="bold" height="100%" click="onAddCustomer()"/>
 		<!--<ui:Button label="DELETE" height="100%" color="0xff0000"/>-->
 	</s:HGroup>
 	<s:DataGrid
@@ -108,7 +108,7 @@
 			}
 			private function onCustomerEditorButton(e:DialogEvent):void
 			{
-				if (e.cause == BTN_SAVE_CUSTOMER || e.cause == BTN_ADD_CUSTOMER)
+				if (e.result == BTN_SAVE_CUSTOMER || e.result == BTN_ADD_CUSTOMER)
 				{
 					save();
 					hideCustomerEditor();
@@ -128,7 +128,7 @@
 			}
 			private function onCustomerEditorClosingPrompt(e:DialogEvent):void
 			{
-				switch(e.cause) {
+				switch(e.result) {
 				case Dialog.BTN_SAVE:
 					save();
 					hideCustomerEditor();
