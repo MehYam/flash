@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  xmlns:ui="ui.*">
+	<fx:Declarations>
+		<fx:Component id="priceColumnRenderer">
+			<s:DefaultGridItemRenderer
+				textAlign="right"
+				/>
+		</fx:Component>
+	</fx:Declarations>
+	<s:HGroup width="100%">
+		<s:Label text="Search:" height="100%" verticalAlign="middle"/>
+		<s:TextInput id="filter" width="100%" height="100%" prompt="enter search term" change="onFilterChange()"/>
+		<s:Line height="{Data.BAR_HEIGHT}">
+			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+		</s:Line>
+		<ui:Button label="ADD NEW" height="100%" click="onAddItem()"/>
+		<ui:Button label="DELETE" height="100%" color="0xff0000"/>
+	</s:HGroup>
+	<s:DataGrid
+		id="items"
+		width="100%" height="100%" 
+		sortableColumns="true" 
+		dataProvider="{Data.instance.items}"
+		doubleClick="onDoubleClick()"
+		doubleClickEnabled="true"
+		>
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="ID"/>
+				<s:GridColumn dataField="name" headerText="Item"/>
+				<s:GridColumn dataField="category" headerText="Type"/>
+				<s:GridColumn dataField="price" headerText="Price"  formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<fx:Script>
+		<![CDATA[
+			import data.Data;
+			private function onFilterChange():void
+			{
+				const pattern:Array = filter.text.toUpperCase().split(" "); 
+				Data.instance.items.filterFunction = function(item:Object):Boolean
+				{
+					// AND on all words, each pattern part must match something
+					for each (var patternPart:String in pattern)
+					{
+						if (!(Utils.matches(item.id, patternPart) || Utils.matches(item.name, patternPart) || Utils.matches(item.category, patternPart) || Utils.matches(item.price, patternPart)))
+						{
+							return false;
+						}
+					}
+					return true;
+				};
+				Data.instance.items.refresh();
+			}
+			private function onAddItem():void
+			{
+				
+			}
+			private function onDoubleClick():void
+			{
+				
+			}
+		]]>
+	</fx:Script>
+</s:VGroup>
