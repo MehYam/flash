@@ -34,14 +34,8 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:VGroup gap="0">
-			<s:TabBar height="50" fontWeight="bold">
-				<mx:ArrayCollection>
-					<fx:String>Dry Clean</fx:String> 
-					<fx:String>Laundry</fx:String> 
-					<fx:String>Alteration</fx:String> 
-				</mx:ArrayCollection>
-			</s:TabBar>
-			<s:TileGroup id="itemButtons" horizontalGap="1" verticalGap="1"/>
+			<s:TabBar height="50" fontWeight="bold" dataProvider="{stack}"/>
+			<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%"/>
 		</s:VGroup>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -81,6 +75,7 @@
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
+			import data.InventoryItem;
 			import data.Order;
 			
 			import flash.text.engine.FontWeight;
@@ -89,10 +84,13 @@
 			import mx.collections.ArrayList;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
+			import mx.core.IVisualElementContainer;
 			import mx.events.CalendarLayoutChangeEvent;
 			import mx.managers.PopUpManager;
 			
 			import spark.components.Button;
+			import spark.components.Group;
+			import spark.components.NavigatorContent;
 			import spark.events.IndexChangeEvent;
 			
 			import ui.Dialog;
@@ -130,32 +128,27 @@
 			
 			private function onInit():void
 			{
-				addButton(asPopup ? _closeButton : _newButton);
-				
-				// Command buttons ///////////////////////////////////////////////
-				// KAI: why not just do this as mxml?
-				// KAI: doesn't this belong in createChildren?
-				for each (var cmd:Object in _commandButtonInfo)
+				if (!_order)
 				{
-					addButton(cmd);
+					if (!Data.instance.ordersHaveLoaded)
+					{
+						Data.instance.events.addEventListener(Data.EVENT_ORDERS_LOADED, onOrdersLoaded, false, 0, true);
+					}
+					else
+					{
+						onOrdersLoaded();
+					}
 				}
-				
-				// Item buttons ////////////////////////////////////////////////
-				for each (var item:Object in Data.instance.inventoryItems)
+				Data.instance.events.addEventListener(Data.EVENT_INVENTORY_LOADED, onInventoryItemsChanged, false, 0, true);
+				if (Data.instance.inventoryHasLoaded)
 				{
-					var button:Button = new Button;
-					button.setStyle("skinClass", MultilineButtonSkin);
-					button.label = item.name + "\n" + Utils.currencyFormatter.format(item.price);
-					button.height = 100;
-					button.width = 100;
-					button.name = item.id;
-					button.addEventListener(MouseEvent.CLICK, onItem, false, 0, true);
+					onInventoryItemsChanged();
+				}
+			}
+			protected override function createChildren():void
+			{
+				super.createChildren();
 
-					itemButtons.addElement(button);
-				}
-				
-				BindingUtils.bindSetter(onSelectionUpdate, itemList.grid, "selectedIndex");
-				
 				// Colors and properties //////////////////////////////////
 				for each (var color:Object in Data.instance.colors.source)
 				{
@@ -183,16 +176,48 @@
 					colorButtons.addElement(patternButton);
 				}
 				date.selectedDate = new Date;
-				if (!_order)
+
+				// Command buttons ///////////////////////////////////////////////
+				addButton(asPopup ? _closeButton : _newButton);
+				for each (var cmd:Object in _commandButtonInfo)
 				{
-					if (!Data.instance.ordersHaveLoaded)
+					addButton(cmd);
+				}
+				
+				BindingUtils.bindSetter(onSelectionUpdate, itemList.grid, "selectedIndex");
+			}
+			private function onInventoryItemsChanged(e:Event = null):void
+			{
+				stack.removeAllElements();
+				for each (var cat:String in Data.instance.inventoryItemCats.source)
+				{
+					var nav:NavigatorContent = new NavigatorContent;
+					nav.label = cat;
+					
+					var itemButtons:TileGroup = new TileGroup;
+					itemButtons.horizontalGap = 1;
+					itemButtons.verticalGap = 1;
+					nav.addElement(itemButtons);
+					
+					const itemsForThisCategory:Array = Data.instance.inventoryItems.source.filter(
+						function(thisItem:InventoryItem, index:int, arr:Array):Boolean
+						{
+							return thisItem.category == nav.label;
+						}
+					);
+					for each (var item:InventoryItem in itemsForThisCategory)
 					{
-						Data.instance.events.addEventListener(Event.COMPLETE, onOrdersLoaded, false, 0, true);
+						var button:Button = new Button;
+						button.setStyle("skinClass", MultilineButtonSkin);
+						button.label = item.name + "\n" + Utils.currencyFormatter.format(item.price);
+						button.height = 80;
+						button.width = 100;
+						button.name = String(item.id);
+						button.addEventListener(MouseEvent.CLICK, onItem, false, 0, true);
+
+						itemButtons.addElement(button);
 					}
-					else
-					{
-						onOrdersLoaded();
-					}
+					stack.addElement(nav);
 				}
 			}
 			private function onOrdersLoaded(e:Event = null):void

@@ -16,10 +16,7 @@ package data
 	// caching too much, etc).  Would have been easier if we had just let the database do everything, and
 	// gone with more of a write->read->dataProvider model.
 	//
-	// Also, we're not doing things atomically enough (i.e. purging line items after writing record changes)
-	//
-	// Also, we're modifying internal data because of binding but not immediately reflecting those changes
-	// back to the database in the Order/OrderEditor case.  Seems rickety.
+	// Also, we're not doing things atomically enough, splitting updates into multiple DB calls, etc
 	final public class Data
 	{
 		static public const BAR_HEIGHT:Number = 40;
@@ -34,7 +31,9 @@ package data
 			return s_instance;
 		}
 
-		// passes a Event.COMPLETE once all Orders are created so that we know when it's safe to start
+		static public const EVENT_ORDERS_LOADED:String = "custapp.ui.data.EventOrdersLoaded";
+		static public const EVENT_INVENTORY_LOADED:String = "custapp.ui.data.EventInventoryLoaded";
+		// dispatches ORDERS_LOADED once all Orders are created so that we know when it's safe to start
 		// allocating id's for them.  This is entirely a hack due to the fact that we're trying to make
 		// id's unique on the database's behalf instead of asking it to do that for us.
 		public const events:EventDispatcher = new EventDispatcher;
@@ -84,6 +83,10 @@ package data
 		public function writeInventoryItem(item:InventoryItem):void
 		{
 			writeAndCacheRecord(ITEM_TABLE, inventoryItems, item);
+			
+			// hack - alert views (the command buttons) that this has changed
+			events.dispatchEvent(new Event(EVENT_INVENTORY_LOADED));
+
 		}
 		public function writeOrder(order:Order):void
 		{
@@ -337,8 +340,11 @@ package data
 		private function onItems(data:Array):void
 		{
 			loadTypedDataToCollection(inventoryItems, data, ITEM_TABLE, ITEM_FIELDS, InventoryItem);
+			inventoryHasLoaded = true;
+			events.dispatchEvent(new Event(EVENT_INVENTORY_LOADED));
 		}
 		public var ordersHaveLoaded:Boolean = false;  // going to hell
+		public var inventoryHasLoaded:Boolean = false;
 		private function onOrders(data:Array):void
 		{
 			loadTypedDataToCollection(orders, data, ORDER_TABLE, ORDER_FIELDS, Order);
@@ -347,8 +353,8 @@ package data
 				// load the items for each order
 				_sql.readTableForColumn(ORDER_ITEMS_TABLE, "orderID", order.id, onOrderItems);
 			}
-			events.dispatchEvent(new Event(Event.COMPLETE));
 			ordersHaveLoaded = true;
+			events.dispatchEvent(new Event(EVENT_ORDERS_LOADED));
 		}
 		private function onOrderItems(d:Array):void
 		{
