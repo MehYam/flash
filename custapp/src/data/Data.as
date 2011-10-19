@@ -45,6 +45,93 @@ package data
 		public const orders:ArrayCollection = new ArrayCollection([]);
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
+
+		/// Database table descriptions ///////////////////////////////////////////////////////
+		static private const CUSTOMER_TABLE:String = "customers";
+		static private const CUSTOMER_FIELDS:Array = 
+			[
+				{ name: "first", type: SQLHelper.TYPE_TEXT },
+				{ name: "last",  type: SQLHelper.TYPE_TEXT },
+				{ name: "phone", type: SQLHelper.TYPE_TEXT },
+				{ name: "email", type: SQLHelper.TYPE_TEXT },
+				{ name: "notes", type: SQLHelper.TYPE_TEXT }
+			];
+		static private const ITEM_TABLE:String = "items";
+		static private const ITEM_FIELDS:Array = 
+			[
+				{ name: "name", type: SQLHelper.TYPE_TEXT },
+				{ name: "price", type: SQLHelper.TYPE_REAL },
+				{ name: "category", type: SQLHelper.TYPE_TEXT }
+			];
+		static private const ORDER_TABLE:String = "orders";
+		static private const ORDER_FIELDS:Array =
+			[
+				{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
+				{ name: "creationTime", type: SQLHelper.TYPE_INTEGER },
+				{ name: "pickupTime", type: SQLHelper.TYPE_INTEGER },
+				{ name: "ready", type: SQLHelper.TYPE_BOOLEAN },
+				{ name: "pickedUp", type: SQLHelper.TYPE_BOOLEAN },
+				{ name: "paid", type: SQLHelper.TYPE_REAL }
+			];
+		static private const ORDER_ITEMS_TABLE:String = "order_items";
+		static private const ORDER_ITEM_FIELDS:Array =
+			[
+				{ name: "itemID", type: SQLHelper.TYPE_INTEGER },
+				{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
+				{ name: "price", type: SQLHelper.TYPE_REAL },
+				{ name: "quantity", type: SQLHelper.TYPE_INTEGER },
+				{ name: "description", type: SQLHelper.TYPE_TEXT },
+				{ name: "category", type: SQLHelper.TYPE_TEXT }
+			];
+		static private const ORDER_HISTORY_TABLE:String = "order_history";
+		static private const ORDER_HISTORY_FIELDS:Array = 
+			[
+				{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
+				{ name: "date", type: SQLHelper.TYPE_INTEGER },
+				{ name: "action", type: SQLHelper.TYPE_TEXT }
+			];
+		private var _sql:SQLHelper = new SQLHelper;
+		public function Data(singletonClass:Class)
+		{
+			if (singletonClass != SingletonClass) throw "hey this is a singleton";
+			
+			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS, false);
+			_sql.createTable(ITEM_TABLE, ITEM_FIELDS, false);
+			_sql.createTable(ORDER_TABLE, ORDER_FIELDS, false);
+			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS, false);
+			_sql.createTable(ORDER_HISTORY_TABLE, ORDER_HISTORY_FIELDS, true);
+			
+			//			addItem("Custom", 1);
+			//			addItem("Tee Shirt", 5);
+			//			addItem("Pants", 7);
+			//			addItem("Vest", 10);
+			//			addItem("Jacket", 9.50);
+			//			addItem("Coat", 10.50);
+			//			addItem("Suit, 3pc", 27.50);
+			//			addItem("Socks", 2.50);
+			//			addItem("Scarf", 5.50);
+			//			addItem("Tie", 3.00);
+			
+			_sql.readTable(CUSTOMER_TABLE, onCustomers);
+			_sql.readTable(ITEM_TABLE, onItems);
+			_sql.readTable(ORDER_TABLE, onOrders);
+			
+			addColor("Red", 0xbb0000);
+			addColor("Green", 0x00bb00);
+			addColor("Blue", 0x0000bb);
+			addColor("Yellow", 0xcccc00);
+			addColor("Purple", 0xbb00bb);
+			addColor("Orange", 0xff7700);
+			addColor("White", 0xcccccc);
+			addColor("Gray", 0x777777);
+			addColor("Black", 0x000000);
+			
+			addPattern("Checkered");
+			addPattern("Plaid");
+			addPattern("Striped");
+			addPattern("Paisely");
+			addPattern("Patterned");
+		}
 		public function createOrder(customerID:int, pickupTime:Number):Order
 		{
 			var retval:Order = new Order;
@@ -62,7 +149,7 @@ package data
 			retval.category = category
 			return retval;
 		}
-		public function createLineItem(itemID:int, orderID:int, name:String, price:Number):LineItem
+		public function createLineItem(itemID:int, orderID:int, category:String, name:String, price:Number):LineItem
 		{
 			var retval:LineItem = new LineItem;
 			retval.id = nextID;
@@ -71,6 +158,7 @@ package data
 			retval.price = price;
 			retval.name = name;
 			retval.quantity = 1;
+			retval.category = category;
 			return retval;
 		}
 
@@ -201,91 +289,6 @@ package data
 			patterns.addItem(name);
 		}
 		
-		/// Database table descriptions ///////////////////////////////////////////////////////
-		static private const CUSTOMER_TABLE:String = "customers";
-		static private const CUSTOMER_FIELDS:Array = 
-		[
-			{ name: "first", type: SQLHelper.TYPE_TEXT },
-			{ name: "last",  type: SQLHelper.TYPE_TEXT },
-			{ name: "phone", type: SQLHelper.TYPE_TEXT },
-			{ name: "email", type: SQLHelper.TYPE_TEXT },
-			{ name: "notes", type: SQLHelper.TYPE_TEXT }
-		];
-		static private const ITEM_TABLE:String = "items";
-		static private const ITEM_FIELDS:Array = 
-		[
-			{ name: "name", type: SQLHelper.TYPE_TEXT },
-			{ name: "price", type: SQLHelper.TYPE_REAL },
-			{ name: "category", type: SQLHelper.TYPE_TEXT }
-		];
-		static private const ORDER_TABLE:String = "orders";
-		static private const ORDER_FIELDS:Array =
-		[
-			{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
-			{ name: "creationTime", type: SQLHelper.TYPE_INTEGER },
-			{ name: "pickupTime", type: SQLHelper.TYPE_INTEGER },
-			{ name: "ready", type: SQLHelper.TYPE_BOOLEAN },
-			{ name: "pickedUp", type: SQLHelper.TYPE_BOOLEAN },
-			{ name: "paid", type: SQLHelper.TYPE_REAL }
-		];
-		static private const ORDER_ITEMS_TABLE:String = "order_items";
-		static private const ORDER_ITEM_FIELDS:Array =
-		[
-			{ name: "itemID", type: SQLHelper.TYPE_INTEGER },
-			{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
-			{ name: "price", type: SQLHelper.TYPE_REAL },
-			{ name: "quantity", type: SQLHelper.TYPE_INTEGER },
-			{ name: "description", type: SQLHelper.TYPE_TEXT }
-		];
-		static private const ORDER_HISTORY_TABLE:String = "order_history";
-		static private const ORDER_HISTORY_FIELDS:Array = 
-		[
-			{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
-			{ name: "date", type: SQLHelper.TYPE_INTEGER },
-			{ name: "action", type: SQLHelper.TYPE_TEXT }
-		];
-		private var _sql:SQLHelper = new SQLHelper;
-		public function Data(singletonClass:Class)
-		{
-			if (singletonClass != SingletonClass) throw "hey this is a singleton";
-
-			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS, false);
-			_sql.createTable(ITEM_TABLE, ITEM_FIELDS, false);
-			_sql.createTable(ORDER_TABLE, ORDER_FIELDS, false);
-			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS, false);
-			_sql.createTable(ORDER_HISTORY_TABLE, ORDER_HISTORY_FIELDS, true);
-
-//			addItem("Custom", 1);
-//			addItem("Tee Shirt", 5);
-//			addItem("Pants", 7);
-//			addItem("Vest", 10);
-//			addItem("Jacket", 9.50);
-//			addItem("Coat", 10.50);
-//			addItem("Suit, 3pc", 27.50);
-//			addItem("Socks", 2.50);
-//			addItem("Scarf", 5.50);
-//			addItem("Tie", 3.00);
-
-			_sql.readTable(CUSTOMER_TABLE, onCustomers);
-			_sql.readTable(ITEM_TABLE, onItems);
-			_sql.readTable(ORDER_TABLE, onOrders);
-	
-			addColor("Red", 0xbb0000);
-			addColor("Green", 0x00bb00);
-			addColor("Blue", 0x0000bb);
-			addColor("Yellow", 0xcccc00);
-			addColor("Purple", 0xbb00bb);
-			addColor("Orange", 0xff7700);
-			addColor("White", 0xcccccc);
-			addColor("Gray", 0x777777);
-			addColor("Black", 0x000000);
-			
-			addPattern("Checkered");
-			addPattern("Plaid");
-			addPattern("Striped");
-			addPattern("Paisely");
-			addPattern("Patterned");
-		}
 		private function loadDataToCollection(collection:ArrayCollection, data:Array, tableName:String):void
 		{
 			Util.ASSERT(collection.length == 0, "Table '" + tableName + "' being read twice?");

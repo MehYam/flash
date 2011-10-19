@@ -26,6 +26,7 @@
 		<s:columns>
 			<s:ArrayList>
 				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40"/>
+				<s:GridColumn dataField="category" headerText="Type" editable="false" width="150"/>
 				<s:GridColumn dataField="name" headerText="Item" editable="false" width="150"/>
 				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}" itemRenderer="{priceColumnRenderer}" headerRenderer="CustomGridHeaderRenderer" width="150"/>
 				<s:GridColumn dataField="quantity" headerText="No." labelFunction="countLabelFunction" width="50"/>

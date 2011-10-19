@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		  xmlns:s="library://ns.adobe.com/flex/spark" 
 		  xmlns:mx="library://ns.adobe.com/flex/mx" 
 		  xmlns:ui="ui.*"
@@ -16,45 +16,54 @@
 				/>
 		</fx:Component>
 	</fx:Declarations>
-	<s:HGroup width="100%">
-		<s:Label text="Search:" height="100%" verticalAlign="middle"/>
-		<s:TextInput id="filter" width="100%" height="100%" prompt="enter search term" change="onFilterChange()"/>
-		<s:Line height="{Data.BAR_HEIGHT}">
-			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
-		</s:Line>
-		<ui:Button label="ADD NEW" height="100%" styleName="commandButton" click="onAddItem()"/>
-		<ui:Button id="deleteButton" label="DELETE" height="100%" styleName="deleteButton" click="onDeleteItem()"/>
-	</s:HGroup>
-	<s:DataGrid
-		id="items"
-		width="100%" height="100%" 
-		sortableColumns="true" 
-		dataProvider="{Data.instance.inventoryItems}"
-		editable="true"
-		gridItemEditorSessionSave="onItemEditted()"
-		selectionChange="updateDeleteButton()"
-		>
-		<s:columns>
-			<s:ArrayList>
-				<s:GridColumn dataField="id" headerText="ID" editable="false"/>
-				<s:GridColumn dataField="name" headerText="Item"/>
-				<s:GridColumn dataField="category" headerText="Type">
-					<s:itemEditor>
-						<fx:Component>
-							<ui:DropDownListGridItemEditor dataProvider="{Data.instance.inventoryItemCats}">
-								<fx:Script>
-									<![CDATA[
-										import data.Data;
-									]]>
-								</fx:Script>
-							</ui:DropDownListGridItemEditor>
-						</fx:Component>
-					</s:itemEditor>
-				</s:GridColumn>
-				<s:GridColumn dataField="price" headerText="Price"  formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
-			</s:ArrayList>
-		</s:columns>
-	</s:DataGrid>
+	<s:VGroup width="50%" height="100%">
+		<s:HGroup width="100%">
+			<s:Label text="Search:" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="filter" width="100%" height="100%" prompt="enter search term" change="onFilterChange()"/>
+			<s:Line height="{Data.BAR_HEIGHT}">
+				<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+			</s:Line>
+			<ui:Button label="ADD NEW" height="100%" styleName="commandButton" click="onAddItem()"/>
+			<ui:Button id="deleteButton" label="DELETE" height="100%" styleName="deleteButton" click="onDeleteItem()"/>
+		</s:HGroup>
+		<s:DataGrid
+			id="items"
+			width="100%" height="100%" 
+			sortableColumns="true" 
+			dataProvider="{Data.instance.inventoryItems}"
+			editable="true"
+			gridItemEditorSessionSave="onItemEditted()"
+			selectionChange="updateDeleteButton()"
+			>
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="id" headerText="ID" editable="false"/>
+					<s:GridColumn dataField="name" headerText="Item"/>
+					<s:GridColumn dataField="category" headerText="Type">
+						<s:itemEditor>
+							<fx:Component>
+								<ui:DropDownListGridItemEditor dataProvider="{Data.instance.inventoryItemCats}">
+									<fx:Script>
+										<![CDATA[
+											import data.Data;
+										]]>
+									</fx:Script>
+								</ui:DropDownListGridItemEditor>
+							</fx:Component>
+						</s:itemEditor>
+					</s:GridColumn>
+					<s:GridColumn dataField="price" headerText="Price"  formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+	</s:VGroup>
+	<s:Line height="100%">
+		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+	</s:Line>
+	<s:VGroup width="50%" height="100%">
+		<ui:Button label="BULK IMPORT" height="{Data.BAR_HEIGHT}" styleName="commandButton" click="onBulkImport()"/>
+		<s:TextArea id="textInput" width="100%" height="100%"/>
+	</s:VGroup>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
@@ -106,6 +115,10 @@
 			{
 				deleteButton.enabled = items.selectedIndex >= 0;
 			}
+			private function onBulkImport():void
+			{
+				
+			}
 		]]>
 	</fx:Script>
-</s:VGroup>
+</s:HGroup>

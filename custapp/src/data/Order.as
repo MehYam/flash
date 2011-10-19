@@ -87,8 +87,8 @@ package data
 		}
 		public function addLineItem(itemID:int):void
 		{
-			const rawItem:Object = Data.instance.getInventoryItem(itemID);
-			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.name, rawItem.price);
+			const rawItem:InventoryItem = Data.instance.getInventoryItem(itemID);
+			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.category, rawItem.name, rawItem.price);
 
 			items.addItem(lineItem);
 			items.refresh();
