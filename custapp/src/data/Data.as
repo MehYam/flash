@@ -2,6 +2,7 @@ package data
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.net.SharedObject;
 	
 	import karnold.utils.SQLHelper;
 	import karnold.utils.Util;
@@ -20,6 +21,10 @@ package data
 	final public class Data
 	{
 		static public const BAR_HEIGHT:Number = 40;
+		static public function get settings():SharedObject
+		{
+			return SharedObject.getLocal("custapp.0");
+		}
 		
 		static private var s_instance:Data;
 		static public function get instance():Data

@@ -26,7 +26,7 @@
 		<s:NavigatorContent label="ITEMS">
 			<local:InventoryItemList width="100%" height="100%"/>
 		</s:NavigatorContent>
-		<s:NavigatorContent label="admin">
+		<s:NavigatorContent label="*ADMIN*">
 			<local:DatabaseBrowser/>
 		</s:NavigatorContent>
 	</mx:ViewStack>
@@ -45,8 +45,6 @@
 				rect.y = 0;
 				nativeWindow.bounds = rect;
 				nativeWindow.maximize();
-
-				
 			}
 		]]>
 	</fx:Script>

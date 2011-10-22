@@ -4,13 +4,19 @@ package
 	
 	public final class PosCmdEvent extends Event
 	{
-		static const public COMPLETE:String = "PosCmdEvent.COMPLETE";
-		static const public ERROR:String = "PosCmdEvent.ERROR";
+		static public const COMPLETE:String = "PosCmdEvent.COMPLETE";
+		static public const ERROR:String = "PosCmdEvent.ERROR";
+		static public const OUTPUT:String = "PosCmdEvnet.OUTPUT";
 		
-		public var result:String;
-		public function PosCmdEvent(type:String)
+		private var _result:String;
+		public function PosCmdEvent(type:String, result:String)
 		{
 			super(type, false, false);
+			_result = result;
+		}
+		public function get result():String
+		{
+			return _result;
 		}
 	}
 }

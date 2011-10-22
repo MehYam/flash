@@ -3,14 +3,26 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 width="100%"
+		 paddingBottom="5"
+		 paddingTop="5"
+		 paddingLeft="5"
+		 paddingRight="5"
+		 creationComplete="onInit()"
 		 >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
+	<s:CheckBox id="simulatePOS" label="Simulate POS Hardware" selected="false" change="Data.settings.data.simulatePOS = simulatePOS.selected"/>
+	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:TextArea id="queryText" width="100%"/>
 	<s:Button label="Run Query"/>
 	<fx:Script>
 		<![CDATA[
+			import data.Data;
+			private function onInit():void
+			{
+				simulatePOS.selected = Data.settings.data.simulatePOS;
+			}
 		]]>
 	</fx:Script>
 </s:VGroup>

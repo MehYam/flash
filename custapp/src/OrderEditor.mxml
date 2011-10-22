@@ -29,7 +29,13 @@
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
 	<s:HGroup>
-		<s:VGroup id="commandButtons" gap="1"/>
+		<s:VGroup id="commandButtons" gap="1">
+			<s:Button id="pay" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>
+			<s:Button id="printTag" label="PRINT TAG" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintTag()"/>
+			<s:Button id="printRcpt" label="PRINT RCPT" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintReceipt()"/>
+			<s:Button id="incItem" label="+1 COUNT" color="0x00aa00" styleName="commandButton" width="125" height="50" click="onIncItem()"/>
+			<s:Button id="decItem" label="-1 COUNT" color="0xbb0000" styleName="commandButton" width="125" height="50" click="onDecItem()"/>
+		</s:VGroup>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
@@ -112,15 +118,6 @@
 					{ label: "7pm", value: 19 }
 				]
 			);
-			private var _quantityButtons:Vector.<IUIComponent> = new Vector.<IUIComponent>(2);
-			private const _commandButtonInfo:Array =
-			[
-				{ name: "-PAY-", color: 0x0000cc, handler: onPay },
-				{ name: "PRINT TAG", color: 0x0000ff, handler: onPrintTag },
-				{ name: "PRINT RCPT", color: 0x0000ff, handler: onPrintReceipt },
-				{ name: "ITEM + 1", color: 0x00aa00, handler: onIncItem },
-				{ name: "ITEM - 1", color: 0xbb0000, handler: onDecItem }
-			];
 			private const _newButton:Object =
 				{ name: "NEW", color: 0x00aa00, handler: onNew };
 			private const _closeButton:Object =
@@ -179,10 +176,6 @@
 
 				// Command buttons ///////////////////////////////////////////////
 				addButton(asPopup ? _closeButton : _newButton);
-				for each (var cmd:Object in _commandButtonInfo)
-				{
-					addButton(cmd);
-				}
 				
 				BindingUtils.bindSetter(onSelectionUpdate, itemList.grid, "selectedIndex");
 			}
@@ -236,16 +229,8 @@
 				if (cmd.handler)
 				{
 					cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
-					if (cmd.handler == onDecItem)
-					{
-						_quantityButtons[0] = cmdButton;
-					}
-					else if (cmd.handler == onIncItem)
-					{
-						_quantityButtons[1] = cmdButton;
-					}
 				}
-				commandButtons.addElement(cmdButton);
+				commandButtons.addElementAt(cmdButton, 0);
 			}
 			private function newOrder():void
 			{
@@ -279,7 +264,7 @@
 				dispatchEvent(new Event(Event.COMPLETE));
 			}
 			static private const BTN_PAY:String = "Pay";
-			private function onPay(e:Event):void
+			private function onPay():void
 			{
 				var pay:PayUI = new PayUI;
 				pay.total = _order.total;
@@ -292,7 +277,7 @@
 				popup.addButton(BTN_PAY);
 				popup.addButton(Dialog.BTN_CANCEL);
 				
-				var dobj:DisplayObject = DisplayObject(e.currentTarget);
+				var dobj:DisplayObject = pay;
 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y + dobj.height)));
 				
 				popup.x = dest.x;
@@ -310,7 +295,7 @@
 	
 					_order.paid = Math.min(_order.total, _order.paid + pay.paying);
 					
-					updateTotal();
+					updateUI();
 	
 					if (change > 0)
 					{
@@ -321,23 +306,59 @@
 				}
 			}
 			private var _posCmd:PosCmd;
-			private function onPrintTag(e:Event):void
+			private function attachPosListeners(p:PosCmd):void
 			{
-				const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "---";
-				Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
-
-				Data.instance.writeOrderHistory(_order, msg);
+				p.addEventListener(PosCmdEvent.COMPLETE, onPosCmdResult, false, 0, true);
+				p.addEventListener(PosCmdEvent.ERROR, onPosCmdResult, false, 0, true);
+				p.addEventListener(PosCmdEvent.OUTPUT, onPosCmdResult, false, 0, true);
 			}
-			private function onPrintReceipt(e:Event):void
+			private function onPosCmdResult(e:PosCmdEvent):void
 			{
-				const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
-				Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
+				if (e.type == PosCmdEvent.ERROR || (e.type == PosCmdEvent.COMPLETE || e.result != "0"))
+				{
+					Dialog.alert(this, "Point of sale hardware error: " + e.result, "Hardware Error", [Dialog.BTN_DONE]);
+				}
+				_posCmd = null;
+			}
+			private function onPrintTag():void
+			{
+				if (_posCmd)
+				{
+					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
+				}
+				else
+				{
+					_posCmd = PosCmd.createPrintCmd(_order, true);
+					attachPosListeners(_posCmd);
+					_posCmd.run();
+					
+					const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "---";
+					Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
+	
+					Data.instance.writeOrderHistory(_order, msg);
+				}
+			}
+			private function onPrintReceipt():void
+			{
+				if (_posCmd)
+				{
+					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
+				}
+				else
+				{
+					_posCmd = PosCmd.createPrintCmd(_order, false);
+					attachPosListeners(_posCmd);
+					_posCmd.run();
 
-				Data.instance.writeOrderHistory(_order, msg);
+					const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
+					Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
+	
+					Data.instance.writeOrderHistory(_order, msg);
+				}
 			}
 			private function onSelectionUpdate(foo:int):void
 			{
-				_quantityButtons[0].enabled = _quantityButtons[1].enabled = colorButtons.enabled = foo >= 0;
+				incItem.enabled = decItem.enabled = foo >= 0;
 			}
 			private function onItem(e:Event):void
 			{
@@ -348,27 +369,27 @@
 					Data.instance.writeOrder(_order);
 
 					itemList.selectedIndex = _order.items.length - 1;
-					updateTotal();
+					updateUI();
 				}
 			}
 			private function onItemEditted(e:Event):void
 			{
 				Data.instance.writeOrder(_order);
-				updateTotal();
+				updateUI();
 			}
-			private function onIncItem(e:Event):void
+			private function onIncItem():void
 			{
 				_order.incItem(itemList.selectedIndex);
 				Data.instance.writeOrder(_order);
 				
-				updateTotal();
+				updateUI();
 			}
-			private function onDecItem(e:Event):void
+			private function onDecItem():void
 			{
 				_order.decItem(itemList.selectedIndex);
 				Data.instance.writeOrder(_order);
 
-				updateTotal();
+				updateUI();
 				
 				onSelectionUpdate(itemList.selectedIndex);
 			}
@@ -386,13 +407,15 @@
 					Data.instance.writeOrder(_order);
 				}
 			}
-			private function updateTotal():void
+			private function updateUI():void
 			{
 				items.text = String(_order.items.length);
 				total.text = Utils.currencyFormatter.format(_order.total);
 				paid.text = Utils.currencyFormatter.format(_order.paid);
 				
 				paid.setStyle("color", _order.total == _order.paid ? 0x00ee00 : 0xff0000);
+				
+				printTag.enabled = printRcpt.enabled = !!_order.customerID;
 			}
 
 			private var _customerList:CustomerList = new CustomerList;
@@ -438,6 +461,8 @@
 				}
 				PopUpManager.removePopUp(_currentPopup);
 				_currentPopup = null;
+				
+				updateUI();
 			}
 			private function dateFormatter(date:Date):String
 			{
@@ -464,9 +489,9 @@
 				
 				itemList.items = _order.items;
 				
-				updateTotal();
-				
 				historyList.history = _order.history;
+
+				updateUI();
 			}
 		]]>
 	</fx:Script>
