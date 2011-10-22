@@ -320,6 +320,7 @@
 					Data.instance.writeOrder(_order);
 				}
 			}
+			private var _posCmd:PosCmd;
 			private function onPrintTag(e:Event):void
 			{
 				const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "---";
