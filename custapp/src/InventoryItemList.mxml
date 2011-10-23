@@ -25,6 +25,7 @@
 			</s:Line>
 			<ui:Button label="ADD NEW" height="100%" styleName="commandButton" click="onAddItem()"/>
 			<ui:Button id="deleteButton" label="DELETE" height="100%" styleName="deleteButton" click="onDeleteItem()"/>
+			<ui:Button id="deleteAll" label="DELETE ALL" height="100%" styleName="deleteButton" click="onDeleteAll()"/>
 		</s:HGroup>
 		<s:DataGrid
 			id="items"
@@ -61,11 +62,13 @@
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
 	<s:VGroup width="50%" height="100%">
-		<ui:Button label="BULK IMPORT" height="{Data.BAR_HEIGHT}" styleName="commandButton" click="onBulkImport()"/>
-		<s:TextArea id="textInput" width="100%" height="100%"/>
+		<ui:Button label="BULK IMPORT" height="{Data.BAR_HEIGHT}" styleName="commandButton" click="onBulkImport()" enabled="{bulkInput.text.length > 0}"/>
+		<s:TextArea id="bulkInput" width="100%" height="100%"/>
 	</s:VGroup>
 	<fx:Script>
 		<![CDATA[
+			import ui.DialogEvent;
+			import ui.Dialog;
 			import data.Data;
 			import data.InventoryItem;
 			private function onFilterChange():void
@@ -91,6 +94,17 @@
 				Data.instance.deleteInventoryItem(InventoryItem(items.selectedItem));
 				updateDeleteButton();
 			}
+			private function onDeleteAll():void
+			{
+				Dialog.alert(this, "Warning - this is irreversable.  Delete all items?", "Warning", [Dialog.BTN_YES, Dialog.BTN_NO], onDeleteAllPrompt);
+			}
+			private function onDeleteAllPrompt(e:DialogEvent):void
+			{
+				if (e.result == Dialog.BTN_YES)
+				{
+					Data.instance.deleteInventoryItems();
+				}
+			}
 			private function onAddItem():void
 			{
 				var item:InventoryItem = Data.instance.createInventoryItem("new item", 0, "Dry Clean");
@@ -114,10 +128,29 @@
 			private function updateDeleteButton():void
 			{
 				deleteButton.enabled = items.selectedIndex >= 0;
+				deleteAll.enabled = items.dataProvider.length > 0;
 			}
+			static private const BTN_YES:String = "Yes, add items";
 			private function onBulkImport():void
 			{
-				
+				Dialog.alert(this, 
+							 "Warning - make sure these items aren't already added.  Continue?",
+							 "Warning!",
+							 [BTN_YES, Dialog.BTN_NO],
+							 onBulkImportPrompt);
+							 
+			}
+			private function onBulkImportPrompt(e:DialogEvent):void
+			{
+				if (e.result == BTN_YES)
+				{
+					if (!Data.instance.bulkWriteInventoryItems(bulkInput.text))
+					{
+						Dialog.alert(this, "Parsing error in the text - items not imported",
+							"Parsing Error",
+							[Dialog.BTN_DONE]);
+					}
+				}
 			}
 		]]>
 	</fx:Script>

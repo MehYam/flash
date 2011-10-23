@@ -29,6 +29,8 @@
 			static public const BTN_CANCEL:String = "Cancel";
 			static public const BTN_SAVE:String = "Save";
 			static public const BTN_DONT_SAVE:String = "Don't Save";
+			static public const BTN_YES:String = "Yes";
+			static public const BTN_NO:String = "No";
 			static public const STANDARD_SAVE_BTNS:Array = [BTN_SAVE, BTN_DONT_SAVE, BTN_CANCEL];
 			
 			//

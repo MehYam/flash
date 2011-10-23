@@ -28,7 +28,7 @@
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
-	<s:HGroup>
+	<s:HGroup width="100%">
 		<s:VGroup id="commandButtons" gap="1">
 			<s:Button id="pay" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>
 			<s:Button id="printTag" label="PRINT TAG" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintTag()"/>
@@ -39,9 +39,9 @@
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<s:VGroup gap="0">
-			<s:TabBar height="50" fontWeight="bold" dataProvider="{stack}"/>
-			<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%"/>
+		<s:VGroup gap="0" width="100%">
+			<s:TabBar height="50" scaleX="0.5" fontWeight="bold" dataProvider="{stack}"/>
+			<mx:ViewStack id="stack" borderStyle="solid" width="100%"/>
 		</s:VGroup>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -86,6 +86,8 @@
 			
 			import flash.text.engine.FontWeight;
 			
+			import karnold.spark.FlowLayout;
+			
 			import mx.binding.utils.BindingUtils;
 			import mx.collections.ArrayList;
 			import mx.core.IFlexDisplayObject;
@@ -98,6 +100,8 @@
 			import spark.components.Group;
 			import spark.components.NavigatorContent;
 			import spark.events.IndexChangeEvent;
+			import spark.layouts.ColumnAlign;
+			import spark.layouts.TileLayout;
 			
 			import ui.Dialog;
 			import ui.DialogEvent;
@@ -184,22 +188,37 @@
 				stack.removeAllElements();
 				for each (var cat:String in Data.instance.inventoryItemCats.source)
 				{
-					var nav:NavigatorContent = new NavigatorContent;
-					nav.label = cat;
-					
-					var itemButtons:TileGroup = new TileGroup;
-					itemButtons.horizontalGap = 1;
-					itemButtons.verticalGap = 1;
-					nav.addElement(itemButtons);
-					
 					const itemsForThisCategory:Array = Data.instance.inventoryItems.source.filter(
 						function(thisItem:InventoryItem, index:int, arr:Array):Boolean
 						{
-							return thisItem.category == nav.label;
+							return thisItem.category == cat;
 						}
 					);
+					var tabsForThisCategory:uint = 0;
+					var nav:NavigatorContent = null;
+					var itemButtons:Group = null;
 					for each (var item:InventoryItem in itemsForThisCategory)
 					{
+						if (!nav)
+						{
+							// create the next tab
+							nav = new NavigatorContent;
+							nav.percentHeight = 100;
+							nav.label = cat + " " + ++tabsForThisCategory;
+
+//							var group:TileGroup = new TileGroup;
+//							group.horizontalGap = 1;
+//							group.verticalGap = 1;
+							var group:Group = new Group;
+							group.layout = new FlowLayout;
+
+							group.percentWidth = 100;
+							group.percentHeight = 100;
+							itemButtons = group;
+
+							nav.addElement(itemButtons);
+							stack.addElement(nav);
+						}
 						var button:Button = new Button;
 						button.setStyle("skinClass", MultilineButtonSkin);
 						button.label = item.name + "\n" + Utils.currencyFormatter.format(item.price);
@@ -209,8 +228,14 @@
 						button.addEventListener(MouseEvent.CLICK, onItem, false, 0, true);
 
 						itemButtons.addElement(button);
+						
+						if (itemButtons.numElements >= Data.settings.data.maxTabItems)
+						{
+							// need to overflow to a new tab, end this one
+							nav = null;
+							itemButtons = null;
+						}
 					}
-					stack.addElement(nav);
 				}
 			}
 			private function onOrdersLoaded(e:Event = null):void

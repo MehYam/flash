@@ -2,6 +2,7 @@ package data
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.globalization.CurrencyParseResult;
 	import flash.net.SharedObject;
 	
 	import karnold.utils.SQLHelper;
@@ -61,8 +62,8 @@ package data
 				{ name: "email", type: SQLHelper.TYPE_TEXT },
 				{ name: "notes", type: SQLHelper.TYPE_TEXT }
 			];
-		static private const ITEM_TABLE:String = "items";
-		static private const ITEM_FIELDS:Array = 
+		static private const INVENTORY_ITEMS_TABLE:String = "items";
+		static private const INVENTORY_ITEM_FIELDS:Array = 
 			[
 				{ name: "name", type: SQLHelper.TYPE_TEXT },
 				{ name: "price", type: SQLHelper.TYPE_REAL },
@@ -98,27 +99,20 @@ package data
 		private var _sql:SQLHelper = new SQLHelper;
 		public function Data(singletonClass:Class)
 		{
+			if (!settings.data.maxTabItems)
+			{
+				settings.data.maxTabItems = 25;
+			}
 			if (singletonClass != SingletonClass) throw "hey this is a singleton";
 			
 			_sql.createTable(CUSTOMER_TABLE, CUSTOMER_FIELDS, false);
-			_sql.createTable(ITEM_TABLE, ITEM_FIELDS, false);
+			_sql.createTable(INVENTORY_ITEMS_TABLE, INVENTORY_ITEM_FIELDS, false);
 			_sql.createTable(ORDER_TABLE, ORDER_FIELDS, false);
 			_sql.createTable(ORDER_ITEMS_TABLE, ORDER_ITEM_FIELDS, false);
 			_sql.createTable(ORDER_HISTORY_TABLE, ORDER_HISTORY_FIELDS, true);
 			
-			//			addItem("Custom", 1);
-			//			addItem("Tee Shirt", 5);
-			//			addItem("Pants", 7);
-			//			addItem("Vest", 10);
-			//			addItem("Jacket", 9.50);
-			//			addItem("Coat", 10.50);
-			//			addItem("Suit, 3pc", 27.50);
-			//			addItem("Socks", 2.50);
-			//			addItem("Scarf", 5.50);
-			//			addItem("Tie", 3.00);
-			
 			_sql.readTable(CUSTOMER_TABLE, onCustomers);
-			_sql.readTable(ITEM_TABLE, onItems);
+			_sql.readTable(INVENTORY_ITEMS_TABLE, onItems);
 			_sql.readTable(ORDER_TABLE, onOrders);
 			
 			addColor("Red", 0xbb0000);
@@ -175,11 +169,50 @@ package data
 		}
 		public function writeInventoryItem(item:InventoryItem):void
 		{
-			writeAndCacheRecord(ITEM_TABLE, inventoryItems, item);
-			
-			// hack - alert views (the command buttons) that this has changed
+			writeAndCacheRecord(INVENTORY_ITEMS_TABLE, inventoryItems, item);
+			signalInventoryChanged();			
+		}
+		// hack - alert views (the command buttons) that this has changed
+		public function signalInventoryChanged():void
+		{
 			events.dispatchEvent(new Event(EVENT_INVENTORY_LOADED));
-
+		}
+		public function deleteInventoryItems():void
+		{
+			// nuke our item table
+			inventoryItems.removeAll();
+			_sql.clearTable(INVENTORY_ITEMS_TABLE);
+		}
+		public function bulkWriteInventoryItems(encodedItems:String):Boolean
+		{
+			// do the parsing first - return errors if found
+			var parsedItems:Vector.<InventoryItem> = new Vector.<InventoryItem>;
+			const lines:Array = encodedItems.split("\n");
+			for each (var line:String in lines)
+			{
+				const columns:Array = line.split("\t");
+				if (columns.length >= 3 && columns[2].length)
+				{
+					const result:CurrencyParseResult = Utils.currencyFormatter.parse(columns[1]);
+					if (isNaN(result.value))
+					{
+						return false;
+					}
+					parsedItems.push(createInventoryItem(columns[0], result.value, columns[2]));
+				}
+			}
+			
+			if (parsedItems.length)
+			{
+				for each (var item:InventoryItem in parsedItems)
+				{
+					writeAndCacheRecord(INVENTORY_ITEMS_TABLE, inventoryItems, item);
+				}
+				// hack - alert views (the command buttons) that this has changed
+				signalInventoryChanged();			
+				return true;
+			}
+			return false;
 		}
 		public function writeOrder(order:Order):void
 		{
@@ -242,7 +275,7 @@ package data
 		}
 		public function deleteInventoryItem(inventoryItem:InventoryItem):void
 		{
-			_sql.deleteRecord(ITEM_TABLE, inventoryItem.id);
+			_sql.deleteRecord(INVENTORY_ITEMS_TABLE, inventoryItem.id);
 			
 			inventoryItems.removeItemAt(lookupIndexByID(inventoryItems, inventoryItem.id));
 			inventoryItems.refresh();
@@ -347,7 +380,7 @@ package data
 		}
 		private function onItems(data:Array):void
 		{
-			loadTypedDataToCollection(inventoryItems, data, ITEM_TABLE, ITEM_FIELDS, InventoryItem);
+			loadTypedDataToCollection(inventoryItems, data, INVENTORY_ITEMS_TABLE, INVENTORY_ITEM_FIELDS, InventoryItem);
 			inventoryHasLoaded = true;
 			events.dispatchEvent(new Event(EVENT_INVENTORY_LOADED));
 		}

@@ -64,6 +64,14 @@ package karnold.utils
 			
 			queueCommand(cmd, null);
 		}
+		public function clearTable(name:String):void
+		{
+			queueCommand("DELETE FROM " + name, null);
+		}
+		public function deleteTable(name:String):void
+		{
+			queueCommand("DROP TABLE " + name, null);
+		}
 		public function readTable(table:String, callback:Function):void
 		{
 			queueCommand("SELECT * FROM " + table, callback);

@@ -12,7 +12,13 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:CheckBox id="simulatePOS" label="Simulate POS Hardware" selected="false" change="Data.settings.data.simulatePOS = simulatePOS.selected"/>
+	<s:HGroup>
+		<s:CheckBox id="simulatePOS" label="Simulate POS Hardware" selected="false" change="Data.settings.data.simulatePOS = simulatePOS.selected"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+		<s:Label height="100%" verticalAlign="middle" text="Max items per tab:"/>
+		<s:NumericStepper id="maxTabItems" minimum="5" maximum="100" change="Data.settings.data.maxTabItems = maxTabItems.value"/>
+		<s:Button height="100%" label="Rebuild Tabs" click="Data.instance.signalInventoryChanged()"/>
+	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:TextArea id="queryText" width="100%"/>
 	<s:Button label="Run Query"/>
@@ -22,6 +28,7 @@
 			private function onInit():void
 			{
 				simulatePOS.selected = Data.settings.data.simulatePOS;
+				maxTabItems.value = Data.settings.data.maxTabItems;
 			}
 		]]>
 	</fx:Script>
