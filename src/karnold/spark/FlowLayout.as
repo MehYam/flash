@@ -8,7 +8,7 @@ package karnold.spark
 	
 	public class FlowLayout extends LayoutBase
 	{
-		private var _horizontalGap:Number = 1;
+		private var _horizontalGap:Number = 4;
 		public function set horizontalGap(value:Number):void
 		{
 			_horizontalGap = value;
@@ -21,7 +21,7 @@ package karnold.spark
 				layoutTarget.invalidateDisplayList();
 			}
 		}
-		private var _verticalGap:Number = 1;
+		private var _verticalGap:Number = 4;
 		public function set verticalGap(value:Number):void
 		{
 			_verticalGap = value;
@@ -34,74 +34,66 @@ package karnold.spark
 				layoutTarget.invalidateDisplayList();
 			}
 		}
-		
-		private function doLayout(layout:GridLayout, targetWidth:Number):void
+
+		private function doLayout(layout:GridLayout, targetWidth:Number, updatingDisplayList:Boolean = false):void
 		{
-			// assume we're flowing the way text word-wraps - this means our target will
-			// already have a width, and so we'll calculate measured height based on that.
+			layout.reset();
+
 			var layoutTarget:GroupBase = target;
-			var widthThisColumn:Number = 0;
-			var heightThisRow:Number = 0;
+			var currentRowHeight:Number = 0;
 			const count:int = layoutTarget.numElements;
 			for (var i:int = 0; i < count; ++i)
 			{
-				// get the current element, we're going to work with the
-				// ILayoutElement interface
-				var element:ILayoutElement = useVirtualLayout ? 
-					layoutTarget.getVirtualElementAt(i) :
-					layoutTarget.getElementAt(i);
+				// not sure virtual layout works, haven't tested it
+				var element:ILayoutElement = useVirtualLayout ?	layoutTarget.getVirtualElementAt(i) : layoutTarget.getElementAt(i);
 				
-				// In virtualization scenarios, the element returned could
-				// still be null. Look at the typical element instead.
+				// In virtualization scenarios, the element returned could still be null. Look at the typical element instead.
 				if (!element)
 					element = typicalLayoutElement;
 				
-				// Find the preferred sizes    
-				const elementWidth:Number = element.getPreferredBoundsWidth();
-				const elementHeight:Number = element.getPreferredBoundsHeight();
+				if (updatingDisplayList)
+				{
+					// Resize the element to its preferred size
+					element.setLayoutBoundsSize(NaN, NaN);
+				}
 				
-				heightThisRow = Math.max(heightThisRow, elementHeight);
-				if (layout.empty)
+				// Find the preferred sizes    
+				const elementWidth:Number = updatingDisplayList ? element.getLayoutBoundsWidth() : element.getPreferredBoundsWidth();
+				const elementHeight:Number = updatingDisplayList ? element.getLayoutBoundsHeight() : element.getPreferredBoundsHeight();
+
+				currentRowHeight = Math.max(currentRowHeight, elementHeight);
+				if (layout.x > 0 && (layout.x + elementWidth > target.width))
 				{
-					layout.totalHeight = heightThisRow;
-					layout.widestColumn = widthThisColumn = elementWidth;
-					layout.rows = 1;
+					// wrap to new row
+					layout.x = 0;
+					layout.y += currentRowHeight + _verticalGap;
+
+					currentRowHeight = elementHeight;
 				}
-				else
+				// add item to row
+				if (updatingDisplayList)
 				{
-					if (widthThisColumn + elementWidth > targetWidth)
-					{
-						// wrap to next row
-						layout.widestColumn = Math.max(layout.widestColumn, widthThisColumn);
-						layout.totalHeight += heightThisRow;
-						++layout.rows;
-						
-						widthThisColumn = elementWidth;
-					}
-					else
-					{
-						widthThisColumn += elementWidth;
-					}
+					element.setLayoutBoundsPosition(layout.x, layout.y);
 				}
+				layout.width = Math.max(layout.width, layout.x + elementWidth);
+				layout.x += elementWidth + _horizontalGap;
 			}
-			layout.widestColumn = Math.max(layout.widestColumn, widthThisColumn);
+			layout.height = layout.y + currentRowHeight;
 		}
-		private var _lastMeasuredLayout:GridLayout = new GridLayout;
+		private var _measuredLayout:GridLayout = new GridLayout;
 		override public function measure():void
 		{
-			_lastMeasuredLayout.reset();			
-			doLayout(_lastMeasuredLayout, target.width);
-			target.measuredWidth = _lastMeasuredLayout.widestColumn;
-			target.measuredHeight = _lastMeasuredLayout.totalHeight;
+			doLayout(_measuredLayout, target.width);
+			target.measuredWidth = _measuredLayout.width;
+			target.measuredHeight = _measuredLayout.height;
 		}
 		
-		private var _lastDrawnLayout:GridLayout = new GridLayout;
 		override public function updateDisplayList(containerWidth:Number,
 												   containerHeight:Number):void
 		{
-			_lastDrawnLayout.reset();
-			doLayout(_lastDrawnLayout, containerWidth);
-			if (!_lastDrawnLayout.compare(_lastMeasuredLayout))
+			var layout:GridLayout = new GridLayout;
+			doLayout(layout, containerWidth);
+			if (!layout.compare(_measuredLayout))
 			{
 				target.invalidateSize();
 				
@@ -109,148 +101,33 @@ package karnold.spark
 				return;
 			}
 			
-			// The position for the current element
-			var x:Number = 0;
-			var y:Number = 0;
-			var maxWidth:Number = 0;
-			var maxHeight:Number = 0;
-			
-			// loop through the elements
-			var layoutTarget:GroupBase = target;
-			var count:int = layoutTarget.numElements;
-			for (var i:int = 0; i < count; i++)
-			{
-				// get the current element, we're going to work with the
-				// ILayoutElement interface
-				var element:ILayoutElement = useVirtualLayout ? 
-					layoutTarget.getVirtualElementAt(i) :
-					layoutTarget.getElementAt(i);
-				
-				// Resize the element to its preferred size by passing
-				// NaN for the width and height constraints
-				element.setLayoutBoundsSize(NaN, NaN);
-				
-				// Find out the element's dimensions sizes.
-				// We do this after the element has been already resized
-				// to its preferred size.
-				var elementWidth:Number = element.getLayoutBoundsWidth();
-				var elementHeight:Number = element.getLayoutBoundsHeight();
-				
-				// Would the element fit on this line, or should we move
-				// to the next line?
-				if (x + elementWidth > containerWidth)
-				{
-					// Start from the left side
-					x = 0;
-					
-					// Move down by elementHeight, we're assuming all 
-					// elements are of equal height
-					y += elementHeight + _verticalGap;
-				}
-				
-				// Position the element
-				element.setLayoutBoundsPosition(x, y);
-				
-				// Find maximum element extents. This is needed for
-				// the scrolling support.
-				maxWidth = Math.max(maxWidth, x + elementWidth);
-				maxHeight = Math.max(maxHeight, y + elementHeight);
-				
-				// Update the current position, add the gap
-				x += elementWidth + _horizontalGap;
-			}
+			doLayout(layout, containerWidth, true);
 			
 			// Scrolling support - update the content size
-			layoutTarget.setContentSize(maxWidth, maxHeight);
+			target.setContentSize(layout.width, layout.height);
 		}
-		//		override public function updateDisplayList(containerWidth:Number,
-		//												   containerHeight:Number):void
-		//		{
-		//			_lastDrawnLayout.reset();
-		//			doLayout(_lastDrawnLayout, containerWidth);
-		//			if (!_lastDrawnLayout.compare(_lastMeasuredLayout))
-		//			{
-		//				target.invalidateSize();
-		//				
-		//				// defer until measure() gets called again
-		//				return;
-		//			}
-		//			
-		//			// The position for the current element
-		//			var x:Number = 0;
-		//			var y:Number = 0;
-		//			var maxWidth:Number = 0;
-		//			var maxHeight:Number = 0;
-		//			
-		//			// loop through the elements
-		//			var layoutTarget:GroupBase = target;
-		//			var count:int = layoutTarget.numElements;
-		//			for (var i:int = 0; i < count; i++)
-		//			{
-		//				// get the current element, we're going to work with the
-		//				// ILayoutElement interface
-		//				var element:ILayoutElement = useVirtualLayout ? 
-		//					layoutTarget.getVirtualElementAt(i) :
-		//					layoutTarget.getElementAt(i);
-		//				
-		//				// Resize the element to its preferred size by passing
-		//				// NaN for the width and height constraints
-		//				element.setLayoutBoundsSize(NaN, NaN);
-		//				
-		//				// Find out the element's dimensions sizes.
-		//				// We do this after the element has been already resized
-		//				// to its preferred size.
-		//				var elementWidth:Number = element.getLayoutBoundsWidth();
-		//				var elementHeight:Number = element.getLayoutBoundsHeight();
-		//				
-		//				// Would the element fit on this line, or should we move
-		//				// to the next line?
-		//				if (x + elementWidth > containerWidth)
-		//				{
-		//					// Start from the left side
-		//					x = 0;
-		//					
-		//					// Move down by elementHeight, we're assuming all 
-		//					// elements are of equal height
-		//					y += elementHeight + _verticalGap;
-		//				}
-		//				
-		//				// Position the element
-		//				element.setLayoutBoundsPosition(x, y);
-		//				
-		//				// Find maximum element extents. This is needed for
-		//				// the scrolling support.
-		//				maxWidth = Math.max(maxWidth, x + elementWidth);
-		//				maxHeight = Math.max(maxHeight, y + elementHeight);
-		//				
-		//				// Update the current position, add the gap
-		//				x += elementWidth + _horizontalGap;
-		//			}
-		//			
-		//			// Scrolling support - update the content size
-		//			layoutTarget.setContentSize(maxWidth, maxHeight);
-		//		}
 	}
 }
 
 internal final class GridLayout
 {
-	public var rows:uint = 0;
-	public var widestColumn:Number = 0;
-	public var totalHeight:Number = 0;
-	
+	public var x:Number;
+	public var y:Number;
+	public var width:Number;
+	public var height:Number;
+	public function GridLayout()
+	{
+		reset();
+	}
 	public function reset():void
 	{
-		rows = 0;
-		widestColumn = 0;
-		totalHeight = 0;
-	}
-	public function get empty():Boolean
-	{
-		return !rows;
+		x = 0;
+		y = 0;
+		width = 0;
+		height = 0;
 	}
 	public function compare(rhs:GridLayout):Boolean
 	{
-		return widestColumn == rhs.widestColumn && totalHeight == rhs.totalHeight;
+		return width == rhs.width && height == rhs.height;
 	}
 }

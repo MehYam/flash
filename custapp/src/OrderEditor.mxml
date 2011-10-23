@@ -40,8 +40,8 @@
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
 		<s:VGroup gap="0" width="100%">
-			<s:TabBar height="50" scaleX="0.5" fontWeight="bold" dataProvider="{stack}"/>
-			<mx:ViewStack id="stack" borderStyle="solid" width="100%"/>
+			<s:TabBar height="50" scaleX="0.7" fontWeight="bold" dataProvider="{stack}"/>
+			<mx:ViewStack id="stack" width="100%"/>
 		</s:VGroup>
 		<s:Line height="100%">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -206,11 +206,12 @@
 							nav.percentHeight = 100;
 							nav.label = cat + " " + ++tabsForThisCategory;
 
-//							var group:TileGroup = new TileGroup;
-//							group.horizontalGap = 1;
-//							group.verticalGap = 1;
+							var layout:FlowLayout = new FlowLayout;
+							layout.horizontalGap = 1;
+							layout.verticalGap = 1;
+
 							var group:Group = new Group;
-							group.layout = new FlowLayout;
+							group.layout = layout;
 
 							group.percentWidth = 100;
 							group.percentHeight = 100;
