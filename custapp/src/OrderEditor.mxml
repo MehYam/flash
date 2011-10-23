@@ -30,7 +30,7 @@
 		</s:VGroup>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:VGroup gap="0" width="100%">
-			<s:TabBar height="50" scaleX="0.7" color="0x0000bb" fontWeight="bold" dataProvider="{stack}"/>
+			<s:TabBar height="50" scaleX="0.7" width="100%" color="0x0000bb" fontWeight="bold" dataProvider="{stack}"/>
 			<mx:ViewStack id="stack" width="100%"/>
 		</s:VGroup>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
@@ -137,7 +137,11 @@
 				for each (var color:Object in Data.instance.colors.source)
 				{
 					var colorButton:Button = new Button;
-					colorButton.setStyle("color", color.color);
+					colorButton.setStyle("chromeColor", color.color);
+					if (color.color == 0)
+					{
+						colorButton.setStyle("color", 0xffffff);
+					}
 					colorButton.setStyle("fontWeight", FontWeight.BOLD);
 					colorButton.label = color.name;
 					colorButton.height = 50;

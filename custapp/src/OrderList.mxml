@@ -163,7 +163,7 @@
 				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
 
 				_currentPopup = popup;
-				PopUpManager.addPopUp(popup, parent);
+				PopUpManager.addPopUp(popup, parent, true);
 				// KAI: with the right combination of percent height, centerPopUp was causing an infinite loop!  
 				// Flex seems stuck in a measure -> invalidate -> measure kinda thing under validateNow().
 				// Fixed it with the popup.height setting above

@@ -20,6 +20,10 @@
 		<s:Button height="100%" label="Rebuild Tabs" click="Data.instance.signalInventoryChanged()"/>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+	<s:HGroup>
+		<s:Button label="PosCmd.exe path:" height="{Data.BAR_HEIGHT}" click="browseForPosCmdPath()"/>
+		<s:Label id="poscmdPath" height="100%" verticalAlign="middle"/>
+	</s:HGroup>
 	<s:TextArea id="queryText" width="100%"/>
 	<s:Button label="Run Query"/>
 	<fx:Script>
@@ -29,6 +33,16 @@
 			{
 				simulatePOS.selected = Data.settings.data.simulatePOS;
 				maxTabItems.value = Data.settings.data.maxTabItems;
+				poscmdPath.text = Data.settings.data.poscmdPath || "c:\\bin\\poscmd.exe";
+			}
+			private function browseForPosCmdPath():void
+			{
+				var file:File = new File;
+				file.browseForOpen("PosCmd.exe");
+				file.addEventListener(Event.SELECT, function(e:Event):void 
+				{
+					Data.settings.data.poscmdPath = poscmdPath.text = File(e.target).nativePath;
+				});
 			}
 		]]>
 	</fx:Script>

@@ -42,12 +42,12 @@ package
 			if (!_p.running)
 			{
 				var startupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo;
-				startupInfo.executable = (new File).resolvePath("c:\\bin\\poscmd.exe");
+				startupInfo.executable = (new File).resolvePath(Data.settings.data.poscmdPath);
 				startupInfo.arguments = new Vector.<String>();
 
 				if (Data.settings.data.simulatePOS)
 				{
-					startupInfo.arguments.push("/Emulation");
+					startupInfo.arguments.push("/emu");
 				}
 				run_impl(_p, startupInfo);
 			}
@@ -97,12 +97,16 @@ final class PrintPosCmd extends PosCmd
 	}
 	static private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 	{
+		// tenderAmount
+
 		const customer:Object = Data.instance.getCustomer(order.customerID);
 		const command:Object =
 		{
 			type: ticket ? "ticket" : "receipt",
 			id:   order.id,
 			datetime: new Date().toLocaleString(),
+			total: order.total,
+			paymentType: "cash",
 			businessInfo:
 			{
 				name: "J's Cleaners",
@@ -119,6 +123,7 @@ final class PrintPosCmd extends PosCmd
 				items: []
 			}
 		};
+		
 		for each (var item:LineItem in order.items.source)
 		{
 			const itemObj:Object =
@@ -126,7 +131,8 @@ final class PrintPosCmd extends PosCmd
 				quantity: item.quantity,
 				description: item.name,
 				comment: item.description || "",
-				perItemPrice: item.price
+				perItemPrice: item.price,
+				amount: item.price * item.quantity
 			};
 			command.customerInfo.items.push(itemObj);
 		}

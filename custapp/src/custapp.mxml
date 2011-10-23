@@ -8,9 +8,9 @@
 	<fx:Declarations>
 	</fx:Declarations>
 	<s:layout><s:HorizontalLayout paddingTop="10" paddingLeft="10" paddingBottom="10" paddingRight="10" gap="0"/></s:layout>
-	<s:TabBar id="stateChooser" dataProvider="{stack}">
+	<s:TabBar id="stateChooser" dataProvider="{stack}" chromeColor="0x9999ff" height="100%" fontWeight="bold">
 		<s:layout>
-			<s:TileLayout verticalGap="0" horizontalGap="0" columnWidth="125" rowHeight="60" requestedColumnCount="1"/>
+			<s:TileLayout verticalGap="0" horizontalGap="0" columnWidth="125" rowHeight="120" requestedColumnCount="1"/>
 		</s:layout>
 	</s:TabBar>		
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
