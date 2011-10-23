@@ -9,20 +9,23 @@
 		<fx:Number id="owing">0</fx:Number>
 		<fx:Number id="paying">0</fx:Number>
 	</fx:Declarations>
+	<s:TileGroup id="buttons" width="100%" rowHeight="{Data.BAR_HEIGHT + 20}" columnAlign="justifyUsingWidth"/>
 	<s:HGroup width="100%" horizontalAlign="right">
-		<s:Label text="Total:"/>
+		<s:Label text="Order Total:"/>
 		<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>
 	</s:HGroup>
 	<s:HGroup width="100%" horizontalAlign="right">
-		<s:Label text="Owing:"/>
+		<s:Label text="Unpaid:"/>
 		<s:Label id="owingLabel"  text="{Utils.currencyFormatter.format(owing)}" styleName="numberLabel"/>
 	</s:HGroup>
 	<s:HGroup width="100%" horizontalAlign="right">
 		<s:Label text="Change:"/>
-		<s:Label id="changeLabel"  text="{Utils.currencyFormatter.format(paying - owing)}" styleName="numberLabel"/>
+		<s:Label id="changeLabel" color="0xdd0000" text="{Utils.currencyFormatter.format(paying - owing)}" styleName="numberLabel"/>
 	</s:HGroup>
-	<s:TextInput width="100%" id="payingInput" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="onFocusOut()"/>
-	<s:TileGroup id="buttons" rowHeight="{Data.BAR_HEIGHT}"/>
+	<s:HGroup width="100%">
+		<s:Label text="Paying:" height="100%" verticalAlign="middle"/>
+		<s:TextInput id="payingInput" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
+	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
@@ -54,6 +57,15 @@
 			{
 				super.createChildren();
 
+				for each (var b:Object in BUTTONS)
+				{
+					button = new Button;
+					button.label = "+" + (b.amount < 1 ? (b.amount*100 + "c") : ("$" + b.amount));
+					button.name = String(b.amount);
+					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
+					
+					buttons.addElement(button);
+				}
 				buttons.addElement(new Rect);
 				
 				var button:Button;
@@ -68,15 +80,6 @@
 				buttons.addElement(button);
 				button.addEventListener(MouseEvent.CLICK, onClearAmount, false, 0, true);
 				
-				for each (var b:Object in BUTTONS)
-				{
-					button = new Button;
-					button.label = "+" + (b.amount < 1 ? (b.amount*100 + "c") : ("$" + b.amount));
-					button.name = String(b.amount);
-					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
-					
-					buttons.addElement(button);
-				}
 			}
 			private function onAddButton(e:Event):void
 			{
@@ -102,7 +105,7 @@
 			{
 				_prevValue = paying;
 			}
-			private function onFocusOut():void
+			private function updateTotal():void
 			{
 				var result:CurrencyParseResult = Utils.currencyFormatter.parse(payingInput.text);
 				if (!isNaN(result.value))

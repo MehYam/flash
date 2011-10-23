@@ -156,6 +156,7 @@
 				orderEditor.asPopup = true;
 				
 				var popup:Dialog = new Dialog;
+				popup.width = width;
 				popup.height = height;
 				popup.bodyContent = orderEditor;
 				popup.addButton(Dialog.BTN_DONE);
