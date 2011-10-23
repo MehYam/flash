@@ -97,8 +97,7 @@ final class PrintPosCmd extends PosCmd
 	}
 	static private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 	{
-		// tenderAmount
-
+		// tenderAmount - NOT HOOKED UP
 		const customer:Object = Data.instance.getCustomer(order.customerID);
 		const command:Object =
 		{
@@ -107,6 +106,7 @@ final class PrintPosCmd extends PosCmd
 			datetime: new Date().toLocaleString(),
 			total: order.total,
 			paymentType: "cash",
+			tenderAmount: 20,
 			businessInfo:
 			{
 				name: "J's Cleaners",
