@@ -8,6 +8,7 @@ package
 	import flash.desktop.NativeProcessStartupInfo;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.events.IOErrorEvent;
 	import flash.events.NativeProcessExitEvent;
 	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
@@ -32,8 +33,12 @@ package
 			if (FACTORY_CREATED_ONLY != FACTORY_GUARD) throw "Create this only with the factory methods above";
 			
 			_p = new NativeProcess;
+			_p.addEventListener(ProgressEvent.STANDARD_INPUT_PROGRESS, onPosCmdStdInProgress);
 			_p.addEventListener(ProgressEvent.STANDARD_OUTPUT_DATA, onPosCmdStdOut);
 			_p.addEventListener(ProgressEvent.STANDARD_ERROR_DATA, onPosCmdStdErr);
+			_p.addEventListener(IOErrorEvent.STANDARD_ERROR_IO_ERROR, onPosCmdError);
+			_p.addEventListener(IOErrorEvent.STANDARD_INPUT_IO_ERROR, onPosCmdError);
+			_p.addEventListener(IOErrorEvent.STANDARD_OUTPUT_IO_ERROR, onPosCmdError);
 			_p.addEventListener(NativeProcessExitEvent.EXIT, onPosCmdDone);
 		}
 		// template method
@@ -63,7 +68,7 @@ package
 		}
 		private function onPosCmdStdErr(e:Event):void
 		{
-			const result:String = _p.standardOutput.readUTFBytes(_p.standardError.bytesAvailable);
+			const result:String = _p.standardOutput.bytesAvailable ? _p.standardOutput.readUTFBytes(_p.standardError.bytesAvailable) : "unknown stderr"; 
 			trace(result);
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.ERROR, result));
@@ -74,6 +79,20 @@ package
 			trace("pos process done, code", result);
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.COMPLETE, result));
+		}
+		private function onPosCmdError(e:IOErrorEvent):void
+		{
+			const result:String = e.toString();
+			trace("pos cmd error, code", result);
+			
+			dispatchEvent(new PosCmdEvent(PosCmdEvent.ERROR, result));
+		}
+		private function onPosCmdStdInProgress(e:ProgressEvent):void
+		{
+			if (e.bytesLoaded >= e.bytesTotal)
+			{
+//				_p.closeInput();
+			}
 		}
 	}
 }
@@ -93,7 +112,7 @@ final class PrintPosCmd extends PosCmd
 	public function PrintPosCmd(order:Order, ticket:Boolean)
 	{
 		super(FACTORY_GUARD);
-		_command = encodeOrderForPrinting(order, ticket);
+		_command = encodeOrderForPrinting(order, ticket) + "\r\n[EOF]";
 	}
 	static private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 	{
