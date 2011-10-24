@@ -3,16 +3,25 @@
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*"
 					   showStatusBar="false"
+					   title="KiraKai's DryClean POS"					
 					   creationComplete="onInit()">
 	<fx:Style source="custapp.css"/>
 	<fx:Declarations>
 	</fx:Declarations>
 	<s:layout><s:HorizontalLayout paddingTop="10" paddingLeft="10" paddingBottom="10" paddingRight="10" gap="0"/></s:layout>
-	<s:TabBar id="stateChooser" dataProvider="{stack}" chromeColor="0x9999ff" height="100%" fontWeight="bold">
-		<s:layout>
-			<s:TileLayout verticalGap="0" horizontalGap="0" columnWidth="125" rowHeight="120" requestedColumnCount="1"/>
-		</s:layout>
-	</s:TabBar>		
+	<s:Group height="100%">
+		<s:TabBar id="stateChooser" dataProvider="{stack}" chromeColor="#658ABE" fontWeight="bold">
+			<s:layout>
+				<s:TileLayout id="tileLayout" verticalGap="0" horizontalGap="0" columnWidth="125" rowHeight="120" requestedColumnCount="1"/>
+			</s:layout> 
+		</s:TabBar>		
+<!--		<s:VGroup verticalAlign="bottom">
+			<s:Button id="fullscreen" toolTip="Go into full-screen mode" name="Full Screen" icon="@Embed(source='ui/fullscreenButton.png')" click="onFullScreen(event)"/>
+			<s:Button id="exitApp" name="Exit" toolTip="Exit the application" icon="@Embed(source='ui/closeButton.png')" click="onExit(event)"/>						
+		</s:VGroup>
+-->		
+		<s:Image width="125" height="125" right="4" bottom="0" source="@Embed(source='ui/jclogo3-white.jpg')"/>
+	</s:Group>
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
 		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%" height="100%"/>
@@ -30,10 +39,12 @@
 			<local:AdminPanel/>
 		</s:NavigatorContent>
 	</mx:ViewStack>
+
 	<fx:Script>
 		<![CDATA[
 			import mx.core.IFlexDisplayObject;
-			
+			import flash.events.FullScreenEvent; 
+
 			import spark.components.TitleWindow;
 			private function onInit():void
 			{
@@ -45,7 +56,27 @@
 				rect.y = 0;
 				nativeWindow.bounds = rect;
 				nativeWindow.maximize();
+				nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+							
 			}
+			
+			private function onFullScreen(e:Event):void
+			{
+				//if( stage.displayState == StageDisplayState.NORMAL ) {
+				nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				//fullscreenButton.label = "Exit Fullscreen"; 
+				//} 
+				/* else {
+				stage.displayState = StageDisplayState.NORMAL;
+				fullscreenButton.label = "Go Fullscreen";
+				} */
+			}
+			private function onExit(e:Event):void
+			{
+				exit();
+			}
+
+			
 		]]>
 	</fx:Script>
 </s:WindowedApplication>

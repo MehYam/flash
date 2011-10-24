@@ -12,7 +12,7 @@
 	<fx:Declarations>
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
-	<s:HGroup>
+	<s:HGroup width="100%">
 		<s:TextInput id="customer" width="300" height="100%" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
@@ -20,7 +20,11 @@
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:Label text="Pickup Time:" height="100%" verticalAlign="middle"/>
 		<s:DropDownList id="time" dataProvider="{timeValues}" selectedIndex="4" height="100%" change="onTimeChange()"/>
-	</s:HGroup>
+<!--		<s:HGroup width="100%" horizontalAlign="right">
+			<s:Button id="fullscreen" width="50" height="50" toolTip="Maximize Window" icon="@Embed(source='ui/fullscreenButton.png')" click="onFullScreen(event)"/>
+			<s:Button id="close" width="50" height="50" toolTip="Exit the application" icon="@Embed(source='ui/closeButton.png')" click="onExit(event)"/>			
+		</s:HGroup>
+-->	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%">
 		<s:VGroup id="commandButtons" gap="1">
@@ -79,6 +83,7 @@
 			import mx.events.CalendarLayoutChangeEvent;
 			import mx.managers.PopUpManager;
 			
+			import spark.components.Application;
 			import spark.components.Button;
 			import spark.components.Group;
 			import spark.components.NavigatorContent;
@@ -276,6 +281,7 @@
 			{
 				dispatchEvent(new Event(Event.COMPLETE));
 			}
+			
 			static private const BTN_PAY:String = "Pay";
 			private function onPay():void
 			{
@@ -291,12 +297,13 @@
 				popup.addButton(Dialog.BTN_CANCEL);
 				
 				var dobj:DisplayObject = payBtn;
-				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
+/* 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
 				
 				popup.x = dest.x;
-				popup.y = dest.y;
+				popup.y = dest.y; */
 				
 				PopUpManager.addPopUp(popup, this, true);
+				PopUpManager.centerPopUp(popup);
 				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
 			}
 			private function onPayComplete(e:DialogEvent):void

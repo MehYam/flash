@@ -10,6 +10,8 @@ local|custapp
 	*/
 	font-size:18pt;
 	font-family:embeddedMyriad;
+	backgroundColor:#404040;
+	/*color:#FFFFFF;*/
 }
 
 s|DropDownList
@@ -17,6 +19,40 @@ s|DropDownList
 	skinClass: ClassReference("ui.StretchyDropDownListSkin");
 }
 
+s|Button
+{
+	chromeColor:#808080;
+}
+
+s|TextInput
+{
+	/*
+	contentBackgroundColor:#FFF7CC;
+	color:black;
+*/
+}
+
+s|TextInput:normalWithPrompt {
+	color: #ff0000;
+	fontFamily:"arial";
+	fontStyle:italic;
+}
+s|TextInput:disabledWithPrompt {
+	color: #ff0000;
+	fontFamily:"arial";
+	fontStyle:italic;
+}
+
+s|TabBar
+{
+	chromeColor:#658ABE;
+}
+/*
+s|Label
+{
+	color:white;
+}
+*/
 .numberLabel
 {
 	font-weight:bold;

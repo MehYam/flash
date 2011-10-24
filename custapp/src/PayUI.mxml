@@ -2,14 +2,17 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 paddingBottom="5" paddingTop="5" paddingLeft="5" paddingRight="5"
+		 paddingBottom="10" paddingTop="10" paddingLeft="30" paddingRight="30"
 		 >
 	<fx:Declarations>
 		<fx:Number id="total">0</fx:Number>
 		<fx:Number id="owing">0</fx:Number>
 		<fx:Number id="paying">0</fx:Number>
 	</fx:Declarations>
-	<s:TileGroup id="buttons" width="100%" rowHeight="{Data.BAR_HEIGHT + 20}" columnAlign="justifyUsingWidth"/>
+	<s:VGroup width="100%">
+		<s:TileGroup requestedColumnCount="5" id="buttonsCents" width="100%" rowHeight="{Data.BAR_HEIGHT + 20}" columnAlign="justifyUsingWidth"/>
+		<s:TileGroup id="buttonsDollars" width="100%" rowHeight="{Data.BAR_HEIGHT + 20}" columnAlign="justifyUsingWidth"/>		
+	</s:VGroup>
 	<s:HGroup width="100%" horizontalAlign="right">
 		<s:Label text="Order Total:"/>
 		<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>
@@ -24,7 +27,7 @@
 	</s:HGroup>
 	<s:HGroup width="100%">
 		<s:Label text="Paying:" height="100%" verticalAlign="middle"/>
-		<s:TextInput id="payingInput" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
+		<s:TextInput id="payingInput" width="100%" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
@@ -41,43 +44,57 @@
 				totalLabel.text = Utils.currencyFormatter.format(o.total);
 				owingLabel.text = Utils.currencyFormatter.format(o.total - o.paid);
 			}
-			static private const BUTTONS:Array = 
+			static private const BUTTONS_CENTS:Array = 
 			[
 				{ amount: 0.01 },
 				{ amount: 0.05 },
 				{ amount: 0.1 },
 				{ amount: 0.25 },
-				{ amount: 1 },
-				{ amount: 5 },
-				{ amount: 10 },
-				{ amount: 20 },
-				{ amount: 50 }
 			];
+			static private const BUTTONS_DOLLARS:Array = 
+				[
+					{ amount: 1 },
+					{ amount: 5 },
+					{ amount: 10 },
+					{ amount: 20 },
+					{ amount: 50 }
+				];
 			protected override function createChildren():void
 			{
 				super.createChildren();
 
-				for each (var b:Object in BUTTONS)
+				for each (var b:Object in BUTTONS_CENTS)
 				{
 					button = new Button;
-					button.label = "+" + (b.amount < 1 ? (b.amount*100 + "c") : ("$" + b.amount));
+					button.label = "+" + b.amount*100 + "c";
 					button.name = String(b.amount);
 					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
 					
-					buttons.addElement(button);
+					buttonsCents.addElement(button);
 				}
-				buttons.addElement(new Rect);
+				for each (var b2:Object in BUTTONS_DOLLARS)
+				{
+					button = new Button;
+					button.label = "+$" + b2.amount;
+					button.name = String(b2.amount);
+					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
+					
+					buttonsDollars.addElement(button);
+				}
+				buttonsDollars.addElement(new Rect);
+				buttonsDollars.addElement(new Rect);
+				buttonsDollars.addElement(new Rect);
 				
 				var button:Button;
 				button = new Button;
 				button.label = "Exact";
-				buttons.addElement(button);
+				buttonsDollars.addElement(button);
 				button.addEventListener(MouseEvent.CLICK, onExactAmount, false, 0, true);
 				
 				button = new Button;
 				button.label = "Clear";
 				button.setStyle("color", 0xdd0000);
-				buttons.addElement(button);
+				buttonsDollars.addElement(button);
 				button.addEventListener(MouseEvent.CLICK, onClearAmount, false, 0, true);
 				
 			}
