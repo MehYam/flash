@@ -6,7 +6,7 @@ package
 	{
 		static public const COMPLETE:String = "PosCmdEvent.COMPLETE";
 		static public const ERROR:String = "PosCmdEvent.ERROR";
-		static public const OUTPUT:String = "PosCmdEvnet.OUTPUT";
+		static public const OUTPUT:String = "PosCmdEvent.OUTPUT";
 		
 		private var _result:String;
 		public function PosCmdEvent(type:String, result:String)

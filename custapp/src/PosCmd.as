@@ -112,7 +112,7 @@ final class PrintPosCmd extends PosCmd
 	public function PrintPosCmd(order:Order, ticket:Boolean)
 	{
 		super(FACTORY_GUARD);
-		_command = encodeOrderForPrinting(order, ticket) + "\r\n[EOF]";
+		_command = encodeOrderForPrinting(order, ticket) + "\r\n";
 	}
 	static private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 	{
@@ -124,23 +124,25 @@ final class PrintPosCmd extends PosCmd
 			id:   order.id,
 			datetime: new Date().toLocaleString(),
 			total: order.total,
-			paymentType: "cash",
+			paymentType: "Cash",
 			tenderAmount: 20,
 			businessInfo:
 			{
 				name: "J's Cleaners",
-				address: "205 S San Mateo Dr, San Mateo, CA 94401",
-				web: "http://jsdryclean.com",
+				addr1: "205 S San Mateo Dr",
+				addr2: "San Mateo, CA 94010",
+				web: "http://www.jsdryclean.com",
 				phone: "(650) 343-2060",
 				footer: "Thanks for choosing J's Cleaners."
 			},
 			customerInfo:
 			{
-				name: customer.name || "-",
-				address: customer.email || "-",
-				phone: customer.phone || "-",
-				items: []
-			}
+				name: customer.name || "Kira Tsu",
+				address: customer.email || "kerbumble@yahoo.com",
+				phone: customer.phone || "6502003022"
+			},
+			items: []
+
 		};
 		
 		for each (var item:LineItem in order.items.source)
@@ -153,16 +155,18 @@ final class PrintPosCmd extends PosCmd
 				perItemPrice: item.price,
 				amount: item.price * item.quantity
 			};
-			command.customerInfo.items.push(itemObj);
+			
+			command.items.push(itemObj);
 		}
 		return JSON.stringify(command);
 	}
 	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
 	{
-		startupInfo.arguments.push("/PrintSlip");
+		startupInfo.arguments.push("/printSlip");
 
 		np.start(startupInfo);
 		np.standardInput.writeUTFBytes(_command);
+		np.standardInput.writeUTFBytes("[EOF]\r\n");
 	}
 }
 

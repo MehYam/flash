@@ -2,6 +2,7 @@
 @namespace s "library://ns.adobe.com/flex/spark";
 @namespace mx "library://ns.adobe.com/flex/mx";
 @namespace local "*";
+@namespace ui "ui.*";
 
 local|custapp 
 {
@@ -13,6 +14,15 @@ local|custapp
 	backgroundColor:#404040;
 	/*color:#FFFFFF;*/
 }
+ui|Dialog
+{
+	/*
+	skinClass:ClassReference("spark.skins.spark.SparkChromeWindowedApplicationSkin");
+	*/
+	font-size:18pt;
+	font-family:embeddedMyriad;
+	backgroundColor:#404040;
+}
 
 s|DropDownList
 {
@@ -21,7 +31,7 @@ s|DropDownList
 
 s|Button
 {
-	chromeColor:#808080;
+	chromeColor:#666666;  /*808080;*/
 }
 
 s|TextInput
@@ -42,17 +52,15 @@ s|TextInput:disabledWithPrompt {
 	fontFamily:"arial";
 	fontStyle:italic;
 }
-
 s|TabBar
 {
 	chromeColor:#658ABE;
 }
-/*
 s|Label
 {
-	color:white;
+	color:#FFF2E2;
 }
-*/
+
 .numberLabel
 {
 	font-weight:bold;

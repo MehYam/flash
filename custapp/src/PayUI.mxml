@@ -2,33 +2,73 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 paddingBottom="10" paddingTop="10" paddingLeft="30" paddingRight="30"
+		 paddingBottom="20" paddingTop="10" paddingLeft="30" paddingRight="30"
+		 currentState="owing"
 		 >
+	
 	<fx:Declarations>
-		<fx:Number id="total">0</fx:Number>
-		<fx:Number id="owing">0</fx:Number>
-		<fx:Number id="paying">0</fx:Number>
 	</fx:Declarations>
-	<s:VGroup width="100%">
-		<s:TileGroup requestedColumnCount="5" id="buttonsCents" width="100%" rowHeight="{Data.BAR_HEIGHT + 20}" columnAlign="justifyUsingWidth"/>
-		<s:TileGroup id="buttonsDollars" width="100%" rowHeight="{Data.BAR_HEIGHT + 20}" columnAlign="justifyUsingWidth"/>		
+	<s:states>
+		<s:State name="owing"/>
+		<s:State name="paying"/>	   
+	</s:states>
+	<s:Label width="100%" text="Select a payment type:"/>
+	<s:HGroup width="100%">
+		<s:ButtonBar id="btnBarPay"
+					 requireSelection="true" selectedIndex="0"
+					 width="100%" change="onPayType(event)">
+			<s:layout>
+				<s:HorizontalLayout gap="20" paddingBottom="10"/>
+			</s:layout>
+			<s:dataProvider>
+				<s:ArrayList>
+					<fx:Object label="Cash"
+							   icon="{AssetManager.ICONCash}" />
+					<fx:Object label="Check"
+							   icon="{AssetManager.ICONCheck}" />
+					<fx:Object label="Credit Card"
+							   icon="{AssetManager.ICONCredit}" />
+				</s:ArrayList>
+			</s:dataProvider>
+		</s:ButtonBar>
+	</s:HGroup>
+	<s:VGroup id="cashPayGroup" width="100%">
+		<s:HGroup id="buttonsDollars" requestedColumnCount="6" width="100%"/>	
+		<s:HGroup id="buttonsCents" width="100%"/>
+		<s:HGroup width="100%" horizontalAlign="left">
+			<s:Button label="Clear" width="100" height="60" color="red"  click="onClearAmount(event)"/>				
+			<s:Button label="Exact" width="100" height="60" color="green" click="onExactAmount(event)"/>
+		</s:HGroup>
 	</s:VGroup>
 	<s:HGroup width="100%" horizontalAlign="right">
-		<s:Label text="Order Total:"/>
-		<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>
+		<mx:Grid>
+			<mx:GridRow>
+				<mx:GridItem><s:Label text="Order Total:"/></mx:GridItem>
+				<mx:GridItem horizontalAlign="right">
+					<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>				
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem><s:Label text="Paying:" height="100%" verticalAlign="middle"/></mx:GridItem>
+				<mx:GridItem>
+					<s:TextInput id="payingInput" width="100" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem><s:Label text="Tender Type:"/></mx:GridItem>
+				<mx:GridItem horizontalAlign="right">
+					<s:Label id="tenderLabel" text="{paymentType}"/>				
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem><s:Label text.owing="Balance owed:" text.paying="Change:"/></mx:GridItem>
+				<mx:GridItem horizontalAlign="right">
+					<s:Label id="changeLabel" color.owing="0xdd0000" color.paying="0x00ff00" text="{Utils.currencyFormatter.format(paying - total)}" styleName="numberLabel"/>
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>
 	</s:HGroup>
-	<s:HGroup width="100%" horizontalAlign="right">
-		<s:Label text="Unpaid:"/>
-		<s:Label id="owingLabel"  text="{Utils.currencyFormatter.format(owing)}" styleName="numberLabel"/>
-	</s:HGroup>
-	<s:HGroup width="100%" horizontalAlign="right">
-		<s:Label text="Change:"/>
-		<s:Label id="changeLabel" color="0xdd0000" text="{Utils.currencyFormatter.format(paying - owing)}" styleName="numberLabel"/>
-	</s:HGroup>
-	<s:HGroup width="100%">
-		<s:Label text="Paying:" height="100%" verticalAlign="middle"/>
-		<s:TextInput id="payingInput" width="100%" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
-	</s:HGroup>
+	<s:CheckBox selected="true" id="optionPrintReceipt" label="Automatically print the receipt" click="onOptionPrintReceipt()"/>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
@@ -36,67 +76,70 @@
 			
 			import flash.globalization.CurrencyParseResult;
 			
+			import mx.events.ItemClickEvent;
+			
 			import spark.components.Button;
+			import spark.events.IndexChangeEvent;
 			import spark.primitives.Rect;
 			
 			public function set order(o:Order):void
 			{
 				totalLabel.text = Utils.currencyFormatter.format(o.total);
-				owingLabel.text = Utils.currencyFormatter.format(o.total - o.paid);
+				//owingLabel.text = Utils.currencyFormatter.format(o.total - o.paid);
 			}
 			static private const BUTTONS_CENTS:Array = 
 			[
-				{ amount: 0.01 },
-				{ amount: 0.05 },
-				{ amount: 0.1 },
-				{ amount: 0.25 },
+				{ amount: 0.01, icon: AssetManager.ICONPenny },
+				{ amount: 0.05, icon: AssetManager.ICONNickel },
+				{ amount: 0.1, icon: AssetManager.ICONDime },
+				{ amount: 0.25, icon: AssetManager.ICONQuarter },
 			];
 			static private const BUTTONS_DOLLARS:Array = 
-				[
-					{ amount: 1 },
-					{ amount: 5 },
-					{ amount: 10 },
-					{ amount: 20 },
-					{ amount: 50 }
-				];
+			[
+				{ amount: 1, icon: AssetManager.ICON1Bill  },
+				{ amount: 5, icon: AssetManager.ICON5Bill  },
+				{ amount: 10, icon: AssetManager.ICON10Bill  },
+				{ amount: 20, icon: AssetManager.ICON20Bill },
+				{ amount: 50, icon: AssetManager.ICON50Bill },
+				{ amount: 100, icon: AssetManager.ICON100Bill }
+			];
 			protected override function createChildren():void
 			{
 				super.createChildren();
 
+				var button:Button;
 				for each (var b:Object in BUTTONS_CENTS)
 				{
 					button = new Button;
-					button.label = "+" + b.amount*100 + "c";
+					button.label = b.amount*100 + "¢";
 					button.name = String(b.amount);
 					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
-					
+					button.width = 100;	
+					button.height = 100;	
 					buttonsCents.addElement(button);
+
+					if( b.icon != null )
+					{
+						button.setStyle("icon", b.icon);
+						button.setStyle("iconPlacement", "top");
+					}
 				}
 				for each (var b2:Object in BUTTONS_DOLLARS)
 				{
 					button = new Button;
-					button.label = "+$" + b2.amount;
+					button.label = "$" + b2.amount;
 					button.name = String(b2.amount);
 					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
-					
+					button.width = 100;					
+					button.height = 100;	
 					buttonsDollars.addElement(button);
+					
+					if( b2.icon != null )
+					{
+						button.setStyle("icon", b2.icon);
+						button.setStyle("iconPlacement", "top");
+					}
 				}
-				buttonsDollars.addElement(new Rect);
-				buttonsDollars.addElement(new Rect);
-				buttonsDollars.addElement(new Rect);
-				
-				var button:Button;
-				button = new Button;
-				button.label = "Exact";
-				buttonsDollars.addElement(button);
-				button.addEventListener(MouseEvent.CLICK, onExactAmount, false, 0, true);
-				
-				button = new Button;
-				button.label = "Clear";
-				button.setStyle("color", 0xdd0000);
-				buttonsDollars.addElement(button);
-				button.addEventListener(MouseEvent.CLICK, onClearAmount, false, 0, true);
-				
 			}
 			private function onAddButton(e:Event):void
 			{
@@ -104,7 +147,7 @@
 			}
 			private function onExactAmount(e:Event):void
 			{
-				paying = owing;
+				paying = total;				
 			}
 			private function onClearAmount(e:Event):void
 			{
@@ -127,21 +170,64 @@
 				var result:CurrencyParseResult = Utils.currencyFormatter.parse(payingInput.text);
 				if (!isNaN(result.value))
 				{
-					if (paying == result.value)
+					paying = result.value;
+				}
+				updateState();
+			}
+			private function updateState():void
+			{
+				currentState = (paying >= total) ? "paying" : "owing";
+			}
+			private var _paying:Number = 0;
+			private var _total:Number = 0;
+			private var _paymentType:String = "Cash";
+			private var _autoPrint:Boolean = true;
+			[Bindable]
+			public function set paying(p:Number):void
+			{
+				_paying = p;
+				updateState();
+			}
+			public function get paying():Number { return _paying;}
+			[Bindable]
+			public function set total(t:Number):void
+			{
+				_total = t;
+				updateState();
+			}
+			public function get total():Number {	return _total;}
+			
+			[Bindable]
+			public function set paymentType(type:String):void
+			{
+				_paymentType = type;
+			}
+			public function get paymentType():String { return _paymentType; }
+			public function get autoPrint():Boolean { return _autoPrint; }
+		
+			private function onOptionPrintReceipt():void 
+			{
+				_autoPrint = optionPrintReceipt.selected;
+			}
+			
+			protected function onPayType(event:IndexChangeEvent):void
+			{
+				if( event.newIndex != event.oldIndex )
+				{
+					paymentType = btnBarPay.selectedItem.label;
+	
+					if( paymentType == "Cash" )
 					{
-						// need to kick the binding to make it work else it leaves the old value
-						paying = result.value + 1;
-						paying = result.value;
+						cashPayGroup.visible = true;
+						cashPayGroup.percentHeight = 100;
+						paying = 0;
 					}
 					else
 					{
-						paying = result.value;
+						cashPayGroup.visible = false;
+						cashPayGroup.height = 100;
+						paying = total;					
 					}
-				}
-				else
-				{
-					paying = _prevValue + 1;
-					paying = _prevValue;
 				}
 			}
 		]]>
