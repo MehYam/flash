@@ -16,23 +16,10 @@ local|custapp
 
 	chromeColor:#666666;  /*808080;*/
 }
-ui|Dialog
-{
-	/*
-	skinClass:ClassReference("spark.skins.spark.SparkChromeWindowedApplicationSkin");
-	*/
-	font-size:18pt;
-	font-family:embeddedMyriad;
-	backgroundColor:#404040;
-}
 
 s|DropDownList
 {
 	skinClass: ClassReference("ui.StretchyDropDownListSkin");
-}
-
-s|Button
-{
 }
 
 s|TextInput
@@ -61,7 +48,23 @@ s|Label
 {
 	color:#FFF2E2;
 }
-
+s|CheckBox
+{
+	skin-class:ClassReference("ui.CustomCheckBoxSkin");
+}
+ui|Dialog
+{
+	/*
+	skinClass:ClassReference("spark.skins.spark.SparkChromeWindowedApplicationSkin");
+	*/
+	font-size:18pt;
+	font-family:embeddedMyriad;
+	backgroundColor:#404040;
+}
+local|OrderHistoryList
+{
+	font-size:12pt;
+}
 .numberLabel
 {
 	font-weight:bold;
@@ -74,11 +77,6 @@ s|Label
 .deleteButton
 {
 	color:#dd0000;
-}
-
-local|OrderHistoryList
-{
-	font-size:12pt;
 }
 
 mx|Alert
