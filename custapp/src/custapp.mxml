@@ -23,10 +23,10 @@
 		<s:Image width="125" height="125" right="4" bottom="0" source="@Embed(source='ui/jclogo3-white.jpg')"/>
 	</s:Group>
 	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
-		<s:NavigatorContent label="TEST">
+<!--		<s:NavigatorContent label="TEST">
 			<local:OrderViewer/>
 		</s:NavigatorContent>
-		<s:NavigatorContent label="DROP OFF">
+-->		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="PICK UP">

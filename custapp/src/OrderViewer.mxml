@@ -41,6 +41,7 @@
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
+			import data.LineItem;
 			import data.Order;
 			
 			import flashx.textLayout.conversion.TextConverter;
@@ -53,6 +54,9 @@
 			public function set order(o:Order):void
 			{
 				_order = o;
+				var dt:Date = new Date();
+				dt.time = o.creationTime;
+				var isTicket:Boolean = (o.status == "dropped off");
 				Data.instance.loadOrderHistory(_order);
 				htmlTextAsHTML =
 					"<br/><p align='center' ><strong> \
@@ -60,13 +64,27 @@
 					205 S San Mateo Dr<br/> \
 					San Mateo, CA 94010<br/></strong> \
 					------------------------------------------------&nbsp;<br/><strong>" +
-					"CLAIM TICKET" +
-					"</strong><br/>------------------------------------------------&nbsp;<br/></p><p> \
-					10/22/2011 7:31 PM<br/> \
-					Ticket # 7789789<br/><br/> \
-					Qty Description<br/> \
-					=== ============================================<br/></p>";
+					(isTicket ? "CLAIM TICKET" : "SALES RECEIPT") +
+					"</strong><br/>------------------------------------------------&nbsp;</p><p><br/>" +
+					dt.toLocaleDateString() + " " + dt.toLocaleTimeString() + "<br/>Ticket # " + o.id +
+					"<br/><br/>" +
+					(isTicket? "Qty Description" : "Qty Description        Per Item Amount" ) +
+					"<br/>=== " + (isTicket? "============================================" : "====================== ========= ===========") + "<br/></p>";
 
+				for each (var line:LineItem in o.items.source) 
+					{
+						if( isTicket )
+						{
+							htmlTextAsHTML += line.quantity + "  " + line.name + " (" + line.description + ")";
+						}
+						else
+						{
+							htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + "\r\n\t" + line.description;
+						}
+					}
+				
+					
+					
 
 
 //					<p>Ticket ID: " + o.id + </p>;
