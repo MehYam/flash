@@ -13,6 +13,8 @@ local|custapp
 	font-family:embeddedMyriad;
 	backgroundColor:#404040;
 	/*color:#FFFFFF;*/
+
+	chromeColor:#666666;  /*808080;*/
 }
 ui|Dialog
 {
@@ -31,7 +33,6 @@ s|DropDownList
 
 s|Button
 {
-	chromeColor:#666666;  /*808080;*/
 }
 
 s|TextInput
