@@ -9,6 +9,7 @@
 		 paddingRight="5"
 		 creationComplete="onInit()" 
 		 >
+	
 	<fx:Declarations>
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
@@ -554,4 +555,5 @@
 			}
 		]]>
 	</fx:Script>
+
 </s:VGroup>

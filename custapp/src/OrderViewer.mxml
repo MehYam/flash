@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:spark="karnold.spark.*" currentState="pending" creationComplete="onInit()"
+		 width="900" height="600" xmlns:ui="ui.*">
+	
+	
+	<fx:Declarations>
+		<fx:String id="htmlTextAsHTML"><![CDATA[<p>Order not loaded.</p>]]></fx:String>
+	</fx:Declarations>
+	<s:states>
+		<s:State name="pending"/>
+		<s:State name="completed"/>	   
+	</s:states>
+	<s:Rect height="100%" width="100%">
+		<s:stroke>
+			<s:SolidColorStroke color="white"/>
+		</s:stroke>
+	</s:Rect>
+	<s:HGroup paddingTop="30" paddingLeft="30" paddingRight="30" paddingBottom="30" width="100%">
+<!--		<s:Rect height="450" width="350">
+			<s:fill>
+				<s:SolidColor color="white"/>
+			</s:fill>
+		</s:Rect>-->
+		<s:RichText id="richTxt" backgroundColor="white" fontFamily="Courier New"
+					textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
+					horizontalCenter="0" verticalCenter="0" />
+
+		<s:VGroup paddingLeft="50">
+			<s:Label text="Order Status:"/>
+			<s:Label text.pending="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
+			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending"/>
+			<ui:Button id="editBtn" label="Edit" height="80" width="150"/>
+			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="80" width="150" includeIn="pending"/>
+			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="80" width="150" includeIn="completed"/>
+		</s:VGroup>
+	</s:HGroup>
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Data;
+			import data.Order;
+			
+			import flashx.textLayout.conversion.TextConverter;
+			
+			private function onInit():void
+			{	
+			}
+			
+			private var _order:Order
+			public function set order(o:Order):void
+			{
+				_order = o;
+				Data.instance.loadOrderHistory(_order);
+				htmlTextAsHTML =
+					"<br/><p align='center' ><strong> \
+					J&#39;s Cleaners &amp; Alterations<br/> \
+					205 S San Mateo Dr<br/> \
+					San Mateo, CA 94010<br/></strong> \
+					------------------------------------------------&nbsp;<br/><strong>" +
+					"CLAIM TICKET" +
+					"</strong><br/>------------------------------------------------&nbsp;<br/></p><p> \
+					10/22/2011 7:31 PM<br/> \
+					Ticket # 7789789<br/><br/> \
+					Qty Description<br/> \
+					=== ============================================<br/></p>";
+
+
+
+//					<p>Ticket ID: " + o.id + </p>;
+				
+				//			orderID.text = String(_order.id);
+				//			customer.text = _order.customerID ? formatCustomer(Data.instance.getCustomer(_order.customerID)) : null;
+				//			
+				//			var d:Date = new Date();
+				//			d.time = _order.pickupTime;
+				//			date.selectedDate = d;
+				//			
+				//			const min:int = timeValues.getItemAt(0).value;
+				//			const max:int = timeValues.getItemAt(timeValues.length-1).value;
+				//			const hour:int = Math.min(Math.max(min, d.hours), max);
+				//			time.selectedIndex = hour - min;
+				//			
+				//			itemList.items = _order.items;
+				//			
+				//			historyList.history = _order.history;
+				//			
+				//			updateUI();
+			}
+			
+		]]>
+	</fx:Script>
+
+</s:Group>
+
