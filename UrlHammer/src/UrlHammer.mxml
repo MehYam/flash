@@ -161,7 +161,8 @@
 					var loader:URLLoader = URLLoader(e.target);
 					if (timestamps.selected)
 					{
-						_log.writeUTFBytes(new Date().toUTCString() + "\r\n");
+						const date:Date = new Date();
+						_log.writeUTFBytes(date.toUTCString() + ", stamp: " + date.time + "\r\n");
 					}
 					_log.writeUTFBytes(loader.data + "\r\n");
 				}
