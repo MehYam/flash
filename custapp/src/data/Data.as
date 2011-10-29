@@ -75,8 +75,7 @@ package data
 				{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
 				{ name: "creationTime", type: SQLHelper.TYPE_INTEGER },
 				{ name: "pickupTime", type: SQLHelper.TYPE_INTEGER },
-				{ name: "ready", type: SQLHelper.TYPE_BOOLEAN },
-				{ name: "pickedUp", type: SQLHelper.TYPE_BOOLEAN },
+				{ name: "status", type: SQLHelper.TYPE_TEXT },
 				{ name: "paid", type: SQLHelper.TYPE_REAL }
 			];
 		static private const ORDER_ITEMS_TABLE:String = "order_items";

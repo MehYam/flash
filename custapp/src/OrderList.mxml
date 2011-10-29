@@ -59,6 +59,7 @@
 				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
 				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
 				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
+				<s:GridColumn dataField="status" headerText="Status"/>
 				<s:GridColumn dataField="total" headerText="Total" formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
 				<s:GridColumn dataField="paid" headerText="Paid" formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
 			</s:ArrayList>

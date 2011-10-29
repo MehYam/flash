@@ -5,13 +5,16 @@ package data
 	// a p.o.d
 	public class Order
 	{
+		public static const STATUS_DRAFT:String = "draft";
+		public static const STATUS_DROPPED_OFF:String = "dropped off";
+		public static const STATUS_COMPLETED:String = "completed";
+
 		public var id:int;
 		public var creationTime:Number = new Date().time;
 		
 		public var customerID:int;
 		public var pickupTime:Number = creationTime;
-		public var ready:Boolean;
-		public var pickedUp:Boolean;
+		public var status:String = STATUS_DRAFT;
 		public var paid:Number = 0;
 
 		// serialized out manually in the writeOrder call

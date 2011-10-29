@@ -72,7 +72,17 @@ package
 //			testBlurFilterRasterizationBounds();
 //			testTint();
 //			testEnumeratingObjectMembers();
-			testRegularExpressions();
+//			testRegularExpressions();
+			testTime();
+		}
+		private function testTime():void
+		{
+			const now:Date = new Date();
+			
+			trace(now);
+			trace(now.time);
+			trace(now.toUTCString());
+			trace(now.toLocaleString());
 		}
 		private function testRegularExpressions():void
 		{

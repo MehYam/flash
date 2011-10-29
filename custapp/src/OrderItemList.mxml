@@ -9,11 +9,6 @@
 				textAlign="right"
 			/>
 		</fx:Component>
-		<fx:Component id="priceColumnHeaderRenderer">
-			<s:DefaultGridItemRenderer
-				textAlign="right"
-			/>
-		</fx:Component>
 	</fx:Declarations>
 	<fx:Metadata>[Event(name="change", type="flash.events.Event")]</fx:Metadata>	
 	<s:DataGrid
