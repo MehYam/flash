@@ -201,6 +201,7 @@
 							var layout:FlowLayout = new FlowLayout;
 							layout.horizontalGap = 1;
 							layout.verticalGap = 1;
+							layout.justify = true;
 
 							var group:Group = new Group;
 							group.layout = layout;
