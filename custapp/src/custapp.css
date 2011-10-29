@@ -87,9 +87,20 @@ mx|Alert
 
 mx|DateField
 {
+	date-chooser-style-name: "dateChooserStyle";
 	font-size:10pt;
 	font-family:Verdana;
 	text-input-class: ClassReference("mx.controls.MXFTETextInput"); 
+}
+.dateChooserStyle
+{
+	content-background-color: #FFF2E2;
+	color: #666666;
+	header-style-name: "dateChooserHeaderStyle";
+}
+.dateChooserHeaderStyle
+{
+	color: #FFF2E2;
 }
 
 @font-face {
