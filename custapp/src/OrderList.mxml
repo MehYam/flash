@@ -56,7 +56,7 @@
 		<s:columns>
 			<s:ArrayList>
 				<s:GridColumn dataField="id" headerText="Ticket"/>
-				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer"/>
+				<s:GridColumn labelFunction="customerLabelFunction" headerText="Customer" width="250"/>
 				<s:GridColumn labelFunction="dropOffLabelFunction" headerText="Drop Off Time"/>
 				<s:GridColumn labelFunction="pickUpLabelFunction" headerText="Pick Up Time"/>
 				<s:GridColumn dataField="status" headerText="Status"/>

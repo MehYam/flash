@@ -12,7 +12,6 @@ local|custapp
 	font-size:18pt;
 	font-family:embeddedMyriad;
 	backgroundColor:#404040;
-	/*color:#FFFFFF;*/
 
 	chromeColor:#666666;  /*808080;*/
 }
@@ -22,21 +21,22 @@ s|DropDownList
 	skinClass: ClassReference("ui.StretchyDropDownListSkin");
 }
 
+s|DataGrid
+{
+	content-background-color:#FFF2E2;
+}
+
 s|TextInput
 {
-	/*
-	contentBackgroundColor:#FFF7CC;
-	color:black;
-*/
+	skin-class: ClassReference("ui.CustomTextInputSkin");
+	content-background-color:#FFF2E2;
 }
 
 s|TextInput:normalWithPrompt {
-	color: #ff0000;
 	fontFamily:"arial";
 	fontStyle:italic;
 }
 s|TextInput:disabledWithPrompt {
-	color: #ff0000;
 	fontFamily:"arial";
 	fontStyle:italic;
 }
@@ -87,8 +87,20 @@ mx|Alert
 
 mx|DateField
 {
+	date-chooser-style-name: "dateChooserStyle";
 	font-size:10pt;
 	font-family:Verdana;
+	text-input-class: ClassReference("mx.controls.MXFTETextInput"); 
+}
+.dateChooserStyle
+{
+	content-background-color: #FFF2E2;
+	color: #666666;
+	header-style-name: "dateChooserHeaderStyle";
+}
+.dateChooserHeaderStyle
+{
+	color: #FFF2E2;
 }
 
 @font-face {

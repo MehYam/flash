@@ -14,7 +14,7 @@
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
 	<s:HGroup width="100%">
-		<s:TextInput id="customer" width="300" height="100%" fontWeight="bold" editable="false" selectable="false" prompt="Select a customer" click="onSelectCustomer()"/>
+		<s:TextInput id="customer" width="300" height="100%" fontWeight="bold" editable="false" selectable="false" prompt="Click to select customer" click="onSelectCustomer()"/>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:Label text="Pickup Date:" height="100%" verticalAlign="middle"/>
 		<mx:DateField id="date" width="160" scaleX="2" scaleY="2" change="onTimeChange()"/>
