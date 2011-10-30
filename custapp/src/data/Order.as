@@ -93,6 +93,15 @@ package data
 			const rawItem:InventoryItem = Data.instance.getInventoryItem(itemID);
 			var lineItem:LineItem = Data.instance.createLineItem(itemID, id, rawItem.category, rawItem.name, rawItem.price);
 
+			if (!items.length)
+			{
+				// re-write the creation time, just so that an empt order opened one day and then filled
+				// in the next contains the correct thing
+				creationTime = new Date().time;
+				
+				// arguably you should fix up the drop off time too, but it could be that it's been
+				// set to a desired value already
+			}
 			items.addItem(lineItem);
 			items.refresh();
 		}

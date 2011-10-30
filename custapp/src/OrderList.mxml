@@ -19,31 +19,39 @@
 		<s:Label text="Search:" verticalAlign="middle" height="100%"/>
 		<s:TextInput id="filter" prompt="enter partial name, number or customer ID" width="100%" height="{Data.BAR_HEIGHT}" change="onFilterChange()"/>
 	</s:HGroup>
-	<s:HGroup width="100%">
-		<s:CheckBox id="limitDatesCheckbox" label="Limit Dates:" selected="true" height="100%" change="onFilterChange()"/>
-		<s:HGroup enabled="{limitDatesCheckbox.selected}">
-			<mx:DateField id="dateFrom" width="160" scaleX="1.8" scaleY="1.8" change="onFilterChange()"/>
-			<s:Label text="To:" verticalAlign="middle" height="100%"/>
-			<mx:DateField id="dateTo" width="160" scaleX="1.8" scaleY="1.8" change="onFilterChange()"/>
-		</s:HGroup>
-		<s:Line height="100%">
-			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
-		</s:Line>
-		<s:CheckBox label="Show Paid" selected="true" height="100%"/>
+	<s:HGroup>
+		<s:VGroup gap="10" height="100%" verticalAlign="middle">
+			<s:CheckBox id="limitDropoffDate" label="Drop Off Dates:" selected="false" height="100%" change="onFilterChange()"/>
+			<s:CheckBox id="limitPickupDate" label="Pickup Dates:" selected="true" height="100%" change="onFilterChange()"/>
+		</s:VGroup>
+		<s:VGroup>
+			<s:HGroup id="dropoff" enabled="{limitDropoffDate.selected}">
+				<mx:DateField id="dropoffFrom" width="160" scaleX="1.8" scaleY="1.8" change="onFilterChange()"/>
+				<s:Label text="To:" verticalAlign="middle" height="100%"/>
+				<mx:DateField id="dropoffTo" width="160" scaleX="1.8" scaleY="1.8" change="onFilterChange()"/>
+			</s:HGroup>
+			<s:HGroup enabled="{limitPickupDate.selected}">
+				<mx:DateField id="pickupFrom" width="160" scaleX="1.8" scaleY="1.8" change="onFilterChange()"/>
+				<s:Label text="To:" verticalAlign="middle" height="100%"/>
+				<mx:DateField id="pickupTo" width="160" scaleX="1.8" scaleY="1.8" change="onFilterChange()"/>
+			</s:HGroup>
+		</s:VGroup>
+	</s:HGroup>
+	<s:HGroup>
+		<s:CheckBox id="showDrafts" label="Show Drafts" selected="true" height="100%" change="onFilterChange()"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+		<s:CheckBox id="showDroppedoff" label="Show Dropped Off" selected="true" height="100%" change="onFilterChange()"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+		<s:CheckBox id="showCompleted" label="Show Completed" selected="false" height="100%" change="onFilterChange()"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 	</s:Line>
 	<s:HGroup id="buttonParent" width="100%" height="{Data.BAR_HEIGHT}">
 		<s:Button height="100%" label="EDIT" styleName="commandButton" click="onEditOrder()"/>
-		<s:Line height="100%">
-			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
-		</s:Line>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:Button height="100%" label="DELETE" styleName="deleteButton" click="onDeleteOrder()"/>
 	</s:HGroup>
-	<s:Line width="100%">
-		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
-	</s:Line>
 	<s:DataGrid
 		id="orders"
 		width="100%" height="100%" 
@@ -65,6 +73,7 @@
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
+	<s:Label id="numShowing" text="Showing 0 of 0 total orders" verticalAlign="middle"/>
 
 	<fx:Script>
 		<![CDATA[
@@ -84,14 +93,22 @@
 			{
 				filter.setFocus();
 				
-				var date:Date = new Date();
+				var date:Date = Utils.beginningOfDay;
 				date.time -= Utils.daysToTime(7);
-				dateFrom.selectedDate = date;
+				dropoffFrom.selectedDate = date;
+
+				date = Utils.endOfDay;
+				dropoffTo.selectedDate = date;
+
+				date = Utils.beginningOfDay;
+				date.time -= Utils.daysToTime(3);
+				pickupFrom.selectedDate = date;
 				
-				date = new Date();
+				date = Utils.endOfDay;
 				date.time += Utils.daysToTime(7);
-				dateTo.selectedDate = date;
+				pickupTo.selectedDate = date;
 				
+				onFilterChange();
 				updateButtons();
 			}
 			static private function customerLabelFunction(orderObj:Order, column:GridColumn):String
@@ -113,25 +130,31 @@
 			}
 			private function onFilterChange():void
 			{
-				const pattern:Array = filter.text.toUpperCase().split(" "); 
+				const pattern:Array = filter.text.toUpperCase().split(" ");
+				const dropoffMin:Number = dropoffFrom.selectedDate.time;
+				const dropoffMax:Number = dropoffTo.selectedDate.time + Utils.daysToTime(1);
+				const pickupMin:Number = pickupFrom.selectedDate.time;
+				const pickupMax:Number = pickupTo.selectedDate.time + Utils.daysToTime(1);
+				
 				Data.instance.orders.filterFunction = function(item:Order):Boolean
 				{
-					if (limitDatesCheckbox.selected)
+					if (limitDropoffDate.selected && (item.creationTime < dropoffMin || item.creationTime > dropoffMax))
 					{
-						const fromDate:Number = dateFrom.selectedDate.time;
-						const toDate:Number = dateTo.selectedDate.time + Utils.daysToTime(1);
-						const dateMatch:Boolean = 
-							(fromDate <= item.pickupTime && toDate >= item.pickupTime) ||
-							(fromDate <= item.creationTime && toDate >= item.creationTime);
-						
-						if (!dateMatch)
-						{
-							return false;
-						}
+						return false;
 					}
-					
+					if (limitPickupDate.selected && (item.pickupTime < pickupMin || item.pickupTime > pickupMax))
+					{
+						return false;
+					}
+					if (!((item.status == Order.STATUS_DRAFT && showDrafts.selected) ||
+						  (item.status == Order.STATUS_DROPPED_OFF && showDroppedoff.selected) ||
+						  (item.status == Order.STATUS_COMPLETED && showCompleted.selected)))
+					{
+						return false;
+					}
+
 					const customer:Object = Data.instance.getCustomer(item.customerID);
-					// AND on all words, each pattern part must match something
+					// AND all terms, each pattern part must match something
 					for each (var patternPart:String in pattern)
 					{
 						if (!(Utils.matches(String(item.id), patternPart) || (customer && Utils.customerMatchesPattern(customer, patternPart))))
@@ -143,6 +166,7 @@
 				};
 				Data.instance.orders.refresh();
 				
+				numShowing.text = "Showing " + Data.instance.orders.length + " of " + Data.instance.orders.source.length + " total orders";
 				updateButtons();
 			}
 			private var _currentPopup:IFlexDisplayObject;

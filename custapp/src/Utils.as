@@ -49,6 +49,22 @@ package
 		{
 			return days * 24 * 60 * 60 * 1000;
 		}
+		static public function get beginningOfDay():Date
+		{
+			var retval:Date = new Date;
+			retval.hours = 0;
+			retval.minutes = 0;
+			retval.seconds = 0;
+			return retval;
+		}
+		static public function get endOfDay():Date
+		{
+			var retval:Date = new Date;
+			retval.hours = 23;
+			retval.minutes = 59;
+			retval.seconds = 59;
+			return retval;
+		}
 		static public function customerMatchesPattern(customer:Object, pattern:String):Boolean
 		{
 			return matches(customer.first, pattern) || 
