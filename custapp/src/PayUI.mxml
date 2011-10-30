@@ -82,6 +82,8 @@
 			import spark.events.IndexChangeEvent;
 			import spark.primitives.Rect;
 			
+			import ui.Dialog;
+			
 			public function set order(o:Order):void
 			{
 				totalLabel.text = Utils.currencyFormatter.format(o.total);
@@ -230,6 +232,43 @@
 					}
 				}
 			}
+
+			public function handleCustomerChange():void
+			{
+				const change:Number = paying - total; 
+				if (change > 0)
+				{
+					popCashDrawer();
+					Dialog.alert(this, "Give " + Utils.currencyFormatter.format(change) + " change to customer.", "Cash Drawer Open", [Dialog.BTN_DONE]);
+				}
+
+			}
+				
+			private function popCashDrawer():void
+			{
+				var _posCmd:PosCmd = PosCmd.createOpenDrawerCmd();
+				attachPosListeners(_posCmd);
+				_posCmd.run();
+			}
+			private function attachPosListeners(p:PosCmd):void  //duplicated from OrderEditor - fix
+			{
+				//				p.addEventListener(PosCmdEvent.COMPLETE, onPosCmdResult, false, 0, true);
+				p.addEventListener(PosCmdEvent.ERROR, onPosCmdResult, false, 0, true);
+				//				p.addEventListener(PosCmdEvent.OUTPUT, onPosCmdResult, false, 0, true);
+			}
+			private function onPosCmdResult(e:PosCmdEvent):void
+			{
+				if (e.type == PosCmdEvent.ERROR )
+				{
+					Dialog.alert(this, "Point of sale hardware error: " + e.result, "Hardware Error", [Dialog.BTN_DONE]);
+				}
+				//				else if( e.type == PosCmdEvent.OUTPUT )
+				//				{
+				//					Dialog.alert(this, "Point of sale hardware output: " + e.result, "Hardware Output", [Dialog.BTN_DONE]);	
+				//				}
+				
+			}
+
 		]]>
 	</fx:Script>
 </s:VGroup>

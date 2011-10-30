@@ -2,7 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 xmlns:spark="karnold.spark.*" currentState="pending" creationComplete="onInit()"
+		 xmlns:spark="karnold.spark.*" currentState="pending"
 		 width="900" height="600" xmlns:ui="ui.*">
 	
 	
@@ -31,8 +31,8 @@
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>
 			<s:Label text.pending="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
-			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending"/>
-			<ui:Button id="editBtn" label="Edit" height="80" width="150"/>
+			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending" color="#F79950" click="onPay()"/>
+			<ui:Button id="editBtn" label="Edit" height="80" width="150" click="onEdit(event)"/>
 			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="80" width="150" includeIn="pending"/>
 			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="80" width="150" includeIn="completed"/>
 		</s:VGroup>
@@ -43,17 +43,21 @@
 			import data.Data;
 			import data.LineItem;
 			import data.Order;
-			
 			import flashx.textLayout.conversion.TextConverter;
+			import mx.managers.PopUpManager;			
+			import ui.Dialog;
+			import ui.DialogEvent;
 			
-			private function onInit():void
-			{	
-			}
-			
+
 			private var _order:Order
 			public function set order(o:Order):void
 			{
 				_order = o;
+				currentState = (o.status == "dropped off" ? "pending" : "completed");
+				updateSlipView(o);
+			}
+			private function updateSlipView(o:Order):void
+			{
 				var dt:Date = new Date();
 				dt.time = o.creationTime;
 				var isTicket:Boolean = (o.status == "dropped off");
@@ -75,12 +79,13 @@
 					{
 						if( isTicket )
 						{
-							htmlTextAsHTML += line.quantity + "  " + line.name + " (" + line.description + ")";
+							htmlTextAsHTML += line.quantity + "  " +  line.name + (line.description ? " (" + line.description + ")" : "");
 						}
 						else
 						{
-							htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + "\r\n\t" + line.description;
+							htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + (line.description ? "\r\n\t" + line.description : "");
 						}
+						htmlTextAsHTML += "<br/>";
 					}
 				
 					
@@ -106,6 +111,60 @@
 				//			historyList.history = _order.history;
 				//			
 				//			updateUI();
+			}
+			
+
+			static private const BTN_PAY:String = "Pay";
+			//static private const BTN_PAY_CC:String = "Pay Credit Card";
+			private function onPay():void
+			{
+				var pay:PayUI = new PayUI;
+				pay.total = _order.total;
+				//pay.owing = _order.total - _order.paid;
+				
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = pay;
+				popup.autoClose = true;
+				popup.title = "Payment";
+				popup.addButton(Dialog.BTN_CANCEL);
+				popup.addButton(BTN_PAY);
+				
+				var dobj:DisplayObject = payBtn;
+				/* 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
+				
+				popup.x = dest.x;
+				popup.y = dest.y; */
+				
+				PopUpManager.addPopUp(popup, this, true);
+				PopUpManager.centerPopUp(popup);
+				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
+			}
+			private function onPayComplete(e:DialogEvent):void
+			{
+				var result:String = e.result;
+				if( result == BTN_PAY )
+				{
+					const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
+					const change:Number = pay.paying - pay.total; 
+					const paymentType:String = pay.paymentType;
+					
+					_order.paid = Math.min(_order.total, _order.paid + pay.paying);
+					pay.handleCustomerChange();
+					
+					//update dialog UI
+					_order.status = "completed";
+					currentState = "completed";
+					updateSlipView(_order);
+					
+					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change) + ", payment type: " + paymentType);
+					Data.instance.writeOrder(_order);
+				}
+			}
+
+			protected function onEdit(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
 			}
 			
 		]]>
