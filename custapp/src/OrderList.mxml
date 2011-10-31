@@ -169,32 +169,34 @@
 				numShowing.text = "Showing " + Data.instance.orders.length + " of " + Data.instance.orders.source.length + " total orders";
 				updateButtons();
 			}
-			private var _currentPopup:IFlexDisplayObject;
+			private var _orderEditorPopup:Dialog;
 			private function onEditOrder():void
 			{
-				//KAI: null check
-				var orderEditor:OrderEditor = new OrderEditor;
-				const order:Order = Order(orders.selectedItem);
-				orderEditor.order = order;
-				orderEditor.percentHeight = 100;
-				orderEditor.percentWidth = 100;
-				orderEditor.asPopup = true;
-				
-				var popup:Dialog = new Dialog;
-				popup.width = width;
-				popup.height = height;
-				popup.bodyContent = orderEditor;
-				popup.addButton(Dialog.BTN_DONE);
-				popup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
+				if (!_orderEditorPopup)
+				{
+					var orderEditor:OrderEditor = new OrderEditor;
+					orderEditor.percentHeight = 100;
+					orderEditor.percentWidth = 100;
+					orderEditor.asPopup = true;
+					
+					_orderEditorPopup = new Dialog;
+					_orderEditorPopup.bodyContent = orderEditor;
+					_orderEditorPopup.addButton(Dialog.BTN_DONE);
+					_orderEditorPopup.addEventListener(Event.COMPLETE, onOrderEditorClose, false, 0, true);
+				}
+				_orderEditorPopup.width = width;
+				_orderEditorPopup.height = height;
 
-				_currentPopup = popup;
-				PopUpManager.addPopUp(popup, parent, true);
+				const order:Order = Order(orders.selectedItem);
+				OrderEditor(_orderEditorPopup.bodyContent).order = order;
+				_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
+
+				PopUpManager.addPopUp(_orderEditorPopup, parent, true);
 				// KAI: with the right combination of percent height, centerPopUp was causing an infinite loop!  
 				// Flex seems stuck in a measure -> invalidate -> measure kinda thing under validateNow().
 				// Fixed it with the popup.height setting above
-				PopUpManager.centerPopUp(popup);
-				popup.y = 0;
-				popup.addEventListener(Event.COMPLETE, onOrderEditorClose, false, 0, true);
+				PopUpManager.centerPopUp(_orderEditorPopup);
+				_orderEditorPopup.y = 0;
 			}
 			private function onOrderEditorClose(e:DialogEvent):void
 			{
@@ -203,10 +205,9 @@
 			}
 			private function hideEditor():void
 			{
-				if (_currentPopup)
+				if (_orderEditorPopup.parent)
 				{
-					PopUpManager.removePopUp(_currentPopup);
-					_currentPopup = null;
+					PopUpManager.removePopUp(_orderEditorPopup);
 				}
 			}
 			private function updateButtons():void
