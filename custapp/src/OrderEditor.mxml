@@ -29,9 +29,9 @@
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%">
 		<s:VGroup id="commandButtons" gap="1">
-			<s:Button id="payBtn" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>
+<!--			<s:Button id="payBtn" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>-->
 			<s:Button id="printTag" label="PRINT TAG" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintTag()"/>
-			<s:Button id="printRcpt" label="PRINT RCPT" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintReceipt()"/>
+<!--			<s:Button id="printRcpt" label="PRINT RCPT" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintReceipt()"/>-->
 		</s:VGroup>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:VGroup gap="0" width="100%">
@@ -51,18 +51,26 @@
 		<local:OrderItemList id="itemList" width="100%" height="100%" change="onItemEditted(event)"/>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-	<s:HGroup>
-		<s:Label text="Ticket:"/>
-		<s:Label id="orderID" styleName="numberLabel"/>
-		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-		<s:Label text="Items:"/>
-		<s:Label id="items" text="0" styleName="numberLabel"/>
-		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-		<s:Label text="Total:"/>
-		<s:Label id="total" text="0" styleName="numberLabel"/>
-		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-		<s:Label text="Paid:"/>
-		<s:Label id="paid" text="0" styleName="numberLabel" color="#00ff00"/>
+	<s:HGroup width="100%">
+		<s:HGroup horizontalAlign="left" width="100%">
+			<s:Label text="Ticket:"/>
+			<s:Label id="orderID" styleName="numberLabel" color="#FDC880"/>
+			<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+			<s:Label text="Status:"/>
+			<s:Label id="statusLabel" text="draft" color="#FFFF00"/>
+			<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>			
+		</s:HGroup>
+		<s:HGroup horizontalAlign="right" width="100%">
+			<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+			<s:Label text="Items:"/>
+			<s:Label id="items" text="0" styleName="numberLabel"/>
+			<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+			<s:Label text="Total:"/>
+			<s:Label id="total" text="0" styleName="numberLabel"/>
+			<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+			<s:Label text="Paid:"/>
+			<s:Label id="paid" text="0" styleName="numberLabel" color="#00ff00"/>			
+		</s:HGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<local:OrderHistoryList id="historyList" width="100%" height="40%"/>
@@ -134,6 +142,8 @@
 				{
 					onInventoryItemsChanged();
 				}
+				invalidateSize();
+				invalidateDisplayList();
 			}
 			protected override function createChildren():void
 			{
@@ -301,7 +311,7 @@
 				dispatchEvent(new Event(Event.COMPLETE));
 			}
 			
-			static private const BTN_PAY:String = "Pay";
+/* 			static private const BTN_PAY:String = "Pay";
 			//static private const BTN_PAY_CC:String = "Pay Credit Card";
 			private function onPay():void
 			{
@@ -317,10 +327,10 @@
 				popup.addButton(BTN_PAY);
 				
 				var dobj:DisplayObject = payBtn;
-/* 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
+// 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
 				
-				popup.x = dest.x;
-				popup.y = dest.y; */
+//				popup.x = dest.x;
+//				popup.y = dest.y; 
 				
 				PopUpManager.addPopUp(popup, this, true);
 				PopUpManager.centerPopUp(popup);
@@ -360,7 +370,7 @@
 					attachPosListeners(_posCmd);
 					_posCmd.run();
 				}				
-			}
+			} */
 			private var _posCmd:PosCmd;
 			private function attachPosListeners(p:PosCmd):void
 			{
@@ -394,31 +404,16 @@
 					_posCmd.run();
 					
 					const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "; marking dropped off---";
-					Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
+					//Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 	
 					_order.status = "dropped off";
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
-				}
-			}
-			private function onPrintReceipt():void
-			{
-				if (_posCmd)
-				{
-					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
-				}
-				else
-				{
-					_posCmd = PosCmd.createPrintCmd(_order, false);
-					attachPosListeners(_posCmd);
-					_posCmd.run();
+					
+					Utils.ViewOrder(_order, this);
+					
+					newOrder();
 
-					const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "; marking complete---";
-					Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
-	
-					_order.status = "complete";
-					Data.instance.writeOrderHistory(_order, msg);
-					Data.instance.writeOrder(_order);
 				}
 			}
 			private function onSelectionUpdate(foo:int):void
@@ -480,7 +475,10 @@
 				
 				paid.setStyle("color", _order.total == _order.paid ? 0x00ee00 : 0xff0000);
 				
-				printTag.enabled = printRcpt.enabled = !!_order.customerID;
+				//printTag.enabled = printRcpt.enabled = !!_order.customerID;
+				printTag.enabled = !!_order.customerID && _order.items.length > 0;
+				
+				statusLabel.text = _order.status.toUpperCase();
 			}
 
 			private var _customerList:CustomerList = new CustomerList;

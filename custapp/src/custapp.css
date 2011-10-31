@@ -16,6 +16,15 @@ local|custapp
 	chromeColor:#666666;  /*808080;*/
 }
 
+s|Button
+{
+	skinClass: ClassReference("ui.CustomButtonSkin");	
+}
+s|ButtonBarButton
+{
+	skinClass: ClassReference("ui.CustomButtonBarButtonSkin")	
+}
+
 s|DropDownList
 {
 	skinClass: ClassReference("ui.StretchyDropDownListSkin");
@@ -46,7 +55,7 @@ s|TabBar
 }
 s|Label
 {
-	color:#FFF2E2;
+	color:#FFFFE4;  /*#FFF2E2;*/
 }
 s|CheckBox
 {

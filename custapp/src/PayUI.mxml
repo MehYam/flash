@@ -117,8 +117,9 @@
 					button.name = String(b.amount);
 					button.addEventListener(MouseEvent.CLICK, onAddButton, false, 0, true);
 					button.width = 100;	
-					button.height = 100;	
+					button.height = 100;
 					buttonsCents.addElement(button);
+					
 
 					if( b.icon != null )
 					{

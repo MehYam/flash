@@ -31,8 +31,8 @@
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>
 			<s:Label text.pending="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
-			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending" color="#F79950" click="onPay()"/>
-			<ui:Button id="editBtn" label="Edit" height="80" width="150" click="onEdit(event)"/>
+			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending" click="onPay()"/>
+			<ui:Button id="editBtn" label="Edit" height="80" width="150" click="onEdit()"/>
 			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="80" width="150" includeIn="pending"/>
 			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="80" width="150" includeIn="completed"/>
 		</s:VGroup>
@@ -43,8 +43,11 @@
 			import data.Data;
 			import data.LineItem;
 			import data.Order;
+			
 			import flashx.textLayout.conversion.TextConverter;
-			import mx.managers.PopUpManager;			
+			
+			import mx.managers.PopUpManager;
+			
 			import ui.Dialog;
 			import ui.DialogEvent;
 			
@@ -160,11 +163,52 @@
 					Data.instance.writeOrder(_order);
 				}
 			}
-
-			protected function onEdit(event:MouseEvent):void
+			private var _posCmd:PosCmd;
+			private function attachPosListeners(p:PosCmd):void
 			{
-				// TODO Auto-generated method stub
-				
+				p.addEventListener(PosCmdEvent.COMPLETE, onPosCmdResult, false, 0, true);
+				p.addEventListener(PosCmdEvent.ERROR, onPosCmdResult, false, 0, true);
+				p.addEventListener(PosCmdEvent.OUTPUT, onPosCmdResult, false, 0, true);
+			}
+			private function onPosCmdResult(e:PosCmdEvent):void
+			{
+				if (e.type == PosCmdEvent.ERROR )
+				{
+					Dialog.alert(this, "Point of sale hardware error: " + e.result, "Hardware Error", [Dialog.BTN_DONE]);
+				}
+				else if( e.type == PosCmdEvent.OUTPUT )
+				{
+					Dialog.alert(this, "Point of sale hardware output: " + e.result, "Hardware Output", [Dialog.BTN_DONE]);	
+				}
+				else if( e.type == PosCmdEvent.COMPLETE )
+				{
+					_posCmd = null;
+				}
+			}
+			private function onPrintReceipt():void
+			{
+				if (_posCmd)
+				{
+					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
+				}
+				else
+				{
+					_posCmd = PosCmd.createPrintCmd(_order, false);
+					attachPosListeners(_posCmd);
+					_posCmd.run();
+					
+					const msg:String = "---Printing receipt and marking order complete---";
+					//Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
+					
+					_order.status = "complete";
+					Data.instance.writeOrderHistory(_order, msg);
+					Data.instance.writeOrder(_order);
+				}
+			}
+
+			protected function onEdit():void
+			{
+				Utils.EditOrder(_order, this.parentApplication.AppViewStack, "FOO");
 			}
 			
 		]]>

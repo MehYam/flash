@@ -22,7 +22,7 @@
 -->		
 		<s:Image width="125" height="125" right="4" bottom="0" source="@Embed(source='ui/jclogo3-white.jpg')"/>
 	</s:Group>
-	<mx:ViewStack id="stack" borderStyle="solid" width="100%" height="100%">
+	<mx:ViewStack id="stack" name="AppViewStack" borderStyle="solid" width="100%" height="100%">
 <!--		<s:NavigatorContent label="TEST">
 			<local:OrderViewer/>
 		</s:NavigatorContent>
@@ -45,9 +45,10 @@
 
 	<fx:Script>
 		<![CDATA[
+			import flash.events.FullScreenEvent;
+			
 			import mx.core.IFlexDisplayObject;
-			import flash.events.FullScreenEvent; 
-
+			
 			import spark.components.TitleWindow;
 			private function onInit():void
 			{
@@ -61,18 +62,28 @@
 				nativeWindow.maximize();
 				nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 							
+				//register global key handler
+				nativeWindow.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 			}
-			
-			private function onFullScreen(e:Event):void
+			public function handleKeyDown(event:KeyboardEvent) :void
 			{
-				//if( stage.displayState == StageDisplayState.NORMAL ) {
-				nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
-				//fullscreenButton.label = "Exit Fullscreen"; 
-				//} 
-				/* else {
-				stage.displayState = StageDisplayState.NORMAL;
-				fullscreenButton.label = "Go Fullscreen";
-				} */
+				if( event.keyCode == Keyboard.F11 )
+				{
+					//toggle full-screen mode
+					toggleFullScreen();
+				}
+			}
+				
+			public function get AppViewStack():ViewStack {	return stack;}
+			
+			private function toggleFullScreen():void
+			{
+				if( nativeWindow.stage.displayState == StageDisplayState.NORMAL ) {
+					nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				} 
+				else {
+					nativeWindow.stage.displayState = StageDisplayState.NORMAL;
+				}
 			}
 			private function onExit(e:Event):void
 			{
