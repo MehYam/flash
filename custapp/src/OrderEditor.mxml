@@ -9,6 +9,7 @@
 		 paddingRight="5"
 		 creationComplete="onInit()" 
 		 >
+	
 	<fx:Declarations>
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
@@ -392,10 +393,12 @@
 					attachPosListeners(_posCmd);
 					_posCmd.run();
 					
-					const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "---";
+					const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "; marking dropped off---";
 					Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 	
+					_order.status = "dropped off";
 					Data.instance.writeOrderHistory(_order, msg);
+					Data.instance.writeOrder(_order);
 				}
 			}
 			private function onPrintReceipt():void
@@ -410,10 +413,12 @@
 					attachPosListeners(_posCmd);
 					_posCmd.run();
 
-					const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "---";
+					const msg:String = "---Printing receipt " + _order.id + " for " + customer.text + " " + total.text + "; marking complete---";
 					Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
 	
+					_order.status = "complete";
 					Data.instance.writeOrderHistory(_order, msg);
+					Data.instance.writeOrder(_order);
 				}
 			}
 			private function onSelectionUpdate(foo:int):void
@@ -555,4 +560,5 @@
 			}
 		]]>
 	</fx:Script>
+
 </s:VGroup>

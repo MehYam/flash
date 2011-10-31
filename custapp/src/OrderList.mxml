@@ -172,31 +172,49 @@
 			private var _orderEditorPopup:Dialog;
 			private function onEditOrder():void
 			{
-				if (!_orderEditorPopup)
+				if( order.status == "draft" )
 				{
-					var orderEditor:OrderEditor = new OrderEditor;
-					orderEditor.percentHeight = 100;
-					orderEditor.percentWidth = 100;
-					orderEditor.asPopup = true;
+					if (!_orderEditorPopup)
+					{
+						var orderEditor:OrderEditor = new OrderEditor;
+						orderEditor.percentHeight = 100;
+						orderEditor.percentWidth = 100;
+						orderEditor.asPopup = true;
+						
+						_orderEditorPopup = new Dialog;
+						_orderEditorPopup.bodyContent = orderEditor;
+						_orderEditorPopup.addButton(Dialog.BTN_DONE);
+						_orderEditorPopup.addEventListener(Event.COMPLETE, onOrderEditorClose, false, 0, true);
+					}
+					_orderEditorPopup.width = width;
+					_orderEditorPopup.height = height;
 					
-					_orderEditorPopup = new Dialog;
-					_orderEditorPopup.bodyContent = orderEditor;
-					_orderEditorPopup.addButton(Dialog.BTN_DONE);
-					_orderEditorPopup.addEventListener(Event.COMPLETE, onOrderEditorClose, false, 0, true);
+					const order:Order = Order(orders.selectedItem);
+					OrderEditor(_orderEditorPopup.bodyContent).order = order;
+					_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
+					
+					PopUpManager.addPopUp(_orderEditorPopup, parent, true);
+					// KAI: with the right combination of percent height, centerPopUp was causing an infinite loop!  
+					// Flex seems stuck in a measure -> invalidate -> measure kinda thing under validateNow().
+					// Fixed it with the popup.height setting above
+					PopUpManager.centerPopUp(_orderEditorPopup);
+					_orderEditorPopup.y = 0;
 				}
-				_orderEditorPopup.width = width;
-				_orderEditorPopup.height = height;
-
-				const order:Order = Order(orders.selectedItem);
-				OrderEditor(_orderEditorPopup.bodyContent).order = order;
-				_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid); 
-
-				PopUpManager.addPopUp(_orderEditorPopup, parent, true);
-				// KAI: with the right combination of percent height, centerPopUp was causing an infinite loop!  
-				// Flex seems stuck in a measure -> invalidate -> measure kinda thing under validateNow().
-				// Fixed it with the popup.height setting above
-				PopUpManager.centerPopUp(_orderEditorPopup);
-				_orderEditorPopup.y = 0;
+				else
+				{
+					var oview:OrderViewer = new OrderViewer;
+					oview.order = order;
+					
+					var popup2:Dialog = new Dialog;
+					popup2.bodyContent = oview;
+					popup2.autoClose = true;
+					popup2.title = "Order Viewer";
+					popup2.addButton(Dialog.BTN_DONE);
+					
+					PopUpManager.addPopUp(popup2, this, true);
+					PopUpManager.centerPopUp(popup2);
+					//popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
+				}
 			}
 			private function onOrderEditorClose(e:DialogEvent):void
 			{

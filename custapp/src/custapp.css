@@ -23,13 +23,13 @@ s|DropDownList
 
 s|DataGrid
 {
-	content-background-color:#FFF2E2;
+	content-background-color:white;
 }
 
 s|TextInput
 {
 	skin-class: ClassReference("ui.CustomTextInputSkin");
-	content-background-color:#FFF2E2;
+	content-background-color:white;
 }
 
 s|TextInput:normalWithPrompt {

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:spark="karnold.spark.*" currentState="pending"
+		 width="900" height="600" xmlns:ui="ui.*">
+	
+	
+	<fx:Declarations>
+		<fx:String id="htmlTextAsHTML"><![CDATA[<p>Order not loaded.</p>]]></fx:String>
+	</fx:Declarations>
+	<s:states>
+		<s:State name="pending"/>
+		<s:State name="completed"/>	   
+	</s:states>
+	<s:Rect height="100%" width="100%">
+		<s:stroke>
+			<s:SolidColorStroke color="white"/>
+		</s:stroke>
+	</s:Rect>
+	<s:HGroup paddingTop="30" paddingLeft="30" paddingRight="30" paddingBottom="30" width="100%">
+<!--		<s:Rect height="450" width="350">
+			<s:fill>
+				<s:SolidColor color="white"/>
+			</s:fill>
+		</s:Rect>-->
+		<s:RichText id="richTxt" backgroundColor="white" fontFamily="Courier New"
+					textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
+					horizontalCenter="0" verticalCenter="0" />
+
+		<s:VGroup paddingLeft="50">
+			<s:Label text="Order Status:"/>
+			<s:Label text.pending="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
+			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending" color="#F79950" click="onPay()"/>
+			<ui:Button id="editBtn" label="Edit" height="80" width="150" click="onEdit(event)"/>
+			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="80" width="150" includeIn="pending"/>
+			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="80" width="150" includeIn="completed"/>
+		</s:VGroup>
+	</s:HGroup>
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Data;
+			import data.LineItem;
+			import data.Order;
+			import flashx.textLayout.conversion.TextConverter;
+			import mx.managers.PopUpManager;			
+			import ui.Dialog;
+			import ui.DialogEvent;
+			
+
+			private var _order:Order
+			public function set order(o:Order):void
+			{
+				_order = o;
+				currentState = (o.status == "dropped off" ? "pending" : "completed");
+				updateSlipView(o);
+			}
+			private function updateSlipView(o:Order):void
+			{
+				var dt:Date = new Date();
+				dt.time = o.creationTime;
+				var isTicket:Boolean = (o.status == "dropped off");
+				Data.instance.loadOrderHistory(_order);
+				htmlTextAsHTML =
+					"<br/><p align='center' ><strong> \
+					J&#39;s Cleaners &amp; Alterations<br/> \
+					205 S San Mateo Dr<br/> \
+					San Mateo, CA 94010<br/></strong> \
+					------------------------------------------------&nbsp;<br/><strong>" +
+					(isTicket ? "CLAIM TICKET" : "SALES RECEIPT") +
+					"</strong><br/>------------------------------------------------&nbsp;</p><p><br/>" +
+					dt.toLocaleDateString() + " " + dt.toLocaleTimeString() + "<br/>Ticket # " + o.id +
+					"<br/><br/>" +
+					(isTicket? "Qty Description" : "Qty Description        Per Item Amount" ) +
+					"<br/>=== " + (isTicket? "============================================" : "====================== ========= ===========") + "<br/></p>";
+
+				for each (var line:LineItem in o.items.source) 
+					{
+						if( isTicket )
+						{
+							htmlTextAsHTML += line.quantity + "  " +  line.name + (line.description ? " (" + line.description + ")" : "");
+						}
+						else
+						{
+							htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + (line.description ? "\r\n\t" + line.description : "");
+						}
+						htmlTextAsHTML += "<br/>";
+					}
+				
+					
+					
+
+
+//					<p>Ticket ID: " + o.id + </p>;
+				
+				//			orderID.text = String(_order.id);
+				//			customer.text = _order.customerID ? formatCustomer(Data.instance.getCustomer(_order.customerID)) : null;
+				//			
+				//			var d:Date = new Date();
+				//			d.time = _order.pickupTime;
+				//			date.selectedDate = d;
+				//			
+				//			const min:int = timeValues.getItemAt(0).value;
+				//			const max:int = timeValues.getItemAt(timeValues.length-1).value;
+				//			const hour:int = Math.min(Math.max(min, d.hours), max);
+				//			time.selectedIndex = hour - min;
+				//			
+				//			itemList.items = _order.items;
+				//			
+				//			historyList.history = _order.history;
+				//			
+				//			updateUI();
+			}
+			
+
+			static private const BTN_PAY:String = "Pay";
+			//static private const BTN_PAY_CC:String = "Pay Credit Card";
+			private function onPay():void
+			{
+				var pay:PayUI = new PayUI;
+				pay.total = _order.total;
+				//pay.owing = _order.total - _order.paid;
+				
+				var popup:Dialog = new Dialog;
+				popup.bodyContent = pay;
+				popup.autoClose = true;
+				popup.title = "Payment";
+				popup.addButton(Dialog.BTN_CANCEL);
+				popup.addButton(BTN_PAY);
+				
+				var dobj:DisplayObject = payBtn;
+				/* 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
+				
+				popup.x = dest.x;
+				popup.y = dest.y; */
+				
+				PopUpManager.addPopUp(popup, this, true);
+				PopUpManager.centerPopUp(popup);
+				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
+			}
+			private function onPayComplete(e:DialogEvent):void
+			{
+				var result:String = e.result;
+				if( result == BTN_PAY )
+				{
+					const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
+					const change:Number = pay.paying - pay.total; 
+					const paymentType:String = pay.paymentType;
+					
+					_order.paid = Math.min(_order.total, _order.paid + pay.paying);
+					pay.handleCustomerChange();
+					
+					//update dialog UI
+					_order.status = "completed";
+					currentState = "completed";
+					updateSlipView(_order);
+					
+					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change) + ", payment type: " + paymentType);
+					Data.instance.writeOrder(_order);
+				}
+			}
+
+			protected function onEdit(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+		]]>
+	</fx:Script>
+
+</s:Group>
+
