@@ -57,6 +57,22 @@ package
 		{
 			return days * 24 * 60 * 60 * 1000;
 		}
+		static public function get beginningOfDay():Date
+		{
+			var retval:Date = new Date;
+			retval.hours = 0;
+			retval.minutes = 0;
+			retval.seconds = 0;
+			return retval;
+		}
+		static public function get endOfDay():Date
+		{
+			var retval:Date = new Date;
+			retval.hours = 23;
+			retval.minutes = 59;
+			retval.seconds = 59;
+			return retval;
+		}
 		static public function customerMatchesPattern(customer:Object, pattern:String):Boolean
 		{
 			return matches(customer.first, pattern) || 
@@ -66,7 +82,7 @@ package
 				matches(customer.email, pattern);
 		}
 
-		static public function EditOrder(o:Order, p:DisplayObject, title:String):void
+		static public function EditOrder(o:Order, p:DisplayObject, title:String):Dialog
 		{
 			var orderEditor:OrderEditor = new OrderEditor;
 			orderEditor.order = o;
@@ -89,6 +105,7 @@ package
 			PopUpManager.centerPopUp(popup);
 			popup.y = 0;  //center popup will center y; this is to set it back to the top edge
 			
+			return popup;
 			//					//KAI: null check
 			//					var orderEditor:OrderEditor = new OrderEditor;
 			//					orderEditor.order = order;
