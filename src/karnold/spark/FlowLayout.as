@@ -100,7 +100,7 @@ package karnold.spark
 				const elementHeight:Number = updatingDisplayList ? element.getLayoutBoundsHeight() : element.getPreferredBoundsHeight();
 
 				currentRowHeight = Math.max(currentRowHeight, elementHeight);
-				if (layout.x > 0 && (layout.x + elementWidth > target.width))
+				if (layout.x > 0 && (int(layout.x + elementWidth) > target.width))
 				{
 					// row has exceeded width, wrap to a new one
 					layout.x = 0;
