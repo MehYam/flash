@@ -12,6 +12,10 @@ package
 	import flash.events.NativeProcessExitEvent;
 	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
+	
+	import mx.controls.Alert;
+	
+	import ui.Dialog;
 
 	[Event(name="PosCmdEvent.COMPLETE", type="src.PosCmdEvent")]
 	[Event(name="PosCmdEvent.ERROR", type="src.PosCmdEvent")]
@@ -43,17 +47,17 @@ package
 		}
 		// template method
 		public function run():void	
-		{
+		{			
 			if (!_p.running)
 			{
 				var startupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo;
 				startupInfo.executable = (new File).resolvePath(Data.settings.data.poscmdPath);
 				startupInfo.arguments = new Vector.<String>();
 
-				if (Data.settings.data.simulatePOS)
-				{
-					startupInfo.arguments.push("/emu");
-				}
+//				if (Data.settings.data.simulatePOS)
+//				{
+//					startupInfo.arguments.push("/emu");
+//				}
 				run_impl(_p, startupInfo);
 			}
 		}
@@ -61,6 +65,8 @@ package
 		protected function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void  {}
 		private function onPosCmdStdOut(e:Event):void
 		{
+			//Dialog.alert(this, "onPosCmdStdOut", "kira", [Dialog.BTN_DONE]);
+
 			const result:String = _p.standardOutput.readUTFBytes(_p.standardOutput.bytesAvailable);
 			trace(result);
 			
@@ -82,8 +88,10 @@ package
 		}
 		private function onPosCmdError(e:IOErrorEvent):void
 		{
-			const result:String = e.toString();
+			//Dialog.alert(this, "onPosCmdError", "kira", [Dialog.BTN_DONE]);
+			
 			trace("pos cmd error, code", result);
+			const result:String = e.toString();
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.ERROR, result));
 		}
@@ -162,11 +170,15 @@ final class PrintPosCmd extends PosCmd
 	}
 	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
 	{
-		startupInfo.arguments.push("/printSlip");
+//		startupInfo.arguments.push("/printSlip");
 
 		np.start(startupInfo);
-		np.standardInput.writeUTFBytes(_command);
-		np.standardInput.writeUTFBytes("[EOF]\r\n");
+		if( Data.settings.data.simulatePOS )
+		{
+			np.standardInput.writeUTFBytes("[emu]\r\n");			
+		}
+		np.standardInput.writeUTFBytes("[printSlip]\r\n");
+		np.standardInput.writeUTFBytes(_command + "\r\n[EOF]\r\n");
 	}
 }
 
@@ -178,7 +190,12 @@ final class OpenDrawerPosCmd extends PosCmd
 	}
 	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
 	{
-		startupInfo.arguments.push("/OpenDrawer");
 		np.start(startupInfo);
+
+		if( Data.settings.data.simulatePOS )
+		{
+			np.standardInput.writeUTFBytes("[emu]\r\n");			
+		}
+		np.standardInput.writeUTFBytes("[openDrawer]\r\n[EOF]\r\n");
 	}
 }

@@ -28,11 +28,11 @@
 -->	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%">
-		<s:VGroup id="commandButtons" gap="1">
-<!--			<s:Button id="payBtn" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>-->
-			<s:Button id="printTag" label="PRINT TAG" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintTag()"/>
-<!--			<s:Button id="printRcpt" label="PRINT RCPT" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintReceipt()"/>-->
+		<!--		<s:VGroup id="commandButtons" gap="1">
+			<s:Button id="payBtn" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>
+			<s:Button id="printRcpt" label="PRINT RCPT" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintReceipt()"/>
 		</s:VGroup>
+		-->
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:VGroup gap="0" width="100%">
 			<s:TabBar height="50" width="100%" color="0x0000bb" fontWeight="bold" dataProvider="{stack}"/>
@@ -73,7 +73,12 @@
 		</s:HGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-	<local:OrderHistoryList id="historyList" width="100%" height="40%"/>
+	<s:HGroup width="100%">
+		<local:OrderHistoryList id="historyList" width="50%" height="40%"/>
+		<s:Button label="NEW" height="100%" width="10%"/>
+		<s:Button label="CANCEL" height="100%" width="10%"/>
+		<s:Button id="printTag" label="Print Ticket" width="30%" height="100%" color="0xF79950" click="onPrintTag()"/>
+	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
@@ -86,6 +91,7 @@
 			
 			import mx.binding.utils.BindingUtils;
 			import mx.collections.ArrayList;
+			import mx.controls.Alert;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IUIComponent;
 			import mx.core.IVisualElementContainer;
@@ -182,7 +188,7 @@
 				date.selectedDate = new Date;
 
 				// Command buttons ///////////////////////////////////////////////
-				addButton(asPopup ? _closeButton : _newButton);
+				//addButton(asPopup ? _closeButton : _newButton);
 				
 				BindingUtils.bindSetter(onSelectionUpdate, itemList.grid, "selectedIndex");
 			}
@@ -264,21 +270,21 @@
 			{
 				newOrder();
 			}
-			private function addButton(cmd:Object):void
-			{
-				var cmdButton:Button = new Button;
-				cmdButton.width = 125;
-				cmdButton.height = 50;
-				cmdButton.styleName = "commandButton";
-				cmdButton.setStyle("color", cmd.color);
-				cmdButton.label = cmd.name;
-				
-				if (cmd.handler)
-				{
-					cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
-				}
-				commandButtons.addElementAt(cmdButton, 0);
-			}
+//			private function addButton(cmd:Object):void
+//			{
+//				var cmdButton:Button = new Button;
+//				cmdButton.width = 125;
+//				cmdButton.height = 50;
+//				cmdButton.styleName = "commandButton";
+//				cmdButton.setStyle("color", cmd.color);
+//				cmdButton.label = cmd.name;
+//				
+//				if (cmd.handler)
+//				{
+//					cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
+//				}
+//				commandButtons.addElementAt(cmdButton, 0);
+//			}
 			private function newOrder():void
 			{
 				var pickupTime:Date = new Date();
@@ -398,7 +404,7 @@
 					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
 				}
 				else
-				{
+				{					
 					_posCmd = PosCmd.createPrintCmd(_order, true);
 					attachPosListeners(_posCmd);
 					_posCmd.run();
@@ -413,7 +419,6 @@
 					Utils.ViewOrder(_order, this);
 					
 					newOrder();
-
 				}
 			}
 			private function onSelectionUpdate(foo:int):void
