@@ -7,12 +7,17 @@
 		 paddingTop="5"
 		 paddingLeft="5"
 		 paddingRight="5"
-		 creationComplete="onInit()" 
+		 creationComplete="onInit()" currentState="needCustomer"
 		 >
 	
 	<fx:Declarations>
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
+	<s:states>
+		<s:State name="printReady"/>
+		<s:State name="needCustomer"/>
+		<s:State name="needItems"/>
+	</s:states>
 	<s:HGroup width="100%">
 		<s:TextInput id="customer" width="300" height="100%" fontWeight="bold" editable="false" selectable="false" prompt="Click to select customer" click="onSelectCustomer()"/>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
@@ -73,11 +78,12 @@
 		</s:HGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-	<s:HGroup width="100%">
-		<local:OrderHistoryList id="historyList" width="50%" height="40%"/>
-		<s:Button label="NEW" height="100%" width="10%"/>
-		<s:Button label="CANCEL" height="100%" width="10%"/>
-		<s:Button id="printTag" label="Print Ticket" width="30%" height="100%" color="0xF79950" click="onPrintTag()"/>
+	<s:HGroup width="100%" height="150">
+		<s:HGroup width="70%" height="100%">
+			<local:OrderHistoryList id="historyList" width="75%" height="100%"/>
+			<s:Button label="NEW" visible="{!asPopup}" height="100%" width="25%" click="onNew(event)"/>			
+		</s:HGroup>
+		<s:Button id="printTag" label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" width="30%" height="100%" color="0xF79950" click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
@@ -481,7 +487,19 @@
 				paid.setStyle("color", _order.total == _order.paid ? 0x00ee00 : 0xff0000);
 				
 				//printTag.enabled = printRcpt.enabled = !!_order.customerID;
-				printTag.enabled = !!_order.customerID && _order.items.length > 0;
+				//printTag.enabled = !!_order.customerID && _order.items.length > 0;
+				if(!!_order.customerID && _order.items.length > 0)
+				{
+					currentState = "printReady";
+				}
+				else if( !!_order.customerID )
+				{
+					currentState = "needItems";
+				}
+				else
+				{
+					currentState = "needCustomer";
+				}					
 				
 				statusLabel.text = _order.status.toUpperCase();
 			}
