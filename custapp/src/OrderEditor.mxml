@@ -73,11 +73,10 @@
 		</s:HGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-	<s:HGroup width="100%">
-		<local:OrderHistoryList id="historyList" width="50%" height="40%"/>
-		<s:Button label="NEW" height="100%" width="10%"/>
-		<s:Button label="CANCEL" height="100%" width="10%"/>
-		<s:Button id="printTag" label="Print Ticket" width="30%" height="100%" color="0xF79950" click="onPrintTag()"/>
+	<s:HGroup width="100%" height="150">
+		<local:OrderHistoryList id="historyList" width="100%" height="100%"/>
+		<s:Button label="NEW" height="100%" width="25%" visible="{!asPopup}"/>
+		<s:Button id="printTag" label="Print Ticket" width="50%" height="100%" color="0xF79950" click="onPrintTag()"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
@@ -188,8 +187,6 @@
 				date.selectedDate = new Date;
 
 				// Command buttons ///////////////////////////////////////////////
-				//addButton(asPopup ? _closeButton : _newButton);
-				
 				BindingUtils.bindSetter(onSelectionUpdate, itemList.grid, "selectedIndex");
 			}
 			private function onInventoryItemsChanged(e:Event = null):void
@@ -317,66 +314,6 @@
 				dispatchEvent(new Event(Event.COMPLETE));
 			}
 			
-/* 			static private const BTN_PAY:String = "Pay";
-			//static private const BTN_PAY_CC:String = "Pay Credit Card";
-			private function onPay():void
-			{
-				var pay:PayUI = new PayUI;
-				pay.total = _order.total;
-				//pay.owing = _order.total - _order.paid;
-					
-				var popup:Dialog = new Dialog;
-				popup.bodyContent = pay;
-				popup.autoClose = true;
-				popup.title = "Payment";
-				popup.addButton(Dialog.BTN_CANCEL);
-				popup.addButton(BTN_PAY);
-				
-				var dobj:DisplayObject = payBtn;
-// 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
-				
-//				popup.x = dest.x;
-//				popup.y = dest.y; 
-				
-				PopUpManager.addPopUp(popup, this, true);
-				PopUpManager.centerPopUp(popup);
-				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
-			}
-			private function onPayComplete(e:DialogEvent):void
-			{
-				var result:String = e.result;
-				if( result == BTN_PAY )
-				{
-					const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
-					const change:Number = pay.paying - pay.total; 
-					const paymentType:String = pay.paymentType;
-	
-					_order.paid = Math.min(_order.total, _order.paid + pay.paying);
-					
-					updateUI();
-
-					if (change > 0)
-					{
-						popCashDrawer();
-						Dialog.alert(this, "Give " + Utils.currencyFormatter.format(change) + " change to customer.", "Cash Drawer Open", [Dialog.BTN_DONE]);
-					}
-					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change) + ", payment type: " + paymentType);
-					Data.instance.writeOrder(_order);
-				}
-			}
-			private function popCashDrawer():void
-			{
-				if (_posCmd)
-				{
-					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
-				}
-				else
-				{
-					_posCmd = PosCmd.createOpenDrawerCmd();
-					attachPosListeners(_posCmd);
-					_posCmd.run();
-				}				
-			} */
 			private var _posCmd:PosCmd;
 			private function attachPosListeners(p:PosCmd):void
 			{
@@ -418,7 +355,10 @@
 					
 					Utils.ViewOrder(_order, this);
 					
-					newOrder();
+					if (!asPopup)
+					{
+						newOrder();
+					}
 				}
 			}
 			private function onSelectionUpdate(foo:int):void

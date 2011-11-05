@@ -125,7 +125,7 @@ final class PrintPosCmd extends PosCmd
 	static private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 	{
 		// tenderAmount - NOT HOOKED UP
-		const customer:Object = Data.instance.getCustomer(order.customerID);
+		const customer:Object = Data.instance.getCustomer(order.customerID) || { name: "Kira Tsu", email: "kerbumble@yahoo.com", phone: "650ggghhhh"};
 		const command:Object =
 		{
 			type: ticket ? "ticket" : "receipt",
@@ -145,12 +145,11 @@ final class PrintPosCmd extends PosCmd
 			},
 			customerInfo:
 			{
-				name: customer.name || "Kira Tsu",
-				address: customer.email || "kerbumble@yahoo.com",
-				phone: customer.phone || "6502003022"
+				name: customer.name,
+				address: customer.email,
+				phone: customer.phone
 			},
 			items: []
-
 		};
 		
 		for each (var item:LineItem in order.items.source)

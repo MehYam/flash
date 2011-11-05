@@ -2,7 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 xmlns:spark="karnold.spark.*" currentState="pending"
+		 xmlns:spark="karnold.spark.*" currentState="draft"
 		 width="900" height="600" xmlns:ui="ui.*">
 	
 	
@@ -10,7 +10,7 @@
 		<fx:String id="htmlTextAsHTML"><![CDATA[<p>Order not loaded.</p>]]></fx:String>
 	</fx:Declarations>
 	<s:states>
-		<s:State name="pending"/>
+		<s:State name="draft"/>
 		<s:State name="completed"/>	   
 	</s:states>
 	<s:Rect height="100%" width="100%">
@@ -30,11 +30,11 @@
 
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>
-			<s:Label text.pending="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
-			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="pending" click="onPay()"/>
+			<s:Label text.draft="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
+			<ui:Button id="payBtn" label="Pay" height="80" width="150" includeIn="draft" click="onPay()"/>
 			<ui:Button id="editBtn" label="Edit" height="80" width="150" click="onEdit()"/>
-			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="80" width="150" includeIn="pending"/>
-			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="80" width="150" includeIn="completed"/>
+			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="80" width="150" includeIn="draft"/>
+			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="80" width="150" includeIn="completed" click="onPrintReceipt()"/>
 		</s:VGroup>
 	</s:HGroup>
 	
@@ -56,7 +56,7 @@
 			public function set order(o:Order):void
 			{
 				_order = o;
-				currentState = (o.status == "dropped off" ? "pending" : "completed");
+				currentState = (o.status == Order.STATUS_DROPPED_OFF ? Order.STATUS_DRAFT : Order.STATUS_COMPLETED);
 				updateSlipView(o);
 			}
 			private function updateSlipView(o:Order):void
@@ -133,11 +133,6 @@
 				popup.addButton(BTN_PAY);
 				
 				var dobj:DisplayObject = payBtn;
-				/* 				var dest:Point = globalToLocal(dobj.localToGlobal(new Point(dobj.x + dobj.width, dobj.y)));
-				
-				popup.x = dest.x;
-				popup.y = dest.y; */
-				
 				PopUpManager.addPopUp(popup, this, true);
 				PopUpManager.centerPopUp(popup);
 				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
@@ -155,12 +150,15 @@
 					pay.handleCustomerChange();
 					
 					//update dialog UI
-					_order.status = "completed";
-					currentState = "completed";
+					_order.status = Order.STATUS_COMPLETED;
+					currentState = Order.STATUS_COMPLETED;
 					updateSlipView(_order);
-					
+
+					onPrintReceipt();
+
 					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change) + ", payment type: " + paymentType);
 					Data.instance.writeOrder(_order);
+					
 				}
 			}
 			private var _posCmd:PosCmd;
@@ -200,17 +198,23 @@
 					const msg:String = "---Printing receipt and marking order complete---";
 					//Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
 					
-					_order.status = "complete";
+					_order.status = Order.STATUS_COMPLETED;
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
 				}
 			}
 
-			protected function onEdit():void
+			private var _orderEditor:Dialog;
+			private function onEdit():void
 			{
-				Utils.EditOrder(_order, this.parentApplication.AppViewStack, "FOO");
+				if (!_orderEditor)
+				{
+					_orderEditor = Utils.createOrderEditorDialog(_order, "title");
+				}
+				_orderEditor.title = "Total:" + Utils.currencyFormatter.format(_order.total) + ", Paid:" + Utils.currencyFormatter.format(_order.paid);
+
+				Utils.showDialog(DisplayObject(parentApplication), _orderEditor);
 			}
-			
 		]]>
 	</fx:Script>
 

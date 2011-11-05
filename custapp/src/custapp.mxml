@@ -22,7 +22,7 @@
 -->		
 		<s:Image width="125" height="125" right="4" bottom="0" source="@Embed(source='ui/jclogo3-white.jpg')"/>
 	</s:Group>
-	<mx:ViewStack id="stack" name="AppViewStack" borderStyle="solid" width="100%" height="100%">
+	<mx:ViewStack id="stack" name="appViewStack" borderStyle="solid" width="100%" height="100%">
 <!--		<s:NavigatorContent label="TEST">
 			<local:OrderViewer/>
 		</s:NavigatorContent>
@@ -45,6 +45,8 @@
 
 	<fx:Script>
 		<![CDATA[
+			import data.Order;
+			
 			import flash.events.FullScreenEvent;
 			
 			import mx.core.IFlexDisplayObject;
@@ -63,7 +65,7 @@
 				nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 							
 				//register global key handler
-				nativeWindow.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+				nativeWindow.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyDown);
 			}
 			public function handleKeyDown(event:KeyboardEvent) :void
 			{
@@ -90,7 +92,13 @@
 				exit();
 			}
 
-			
+
+			private function onClick():void
+			{
+//				var _posCmd:PosCmd = PosCmd.createOpenDrawerCmd();
+				var _posCmd:PosCmd = PosCmd.createPrintCmd(new Order, false);
+				_posCmd.run();
+			}
 		]]>
 	</fx:Script>
 </s:WindowedApplication>
