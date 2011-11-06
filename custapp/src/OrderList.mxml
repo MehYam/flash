@@ -42,7 +42,7 @@
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:CheckBox id="showDroppedoff" label="Show Dropped Off" selected="true" height="100%" change="onFilterChange()"/>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-		<s:CheckBox id="showCompleted" label="Show Completed" selected="false" height="100%" change="onFilterChange()"/>
+		<s:CheckBox id="showCompleted" label="Show Completed" selected="true" height="100%" change="onFilterChange()"/>
 	</s:HGroup>
 	<s:Line width="100%">
 		<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
@@ -179,9 +179,12 @@
 				{
 					if (!_orderEditorPopup)
 					{
-						var title:String = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid);
-						_orderEditorPopup = Utils.EditOrder(order, parentApplication.AppViewStack, title);
+						_orderEditorPopup = Utils.createOrderEditorDialog();
 					}
+					OrderEditor(_orderEditorPopup.bodyContent).order = order;
+
+					_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid);
+					Utils.showDialog(this, _orderEditorPopup);// DisplayObject(parentApplication), _orderEditorPopup);
 				}
 				else
 				{

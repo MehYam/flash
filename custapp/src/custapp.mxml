@@ -22,11 +22,12 @@
 -->		
 		<s:Image width="125" height="125" right="4" bottom="0" source="@Embed(source='ui/jclogo3-white.jpg')"/>
 	</s:Group>
-	<mx:ViewStack id="stack" name="AppViewStack" borderStyle="solid" width="100%" height="100%">
+	<mx:ViewStack id="stack" name="appViewStack" borderStyle="solid" width="100%" height="100%">
 <!--		<s:NavigatorContent label="TEST">
 			<local:OrderViewer/>
 		</s:NavigatorContent>
--->		<s:NavigatorContent label="DROP OFF">
+		-->
+		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="PICK UP">
@@ -39,19 +40,28 @@
 			<local:InventoryItemList width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="*ADMIN*">
-			<local:AdminPanel/>
+			<local:AdminPanel height="100%"/>
 		</s:NavigatorContent>
 	</mx:ViewStack>
 
 	<fx:Script>
 		<![CDATA[
+			import data.Order;
+			
 			import flash.events.FullScreenEvent;
+			
+			import karnold.utils.Util;
 			
 			import mx.core.IFlexDisplayObject;
 			
 			import spark.components.TitleWindow;
 			private function onInit():void
 			{
+				// system setup stuff
+				systemManager.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+				Util.setLogCallback(Utils.concatDebugOutputCallback);
+
+				// everything else
 				var rect:Rectangle = new Rectangle;
 
 				rect.width = Capabilities.screenResolutionX;
@@ -63,7 +73,17 @@
 				nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 							
 				//register global key handler
-				nativeWindow.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+				nativeWindow.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyDown);
+			}
+			private var _inUncaughtError:Boolean = false;
+			private function onUncaughtError(e:UncaughtErrorEvent):void
+			{
+				if (!_inUncaughtError)
+				{
+					_inUncaughtError = true;
+					Util.error("Uncaught error:", e.toString());
+					_inUncaughtError = false;
+				}
 			}
 			public function handleKeyDown(event:KeyboardEvent) :void
 			{
@@ -90,7 +110,13 @@
 				exit();
 			}
 
-			
+
+			private function onClick():void
+			{
+//				var _posCmd:PosCmd = PosCmd.createOpenDrawerCmd();
+				var _posCmd:PosCmd = PosCmd.createPrintCmd(new Order, false);
+				_posCmd.run();
+			}
 		]]>
 	</fx:Script>
 </s:WindowedApplication>

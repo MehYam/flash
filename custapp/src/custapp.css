@@ -16,6 +16,7 @@ local|custapp
 	chromeColor:#666666;  /*808080;*/
 }
 
+
 s|Button
 {
 	skinClass: ClassReference("ui.CustomButtonSkin");	
@@ -28,11 +29,17 @@ s|ButtonBarButton
 s|DropDownList
 {
 	skinClass: ClassReference("ui.StretchyDropDownListSkin");
+	contentBackgroundColor: #666666;
 }
 
 s|DataGrid
 {
 	content-background-color:white;
+}
+
+s|VScrollBar
+{
+	/* KAI: application-wide wider scrollbars, prolly accomplished with a skin */
 }
 
 s|TextInput

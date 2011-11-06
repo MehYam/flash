@@ -55,46 +55,48 @@ package data
 		/// Database table descriptions ///////////////////////////////////////////////////////
 		static private const CUSTOMER_TABLE:String = "customers";
 		static private const CUSTOMER_FIELDS:Array = 
-			[
-				{ name: "first", type: SQLHelper.TYPE_TEXT },
-				{ name: "last",  type: SQLHelper.TYPE_TEXT },
-				{ name: "phone", type: SQLHelper.TYPE_TEXT },
-				{ name: "email", type: SQLHelper.TYPE_TEXT },
-				{ name: "notes", type: SQLHelper.TYPE_TEXT }
-			];
+		[
+			{ name: "first", type: SQLHelper.TYPE_TEXT },
+			{ name: "last",  type: SQLHelper.TYPE_TEXT },
+			{ name: "phone", type: SQLHelper.TYPE_TEXT },
+			{ name: "email", type: SQLHelper.TYPE_TEXT },
+			{ name: "notes", type: SQLHelper.TYPE_TEXT }
+		];
 		static private const INVENTORY_ITEMS_TABLE:String = "items";
 		static private const INVENTORY_ITEM_FIELDS:Array = 
-			[
-				{ name: "name", type: SQLHelper.TYPE_TEXT },
-				{ name: "price", type: SQLHelper.TYPE_REAL },
-				{ name: "category", type: SQLHelper.TYPE_TEXT }
-			];
+		[
+			{ name: "name", type: SQLHelper.TYPE_TEXT },
+			{ name: "price", type: SQLHelper.TYPE_REAL },
+			{ name: "category", type: SQLHelper.TYPE_TEXT }
+		];
 		static private const ORDER_TABLE:String = "orders";
 		static private const ORDER_FIELDS:Array =
-			[
-				{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
-				{ name: "creationTime", type: SQLHelper.TYPE_INTEGER },
-				{ name: "pickupTime", type: SQLHelper.TYPE_INTEGER },
-				{ name: "status", type: SQLHelper.TYPE_TEXT },
-				{ name: "paid", type: SQLHelper.TYPE_REAL }
-			];
+		[
+			{ name: "customerID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "creationTime", type: SQLHelper.TYPE_INTEGER },
+			{ name: "pickupTime", type: SQLHelper.TYPE_INTEGER },
+			{ name: "status", type: SQLHelper.TYPE_TEXT },
+			{ name: "paid", type: SQLHelper.TYPE_REAL }
+		];
 		static private const ORDER_ITEMS_TABLE:String = "order_items";
 		static private const ORDER_ITEM_FIELDS:Array =
-			[
-				{ name: "itemID", type: SQLHelper.TYPE_INTEGER },
-				{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
-				{ name: "price", type: SQLHelper.TYPE_REAL },
-				{ name: "quantity", type: SQLHelper.TYPE_INTEGER },
-				{ name: "description", type: SQLHelper.TYPE_TEXT },
-				{ name: "category", type: SQLHelper.TYPE_TEXT }
-			];
+		[
+			{ name: "itemID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "price", type: SQLHelper.TYPE_REAL },
+			{ name: "quantity", type: SQLHelper.TYPE_INTEGER },
+			{ name: "description", type: SQLHelper.TYPE_TEXT },
+			{ name: "category", type: SQLHelper.TYPE_TEXT },
+			{ name: "name", type: SQLHelper.TYPE_TEXT }
+
+		];
 		static private const ORDER_HISTORY_TABLE:String = "order_history";
 		static private const ORDER_HISTORY_FIELDS:Array = 
-			[
-				{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
-				{ name: "date", type: SQLHelper.TYPE_INTEGER },
-				{ name: "action", type: SQLHelper.TYPE_TEXT }
-			];
+		[
+			{ name: "orderID", type: SQLHelper.TYPE_INTEGER },
+			{ name: "date", type: SQLHelper.TYPE_INTEGER },
+			{ name: "action", type: SQLHelper.TYPE_TEXT }
+		];
 		private var _sql:SQLHelper = new SQLHelper;
 		public function Data(singletonClass:Class)
 		{
@@ -342,7 +344,7 @@ package data
 			}
 			else
 			{
-				trace("No data for table '" + tableName + "'");
+				Util.error("No data for table '" + tableName + "'");
 			}
 		}
 		private function loadTypedDataToCollection(collection:ArrayCollection, data:Array, tableName:String, fields:Array, classForTypedObject:Class):void
@@ -370,7 +372,7 @@ package data
 			}
 			else
 			{
-				trace("No data for table '" + tableName + "'");
+				Util.error("No data for table '" + tableName + "'");
 			}
 		}
 		private function onCustomers(data:Array):void
@@ -408,7 +410,7 @@ package data
 				}
 				else
 				{
-					trace("no order for items with orderID", orderID);
+					Util.error("no order for items with orderID", orderID);
 				}
 			}
 		}

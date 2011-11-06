@@ -16,11 +16,61 @@ package karnold.utils
 	
 	final public class Util
 	{
-		static public function tr(str:String):void
+		// cheap logging routines
+		static private var s_logToTrace:Boolean = true;
+		static public function setLogToTrace(b:Boolean):void
 		{
-			trace("kai:", str);
+			s_logToTrace = b;
 		}
-		
+		static public const LEVEL_INFO:int = 0;
+		static public const LEVEL_DEBUG:int = 1;
+		static public const LEVEL_ERROR:int = 2;
+		static public const LEVEL_OVERRIDE:int = 3;
+		static private const LEVELS:Vector.<String> = new <String>[ "INFO", "DEBUG", "ERROR", "####>" ];
+		static private var s_logLevel:int = LEVEL_INFO;
+		static public function setLogLevel(level:int):void
+		{
+			s_logLevel = level;
+		}
+		/**
+		 * 
+		 * @param f - callback function of the form function callback(level:int, str:String):void
+		 * 
+		 */
+		static private var s_logCallback:Function;
+		static public function setLogCallback(f:Function):void
+		{
+			s_logCallback = f;
+		}
+		static public function log(level:int, args:Array):void
+		{
+			if (level >= s_logLevel)
+			{
+				const date:Date = new Date();
+				const pre:String = "[" + date.hours + ":" + date.minutes + ":" + date.seconds + "." + date.milliseconds + "|" + LEVELS[level] + "]";
+				const line:String = pre + " " + args.join(" ");
+				
+				if (s_logToTrace)
+				{
+					trace(line);
+				}
+				if (s_logCallback != null)
+				{
+					s_logCallback(level, line);
+				}
+			}
+		}
+		static public function tr(...args:Array):void	{ log(LEVEL_INFO, args); }
+		static public function info(...args:Array):void	{ log(LEVEL_INFO, args); }
+		static public function debug(...args:Array):void { log(LEVEL_DEBUG, args); }
+		static public function error(...args:Array):void { log(LEVEL_ERROR, args); }
+		/**
+		 * Meant for immediate debugging only - these shouldn't be checked in 
+		 * @param args
+		 * 
+		 */
+		static public function override(...args:Array):void	{ log(LEVEL_OVERRIDE, args); }
+
 		static public function ASSERT(b:Boolean, msg:String = ""):void
 		{
 			if (!b)
