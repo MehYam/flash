@@ -182,7 +182,8 @@
 						_orderEditorPopup = Utils.createOrderEditorDialog(order, "");
 					}
 					_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid);
-					Utils.showDialog(DisplayObject(parentApplication), _orderEditorPopup);
+					Utils.showDialog(this, _orderEditorPopup);// DisplayObject(parentApplication), _orderEditorPopup);
+					_orderEditorPopup.maxHeight = this.height;
 				}
 				else
 				{

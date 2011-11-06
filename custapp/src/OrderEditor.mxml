@@ -73,7 +73,7 @@
 		</s:HGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-	<s:HGroup width="100%" height="150">
+	<s:HGroup width="100%" height="120">
 		<local:OrderHistoryList id="historyList" width="100%" height="100%"/>
 		<s:Button label="NEW" height="100%" width="25%" visible="{!asPopup}"/>
 		<s:Button id="printTag" label="Print Ticket" width="50%" height="100%" color="0xF79950" click="onPrintTag()"/>
@@ -267,21 +267,6 @@
 			{
 				newOrder();
 			}
-//			private function addButton(cmd:Object):void
-//			{
-//				var cmdButton:Button = new Button;
-//				cmdButton.width = 125;
-//				cmdButton.height = 50;
-//				cmdButton.styleName = "commandButton";
-//				cmdButton.setStyle("color", cmd.color);
-//				cmdButton.label = cmd.name;
-//				
-//				if (cmd.handler)
-//				{
-//					cmdButton.addEventListener(MouseEvent.CLICK, cmd.handler, false, 0, true);
-//				}
-//				commandButtons.addElementAt(cmdButton, 0);
-//			}
 			private function newOrder():void
 			{
 				var pickupTime:Date = new Date();
@@ -353,10 +338,9 @@
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
 					
-					Utils.ViewOrder(_order, this);
-					
 					if (!asPopup)
 					{
+						Utils.ViewOrder(_order, this);
 						newOrder();
 					}
 				}

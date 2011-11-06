@@ -26,7 +26,7 @@
 		</s:Rect>-->
 		<s:RichText id="richTxt" backgroundColor="white" fontFamily="Courier New"
 					textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
-					horizontalCenter="0" verticalCenter="0" />
+					horizontalCenter="0" verticalCenter="0" height="100%"/>
 
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>

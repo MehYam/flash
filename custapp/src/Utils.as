@@ -82,16 +82,16 @@ package
 				matches(customer.phone, pattern) || 
 				matches(customer.email, pattern);
 		}
-		static public function showDialog(parent:DisplayObject, d:IFlexDisplayObject):void
+		static public function showDialog(parent:DisplayObject, d:UIComponent):void
 		{
-			d.width = parent.width - 40;
+			d.width = parent.width;
+			d.maxHeight = parent.height;
+
 			PopUpManager.addPopUp(d, parent, true);
 			// KAI: with the right combination of percent height, centerPopUp was causing an infinite loop!  
 			// Flex seems stuck in a measure -> invalidate -> measure kinda thing under validateNow().
 			// Fixed it with the popup.height setting above
 			PopUpManager.centerPopUp(d);
-			
-			d.y = 20;
 		}
 		static public function createOrderEditorDialog(o:Order, title:String):Dialog
 		{
@@ -123,7 +123,6 @@ package
 			
 			PopUpManager.addPopUp(popup, p, true);
 			PopUpManager.centerPopUp(popup);
-	
 		}
 	}
 }

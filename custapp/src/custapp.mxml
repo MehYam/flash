@@ -26,7 +26,8 @@
 <!--		<s:NavigatorContent label="TEST">
 			<local:OrderViewer/>
 		</s:NavigatorContent>
--->		<s:NavigatorContent label="DROP OFF">
+		-->
+		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="PICK UP">
