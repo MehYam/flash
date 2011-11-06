@@ -27,11 +27,11 @@
 			<local:OrderViewer/>
 		</s:NavigatorContent>
 		-->
-		<s:NavigatorContent label="PICK UP">
-			<local:OrderList width="100%" height="100%"/>
-		</s:NavigatorContent>
 		<s:NavigatorContent label="DROP OFF">
 			<local:OrderEditor width="100%" height="100%"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="PICK UP">
+			<local:OrderList width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="CUSTOMERS">
 			<local:CustomerList width="100%" height="100%"/>
