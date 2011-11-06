@@ -4,8 +4,6 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:spark="karnold.spark.*" currentState="draft"
 		 width="900" height="600" xmlns:ui="ui.*">
-	
-	
 	<fx:Declarations>
 		<fx:String id="htmlTextAsHTML"><![CDATA[<p>Order not loaded.</p>]]></fx:String>
 	</fx:Declarations>
@@ -18,16 +16,17 @@
 			<s:SolidColorStroke color="white"/>
 		</s:stroke>
 	</s:Rect>
-	<s:HGroup paddingTop="30" paddingLeft="30" paddingRight="30" paddingBottom="30" width="100%">
-<!--		<s:Rect height="450" width="350">
-			<s:fill>
-				<s:SolidColor color="white"/>
-			</s:fill>
-		</s:Rect>-->
-		<s:RichText id="richTxt" backgroundColor="white" fontFamily="Courier New"
-					textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
-					horizontalCenter="0" verticalCenter="0" height="100%"/>
-
+	<s:HGroup left="30" right="30" top="30" bottom="30">
+		<s:Scroller width="100%" height="100%">
+			<s:RichEditableText 
+				id="richTxt"
+				backgroundColor="white"
+				editable="false"
+				fontFamily="Courier New"
+				textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
+				width="100%" height="100%"
+			/>
+		</s:Scroller>
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>
 			<s:Label text.draft="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)"/>
@@ -79,24 +78,18 @@
 					"<br/>=== " + (isTicket? "============================================" : "====================== ========= ===========") + "<br/></p>";
 
 				for each (var line:LineItem in o.items.source) 
+				{
+					if( isTicket )
 					{
-						if( isTicket )
-						{
-							htmlTextAsHTML += line.quantity + "  " +  line.name + (line.description ? " (" + line.description + ")" : "");
-						}
-						else
-						{
-							htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + (line.description ? "\r\n\t" + line.description : "");
-						}
-						htmlTextAsHTML += "<br/>";
+						htmlTextAsHTML += line.quantity + "  " +  line.name + (line.description ? " (" + line.description + ")" : "");
 					}
-				
-					
-					
-
-
+					else
+					{
+						htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + (line.description ? "\r\n\t" + line.description : "");
+					}
+					htmlTextAsHTML += "<br/>";
+				}
 //					<p>Ticket ID: " + o.id + </p>;
-				
 				//			orderID.text = String(_order.id);
 				//			customer.text = _order.customerID ? formatCustomer(Data.instance.getCustomer(_order.customerID)) : null;
 				//			
@@ -209,10 +202,11 @@
 			{
 				if (!_orderEditor)
 				{
-					_orderEditor = Utils.createOrderEditorDialog(_order, "title");
+					_orderEditor = Utils.createOrderEditorDialog();
 				}
+				OrderEditor(_orderEditor.bodyContent).order = _order;
+				
 				_orderEditor.title = "Total:" + Utils.currencyFormatter.format(_order.total) + ", Paid:" + Utils.currencyFormatter.format(_order.paid);
-
 				Utils.showDialog(DisplayObject(parentApplication), _orderEditor);
 			}
 		]]>

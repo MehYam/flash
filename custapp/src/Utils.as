@@ -93,10 +93,9 @@ package
 			// Fixed it with the popup.height setting above
 			PopUpManager.centerPopUp(d);
 		}
-		static public function createOrderEditorDialog(o:Order, title:String):Dialog
+		static public function createOrderEditorDialog():Dialog
 		{
 			var orderEditor:OrderEditor = new OrderEditor;
-			orderEditor.order = o;
 			orderEditor.percentHeight = 100;
 			orderEditor.percentWidth = 100;
 			orderEditor.asPopup = true;
@@ -105,7 +104,6 @@ package
 			popup.autoClose = true;
 			popup.bodyContent = orderEditor;
 			popup.addButton(Dialog.BTN_DONE);
-			popup.title = title;
 			
 			return popup;
 		}

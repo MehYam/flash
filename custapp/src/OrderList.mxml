@@ -179,11 +179,12 @@
 				{
 					if (!_orderEditorPopup)
 					{
-						_orderEditorPopup = Utils.createOrderEditorDialog(order, "");
+						_orderEditorPopup = Utils.createOrderEditorDialog();
 					}
+					OrderEditor(_orderEditorPopup.bodyContent).order = order;
+
 					_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid);
 					Utils.showDialog(this, _orderEditorPopup);// DisplayObject(parentApplication), _orderEditorPopup);
-					_orderEditorPopup.maxHeight = this.height;
 				}
 				else
 				{

@@ -28,11 +28,6 @@
 -->	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%">
-		<!--		<s:VGroup id="commandButtons" gap="1">
-			<s:Button id="payBtn" label="-PAY-" color="0x0000cc" styleName="commandButton" width="125" height="50" click="onPay()"/>
-			<s:Button id="printRcpt" label="PRINT RCPT" color="0x0000ff" styleName="commandButton" width="125" height="50" click="onPrintReceipt()"/>
-		</s:VGroup>
-		-->
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:VGroup gap="0" width="100%">
 			<s:TabBar height="50" width="100%" color="0x0000bb" fontWeight="bold" dataProvider="{stack}"/>
@@ -75,7 +70,7 @@
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%" height="120">
 		<local:OrderHistoryList id="historyList" width="100%" height="100%"/>
-		<s:Button label="NEW" height="100%" width="25%" visible="{!asPopup}"/>
+		<s:Button label="NEW" height="100%" width="25%" enabled="{!asPopup}" click="onNew()"/>
 		<s:Button id="printTag" label="Print Ticket" width="50%" height="100%" color="0xF79950" click="onPrintTag()"/>
 	</s:HGroup>
 	<fx:Script>
@@ -276,7 +271,7 @@
 				order = Data.instance.createOrder(0, pickupTime.time);
 			}
 			static private const BTN_CREATE_NEW:String = "Yes, Create New";
-			private function onNew(e:Event):void
+			private function onNew():void
 			{
 				if (!_order.customerID)
 				{
