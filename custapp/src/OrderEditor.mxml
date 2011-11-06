@@ -7,7 +7,7 @@
 		 paddingTop="5"
 		 paddingLeft="5"
 		 paddingRight="5"
-		 creationComplete="onInit()" currentState="needCustomer"
+		 creationComplete="onInit()" currentState="needCustomer" xmlns:ui="ui.*"
 		 >
 	
 	<fx:Declarations>
@@ -73,19 +73,12 @@
 		</s:HGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-<<<<<<< HEAD
-	<s:HGroup width="100%" height="150">
+	<s:HGroup width="100%" height="120">
 		<s:HGroup width="70%" height="100%">
 			<local:OrderHistoryList id="historyList" width="75%" height="100%"/>
-			<s:Button label="NEW" visible="{!asPopup}" height="100%" width="25%" click="onNew(event)"/>			
+			<s:Button label="NEW" visible="{!asPopup}" height="100%" width="25%" chromeColor="#B7DCFF" click="onNew()"/>			
 		</s:HGroup>
-		<s:Button id="printTag" label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" width="30%" height="100%" color="0xF79950" click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>
-=======
-	<s:HGroup width="100%" height="120">
-		<local:OrderHistoryList id="historyList" width="100%" height="100%"/>
-		<s:Button label="NEW" height="100%" width="25%" enabled="{!asPopup}" click="onNew()"/>
-		<s:Button id="printTag" label="Print Ticket" width="50%" height="100%" color="0xF79950" click="onPrintTag()"/>
->>>>>>> 828dfa2ad518a6bfd2862d06294fadf18a3ee400
+		<s:Button id="printTag" width="30%" height="100%" chromeColor="#7B9221" label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" color="0xF79950" click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
