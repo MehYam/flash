@@ -94,8 +94,6 @@
 				}
 			}
 				
-			public function get AppViewStack():ViewStack {	return stack;}
-			
 			private function toggleFullScreen():void
 			{
 				if( nativeWindow.stage.displayState == StageDisplayState.NORMAL ) {

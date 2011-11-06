@@ -184,7 +184,7 @@
 					OrderEditor(_orderEditorPopup.bodyContent).order = order;
 
 					_orderEditorPopup.title = customerLabelFunction(order, null) + " Total:" + Utils.currencyFormatter.format(order.total) + ", Paid:" + Utils.currencyFormatter.format(order.paid);
-					Utils.showDialog(this, _orderEditorPopup);// DisplayObject(parentApplication), _orderEditorPopup);
+					Utils.showDialog(parentApplication.stack, _orderEditorPopup);// DisplayObject(parentApplication), _orderEditorPopup);
 				}
 				else
 				{

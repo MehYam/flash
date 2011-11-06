@@ -228,7 +228,7 @@
 				OrderEditor(_orderEditor.bodyContent).order = _order;
 				
 				_orderEditor.title = "Total:" + Utils.currencyFormatter.format(_order.total) + ", Paid:" + Utils.currencyFormatter.format(_order.paid);
-				Utils.showDialog(DisplayObject(parentApplication), _orderEditor);
+				Utils.showDialog(parentApplication.stack, _orderEditor);
 			}
 		]]>
 	</fx:Script>
