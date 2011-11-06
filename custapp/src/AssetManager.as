@@ -56,6 +56,15 @@ package
 		[Embed("ui/money/credit.png")]
 		public static const ICONCredit:Class;
 
+		[Embed("ui/newDoc.png")]
+		public static const ICONNewDoc:Class;
+
+		[Embed("ui/customer.png")]
+		public static const ICONCustomer:Class;
+
+		[Embed("ui/printer.png")]
+		public static const ICONPrinter:Class;
+
 		public function AssetManager()
 		{			
 		}

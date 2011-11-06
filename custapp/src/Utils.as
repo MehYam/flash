@@ -103,6 +103,7 @@ package
 			// Flex seems stuck in a measure -> invalidate -> measure kinda thing under validateNow().
 			// Fixed it with the popup.height setting above
 			PopUpManager.centerPopUp(d);
+			d.y = 5;
 		}
 		static public function createOrderEditorDialog():Dialog
 		{
