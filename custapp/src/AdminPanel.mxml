@@ -25,14 +25,41 @@
 		<ui:Button label="PosCmd.exe path:" click="browseForPosCmdPath()"/>
 		<s:Label id="poscmdPath" height="100%" verticalAlign="middle"/>
 	</s:HGroup>
+	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
+	<s:HGroup>
+		<s:Label text="Filter level:" height="100%" verticalAlign="middle"/>
+		<s:DropDownList id="debugLevel" change="onDebugLevelChange()" height="{Data.BAR_HEIGHT}">
+			<s:dataProvider>
+				<s:ArrayList>
+					<fx:String>Info</fx:String>
+					<fx:String>Debug</fx:String>
+					<fx:String>Error</fx:String>
+					<fx:String>Override</fx:String>
+				</s:ArrayList>
+			</s:dataProvider>
+		</s:DropDownList>
+	</s:HGroup>
+	<s:TextArea width="100%" height="100%" text="{Utils.debugOutput}"/>
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
+			
+			import karnold.utils.Util;
 			private function onInit():void
 			{
 				simulatePOS.selected = Data.settings.data.simulatePOS;
 				maxTabItems.value = Data.settings.data.maxTabItems;
 				poscmdPath.text = Data.settings.data.poscmdPath || "c:\\bin\\poscmd.exe";
+				
+				if (Data.settings.data.debugLevel == undefined)
+				{
+					Data.settings.data.debugLevel = Util.LEVEL_ERROR;
+				}
+				Utils.debugLevel = debugLevel.selectedIndex = Data.settings.data.debugLevel;
+			}
+			private function onDebugLevelChange():void
+			{
+				Utils.debugLevel = Data.settings.data.debugLevel = debugLevel.selectedIndex;
 			}
 			private function browseForPosCmdPath():void
 			{

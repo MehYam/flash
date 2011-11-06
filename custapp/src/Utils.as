@@ -24,6 +24,17 @@ package
 		public function Utils()
 		{
 		}
+		[Bindable]
+		static public var debugOutput:String = "";
+		static public var debugLevel:int = 1;
+		static public function concatDebugOutputCallback(level:int, str:String):void
+		{
+			if (debugOutput.length > (256 * 1024))
+			{
+				debugOutput = debugOutput.substring(128 * 1024);
+			}
+			debugOutput += "\n" + str;
+		}
 		static public function matches(item:String, pattern:String):Boolean
 		{
 			return item && item.length && (item.toUpperCase().indexOf(pattern) >= 0);

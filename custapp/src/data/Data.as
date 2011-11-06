@@ -344,7 +344,7 @@ package data
 			}
 			else
 			{
-				trace("No data for table '" + tableName + "'");
+				Util.error("No data for table '" + tableName + "'");
 			}
 		}
 		private function loadTypedDataToCollection(collection:ArrayCollection, data:Array, tableName:String, fields:Array, classForTypedObject:Class):void
@@ -372,7 +372,7 @@ package data
 			}
 			else
 			{
-				trace("No data for table '" + tableName + "'");
+				Util.error("No data for table '" + tableName + "'");
 			}
 		}
 		private function onCustomers(data:Array):void
@@ -410,7 +410,7 @@ package data
 				}
 				else
 				{
-					trace("no order for items with orderID", orderID);
+					Util.error("no order for items with orderID", orderID);
 				}
 			}
 		}

@@ -13,6 +13,8 @@ package
 	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
 	
+	import karnold.utils.Util;
+	
 	import mx.controls.Alert;
 	
 	import ui.Dialog;
@@ -22,6 +24,8 @@ package
 	[Event(name="PosCmdEvent.OUTPUT", type="src.PosCmdEvent")]
 	public class PosCmd extends EventDispatcher
 	{
+		static private var s_instances:uint = 0;
+
 		// factory methods
 		static public function createPrintCmd(order:Order, ticket:Boolean):PosCmd
 		{
@@ -31,6 +35,7 @@ package
 		{
 			return new OpenDrawerPosCmd;
 		}
+		protected const _instance:uint = s_instances++;
 		private var _p:NativeProcess;
 		public function PosCmd(FACTORY_CREATED_ONLY:Class)
 		{
@@ -54,10 +59,6 @@ package
 				startupInfo.executable = (new File).resolvePath(Data.settings.data.poscmdPath);
 				startupInfo.arguments = new Vector.<String>();
 
-//				if (Data.settings.data.simulatePOS)
-//				{
-//					startupInfo.arguments.push("/emu");
-//				}
 				run_impl(_p, startupInfo);
 			}
 		}
@@ -68,21 +69,21 @@ package
 			//Dialog.alert(this, "onPosCmdStdOut", "kira", [Dialog.BTN_DONE]);
 
 			const result:String = _p.standardOutput.readUTFBytes(_p.standardOutput.bytesAvailable);
-			trace(result);
+			Util.debug(_instance, "PosCmd stdout", result);
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.OUTPUT, result));
 		}
 		private function onPosCmdStdErr(e:Event):void
 		{
 			const result:String = _p.standardOutput.bytesAvailable ? _p.standardOutput.readUTFBytes(_p.standardError.bytesAvailable) : "unknown stderr"; 
-			trace(result);
+			Util.debug(_instance, "PosCmd stderr", result);
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.ERROR, result));
 		}
 		private function onPosCmdDone(e:NativeProcessExitEvent):void
 		{
 			const result:String = String(e.exitCode);
-			trace("pos process done, code", result);
+			Util.debug(_instance, "PosCmd done", result);
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.COMPLETE, result));
 		}
@@ -90,7 +91,7 @@ package
 		{
 			//Dialog.alert(this, "onPosCmdError", "kira", [Dialog.BTN_DONE]);
 			
-			trace("pos cmd error, code", result);
+			Util.debug(_instance, "PosCmd error, code", result);
 			const result:String = e.toString();
 			
 			dispatchEvent(new PosCmdEvent(PosCmdEvent.ERROR, result));
@@ -111,6 +112,8 @@ import data.Order;
 import flash.desktop.NativeProcess;
 import flash.desktop.NativeProcessStartupInfo;
 import flash.filesystem.File;
+
+import karnold.utils.Util;
 
 final internal class FACTORY_GUARD {}
 
@@ -169,8 +172,7 @@ final class PrintPosCmd extends PosCmd
 	}
 	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
 	{
-//		startupInfo.arguments.push("/printSlip");
-
+		Util.debug(_instance, "running open drawer command");
 		np.start(startupInfo);
 		if( Data.settings.data.simulatePOS )
 		{
@@ -189,6 +191,7 @@ final class OpenDrawerPosCmd extends PosCmd
 	}
 	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
 	{
+		Util.debug(_instance, "running open drawer command");
 		np.start(startupInfo);
 
 		if( Data.settings.data.simulatePOS )

@@ -40,7 +40,7 @@
 			<local:InventoryItemList width="100%" height="100%"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="*ADMIN*">
-			<local:AdminPanel/>
+			<local:AdminPanel height="100%"/>
 		</s:NavigatorContent>
 	</mx:ViewStack>
 
@@ -50,11 +50,18 @@
 			
 			import flash.events.FullScreenEvent;
 			
+			import karnold.utils.Util;
+			
 			import mx.core.IFlexDisplayObject;
 			
 			import spark.components.TitleWindow;
 			private function onInit():void
 			{
+				// system setup stuff
+				systemManager.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+				Util.setLogCallback(Utils.concatDebugOutputCallback);
+
+				// everything else
 				var rect:Rectangle = new Rectangle;
 
 				rect.width = Capabilities.screenResolutionX;
@@ -67,6 +74,16 @@
 							
 				//register global key handler
 				nativeWindow.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyDown);
+			}
+			private var _inUncaughtError:Boolean = false;
+			private function onUncaughtError(e:UncaughtErrorEvent):void
+			{
+				if (!_inUncaughtError)
+				{
+					_inUncaughtError = true;
+					Util.error("Uncaught error:", e.toString());
+					_inUncaughtError = false;
+				}
 			}
 			public function handleKeyDown(event:KeyboardEvent) :void
 			{

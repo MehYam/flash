@@ -316,6 +316,7 @@
 			}
 			private function onPrintTag():void
 			{
+				//KAI: copy pasta w/ OrderViewer
 				if (_posCmd)
 				{
 					Dialog.alert(this, "Point of sale hardware busy", "Hardware Busy", [Dialog.BTN_DONE]);
@@ -329,7 +330,7 @@
 					const msg:String = "---Printing tag " + _order.id + " for " + customer.text + "; marking dropped off---";
 					//Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 	
-					_order.status = "dropped off";
+					_order.status = Order.STATUS_DROPPED_OFF;
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
 					
