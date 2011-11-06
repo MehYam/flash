@@ -14,9 +14,9 @@
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
 	<s:states>
-		<s:State name="printReady"/>
 		<s:State name="needCustomer"/>
 		<s:State name="needItems"/>
+		<s:State name="printReady"/>
 	</s:states>
 	<s:HGroup width="100%">
 		<s:TextInput id="customer" width="300" height="100%" fontWeight="bold" editable="false" selectable="false" prompt="Click to select customer" click="onSelectCustomer()"/>
@@ -43,12 +43,12 @@
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%" height="100%">
+		<local:OrderItemList id="itemList" width="100%" height="100%" change="onItemEditted(event)"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:VGroup id="commandButtons2" gap="1">
 			<s:Button id="incItem" label="+1 COUNT" color="0x00aa00" styleName="commandButton" width="125" height="50" click="onIncItem()"/>
 			<s:Button id="decItem" label="-1 COUNT" color="0xbb0000" styleName="commandButton" width="125" height="50" click="onDecItem()"/>
 		</s:VGroup>
-		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-		<local:OrderItemList id="itemList" width="100%" height="100%" change="onItemEditted(event)"/>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%">
@@ -74,11 +74,15 @@
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 	<s:HGroup width="100%" height="120">
-		<s:HGroup width="70%" height="100%">
-			<local:OrderHistoryList id="historyList" width="75%" height="100%"/>
-			<s:Button label="NEW" visible="{!asPopup}" height="100%" width="25%" chromeColor="#B7DCFF" click="onNew()"/>			
-		</s:HGroup>
-		<s:Button id="printTag" width="30%" height="100%" chromeColor="#7B9221" label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" color="0xF79950" click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>
+		<local:OrderHistoryList id="historyList" width="100%" height="100%"/>
+		<s:Button label="NEW" enabled="{!asPopup}" height="100%" width="180" chromeColor="#B7DCFF" click="onNew()" 
+				  icon="@Embed(source='ui/newDoc.png')" iconPlacement="right"/>			
+		<s:Button id="printTag" width="300" height="100%" iconPlacement="right"
+				  icon.needCustomer="@Embed(source='ui/customer.png')" icon.printReady="@Embed(source='ui/printer.png')" icon.needItems="@Embed(source='ui/printer.png')" 
+				  chromeColor.printReady="#4CAE46" chromeColor.needCustomer="#7B9221" chromeColor.needItems="#C0C0C0"
+				  label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" 
+				  enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" 
+				  click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>
 	</s:HGroup>
 	<fx:Script>
 		<![CDATA[
@@ -151,6 +155,7 @@
 				}
 				invalidateSize();
 				invalidateDisplayList();
+				
 			}
 			protected override function createChildren():void
 			{
@@ -264,7 +269,7 @@
 						}
 					}
 				}
-			}
+							}
 			private function onOrdersLoaded(e:Event = null):void
 			{
 				newOrder();
@@ -276,6 +281,7 @@
 				pickupTime.hours = 12;
 
 				order = Data.instance.createOrder(0, pickupTime.time);
+				updateUI();
 			}
 			static private const BTN_CREATE_NEW:String = "Yes, Create New";
 			private function onNew():void
@@ -399,6 +405,14 @@
 					Data.instance.writeOrder(_order);
 				}
 			}
+			private function updateStates()
+			{
+				var itemsAdded:Boolean =  _order.items.length > 0; 
+				var customerAdded:Boolean = !!_order.customerID; 
+				currentState = (customerAdded && itemsAdded ? "printReady" :										
+					(customerAdded ? "needItems" : "needCustomer") );
+		
+			}
 			private function updateUI():void
 			{
 				items.text = String(_order.items.length);
@@ -406,23 +420,14 @@
 				paid.text = Utils.currencyFormatter.format(_order.paid);
 				
 				paid.setStyle("color", _order.total == _order.paid ? 0x00ee00 : 0xff0000);
-				
-				//printTag.enabled = printRcpt.enabled = !!_order.customerID;
-				//printTag.enabled = !!_order.customerID && _order.items.length > 0;
-				if(!!_order.customerID && _order.items.length > 0)
-				{
-					currentState = "printReady";
-				}
-				else if( !!_order.customerID )
-				{
-					currentState = "needItems";
-				}
-				else
-				{
-					currentState = "needCustomer";
-				}					
-				
+
+				var itemsAdded:Boolean =  _order.items.length > 0; 
+				decItem.enabled = itemsAdded;
+				incItem.enabled = itemsAdded;
+				updateStates();
+
 				statusLabel.text = _order.status.toUpperCase();
+
 			}
 
 			private var _customerList:CustomerList = new CustomerList;
