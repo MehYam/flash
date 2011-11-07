@@ -2,14 +2,16 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 xmlns:spark="karnold.spark.*" currentState="draft"
+		 xmlns:spark="karnold.spark.*" currentState="droppedOff"
 		 width="900" height="600" xmlns:ui="ui.*">
+		
 	<fx:Declarations>
 		<fx:String id="htmlTextAsHTML"><![CDATA[<p>Order not loaded.</p>]]></fx:String>
 	</fx:Declarations>
 	<s:states>
-		<s:State name="draft"/>
+		<s:State name="droppedOff"/>
 		<s:State name="completed"/>	   
+		<s:State name="voided"/>
 	</s:states>
 	<s:Rect height="100%" width="100%">
 		<s:stroke>
@@ -29,13 +31,16 @@
 		</s:Scroller>
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>
-			<s:Label text.draft="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)" color.draft="#FFFF00" color.completed="#4CFF00"/>
+			<s:Label text.droppedOff="DROPPED OFF (ticket issued)" text.completed="COMPLETED (paid)" text.voided="VOIDED"
+					 color.droppedOff="#FFFF00" color.completed="#4CFF00" color.voided="#CC0100"/>
 			<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-			<ui:Button id="payBtn" label="Pay" height="150" width="200" includeIn="draft" 
+			<ui:Button id="payBtn" label="Pay" height="150" width="200" includeIn="droppedOff" 
 					   chromeColor="#78D3D1" icon="@Embed(source='ui/pay2.png')" iconPlacement="right" click="onPay()"/>
-			<ui:Button id="editBtn" label="Edit" height="150" width="200" chromeColor="#B5B5B5" 
+			<ui:Button id="editBtn" label="Edit" height="150" width="200" chromeColor="#B5B5B5" includeIn="droppedOff"
 					   icon="@Embed(source='ui/edit.png')" iconPlacement="right" click="onEdit()"/>
-			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="150" width="200" includeIn="draft" 
+			<s:Button id="voidBtn" label="Void  Receipt" height="150" width="200" includeIn="completed" skinClass="ui.MultilineButtonSkin"
+					  chromeColor="#B5B5B5" icon="@Embed(source='ui/void.png')" iconPlacement="right" click="onVoid(event)"/>
+			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="150" width="200" includeIn="droppedOff" 
 					   chromeColor="#4CAE46" icon="@Embed(source='ui/printer.png')" iconPlacement="right"
 					   click="onPrintTag()" skinClass="ui.MultilineButtonSkin"/>
 			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="150" width="200" includeIn="completed" 
@@ -62,7 +67,7 @@
 			public function set order(o:Order):void
 			{
 				_order = o;
-				currentState = (o.status == Order.STATUS_DROPPED_OFF ? Order.STATUS_DRAFT : Order.STATUS_COMPLETED);
+				currentState = (o.status == Order.STATUS_DROPPED_OFF ? "droppedOff" : o.status);
 				updateSlipView(o);
 			}
 			private function updateSlipView(o:Order):void
@@ -244,6 +249,15 @@
 				_orderEditor.title = "Total:" + Utils.currencyFormatter.format(_order.total) + ", Paid:" + Utils.currencyFormatter.format(_order.paid);
 				Utils.showDialog(parentApplication.stack, _orderEditor);
 			}
+			
+			private function onVoid(event:MouseEvent):void
+			{
+				_order.status = Order.STATUS_VOIDED;
+				Data.instance.writeOrderHistory(_order, "Setting status to VOID");
+				Data.instance.writeOrder(_order);
+				currentState = "voided";
+			}
+
 		]]>
 	</fx:Script>
 

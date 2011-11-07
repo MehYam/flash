@@ -8,6 +8,7 @@ package data
 		public static const STATUS_DRAFT:String = "draft";
 		public static const STATUS_DROPPED_OFF:String = "dropped off";
 		public static const STATUS_COMPLETED:String = "completed";
+		public static const STATUS_VOIDED:String = "voided";
 
 		public var id:int;
 		public var creationTime:Number = new Date().time;
