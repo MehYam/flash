@@ -8,35 +8,53 @@
 		 paddingLeft="5"
 		 paddingRight="5"
 		 creationComplete="filter.setFocus()"
+		 currentState="normal"
 		 >
-	<fx:Declarations/>
-	<s:HGroup width="100%">
-		<s:Label text="Search:" height="100%" verticalAlign="middle"/>
-		<s:TextInput id="filter" width="100%" height="100%" prompt="enter partial name, number or customer ID" change="onFilterChange()"/>
-		<s:Line height="{Data.BAR_HEIGHT}">
+	<fx:Declarations>			
+	</fx:Declarations>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="popup"/>
+	</s:states>
+	<s:HGroup width="100%" height="100%">	
+		<s:VGroup width="100%" height="100%">			
+			<s:HGroup width="100%">
+				<s:Label text="Search:" height="100%" verticalAlign="middle"/>
+				<s:TextInput id="filter" width="100%" height="100%" prompt="enter partial name, number or customer ID" change="onFilterChange()"/>
+				<s:Line height="{Data.BAR_HEIGHT}">
+					<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
+				</s:Line>
+				<ui:Button label="ADD NEW" styleName="commandButton" height="100%" click="onAddCustomer()"/>
+				<!--<ui:Button label="DELETE" height="100%" color="0xff0000"/>-->
+			</s:HGroup>
+			<s:DataGrid
+				id="customerGrid"
+				width="100%" height="100%" 
+				sortableColumns="true" 
+				dataProvider="{Data.instance.customers}"
+				doubleClick="onDoubleClick()"
+				doubleClickEnabled="true"
+			>	
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="last" headerText="Last Name"/>
+						<s:GridColumn dataField="first" headerText="First Name"/>
+						<s:GridColumn dataField="id" headerText="ID"/>
+						<s:GridColumn dataField="phone" headerText="Phone" formatter="{Utils.phoneFormatter}"/>
+						<s:GridColumn dataField="email" headerText="Email"/>
+					</s:ArrayList>
+				</s:columns>
+			</s:DataGrid>
+		</s:VGroup>
+		<s:Line height="100%" width="2" includeIn="normal">
 			<s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke>
 		</s:Line>
-		<ui:Button label="ADD NEW" styleName="commandButton" height="100%" click="onAddCustomer()"/>
-		<!--<ui:Button label="DELETE" height="100%" color="0xff0000"/>-->
+		<s:VGroup width="100%" height="100%" includeIn="normal">
+			<ui:Button label="BULK IMPORT" height="{Data.BAR_HEIGHT}" styleName="commandButton" click="onBulkImport()" enabled="{bulkInput.text.length > 0}"/>
+			<s:TextArea id="bulkInput" width="100%" height="100%"/>
+		</s:VGroup>
 	</s:HGroup>
-	<s:DataGrid
-		id="customerGrid"
-		width="100%" height="100%" 
-		sortableColumns="true" 
-		dataProvider="{Data.instance.customers}"
-		doubleClick="onDoubleClick()"
-		doubleClickEnabled="true"
-	>
-		<s:columns>
-			<s:ArrayList>
-				<s:GridColumn dataField="last" headerText="Last Name"/>
-				<s:GridColumn dataField="first" headerText="First Name"/>
-				<s:GridColumn dataField="id" headerText="ID"/>
-				<s:GridColumn dataField="phone" headerText="Phone" formatter="{Utils.phoneFormatter}"/>
-				<s:GridColumn dataField="email" headerText="Email"/>
-			</s:ArrayList>
-		</s:columns>
-	</s:DataGrid>
+
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
@@ -183,6 +201,30 @@
 			{
 				_doubleClickEdits = b;
 			}
+
+			//KIRA - copy & pasted from InventoryListItem
+			static private const BTN_YES:String = "Yes, add items";
+			private function onBulkImport():void
+			{
+				Dialog.alert(this, 
+					"Warning - make sure these items aren't already added.  Continue?",
+					"Warning!",
+					[BTN_YES, Dialog.BTN_NO],
+					onBulkImportPrompt);				
+			}
+			private function onBulkImportPrompt(e:DialogEvent):void
+			{
+				if (e.result == BTN_YES)
+				{
+					if (!Data.instance.bulkWriteCustomers(bulkInput.text))
+					{
+						Dialog.alert(this, "Parsing error in the text - items not imported",
+							"Parsing Error",
+							[Dialog.BTN_DONE]);
+					}
+				}
+			}
+
 		]]>
 	</fx:Script>
 </s:VGroup>

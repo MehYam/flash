@@ -443,6 +443,7 @@
 				_customerList.doubleClickEdits = false;
 				_customerList.percentHeight = 100;
 				_customerList.percentWidth = 100;
+				_customerList.currentState = "popup";
 				popup.bodyContent = _customerList;
 				popup.addButton(Dialog.BTN_DONE);
 

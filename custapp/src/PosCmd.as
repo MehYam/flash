@@ -149,32 +149,36 @@ package
 			Util.debug(_instance, "PosCmd::encodeOrderForPrinting()", "is ticket? " + ticket);
 
 			// tenderAmount - NOT HOOKED UP
-			const customer:Object = Data.instance.getCustomer(order.customerID) || { name: "Kira Tsu", email: "kerbumble@yahoo.com", phone: "650ggghhhh"};
+			const customer:Object = Data.instance.getCustomer(order.customerID) || { first:"unknown", last:"", email: "kerbumble@yahoo.com", phone: "----"};
 			const command:Object =
-				{
-					type: ticket ? "ticket" : "receipt",
-						id:   order.id,
-						datetime: new Date().toLocaleString(),
-						total: order.total,
-						paymentType: "Cash",
-						tenderAmount: 20,
-						businessInfo:
-						{
-							name: "J's Cleaners",
-							addr1: "205 S San Mateo Dr",
-							addr2: "San Mateo, CA 94010",
-							web: "http://www.jsdryclean.com",
-							phone: "(650) 343-2060",
-							footer: "Thanks for choosing J's Cleaners."
-						},
-						customerInfo:
-						{
-							name: customer.name,
-								address: customer.email,
-								phone: customer.phone
-						},
-						items: []
-				};
+			{
+				type: ticket ? "ticket" : "receipt",
+					id:   order.id,
+					datetime: new Date().toLocaleString(),
+					
+					total: order.total,
+					discount: order.discount,
+					paymentType: order.paymentType,
+					tenderAmount: order.tenderAmount,
+					change: order.change,
+					
+					businessInfo:
+					{
+						name: "J's Cleaners",
+						addr1: "205 S San Mateo Dr",
+						addr2: "San Mateo, CA 94010",
+						web: "http://www.jsdryclean.com",
+						phone: "(650) 343-2060"
+					},
+					customerInfo:
+					{
+						name: customer.first + " " + customer.last,
+						phone: customer.phone
+					},
+					items: [],
+					footer: "Thanks for choosing J's Cleaners."
+
+			};
 			
 			for each (var item:LineItem in order.items.source)
 			{

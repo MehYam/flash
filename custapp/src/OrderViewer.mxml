@@ -2,8 +2,9 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 xmlns:spark="karnold.spark.*" currentState="droppedOff"
-		 width="900" height="600" xmlns:ui="ui.*">
+		 xmlns:spark="karnold.spark.*"
+		 xmlns:ui="ui.*"
+		 width="900" height="600" currentState="droppedOff">
 		
 	<fx:Declarations>
 		<fx:String id="htmlTextAsHTML"><![CDATA[<p>Order not loaded.</p>]]></fx:String>
@@ -13,39 +14,43 @@
 		<s:State name="completed"/>	   
 		<s:State name="voided"/>
 	</s:states>
-	<s:Rect height="100%" width="100%">
+	<s:Rect width="100%" height="100%">
 		<s:stroke>
 			<s:SolidColorStroke color="white"/>
 		</s:stroke>
 	</s:Rect>
 	<s:HGroup left="30" right="30" top="30" bottom="30">
 		<s:Scroller width="100%" height="100%">
-			<s:RichEditableText 
-				id="richTxt"
-				backgroundColor="white"
-				editable="false"
-				fontFamily="Courier New"
-				textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
-				width="100%" height="100%"
-			/>
+			<s:RichEditableText id="richTxt" width="100%" height="100%" backgroundColor="white"
+								editable="false" fontFamily="Courier New"
+								textFlow="{TextConverter.importToFlow(htmlTextAsHTML, TextConverter.TEXT_FIELD_HTML_FORMAT)}"/>
 		</s:Scroller>
 		<s:VGroup paddingLeft="50">
 			<s:Label text="Order Status:"/>
-			<s:Label text.droppedOff="DROPPED OFF (ticket issued)" text.completed="COMPLETED (paid)" text.voided="VOIDED"
-					 color.droppedOff="#FFFF00" color.completed="#4CFF00" color.voided="#CC0100"/>
+			<s:Label color.completed="#4CFF00" text.completed="COMPLETED (paid)"
+					 color.droppedOff="#FFFF00" text.droppedOff="DROPPED OFF (ticket issued)"
+					 color.voided="#CC0100" text.voided="VOIDED"/>
 			<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
-			<ui:Button id="payBtn" label="Pay" height="150" width="200" includeIn="droppedOff" 
-					   chromeColor="#78D3D1" icon="@Embed(source='ui/pay2.png')" iconPlacement="right" click="onPay()"/>
-			<ui:Button id="editBtn" label="Edit" height="150" width="200" chromeColor="#B5B5B5" includeIn="droppedOff"
-					   icon="@Embed(source='ui/edit.png')" iconPlacement="right" click="onEdit()"/>
-			<s:Button id="voidBtn" label="Void  Receipt" height="150" width="200" includeIn="completed" skinClass="ui.MultilineButtonSkin"
-					  chromeColor="#B5B5B5" icon="@Embed(source='ui/void.png')" iconPlacement="right" click="onVoid(event)"/>
-			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="150" width="200" includeIn="droppedOff" 
-					   chromeColor="#4CAE46" icon="@Embed(source='ui/printer.png')" iconPlacement="right"
-					   click="onPrintTag()" skinClass="ui.MultilineButtonSkin"/>
-			<s:Button id="reprintReceiptBtn" label="Reprint Receipt" height="150" width="200" includeIn="completed" 
-					  chromeColor="#4CAE46" icon="@Embed(source='ui/printer.png')" iconPlacement="right"
-					  click="onPrintReceipt(false)" skinClass="ui.MultilineButtonSkin"/>
+			<ui:Button id="payBtn" includeIn="droppedOff" width="200" height="150" label="Pay"
+					   chromeColor="#78D3D1" click="onPay()" icon="@Embed(source='ui/pay2.png')"
+					   iconPlacement="right"/>
+			<ui:Button id="editBtn" includeIn="droppedOff" width="200" height="150" label="Edit"
+					   chromeColor="#B5B5B5" click="onEdit()" icon="@Embed(source='ui/edit.png')"
+					   iconPlacement="right"/>
+			<s:Button id="voidBtn" includeIn="completed" width="200" height="150"
+					  label="Void  Receipt" chromeColor="#B5B5B5" click="onVoid()"
+					  icon="@Embed(source='ui/void.png')" iconPlacement="right"
+					  skinClass="ui.MultilineButtonSkin"/>
+			<s:Button id="unVoidBtn" includeIn="voided" width="200" height="150"
+					  label="Unvoid  Receipt" chromeColor="#B5B5B5" click="onUnvoid()"/>
+			<ui:Button id="reprintTicketBtn" includeIn="droppedOff" width="200" height="150"
+					   label="Reprint Ticket" chromeColor="#4CAE46" click="onPrintTag()"
+					   icon="@Embed(source='ui/printer.png')" iconPlacement="right"
+					   skinClass="ui.MultilineButtonSkin"/>
+			<s:Button id="reprintReceiptBtn" includeIn="completed" width="200" height="150"
+					  label="Reprint Receipt" chromeColor="#4CAE46" click="onPrintReceipt(false)"
+					  icon="@Embed(source='ui/printer.png')" iconPlacement="right"
+					  skinClass="ui.MultilineButtonSkin"/>
 		</s:VGroup>
 	</s:HGroup>
 	
@@ -101,6 +106,17 @@
 					}
 					htmlTextAsHTML += "<br/>";
 				}
+				if( !isTicket )
+				{
+					htmlTextAsHTML += "<br/>==============<br/>";
+					var total:Number = o.total;
+					if( o.discount < 0 )
+					{
+						htmlTextAsHTML += "Subtotal: " + o.total + "<br/>Discount " + Math.abs(Math.round(o.discount*100)) + "%: " + o.discount*o.total;
+					}
+					htmlTextAsHTML += "Total: " + total + "<br/>" + o.paymentType + "&nbsp;Tendered&nbsp;" + o.tenderAmount + "<br/>Change: " + o.change + "<br/><br/>";
+				}
+				
 //					<p>Ticket ID: " + o.id + </p>;
 				//			orderID.text = String(_order.id);
 				//			customer.text = _order.customerID ? formatCustomer(Data.instance.getCustomer(_order.customerID)) : null;
@@ -122,50 +138,46 @@
 			}
 			
 
-			static private const BTN_PAY:String = "Pay";
-			//static private const BTN_PAY_CC:String = "Pay Credit Card";
+			private var _popup:Dialog = null;
 			private function onPay():void
 			{
 				var pay:PayUI = new PayUI;
 				pay.total = _order.total;
-				//pay.owing = _order.total - _order.paid;
 				
-				var popup:Dialog = new Dialog;
-				popup.bodyContent = pay;
-				popup.autoClose = true;
-				popup.title = "Payment";
-				popup.addButton(Dialog.BTN_CANCEL);
-				popup.addButton(BTN_PAY);
-				
-				var dobj:DisplayObject = payBtn;
-				PopUpManager.addPopUp(popup, this, true);
-				PopUpManager.centerPopUp(popup);
-				popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
+				_popup = new Dialog;
+				_popup.bodyContent = pay;
+				_popup.autoClose = true;
+				_popup.title = "Payment";
+
+				PopUpManager.addPopUp(_popup, this, true);
+				PopUpManager.centerPopUp(_popup);
+				_popup.addEventListener(Event.COMPLETE, onPayComplete, false, 0, true);
 			}
 			private function onPayComplete(e:DialogEvent):void
 			{
-				var result:String = e.result;
-				if( result == BTN_PAY )
+				const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
+				if( pay.finishPayment )
 				{
-					const pay:PayUI = PayUI(Dialog(e.currentTarget).bodyContent);
-					const change:Number = pay.paying - pay.total; 
-					const paymentType:String = pay.paymentType;
-					
+					_order.paymentType = pay.paymentType;
+					_order.tenderAmount = pay.paying;
 					_order.paid = Math.min(_order.total, _order.paid + pay.paying);
-
-					if( change > 0 )
+	
+					if( _order.change > 0 )
 					{
-						pay.handleCustomerChange(change);
+						pay.handleCustomerChange(_order.change);
 					}
-					onPrintReceipt(change > 0);
+					onPrintReceipt(_order.change > 0);
 					
 					//update dialog UI
 					currentState = Order.STATUS_COMPLETED;
 					updateSlipView(_order);
-
-					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(change) + ", payment type: " + paymentType);
+	
+					Data.instance.writeOrderHistory(_order, "Paid " + _order.paid + " of " + _order.total + ", change: " + Utils.currencyFormatter.format(_order.change) + ", payment type: " + _order.paymentType);
 					Data.instance.writeOrder(_order);
 				}
+				
+				PopUpManager.removePopUp(_popup);
+				_popup = null;
 			}
 			private var _posCmd:PosCmd;
 			private function attachPosListeners(p:PosCmd):void
@@ -250,12 +262,33 @@
 				Utils.showDialog(parentApplication.stack, _orderEditor);
 			}
 			
-			private function onVoid(event:MouseEvent):void
+			private function onVoid():void
 			{
-				_order.status = Order.STATUS_VOIDED;
-				Data.instance.writeOrderHistory(_order, "Setting status to VOID");
-				Data.instance.writeOrder(_order);
-				currentState = "voided";
+				Dialog.alert(this, "Are you sure you want to void this order?", "Confirm", [Dialog.BTN_NO, Dialog.BTN_YES], onVoidConfirm);
+			}
+			private function onVoidConfirm(e:DialogEvent):void
+			{
+				if (e.result == Dialog.BTN_YES)
+				{				
+					_order.status = Order.STATUS_VOIDED;
+					Data.instance.writeOrderHistory(_order, "Setting status to VOID");
+					Data.instance.writeOrder(_order);
+					currentState = "voided";
+				}
+			}
+			private function onUnvoid():void
+			{
+				Dialog.alert(this, "Are you sure you want to unvoid this order?", "Confirm", [Dialog.BTN_NO, Dialog.BTN_YES], onUnvoidConfirm);
+			}
+			private function onUnvoidConfirm(e:DialogEvent):void
+			{
+				if (e.result == Dialog.BTN_YES)
+				{				
+					_order.status = Order.STATUS_COMPLETED;
+					Data.instance.writeOrderHistory(_order, "Unvoiding order; setting status to COMPLETED");
+					Data.instance.writeOrder(_order);
+					currentState = "completed";
+				}
 			}
 
 		]]>

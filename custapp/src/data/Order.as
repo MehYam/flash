@@ -17,6 +17,9 @@ package data
 		public var pickupTime:Number = creationTime;
 		public var status:String = STATUS_DRAFT;
 		public var paid:Number = 0;
+		public var tenderAmount:Number = 0;
+		public var paymentType:String = "Cash";
+		public var discount:Number = 0;
 
 		// serialized out manually in the writeOrder call
 		public const items:ArrayCollection = new ArrayCollection([]);
@@ -63,6 +66,10 @@ package data
 				retval += (item.price * item.quantity);
 			}
 			return retval;
+		}
+		public function get change():Number
+		{
+			return tenderAmount - total;
 		}
 		public function get numItems():Number
 		{
