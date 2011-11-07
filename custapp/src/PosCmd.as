@@ -26,21 +26,16 @@ package
 	{
 		static private var s_instances:uint = 0;
 
-		// factory methods
-		static public function createPrintCmd(order:Order, ticket:Boolean):PosCmd
-		{
-			return new PrintPosCmd(order, ticket);
-		}
-		static public function createOpenDrawerCmd():PosCmd
-		{
-			return new OpenDrawerPosCmd;
-		}
-		protected const _instance:uint = s_instances++;
+		private const _instance:uint = s_instances++;
 		private var _p:NativeProcess;
-		public function PosCmd(FACTORY_CREATED_ONLY:Class)
+		private var _openDrawer:Boolean;
+		private var _printSlip:Boolean;
+		private var _order:Order;
+		private var _isTicket:Boolean;
+		public function PosCmd() //FACTORY_CREATED_ONLY:Class)
 		{
-			if (FACTORY_CREATED_ONLY != FACTORY_GUARD) throw "Create this only with the factory methods above";
-			
+			Util.debug(_instance, "PosCmd constructor");
+						
 			_p = new NativeProcess;
 			_p.addEventListener(ProgressEvent.STANDARD_INPUT_PROGRESS, onPosCmdStdInProgress);
 			_p.addEventListener(ProgressEvent.STANDARD_OUTPUT_DATA, onPosCmdStdOut);
@@ -50,24 +45,70 @@ package
 			_p.addEventListener(IOErrorEvent.STANDARD_OUTPUT_IO_ERROR, onPosCmdError);
 			_p.addEventListener(NativeProcessExitEvent.EXIT, onPosCmdDone);
 		}
+		public function openDrawer():void
+		{
+			Util.debug(_instance, "PosCmd::openDrawer");
+			_openDrawer = true;			
+		}
+		public function printSlip(order:Order, isTicket:Boolean):void
+		{
+			Util.debug(_instance, "PosCmd::printSlip", "isTicket: " + isTicket);
+			_printSlip = true;
+			_order = order;
+			_isTicket = isTicket;			
+		}
 		// template method
 		public function run():void	
-		{			
+		{				
+			Util.debug(_instance, "PosCmd::run()");
+		
 			if (!_p.running)
 			{
+				Util.debug(_instance, "PosCmd::run(), !_p.running");
+
 				var startupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo;
 				startupInfo.executable = (new File).resolvePath(Data.settings.data.poscmdPath);
 				startupInfo.arguments = new Vector.<String>();
 
-				run_impl(_p, startupInfo);
+				Util.debug(_instance, "PosCmd::run(), 1");
+
+				try
+				{
+					_p.start(startupInfo);
+				}
+				catch (e:Error)
+				{
+					Util.error(".start error", e.message, "\n", e.toString());
+				}
+
+				Util.debug(_instance, "PosCmd::run(), 2");
+
+				if( Data.settings.data.simulatePOS )
+				{
+					Util.debug(_instance, "writing [emu] command to PosCmd's stdin");
+					_p.standardInput.writeUTFBytes("[emu]\r\n");			
+				}
+				if( _openDrawer )
+				{
+					Util.debug(_instance, "writing [openDrawer] command PosCmd's stdin");
+					_p.standardInput.writeUTFBytes("[openDrawer]\r\n");
+				}
+				if( _printSlip )
+				{
+					Util.debug(_instance, "writing [printSlip] command to PosCmd's stdin");
+					_p.standardInput.writeUTFBytes("[printSlip]\r\n");
+					_p.standardInput.writeUTFBytes(encodeOrderForPrinting(_order, _isTicket) + "\r\n");
+				}
+				Util.debug(_instance, "PosCmd::run(), 3");
+
+				_p.standardInput.writeUTFBytes("[EOF]\r\n");
 			}
 		}
+
 		// abstract method for the run() template
-		protected function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void  {}
+//		protected function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void  {}
 		private function onPosCmdStdOut(e:Event):void
 		{
-			//Dialog.alert(this, "onPosCmdStdOut", "kira", [Dialog.BTN_DONE]);
-
 			const result:String = _p.standardOutput.readUTFBytes(_p.standardOutput.bytesAvailable);
 			Util.debug(_instance, "PosCmd stdout", result);
 			
@@ -103,101 +144,53 @@ package
 //				_p.closeInput();
 			}
 		}
-	}
-}
-import data.Data;
-import data.LineItem;
-import data.Order;
-
-import flash.desktop.NativeProcess;
-import flash.desktop.NativeProcessStartupInfo;
-import flash.filesystem.File;
-
-import karnold.utils.Util;
-
-final internal class FACTORY_GUARD {}
-
-final class PrintPosCmd extends PosCmd
-{
-	private var _command:String;
-	public function PrintPosCmd(order:Order, ticket:Boolean)
-	{
-		super(FACTORY_GUARD);
-		_command = encodeOrderForPrinting(order, ticket) + "\r\n";
-	}
-	static private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
-	{
-		// tenderAmount - NOT HOOKED UP
-		const customer:Object = Data.instance.getCustomer(order.customerID) || { name: "Kira Tsu", email: "kerbumble@yahoo.com", phone: "650ggghhhh"};
-		const command:Object =
+		private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 		{
-			type: ticket ? "ticket" : "receipt",
-			id:   order.id,
-			datetime: new Date().toLocaleString(),
-			total: order.total,
-			paymentType: "Cash",
-			tenderAmount: 20,
-			businessInfo:
-			{
-				name: "J's Cleaners",
-				addr1: "205 S San Mateo Dr",
-				addr2: "San Mateo, CA 94010",
-				web: "http://www.jsdryclean.com",
-				phone: "(650) 343-2060",
-				footer: "Thanks for choosing J's Cleaners."
-			},
-			customerInfo:
-			{
-				name: customer.name,
-				address: customer.email,
-				phone: customer.phone
-			},
-			items: []
-		};
-		
-		for each (var item:LineItem in order.items.source)
-		{
-			const itemObj:Object =
-			{
-				quantity: item.quantity,
-				description: item.name,
-				comment: item.description || "",
-				perItemPrice: item.price,
-				amount: item.price * item.quantity
-			};
+			Util.debug(_instance, "PosCmd::encodeOrderForPrinting()", "is ticket? " + ticket);
+
+			// tenderAmount - NOT HOOKED UP
+			const customer:Object = Data.instance.getCustomer(order.customerID) || { name: "Kira Tsu", email: "kerbumble@yahoo.com", phone: "650ggghhhh"};
+			const command:Object =
+				{
+					type: ticket ? "ticket" : "receipt",
+						id:   order.id,
+						datetime: new Date().toLocaleString(),
+						total: order.total,
+						paymentType: "Cash",
+						tenderAmount: 20,
+						businessInfo:
+						{
+							name: "J's Cleaners",
+							addr1: "205 S San Mateo Dr",
+							addr2: "San Mateo, CA 94010",
+							web: "http://www.jsdryclean.com",
+							phone: "(650) 343-2060",
+							footer: "Thanks for choosing J's Cleaners."
+						},
+						customerInfo:
+						{
+							name: customer.name,
+								address: customer.email,
+								phone: customer.phone
+						},
+						items: []
+				};
 			
-			command.items.push(itemObj);
+			for each (var item:LineItem in order.items.source)
+			{
+				const itemObj:Object =
+					{
+						quantity: item.quantity,
+							description: item.name,
+							comment: item.description || "",
+							perItemPrice: item.price,
+							amount: item.price * item.quantity
+					};
+				
+				command.items.push(itemObj);
+			}
+			return JSON.stringify(command);
 		}
-		return JSON.stringify(command);
-	}
-	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
-	{
-		Util.debug(_instance, "running open drawer command");
-		np.start(startupInfo);
-		if( Data.settings.data.simulatePOS )
-		{
-			np.standardInput.writeUTFBytes("[emu]\r\n");			
-		}
-		np.standardInput.writeUTFBytes("[printSlip]\r\n");
-		np.standardInput.writeUTFBytes(_command + "\r\n[EOF]\r\n");
-	}
-}
-
-final class OpenDrawerPosCmd extends PosCmd
-{
-	public function OpenDrawerPosCmd()
-	{
-		super(FACTORY_GUARD);
-	}
-	protected override function run_impl(np:NativeProcess, startupInfo:NativeProcessStartupInfo):void
-	{
-		Util.debug(_instance, "running open drawer command");
-		np.start(startupInfo);
-
-		if( Data.settings.data.simulatePOS )
-		{
-			np.standardInput.writeUTFBytes("[emu]\r\n");			
-		}
-		np.standardInput.writeUTFBytes("[openDrawer]\r\n[EOF]\r\n");
+	
 	}
 }

@@ -234,23 +234,12 @@
 				}
 			}
 
-			public function handleCustomerChange():void
+			public function handleCustomerChange(change:Number):void
 			{
-				const change:Number = paying - total; 
-				if (change > 0)
-				{
-					popCashDrawer();
-					Dialog.alert(this, "Give " + Utils.currencyFormatter.format(change) + " change to customer.", "Cash Drawer Open", [Dialog.BTN_DONE]);
-				}
+				Dialog.alert(this, "Give " + Utils.currencyFormatter.format(change) + " change to customer.", "Cash Drawer Open", [Dialog.BTN_DONE]);
 
 			}
 				
-			private function popCashDrawer():void
-			{
-				var _posCmd:PosCmd = PosCmd.createOpenDrawerCmd();
-				attachPosListeners(_posCmd);
-				_posCmd.run();
-			}
 			private function attachPosListeners(p:PosCmd):void  //duplicated from OrderEditor - fix
 			{
 				//				p.addEventListener(PosCmdEvent.COMPLETE, onPosCmdResult, false, 0, true);

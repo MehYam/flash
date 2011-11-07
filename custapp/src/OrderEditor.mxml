@@ -336,7 +336,8 @@
 				}
 				else
 				{					
-					_posCmd = PosCmd.createPrintCmd(_order, true);
+					_posCmd = new PosCmd();
+					_posCmd.printSlip(_order, true);				
 					attachPosListeners(_posCmd);
 					_posCmd.run();
 					
@@ -344,6 +345,7 @@
 					//Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 	
 					_order.status = Order.STATUS_DROPPED_OFF;
+					updateUI();
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
 					
@@ -405,7 +407,7 @@
 					Data.instance.writeOrder(_order);
 				}
 			}
-			private function updateStates()
+			private function updateStates():void
 			{
 				var itemsAdded:Boolean =  _order.items.length > 0; 
 				var customerAdded:Boolean = !!_order.customerID; 

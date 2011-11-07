@@ -65,6 +65,9 @@ package
 		[Embed("ui/printer.png")]
 		public static const ICONPrinter:Class;
 
+		[Embed("ui/pay.png")]
+		public static const ICONPay:Class;
+
 		public function AssetManager()
 		{			
 		}
