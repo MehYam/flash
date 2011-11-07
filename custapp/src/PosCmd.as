@@ -68,9 +68,10 @@ package
 
 				var startupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo;
 				startupInfo.executable = (new File).resolvePath(Data.settings.data.poscmdPath);
-				startupInfo.arguments = new Vector.<String>();
+				//startupInfo.arguments = new Vector.<String>();
 
-				Util.debug(_instance, "PosCmd::run(), 1");
+				Util.debug("startupInfo", startupInfo);
+				Util.debug("process", _p);
 
 				try
 				{
@@ -78,10 +79,9 @@ package
 				}
 				catch (e:Error)
 				{
-					Util.error(".start error", e.message, "\n", e.toString());
+					Util.error("process.start error", e.message, "\n", e.toString());
 				}
 
-				Util.debug(_instance, "PosCmd::run(), 2");
 
 				if( Data.settings.data.simulatePOS )
 				{

@@ -79,7 +79,7 @@
 				  icon="@Embed(source='ui/newDoc.png')" iconPlacement="right"/>			
 		<s:Button id="printTag" width="300" height="100%" iconPlacement="right"
 				  icon.needCustomer="@Embed(source='ui/customer.png')" icon.printReady="@Embed(source='ui/printer.png')" icon.needItems="@Embed(source='ui/printer.png')" 
-				  chromeColor.printReady="#4CAE46" chromeColor.needCustomer="#7B9221" chromeColor.needItems="#C0C0C0"
+				  chromeColor.printReady="#4CAE46" chromeColor.needCustomer="#F06000" chromeColor.needItems="#C0C0C0"
 				  label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" 
 				  enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" 
 				  click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>

@@ -32,7 +32,7 @@
 			<s:Label text.draft="IN PROGRESS (ticket issued)" text.completed="COMPLETED (paid)" color.draft="#FFFF00" color.completed="#4CFF00"/>
 			<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 			<ui:Button id="payBtn" label="Pay" height="150" width="200" includeIn="draft" 
-					   chromeColor="#78D3D1" icon="@Embed(source='ui/pay.png')" iconPlacement="right" click="onPay()"/>
+					   chromeColor="#78D3D1" icon="@Embed(source='ui/pay2.png')" iconPlacement="right" click="onPay()"/>
 			<ui:Button id="editBtn" label="Edit" height="150" width="200" chromeColor="#B5B5B5" 
 					   icon="@Embed(source='ui/edit.png')" iconPlacement="right" click="onEdit()"/>
 			<ui:Button id="reprintTicketBtn" label="Reprint Ticket" height="150" width="200" includeIn="draft" 
