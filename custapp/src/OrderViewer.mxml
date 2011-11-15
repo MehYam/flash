@@ -102,7 +102,7 @@
 					}
 					else
 					{
-						htmlTextAsHTML += line.quantity + "  " + line.name + "  " + line.price + "  " + line.price*line.quantity + (line.description ? "\r\n\t" + line.description : "");
+						htmlTextAsHTML += line.quantity + "  " + line.name + "  " + Utils.currencyFormatter.format(line.price) + "  " + Utils.currencyFormatter.format(line.price*line.quantity) + (line.description ? "\r\n\t" + line.description : "");
 					}
 					htmlTextAsHTML += "<br/>";
 				}
@@ -112,9 +112,9 @@
 					var total:Number = o.total;
 					if( o.discount < 0 )
 					{
-						htmlTextAsHTML += "Subtotal: " + o.total + "<br/>Discount " + Math.abs(Math.round(o.discount*100)) + "%: " + o.discount*o.total;
+						htmlTextAsHTML += "Subtotal: " + o.total + "<br/>Discount " + Math.abs(Math.round(o.discount*100)) + "%: " + Utils.currencyFormatter.format(o.discount*o.total);
 					}
-					htmlTextAsHTML += "Total: " + total + "<br/>" + o.paymentType + "&nbsp;Tendered&nbsp;" + o.tenderAmount + "<br/>Change: " + o.change + "<br/><br/>";
+					htmlTextAsHTML += "Total: " + Utils.currencyFormatter.format(total) + "<br/>" + o.paymentType + " Tendered " + Utils.currencyFormatter.format(o.tenderAmount) + "<br/>Change: " + Utils.currencyFormatter.format(o.change) + "<br/><br/>";
 				}
 				
 //					<p>Ticket ID: " + o.id + </p>;
@@ -218,7 +218,7 @@
 					const msg:String = "---Printing tag " + _order.id + "; marking dropped off---";
 					//Dialog.alert(this, msg, "Receipt", [Dialog.BTN_DONE]);
 					
-					_order.status = Order.STATUS_COMPLETED;
+					_order.status = Order.STATUS_DROPPED_OFF;
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
 				}
@@ -240,7 +240,7 @@
 					_posCmd.printSlip(_order, false);
 					attachPosListeners(_posCmd);
 					_posCmd.run();
-					
+
 					const msg:String = "---Printing receipt and marking order complete---";
 					
 					_order.status = Order.STATUS_COMPLETED;

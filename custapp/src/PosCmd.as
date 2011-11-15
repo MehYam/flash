@@ -12,6 +12,7 @@ package
 	import flash.events.NativeProcessExitEvent;
 	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
+	import flash.globalization.DateTimeStyle;
 	
 	import karnold.utils.Util;
 	
@@ -144,17 +145,22 @@ package
 //				_p.closeInput();
 			}
 		}
+		import spark.formatters.DateTimeFormatter;
 		private function encodeOrderForPrinting(order:Order, ticket:Boolean):String
 		{
-			Util.debug(_instance, "PosCmd::encodeOrderForPrinting()", "is ticket? " + ticket);
-
+//			Util.debug(_instance, "PosCmd::encodeOrderForPrinting()", "is ticket? " + ticket);
+//			var dtf:DateTimeFormatter = new DateTimeFormatter();
+//			dtf.dateTimePattern = "mm/dd/yy h:mm a";
+//			dtf.setStyle("locale", "en-US");
+			
 			// tenderAmount - NOT HOOKED UP
 			const customer:Object = Data.instance.getCustomer(order.customerID) || { first:"unknown", last:"", email: "kerbumble@yahoo.com", phone: "----"};
 			const command:Object =
 			{
 				type: ticket ? "ticket" : "receipt",
 					id:   order.id,
-					datetime: new Date().toLocaleString(),
+					datetimePickup: new Date(order.pickupTime).toLocaleString(),
+					datetimeDropoff: new Date(order.creationTime).toLocaleString(),
 					
 					total: order.total,
 					discount: order.discount,
@@ -173,7 +179,7 @@ package
 					customerInfo:
 					{
 						name: customer.first + " " + customer.last,
-						phone: customer.phone
+						phone: Utils.phoneFormatter.format(customer.phone)
 					},
 					items: [],
 					footer: "Thanks for choosing J's Cleaners."
