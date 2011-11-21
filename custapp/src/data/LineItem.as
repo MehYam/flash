@@ -1,6 +1,6 @@
 package data
 {
-	// a p.o.d
+	// a p.o.d - mostly
 	public final class LineItem
 	{
 		public var id:int;
@@ -10,7 +10,17 @@ package data
 		public var name:String;
 		public var category:String;
 		public var price:Number = 0;  // because the unit price may have been modified
-		public var quantity:int;
 		public var description:String;
+		
+		public var subItem:Boolean = false;
+		public var quantity:int;
+		public function get pieceQuantity():int
+		{
+			if( subItem )
+				return 0;
+			else
+				return quantity;
+		}
+		
 	}
 }

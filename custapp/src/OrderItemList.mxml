@@ -20,7 +20,7 @@
 	>
 		<s:columns>
 			<s:ArrayList>
-				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40"/>
+				<s:GridColumn dataField="id" headerText="ID" editable="false" width="40" visible="false"/>
 				<s:GridColumn dataField="category" headerText="Type" editable="false" width="150"/>
 				<s:GridColumn dataField="name" headerText="Item" editable="false" width="150"/>
 				<s:GridColumn dataField="price" headerText="Price" formatter="{Utils.currencyFormatter}" itemRenderer="{priceColumnRenderer}" headerRenderer="CustomGridHeaderRenderer" width="150"/>
@@ -43,7 +43,7 @@
 			static private function countLabelFunction(itemObj:LineItem, column:GridColumn):String
 			{
 				// a number formatter would be a cooler way of doing this, and should be more immune to things like sorting, etc
-				return "x" + itemObj.quantity;
+				return (itemObj.subItem ? "(" : "x" ) + itemObj.quantity + (itemObj.subItem ? ")" : "");
 			}
 			public function get selectedIndex():int
 			{

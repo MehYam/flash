@@ -7,5 +7,6 @@ package data
 		public var name:String;
 		public var category:String;
 		public var price:Number;
+		public var icon:String;
 	}
 }

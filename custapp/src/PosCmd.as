@@ -170,7 +170,7 @@ package
 					
 					businessInfo:
 					{
-						name: "J's Cleaners",
+						name: "J's Cleaners & Alterations",
 						addr1: "205 S San Mateo Dr",
 						addr2: "San Mateo, CA 94010",
 						web: "http://www.jsdryclean.com",
@@ -182,6 +182,8 @@ package
 						phone: Utils.phoneFormatter.format(customer.phone)
 					},
 					items: [],
+					totalPieces: 0,
+					storeHours: "Store Hours:\r\nMON-FRI 7:30-6:00 | SAT 8:00-5:00 | SUN Closed", 
 					footer: "Thanks for choosing J's Cleaners."
 
 			};
@@ -190,15 +192,18 @@ package
 			{
 				const itemObj:Object =
 					{
-						quantity: item.quantity,
-							description: item.name,
-							comment: item.description || "",
-							perItemPrice: item.price,
-							amount: item.price * item.quantity
+						quantity: item.pieceQuantity,
+						description: Data.inventoryCatsMap[item.category] + " " + item.name,
+						comment: item.description || "",
+						perItemPrice: item.price,
+						amount: item.price * item.quantity
 					};
 				
 				command.items.push(itemObj);
+				
+				command.totalPieces += item.pieceQuantity;
 			}
+			
 			return JSON.stringify(command);
 		}
 	

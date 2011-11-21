@@ -4,6 +4,7 @@ package data
 	import flash.events.EventDispatcher;
 	import flash.globalization.CurrencyParseResult;
 	import flash.net.SharedObject;
+	import flash.utils.Dictionary;
 	
 	import karnold.utils.SQLHelper;
 	import karnold.utils.Util;
@@ -53,6 +54,13 @@ package data
 		public const colors:ArrayList = new ArrayList([]);
 		public const patterns:ArrayList = new ArrayList([]);
 
+		//TODO: this is hardcoded at the moment; should make categories more dynamic
+		static public const inventoryCatsMap:Dictionary = new Dictionary();
+		inventoryCatsMap["Dry Clean"] = "DC";
+		inventoryCatsMap["Laundry"] = "L";
+		inventoryCatsMap["Alteration"] = "A";
+		
+		
 		/// Database table descriptions ///////////////////////////////////////////////////////
 		static private const CUSTOMER_TABLE:String = "customers";
 		static private const CUSTOMER_FIELDS:Array = 
@@ -68,7 +76,8 @@ package data
 		[
 			{ name: "name", type: SQLHelper.TYPE_TEXT },
 			{ name: "price", type: SQLHelper.TYPE_REAL },
-			{ name: "category", type: SQLHelper.TYPE_TEXT }
+			{ name: "category", type: SQLHelper.TYPE_TEXT },
+			{ name: "icon", type: SQLHelper.TYPE_TEXT }
 		];
 		static private const ORDER_TABLE:String = "orders";
 		static private const ORDER_FIELDS:Array =
@@ -144,13 +153,14 @@ package data
 			retval.pickupTime = pickupTime;
 			return retval;
 		}
-		public function createInventoryItem(name:String, price:Number, category:String):InventoryItem
+		public function createInventoryItem(name:String, price:Number, category:String, icon:String):InventoryItem
 		{
 			var retval:InventoryItem = new InventoryItem;
 			retval.id = nextID;
 			retval.name = name;
 			retval.price = price;
-			retval.category = category
+			retval.category = category;
+			retval.icon = icon;
 			return retval;
 		}
 		public function createCustomer(first:String, last:String, phone:String, email:String, notes:String):Customer
@@ -219,7 +229,7 @@ package data
 					{
 						return false;
 					}
-					parsedItems.push(createInventoryItem(columns[0], result.value, columns[2]));
+					parsedItems.push(createInventoryItem(columns[0], result.value, columns[2], (columns[3].length ? columns[3] : "")));
 				}
 			}
 			

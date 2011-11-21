@@ -54,6 +54,7 @@
 						</s:itemEditor>
 					</s:GridColumn>
 					<s:GridColumn dataField="price" headerText="Price"  formatter="{Utils.currencyFormatter}" headerRenderer="CustomGridHeaderRenderer" itemRenderer="{priceColumnRenderer}"/>
+					<s:GridColumn dataField="icon" headerText="Icon" editable="true"/>
 				</s:ArrayList>
 			</s:columns>
 		</s:DataGrid>
@@ -107,7 +108,7 @@
 			}
 			private function onAddItem():void
 			{
-				var item:InventoryItem = Data.instance.createInventoryItem("new item", 0, "Dry Clean");
+				var item:InventoryItem = Data.instance.createInventoryItem("new item", 0, "Dry Clean", "");
 				Data.instance.writeInventoryItem(item);
 				
 				filter.text = "";

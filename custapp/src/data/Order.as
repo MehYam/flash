@@ -1,5 +1,9 @@
 package data
 {
+	import flashx.textLayout.debug.assert;
+	
+	import karnold.utils.Util;
+	
 	import mx.collections.ArrayCollection;
 
 	// a p.o.d
@@ -113,6 +117,16 @@ package data
 			items.addItem(lineItem);
 			items.refresh();
 		}
+		
+		public function toggleSubItem(index:int):Boolean
+		{
+			var item:LineItem = LineItem(items.getItemAt(index));
+			item.subItem = !item.subItem;
+			
+			items.refresh();
+			
+			return item.subItem;
+		}		
 		public function incItem(index:int):void
 		{
 			var item:LineItem = LineItem(items.getItemAt(index));

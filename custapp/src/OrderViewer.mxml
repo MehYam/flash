@@ -77,8 +77,10 @@
 			}
 			private function updateSlipView(o:Order):void
 			{
-				var dt:Date = new Date();
-				dt.time = o.creationTime;
+				var dtDropoff:Date = new Date();
+				dtDropoff.time = o.creationTime;
+				var dtPickup:Date = new Date();
+				dtPickup.time = o.pickupTime;
 				var isTicket:Boolean = (o.status == "dropped off");
 				Data.instance.loadOrderHistory(_order);
 				htmlTextAsHTML =
@@ -88,9 +90,11 @@
 					San Mateo, CA 94010<br/></strong> \
 					------------------------------------------------&nbsp;<br/><strong>" +
 					(isTicket ? "CLAIM TICKET" : "SALES RECEIPT") +
-					"</strong><br/>------------------------------------------------&nbsp;</p><p><br/>" +
-					dt.toLocaleDateString() + " " + dt.toLocaleTimeString() + "<br/>Ticket # " + o.id +
-					"<br/><br/>" +
+					"<br/>" + o.id + "<br/></strong>------------------------------------------------&nbsp;</p><p><br/>" +
+					Data.instance.getCustomer(_order.customerID).first + " " + Data.instance.getCustomer(_order.customerID).last + "<br/>" +
+					"Drop-off: " + dtDropoff.toLocaleDateString() + " " + dtDropoff.toLocaleTimeString() + 
+					"<br/><strong>Pick-up: " + dtPickup.toLocaleDateString() + " " + dtPickup.toLocaleTimeString() +
+					"</strong><br/><br/>" +
 					(isTicket? "Qty Description" : "Qty Description        Per Item Amount" ) +
 					"<br/>=== " + (isTicket? "============================================" : "====================== ========= ===========") + "<br/></p>";
 
@@ -98,11 +102,11 @@
 				{
 					if( isTicket )
 					{
-						htmlTextAsHTML += line.quantity + "  " +  line.name + (line.description ? " (" + line.description + ")" : "");
+						htmlTextAsHTML += line.pieceQuantity + "   " +  line.name + (line.description ? " (" + line.description + ")" : "");
 					}
 					else
 					{
-						htmlTextAsHTML += line.quantity + "  " + line.name + "  " + Utils.currencyFormatter.format(line.price) + "  " + Utils.currencyFormatter.format(line.price*line.quantity) + (line.description ? "\r\n\t" + line.description : "");
+						htmlTextAsHTML += line.pieceQuantity + "   " + line.name + "  " + Utils.currencyFormatter.format(line.price) + "  " + Utils.currencyFormatter.format(line.price*line.quantity) + (line.description ? "\r\n\t" + line.description : "");
 					}
 					htmlTextAsHTML += "<br/>";
 				}
