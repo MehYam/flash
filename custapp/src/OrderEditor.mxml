@@ -9,7 +9,6 @@
 		 paddingRight="5"
 		 creationComplete="onInit()" currentState="needCustomer" xmlns:ui="ui.*"
 		 >
-	
 	<fx:Declarations>
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
@@ -350,10 +349,11 @@
 			private function onSelectionUpdate(index:int):void
 			{
 				incItem.enabled = decItem.enabled = subItem.enabled = index >= 0;
-				if( _order != null && _order.items != null && _order.items.length > 0 )
+				if( _order != null && index >= 0 && _order.items != null && _order.items.length > 0 )
 				{
 					var item:LineItem = LineItem(_order.items.getItemAt(index));
-					subItem.label = (item.subItem ? "NORMAL" : "SUBITEM");					
+					subItem.label = (item.subItem ? "NORMAL" : "SUBITEM");		
+					
 				}
 
 			}
