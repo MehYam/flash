@@ -18,7 +18,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<locationURI>DOCUMENTS/flash/src</locationURI>
+			<location>C:/source/flash/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

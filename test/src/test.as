@@ -44,36 +44,77 @@ package
 	{
 		public function test()
 		{
-//			testMask();
-//			testBadgeMockup();
-//			testInstances();
-//			testFilters();
-//			testGradientFilter();
-//			testTimer();
-//			testBadgeMockup2();
+//			testAddChild();
 //			testApply("arg1", "arg2");
-//			testHack();
+//			testArray();
+//			testBadgeMockup();
+//			testBadgeMockup2();
+//			testBlurFilterRasterizationBounds();
+//			testBooleanExpressionTrick();
+//			testBrowserZoomDetection();
+//			teste4x();
+//			testEmbeddedFont();
+//			testEnumeratingObjectMembers();
 //			testException();
 //			testExternalInterfaceAndApply();
-//			testEmbeddedFont();
+//			testFilters();
 //			testGradientBitmap();
+//			testGradientFilter();
+//			testHack();
+//			testHtmlAnchorTag();
+//			testInstances();
+//			testMask();
 //			testMovieclipDynamicObj();
+//			testParsing();
+//			testPixelSnapping();
+//			testRegularExpressions();
+//			testSimpleAnimationPerformance();
 //			testStorageObject(false);
 //			testStorageObject(true);
-//			teste4x();
-//			testParsing();
-//			testHtmlAnchorTag();
-//			testSimpleAnimationPerformance();
-//			testAddChild();
-//			testBooleanExpressionTrick();
-//			testPixelSnapping();
-//			testBrowserZoomDetection();
-//			testArray();
-//			testBlurFilterRasterizationBounds();
+//			testTime();
+//			testTimer();
 //			testTint();
-//			testEnumeratingObjectMembers();
-//			testRegularExpressions();
-			testTime();
+//			testTypeStuff();
+//			testVector();
+			testCleverOr();
+		}
+		private function testCleverOr():void
+		{
+			const foo:Object = {};
+			foo[1] = PseudoEnum.ENUM1;
+			foo[2] = PseudoEnum.ENUM2;
+			
+			var pe:PseudoEnum = foo[0] || PseudoEnum.UNDEFINED;
+			
+			pe = foo[1] || PseudoEnum.UNDEFINED;
+		}
+		private function testVector():void
+		{
+			var foo2:Array = [];
+			foo2[0] = "foo";
+			foo2[5] = "bar";
+			
+			for each (var i:String in foo2)
+			{
+				trace(i);
+			}
+
+			trace("creating foo");
+			var foo:Vector.<String> = new Vector.<String>;
+			foo[5] = "bar";			// throws exception
+		}
+		private function fooFunction(i:int, b:Boolean):void {}
+		private function testTypeStuff():void
+		{
+			trace(new ClassA);
+			trace(ClassB);
+			
+			var foo:Object = fooFunction;
+			
+			trace((new ClassB)["constructor"]);
+			
+			foo = new ClassA;
+			trace(foo["constructor"]);
 		}
 		private function testTime():void
 		{
@@ -857,4 +898,18 @@ final class ClassToEnumerate
 	public var field2:uint = 0;
 	public var field3:Number = 5;
 	public var field4:String = "bar";
+}
+
+final class ClassA {}
+final class ClassB {}
+
+
+final class PseudoEnum
+{
+	static public const UNDEFINED:PseudoEnum = new PseudoEnum(-1);
+	static public const ENUM1:PseudoEnum = new PseudoEnum(1);
+	static public const ENUM2:PseudoEnum = new PseudoEnum(2);
+	
+	public var val:int;
+	public function PseudoEnum(v:int):void { this.val = v; }
 }
