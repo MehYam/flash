@@ -33,6 +33,7 @@ package
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	import flash.utils.describeType;
@@ -52,6 +53,8 @@ package
 //			testBlurFilterRasterizationBounds();
 //			testBooleanExpressionTrick();
 //			testBrowserZoomDetection();
+			testByteArray();
+//			testCleverOr();
 //			teste4x();
 //			testEmbeddedFont();
 //			testEnumeratingObjectMembers();
@@ -76,7 +79,15 @@ package
 //			testTint();
 //			testTypeStuff();
 //			testVector();
-			testCleverOr();
+		}
+		private function testByteArray():void
+		{
+			const ba:ByteArray = new ByteArray;
+			ba.writeUTFBytes("test");
+			for (var i:int = 0; i < ba.length; ++i)
+			{
+				trace(ba[i]);
+			}
 		}
 		private function testCleverOr():void
 		{
