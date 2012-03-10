@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   showStatusBar="false"
+					   creationComplete="onInit()"
+					   invoke="onInvoke(event)"
+					   windowMove="onMove(event)"
+					   windowResize="onResize(event)"
+					   displayStateChange="onMaxMinRestore()" xmlns:ui="ui.*"
+					   >
+	<fx:Style source="MultiDataPortal.css"/>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:layout><s:VerticalLayout paddingTop="10" paddingLeft="10" paddingBottom="10" paddingRight="10"/></s:layout>
+	<ui:ConnectionList id="connections" width="100%" height="200"/>
+	<s:HGroup>
+		<s:Button label="Add"/>
+		<s:Button label="Remove" click="test()"/>
+		<s:Button label="Export..."/>
+		<s:Button label="Import..."/>
+	</s:HGroup>
+	<s:HGroup width="100%">
+		<s:CheckBox toolTip="Enabled"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
+		<s:Label height="100%" verticalAlign="middle" text="RV-CC" toolTip="Enabled"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
+		<s:Ellipse width="18" height="18"><s:fill><s:SolidColor color="0x00ff00"/></s:fill></s:Ellipse>
+		<s:Label height="100%" verticalAlign="middle" text="Connected"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
+		<s:Ellipse width="18" height="18"><s:fill><s:SolidColor color="0x00ff00"/></s:fill></s:Ellipse>
+		<s:ComboBox prompt="addr">
+			<s:dataProvider>
+				<mx:ArrayList>
+					<fx:String>localhost</fx:String>
+					<fx:String>Orange</fx:String>
+					<fx:String>Yellow</fx:String>
+					<fx:String>Blue</fx:String>
+					<fx:String>Green</fx:String>
+				</mx:ArrayList>
+			</s:dataProvider>
+		</s:ComboBox>
+		<s:ComboBox width="50" prompt="port"/>
+		<s:CheckBox toolTip="As Client"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
+		<s:Ellipse width="18" height="18"><s:fill><s:SolidColor color="0x00ff00"/></s:fill></s:Ellipse>
+		<s:ComboBox/>
+		<s:ComboBox width="50"/>
+		<s:ComboBox toolTip="Server Port"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
+		<s:Label height="100%" verticalAlign="middle" text="3.25MB over 1270 packets, 4.5 KB/s"/>
+		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
+		<s:Label height="100%" verticalAlign="middle" text="Buffer:  1.2 KB"/>
+	</s:HGroup>
+	<s:TextArea width="100%" height="100%" text="Ready"/>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexNativeWindowBoundsEvent;
+			
+			import spark.components.gridClasses.GridColumn;
+			import spark.events.GridEvent;
+			private function onInit():void
+			{
+				// everything else
+				var rect:Rectangle = new Rectangle;
+				
+				rect.width = Settings.instance.data.width || Capabilities.screenResolutionX * .75;
+				rect.height = Settings.instance.data.height || Capabilities.screenResolutionY * .75;
+				rect.x = Settings.instance.data.x || (Capabilities.screenResolutionX - rect.width) / 2;
+				rect.y = Settings.instance.data.y || (Capabilities.screenResolutionY - rect.height) / 2;
+				nativeWindow.bounds = rect;
+				
+				if (Settings.instance.data.maxMinRestore == NativeWindowDisplayState.MAXIMIZED)
+				{
+					nativeWindow.maximize();
+				}
+			}
+			private function onInvoke(event:InvokeEvent):void
+			{
+				// could set things up to be per-instance here, i.e. different settings
+			}
+			private function onResize(event:FlexNativeWindowBoundsEvent):void
+			{
+				if (nativeWindow.displayState == NativeWindowDisplayState.NORMAL)
+				{
+					Settings.instance.data.width = event.afterBounds.width;
+					Settings.instance.data.height = event.afterBounds.height;
+				}
+			}
+			private function onMove(event:FlexNativeWindowBoundsEvent):void
+			{
+				if (nativeWindow.displayState == NativeWindowDisplayState.NORMAL)
+				{
+					Settings.instance.data.x = event.afterBounds.x;
+					Settings.instance.data.y = event.afterBounds.y;
+				}
+			}
+			private function onMaxMinRestore():void
+			{
+				Settings.instance.data.maxMinRestore = nativeWindow.displayState;
+			}
+			private function test():void
+			{
+				Alert.show("foo", "bar");
+			}
+		]]>
+	</fx:Script>
+</s:WindowedApplication>

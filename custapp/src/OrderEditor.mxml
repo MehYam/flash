@@ -405,7 +405,7 @@
 					Data.instance.writeOrder(_order);
 				}
 			}
-			private function updateStates()
+			private function updateStates():void
 			{
 				var itemsAdded:Boolean =  _order.items.length > 0; 
 				var customerAdded:Boolean = !!_order.customerID; 

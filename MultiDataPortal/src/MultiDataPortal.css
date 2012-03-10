@@ -1,0 +1,27 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace local "*";
+
+local|MultiDataPortal 
+{
+	font-family:embeddedMyriad;
+	backgroundColor:#93ae93;
+}
+
+mx|Alert
+{
+	font-family:arial;
+}
+
+@font-face {
+	src:url("MyriadWebPro.ttf");
+	fontFamily: embeddedMyriad;
+	embedAsCFF: true;
+}	
+@font-face {
+	src:url("MyriadWebPro-Bold.ttf");
+	fontFamily: embeddedMyriad;
+	font-weight:bold;
+	embedAsCFF: true;
+}	

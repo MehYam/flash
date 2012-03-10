@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:DataGrid xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			xmlns:s="library://ns.adobe.com/flex/spark" 
+			xmlns:mx="library://ns.adobe.com/flex/mx"
+			skinClass="ui.ConnectionsDataGridSkin"
+			requestedRowCount="4" 
+			sortableColumns="true"
+			editable="true"
+			creationComplete="onInit()"
+			>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:columns>
+		<s:ArrayList>
+			<s:GridColumn headerText="Run" dataField="dataField1" editable="false">
+				<s:itemRenderer>
+					<fx:Component>
+						<s:GridItemRenderer>
+							<s:CheckBox horizontalCenter="0" verticalCenter="0"/>
+						</s:GridItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+			</s:GridColumn>
+			<s:GridColumn headerText="Name" dataField="dataField2" sortable="true"></s:GridColumn>
+			<s:GridColumn headerText="Status" dataField="dataField3" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Source" itemRenderer="SocketSourceGridItemRenderer" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Dest" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Stats" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Buffer" editable="false"></s:GridColumn>
+		</s:ArrayList>
+	</s:columns>
+	<s:typicalItem>
+		<fx:Object dataField1="Sample Data" dataField2="Sample Data" dataField3="Sample Data"></fx:Object>
+	</s:typicalItem>
+	<s:ArrayList>
+		<fx:Object dataField1="data1" dataField2="data1" dataField3="data1"></fx:Object>
+		<fx:Object dataField1="data2" dataField2="data2" dataField3="data2"></fx:Object>
+		<fx:Object dataField1="data3" dataField2="data3" dataField3="data3"></fx:Object>
+		<fx:Object dataField1="data4" dataField2="data4" dataField3="data4"></fx:Object>
+	</s:ArrayList>
+
+	<fx:Script>
+		<![CDATA[
+			import spark.components.gridClasses.GridColumn;
+			import spark.events.GridEvent;
+			private function onInit():void
+			{
+				if (Settings.instance.data.connectionsColumnWidths)
+				{
+					for each(var column:GridColumn in columns.toArray())
+					{
+						const w:* = Settings.instance.data.connectionsColumnWidths[column.headerText];
+						if (w)
+						{
+							column.width = w;
+						}
+					}
+				}
+				addEventListener(GridEvent.SEPARATOR_MOUSE_UP, onSeparatorResize, false, 0, true);
+			}
+			private function onSeparatorResize(unused:Event):void
+			{
+				Settings.instance.data.connectionsColumnWidths = {};
+				for each(var column:GridColumn in columns.toArray())
+				{
+					Settings.instance.data.connectionsColumnWidths[column.headerText] = column.width;
+				}
+			}
+
+		]]>
+	</fx:Script>
+</s:DataGrid>
