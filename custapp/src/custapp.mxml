@@ -81,7 +81,7 @@
 				if (!_inUncaughtError)
 				{
 					_inUncaughtError = true;
-					Util.error("Uncaught error:", e.toString());
+					Util.error("Uncaught error:", e.error.toString(), "\n", e.toString());
 					_inUncaughtError = false;
 				}
 			}
@@ -112,8 +112,8 @@
 			private function onClick():void
 			{
 //				var _posCmd:PosCmd = PosCmd.createOpenDrawerCmd();
-				var _posCmd:PosCmd = PosCmd.createPrintCmd(new Order, false);
-				_posCmd.run();
+//				var _posCmd:PosCmd = PosCmd.createPrintCmd(new Order, false);
+//				_posCmd.run();
 			}
 		]]>
 	</fx:Script>

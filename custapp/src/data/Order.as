@@ -1,5 +1,9 @@
 package data
 {
+	import flashx.textLayout.debug.assert;
+	
+	import karnold.utils.Util;
+	
 	import mx.collections.ArrayCollection;
 
 	// a p.o.d
@@ -8,6 +12,7 @@ package data
 		public static const STATUS_DRAFT:String = "draft";
 		public static const STATUS_DROPPED_OFF:String = "dropped off";
 		public static const STATUS_COMPLETED:String = "completed";
+		public static const STATUS_VOIDED:String = "voided";
 
 		public var id:int;
 		public var creationTime:Number = new Date().time;
@@ -16,6 +21,9 @@ package data
 		public var pickupTime:Number = creationTime;
 		public var status:String = STATUS_DRAFT;
 		public var paid:Number = 0;
+		public var tenderAmount:Number = 0;
+		public var paymentType:String = "Cash";
+		public var discount:Number = 0;
 
 		// serialized out manually in the writeOrder call
 		public const items:ArrayCollection = new ArrayCollection([]);
@@ -63,6 +71,10 @@ package data
 			}
 			return retval;
 		}
+		public function get change():Number
+		{
+			return tenderAmount - total;
+		}
 		public function get numItems():Number
 		{
 			var retval:Number = 0;
@@ -105,6 +117,16 @@ package data
 			items.addItem(lineItem);
 			items.refresh();
 		}
+		
+		public function toggleSubItem(index:int):Boolean
+		{
+			var item:LineItem = LineItem(items.getItemAt(index));
+			item.subItem = !item.subItem;
+			
+			items.refresh();
+			
+			return item.subItem;
+		}		
 		public function incItem(index:int):void
 		{
 			var item:LineItem = LineItem(items.getItemAt(index));

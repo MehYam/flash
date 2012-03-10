@@ -9,7 +9,6 @@
 		 paddingRight="5"
 		 creationComplete="onInit()" currentState="needCustomer" xmlns:ui="ui.*"
 		 >
-	
 	<fx:Declarations>
 		<fx:Boolean id="asPopup"></fx:Boolean>
 	</fx:Declarations>
@@ -46,8 +45,9 @@
 		<local:OrderItemList id="itemList" width="100%" height="100%" change="onItemEditted(event)"/>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
 		<s:VGroup id="commandButtons2" gap="1">
-			<s:Button id="incItem" label="+1 COUNT" color="0x00aa00" styleName="commandButton" width="125" height="50" click="onIncItem()"/>
-			<s:Button id="decItem" label="-1 COUNT" color="0xbb0000" styleName="commandButton" width="125" height="50" click="onDecItem()"/>
+			<s:Button id="incItem" label="+1 COUNT" styleName="commandButton" width="125" height="50" click="onIncItem()"/>
+			<s:Button id="decItem" label="-1 COUNT" styleName="commandButton" width="125" height="50" click="onDecItem()"/>
+			<s:Button id="subItem" label="SUBITEM" styleName="commandButton" width="125" height="50" click="onSubItem()"/>
 		</s:VGroup>
 	</s:HGroup>
 	<s:Line width="100%"><s:stroke><s:SolidColorStroke color="#aaaaaa" weight="1"/></s:stroke></s:Line>
@@ -79,7 +79,7 @@
 				  icon="@Embed(source='ui/newDoc.png')" iconPlacement="right"/>			
 		<s:Button id="printTag" width="300" height="100%" iconPlacement="right"
 				  icon.needCustomer="@Embed(source='ui/customer.png')" icon.printReady="@Embed(source='ui/printer.png')" icon.needItems="@Embed(source='ui/printer.png')" 
-				  chromeColor.printReady="#4CAE46" chromeColor.needCustomer="#7B9221" chromeColor.needItems="#C0C0C0"
+				  chromeColor.printReady="#4CAE46" chromeColor.needCustomer="#F06000" chromeColor.needItems="#C0C0C0"
 				  label.printReady="Print Ticket" label.needCustomer="Select Customer" label.needItems="Select Items" 
 				  enabled.printReady="true" enabled.needCustomer="true" enabled.needItems="false" 
 				  click.printReady="onPrintTag()" click.needCustomer="onSelectCustomer()"/>
@@ -88,6 +88,7 @@
 		<![CDATA[
 			import data.Data;
 			import data.InventoryItem;
+			import data.LineItem;
 			import data.Order;
 			
 			import flash.text.engine.FontWeight;
@@ -241,21 +242,10 @@
 						button.width = 120;
 						button.setStyle("fontSize",16); 
 						button.name = String(item.id);
-						if( item.name == "blouse")
-						{							
-							button.setStyle("icon", AssetManager.ICON);
-							button.setStyle("iconPlacement", "top");
-						
-						}
-						else if( item.name == "coat (M)" )
+						if( item.icon != null && item.icon.length > 0 )
 						{
-							button.setStyle("icon", AssetManager.ICON2);
-							button.setStyle("iconPlacement", "top");
-						}
-						else if( item.name == "suit, 2pc" )
-						{
-							button.setStyle("icon", AssetManager.ICON3);
-							button.setStyle("iconPlacement", "top");
+							button.setStyle("icon", AssetManager.clothingLookup[item.icon]);
+							button.setStyle("iconPlacement", "top");							
 						}
 						button.addEventListener(MouseEvent.CLICK, onItem, false, 0, true);
 
@@ -336,7 +326,8 @@
 				}
 				else
 				{					
-					_posCmd = PosCmd.createPrintCmd(_order, true);
+					_posCmd = new PosCmd();
+					_posCmd.printSlip(_order, true);				
 					attachPosListeners(_posCmd);
 					_posCmd.run();
 					
@@ -344,6 +335,7 @@
 					//Dialog.alert(this, msg, "Tag", [Dialog.BTN_DONE]);
 	
 					_order.status = Order.STATUS_DROPPED_OFF;
+					updateUI();
 					Data.instance.writeOrderHistory(_order, msg);
 					Data.instance.writeOrder(_order);
 					
@@ -354,9 +346,16 @@
 					}
 				}
 			}
-			private function onSelectionUpdate(foo:int):void
+			private function onSelectionUpdate(index:int):void
 			{
-				incItem.enabled = decItem.enabled = foo >= 0;
+				incItem.enabled = decItem.enabled = subItem.enabled = index >= 0;
+				if( _order != null && index >= 0 && _order.items != null && _order.items.length > 0 )
+				{
+					var item:LineItem = LineItem(_order.items.getItemAt(index));
+					subItem.label = (item.subItem ? "NORMAL" : "SUBITEM");		
+					
+				}
+
 			}
 			private function onItem(e:Event):void
 			{
@@ -391,6 +390,16 @@
 				
 				onSelectionUpdate(itemList.selectedIndex);
 			}
+			private function onSubItem():void
+			{
+				//toggle
+				var isSubItem:Boolean = _order.toggleSubItem(itemList.selectedIndex);
+				Data.instance.writeOrder(_order);
+				
+				updateUI();
+				onSelectionUpdate(itemList.selectedIndex);
+
+			}
 			private function onTimeChange():void
 			{
 				_order.pickupTime = date.selectedDate.setHours(time.selectedItem.value);
@@ -422,8 +431,7 @@
 				paid.setStyle("color", _order.total == _order.paid ? 0x00ee00 : 0xff0000);
 
 				var itemsAdded:Boolean =  _order.items.length > 0; 
-				decItem.enabled = itemsAdded;
-				incItem.enabled = itemsAdded;
+				decItem.enabled = incItem.enabled = subItem.enabled = itemsAdded;
 				updateStates();
 
 				statusLabel.text = _order.status.toUpperCase();
@@ -441,6 +449,7 @@
 				_customerList.doubleClickEdits = false;
 				_customerList.percentHeight = 100;
 				_customerList.percentWidth = 100;
+				_customerList.currentState = "popup";
 				popup.bodyContent = _customerList;
 				popup.addButton(Dialog.BTN_DONE);
 

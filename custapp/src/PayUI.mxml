@@ -10,13 +10,13 @@
 	</fx:Declarations>
 	<s:states>
 		<s:State name="owing"/>
-		<s:State name="paying"/>	   
+		<s:State name="paying"/>
 	</s:states>
 	<s:Label width="100%" text="Select a payment type:"/>
 	<s:HGroup width="100%">
 		<s:ButtonBar id="btnBarPay"
 					 requireSelection="true" selectedIndex="0"
-					 width="100%" change="onPayType(event)">
+					 width="100%" height="70" change="onPayType(event)">
 			<s:layout>
 				<s:HorizontalLayout gap="20" paddingBottom="10"/>
 			</s:layout>
@@ -36,45 +36,57 @@
 		<s:HGroup id="buttonsDollars" requestedColumnCount="6" width="100%"/>	
 		<s:HGroup id="buttonsCents" width="100%"/>
 		<s:HGroup width="100%" horizontalAlign="left">
-			<s:Button label="Clear" width="100" height="60" color="red"  click="onClearAmount(event)"/>				
-			<s:Button label="Exact" width="100" height="60" color="green" click="onExactAmount(event)"/>
+			<s:Button label="Clear" width="100" height="100" icon="@Embed(source='ui/money/clear.png')" iconPlacement="top" click="onClearAmount(event)"/>				
+			<s:Button label="Exact" width="100" height="100" chromeColor="green" click="onExactAmount(event)"/>
 		</s:HGroup>
 	</s:VGroup>
-	<s:HGroup width="100%" horizontalAlign="right">
-		<mx:Grid>
-			<mx:GridRow>
-				<mx:GridItem><s:Label text="Order Total:"/></mx:GridItem>
-				<mx:GridItem horizontalAlign="right">
-					<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>				
-				</mx:GridItem>
-			</mx:GridRow>
-			<mx:GridRow>
-				<mx:GridItem><s:Label text="Paying:" height="100%" verticalAlign="middle"/></mx:GridItem>
-				<mx:GridItem>
-					<s:TextInput id="payingInput" width="100" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
-				</mx:GridItem>
-			</mx:GridRow>
-			<mx:GridRow>
-				<mx:GridItem><s:Label text="Tender Type:"/></mx:GridItem>
-				<mx:GridItem horizontalAlign="right">
-					<s:Label id="tenderLabel" text="{paymentType}"/>				
-				</mx:GridItem>
-			</mx:GridRow>
-			<mx:GridRow>
-				<mx:GridItem><s:Label text.owing="Balance owed:" text.paying="Change:"/></mx:GridItem>
-				<mx:GridItem horizontalAlign="right">
-					<s:Label id="changeLabel" color.owing="0xdd0000" color.paying="0x00ff00" text="{Utils.currencyFormatter.format(paying - total)}" styleName="numberLabel"/>
-				</mx:GridItem>
-			</mx:GridRow>
-		</mx:Grid>
+	<s:HGroup width="100%">
+		<s:HGroup horizontalAlign="left" width="100%">
+			<s:Button label="Discount" width="100" height="100" enabled="false" icon="@Embed(source='ui/discount.png')" iconPlacement="top" click="onDiscount()" />
+		</s:HGroup>
+		<s:HGroup width="100%" horizontalAlign="right">
+			<mx:Grid>
+				<mx:GridRow>
+					<mx:GridItem><s:Label text="Order Total:"/></mx:GridItem>
+					<mx:GridItem horizontalAlign="right">
+						<s:Label id="totalLabel" text="{Utils.currencyFormatter.format(total)}" styleName="numberLabel"/>				
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem><s:Label text="Paying:" height="100%" verticalAlign="middle"/></mx:GridItem>
+					<mx:GridItem>
+						<s:TextInput id="payingInput" width="100" color="0x0000ff" fontSize="22" fontWeight="bold" textAlign="right" text="{Utils.currencyFormatter.format(paying)}" keyDown="onKeyDown(event)" focusIn="onFocusIn()" focusOut="updateTotal()"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem><s:Label text="Tender Type:"/></mx:GridItem>
+					<mx:GridItem horizontalAlign="right">
+						<s:Label id="tenderLabel" text="{paymentType}"/>				
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem><s:Label text.owing="Balance owed:" text.paying="Change:"/></mx:GridItem>
+					<mx:GridItem horizontalAlign="right">
+						<s:Label id="changeLabel" color.owing="0xdd0000" color.paying="0x00ff00" text="{Utils.currencyFormatter.format(paying - total)}" styleName="numberLabel"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+		</s:HGroup>
 	</s:HGroup>
 	<s:CheckBox selected="true" id="optionPrintReceipt" label="Automatically print the receipt" click="onOptionPrintReceipt()"/>
+	<s:HGroup horizontalAlign="center" width="100%" paddingTop="20">
+		<s:Button id="cancel" label="Cancel" width="180" height="70" click="onComplete(false)"/>
+		<s:Button id="complete" label="Finish Payment" width="180" height="70" chromeColor="#78D3D1" click="onComplete(true)" enabled.paying="true" enabled.owing="false"/>
+	</s:HGroup>
+
 	<fx:Script>
 		<![CDATA[
 			import data.Data;
 			import data.Order;
 			
 			import flash.globalization.CurrencyParseResult;
+			
+			import karnold.utils.Util;
 			
 			import mx.events.ItemClickEvent;
 			
@@ -83,6 +95,7 @@
 			import spark.primitives.Rect;
 			
 			import ui.Dialog;
+			import ui.DialogEvent;
 			
 			public function set order(o:Order):void
 			{
@@ -152,6 +165,10 @@
 			{
 				paying = total;				
 			}
+			private function onDiscount():void
+			{
+				//TODO: KirA	
+			}
 			private function onClearAmount(e:Event):void
 			{
 				paying = 0;
@@ -190,6 +207,7 @@
 			{
 				_paying = p;
 				updateState();
+				
 			}
 			public function get paying():Number { return _paying;}
 			[Bindable]
@@ -234,23 +252,12 @@
 				}
 			}
 
-			public function handleCustomerChange():void
+			public function handleCustomerChange(change:Number):void
 			{
-				const change:Number = paying - total; 
-				if (change > 0)
-				{
-					popCashDrawer();
-					Dialog.alert(this, "Give " + Utils.currencyFormatter.format(change) + " change to customer.", "Cash Drawer Open", [Dialog.BTN_DONE]);
-				}
+				Dialog.alert(this, "Give " + Utils.currencyFormatter.format(change) + " change to customer.", "Cash Drawer Open", [Dialog.BTN_DONE]);
 
 			}
 				
-			private function popCashDrawer():void
-			{
-				var _posCmd:PosCmd = PosCmd.createOpenDrawerCmd();
-				attachPosListeners(_posCmd);
-				_posCmd.run();
-			}
 			private function attachPosListeners(p:PosCmd):void  //duplicated from OrderEditor - fix
 			{
 				//				p.addEventListener(PosCmdEvent.COMPLETE, onPosCmdResult, false, 0, true);
@@ -268,6 +275,15 @@
 				//					Dialog.alert(this, "Point of sale hardware output: " + e.result, "Hardware Output", [Dialog.BTN_DONE]);	
 				//				}
 				
+			}
+			private var _clickedFinish:Boolean = false;
+			public function get finishPayment():Boolean { return _clickedFinish; }
+			private function onComplete(proceed:Boolean):void
+			{
+				Util.debug("PayUI::onComplete", proceed);
+				_clickedFinish = proceed;
+				var e:DialogEvent = new DialogEvent(Event.COMPLETE);
+				dispatchEvent(e);
 			}
 
 		]]>
