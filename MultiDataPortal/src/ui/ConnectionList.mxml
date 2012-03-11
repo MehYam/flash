@@ -23,19 +23,21 @@
 				</s:itemRenderer>
 			</s:GridColumn>
 			<s:GridColumn headerText="Name" dataField="dataField2" sortable="true"></s:GridColumn>
-			<s:GridColumn headerText="Status" dataField="dataField3" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Status" itemRenderer="StatusGridItemRenderer" dataField="status" editable="false"></s:GridColumn>
 			<s:GridColumn headerText="Source" itemRenderer="SocketSourceGridItemRenderer" editable="false"></s:GridColumn>
-			<s:GridColumn headerText="Dest" editable="false"></s:GridColumn>
-			<s:GridColumn headerText="Stats" editable="false"></s:GridColumn>
-			<s:GridColumn headerText="Buffer" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Source Type" itemRenderer="SocketTypeGridItemRenderer" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Destination" itemRenderer="SocketDestGridItemRenderer" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Dest. Type" itemRenderer="SocketTypeGridItemRenderer"  editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Stats" dataField="dataField4" editable="false"></s:GridColumn>
+			<s:GridColumn headerText="Buffer" dataField="dataField5" editable="false"></s:GridColumn>
 		</s:ArrayList>
 	</s:columns>
 	<s:typicalItem>
 		<fx:Object dataField1="Sample Data" dataField2="Sample Data" dataField3="Sample Data"></fx:Object>
 	</s:typicalItem>
 	<s:ArrayList>
-		<fx:Object dataField1="data1" dataField2="data1" dataField3="data1"></fx:Object>
-		<fx:Object dataField1="data2" dataField2="data2" dataField3="data2"></fx:Object>
+		<fx:Object dataField1="data1" status="Connected" dataField3="data1" dataField4="3.25MB over 1270 packets, 4.5 KB/s" dataField5="3.4 KB"></fx:Object>
+		<fx:Object dataField1="data2" dataField2="RV-DC" dataField3="data2"></fx:Object>
 		<fx:Object dataField1="data3" dataField2="data3" dataField3="data3"></fx:Object>
 		<fx:Object dataField1="data4" dataField2="data4" dataField3="data4"></fx:Object>
 	</s:ArrayList>

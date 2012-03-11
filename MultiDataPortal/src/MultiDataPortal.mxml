@@ -14,13 +14,6 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<s:layout><s:VerticalLayout paddingTop="10" paddingLeft="10" paddingBottom="10" paddingRight="10"/></s:layout>
-	<ui:ConnectionList id="connections" width="100%" height="200"/>
-	<s:HGroup>
-		<s:Button label="Add"/>
-		<s:Button label="Remove" click="test()"/>
-		<s:Button label="Export..."/>
-		<s:Button label="Import..."/>
-	</s:HGroup>
 	<s:HGroup width="100%">
 		<s:CheckBox toolTip="Enabled"/>
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
@@ -53,7 +46,14 @@
 		<s:Line height="100%"><s:stroke><s:SolidColorStroke color="#777777" weight="1"/></s:stroke></s:Line>
 		<s:Label height="100%" verticalAlign="middle" text="Buffer:  1.2 KB"/>
 	</s:HGroup>
-	<s:TextArea width="100%" height="100%" text="Ready"/>
+	<ui:ConnectionList id="connections" width="100%" height="50%"/>
+	<s:HGroup>
+		<s:Button label="Add" click="add()"/>
+		<s:Button label="Remove" click="test()"/>
+		<s:Button label="Export..." enabled="false"/>
+		<s:Button label="Import..." enabled="false"/>
+	</s:HGroup>
+	<s:TextArea id="console" width="100%" height="50%" text="Ready" editable="false"/>
 
 	<fx:Script>
 		<![CDATA[
@@ -102,9 +102,14 @@
 			{
 				Settings.instance.data.maxMinRestore = nativeWindow.displayState;
 			}
+			////////////////////////////////////////////////////////////////////////////
 			private function test():void
 			{
 				Alert.show("foo", "bar");
+			}
+			private function add():void
+			{
+				connections.dataProvider.addItem({});
 			}
 		]]>
 	</fx:Script>
