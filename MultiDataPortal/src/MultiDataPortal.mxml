@@ -57,6 +57,9 @@
 
 	<fx:Script>
 		<![CDATA[
+			import data.ConnectionItem;
+			import data.Settings;
+			
 			import mx.controls.Alert;
 			import mx.events.FlexNativeWindowBoundsEvent;
 			
@@ -109,7 +112,7 @@
 			}
 			private function add():void
 			{
-				connections.dataProvider.addItem({});
+				connections.dataProvider.addItem(new ConnectionItem);
 			}
 		]]>
 	</fx:Script>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" 
+					clipAndEnableScrolling="true"
+					>
+	
+	<fx:Script>
+		<![CDATA[
+			import data.ConnectionItem;
+			import data.ConnectionType;
+			import data.MRUData;
+			override public function prepare(hasBeenRecycled:Boolean):void
+			{
+				const item:ConnectionItem = data as ConnectionItem;
+				if (item)
+				{
+					IP.selectedItem = item.sourceIP;
+					port.selectedItem = item.sourcePort;
+					
+					// must figure out how to get the eventing/binding working - could just invalidate the row?
+					//IP.enabled = item.sourceType == ConnectionType.CLIENT;
+				}
+			}
+			private function handleChange():void
+			{
+				var item:ConnectionItem = data as ConnectionItem;
+				if (item)
+				{
+					item.sourceIP = IP.selectedItem;
+					item.sourcePort = parseInt(port.selectedItem);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<s:layout><s:HorizontalLayout paddingLeft="3" paddingRight="3" verticalAlign="middle"/></s:layout>
+	<s:ComboBox id="IP" prompt="addr" dataProvider="{MRUData.IPS}" change="handleChange()"/>
+	<s:ComboBox id="port" width="60" prompt="port" dataProvider="{MRUData.PORTS}" change="handleChange()"/>
+</s:GridItemRenderer>
