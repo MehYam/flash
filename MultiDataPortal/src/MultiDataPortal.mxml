@@ -7,6 +7,7 @@
 					   invoke="onInvoke(event)"
 					   windowMove="onMove(event)"
 					   windowResize="onResize(event)"
+					   closing="onClosing(event)"
 					   displayStateChange="onMaxMinRestore()" xmlns:ui="ui.*"
 					   >
 	<fx:Style source="MultiDataPortal.css"/>
@@ -49,7 +50,7 @@
 	<ui:ConnectionList id="connections" width="100%" height="50%"/>
 	<s:HGroup>
 		<s:Button label="Add" click="add()"/>
-		<s:Button label="Remove" click="test()"/>
+		<s:Button label="Remove" id="btnRemove" enabled="{connections.selectedIndex >= 0}" click="remove(true)"/>
 		<s:Button label="Export..." enabled="false"/>
 		<s:Button label="Import..." enabled="false"/>
 	</s:HGroup>
@@ -61,6 +62,8 @@
 			import data.Settings;
 			
 			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.CollectionEvent;
 			import mx.events.FlexNativeWindowBoundsEvent;
 			
 			import spark.components.gridClasses.GridColumn;
@@ -106,14 +109,56 @@
 			{
 				Settings.instance.data.maxMinRestore = nativeWindow.displayState;
 			}
-			////////////////////////////////////////////////////////////////////////////
-			private function test():void
+			private function onClosing(event:Event):void
 			{
-				Alert.show("foo", "bar");
+				for each (var item:ConnectionItem in Settings.connectionData.source)
+				{
+					if (item.running)
+					{
+						Alert.show("You have active connection(s).  Do you still wish to close?", "Quit?", Alert.YES | Alert.NO)
+							.addEventListener(CloseEvent.CLOSE, onPromptClose, false, 0, true);
+						event.preventDefault();
+						break;
+					}
+				}
 			}
+			private function onPromptClose(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES)
+				{
+					nativeApplication.exit();
+				}
+			}
+			////////////////////////////////////////////////////////////////////////////
 			private function add():void
 			{
 				connections.dataProvider.addItem(new ConnectionItem);
+			}
+			private function remove(checkForRunning:Boolean):void
+			{
+				const i:int = connections.selectedIndex;
+				if (i >= 0 && i < connections.dataProvider.length)
+				{
+					var item:ConnectionItem = ConnectionItem(connections.dataProvider.getItemAt(i));
+					if (checkForRunning && item.running)
+					{
+						Alert.show("This connection is active.  Do you wish to delete it?", "Delete Active Connection?", Alert.YES | Alert.NO)
+							.addEventListener(CloseEvent.CLOSE, onDeletePromptClose, false, 0, true);
+					}
+					else
+					{
+						item.running = false;
+						connections.dataProvider.removeItemAt(i);
+						btnRemove.enabled = false;
+					}
+				}
+			}
+			private function onDeletePromptClose(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES)
+				{
+					remove(false);
+				}
 			}
 		]]>
 	</fx:Script>

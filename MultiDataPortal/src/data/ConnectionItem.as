@@ -1,10 +1,12 @@
 package data 
 {
+	import net.ClientSocket;
+
 	public final class ConnectionItem
 	{
 		static private var _instances:int = 0;
 		
-		public var running:Boolean;
+		public function get running():Boolean { return _running; }
 		public var name:String = "Entry" + ++_instances;
 		public var status:String = "--";
 
@@ -19,5 +21,25 @@ package data
 		
 		public var stats:String = "--";
 		public var buffer:String = "--";
+		
+		private var _running:Boolean = false;
+		public function set running(r:Boolean):void
+		{
+			if (_running != r)
+			{
+				if (r)
+				{
+					// fire up all the connections
+				}
+				else
+				{
+					// close all the connections
+				}
+				_running = r;
+			}
+		}
+		
+		private var _sourceClient:ClientSocket;
+		private var _destClient:ClientSocket;
 	}
 }

@@ -53,7 +53,7 @@ package
 //			testBlurFilterRasterizationBounds();
 //			testBooleanExpressionTrick();
 //			testBrowserZoomDetection();
-			testByteArray();
+//			testByteArray();
 //			testCleverOr();
 //			teste4x();
 //			testEmbeddedFont();
@@ -72,6 +72,7 @@ package
 //			testPixelSnapping();
 //			testRegularExpressions();
 //			testSimpleAnimationPerformance();
+			testSocket();
 //			testStorageObject(false);
 //			testStorageObject(true);
 //			testTime();
@@ -79,6 +80,12 @@ package
 //			testTint();
 //			testTypeStuff();
 //			testVector();
+		}
+		private var _socketTest:SocketTest
+		private function testSocket():void
+		{
+			_socketTest = new SocketTest;
+			_socketTest.testClient("localhost", 2112);
 		}
 		private function testByteArray():void
 		{

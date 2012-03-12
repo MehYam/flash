@@ -1,6 +1,7 @@
 package data
 {
 	import flash.net.SharedObject;
+	import flash.utils.getTimer;
 	
 	import mx.collections.ArrayList;
 	import mx.events.CollectionEvent;
@@ -41,6 +42,7 @@ package data
 		}
 		static private function saveConnections():void
 		{
+			trace("saving connections", getTimer());
 			var serialized:Array = [];			
 			for each (var item:ConnectionItem in connectionData.source)
 			{
