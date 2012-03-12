@@ -5,8 +5,12 @@
 	
 	<fx:Script>
 		<![CDATA[
-			override public function prepare(hasBeenRecycled:Boolean):void {
-				lbl.text = data[column.dataField]
+			override public function prepare(hasBeenRecycled:Boolean):void
+			{
+				if (data)
+				{
+					lbl.text = data[column.dataField];
+				}
 			}
 		]]>
 	</fx:Script>

@@ -7,12 +7,14 @@
 		<![CDATA[
 			import data.ConnectionItem;
 			import data.ConnectionType;
+			import data.Settings;
 			override public function prepare(hasBeenRecycled:Boolean):void 
 			{
 				const item:ConnectionItem = data as ConnectionItem;
 				if (item)
 				{
 					connectionType.selectedItem = item[column.dataField];
+					connectionType.enabled = !item.running;
 				}
 			}
 			private function handleChange():void
@@ -21,6 +23,9 @@
 				if (item)
 				{
 					item[column.dataField] = connectionType.selectedItem;
+
+					// hack because I'm not using IGridItemEditor correctly
+					Settings.connectionData.itemUpdated(data);
 				}
 			}
 		]]>

@@ -10,6 +10,7 @@
 			import data.ConnectionItem;
 			import data.ConnectionType;
 			import data.MRUData;
+			import data.Settings;
 			override public function prepare(hasBeenRecycled:Boolean):void
 			{
 				const item:ConnectionItem = data as ConnectionItem;
@@ -18,8 +19,8 @@
 					IP.selectedItem = item.sourceIP;
 					port.selectedItem = item.sourcePort;
 					
-					// must figure out how to get the eventing/binding working - could just invalidate the row?
-					//IP.enabled = item.sourceType == ConnectionType.CLIENT;
+					IP.enabled = !item.running && item.sourceType == ConnectionType.CLIENT;
+					port.enabled = !item.running;
 				}
 			}
 			private function handleChange():void
@@ -29,6 +30,9 @@
 				{
 					item.sourceIP = IP.selectedItem;
 					item.sourcePort = parseInt(port.selectedItem);
+					
+					// hack because I'm not using IGridItemEditor correctly
+					Settings.connectionData.itemUpdated(data);
 				}
 			}
 		]]>

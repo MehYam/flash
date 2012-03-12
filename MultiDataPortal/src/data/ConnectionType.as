@@ -4,19 +4,30 @@ package data
 
 	public final class ConnectionType
 	{
-		private var _type:String;
-		
-		static public const SERVER:ConnectionType = new ConnectionType("server");
-		static public const CLIENT:ConnectionType = new ConnectionType("client");
-		static public const BOTH:ConnectionType = new ConnectionType("both");
+		static private const s_lookup:Object = {};
+		static public const SERVER:ConnectionType = new ConnectionType("server", CONSTRUCTOR_LOCK);
+		static public const CLIENT:ConnectionType = new ConnectionType("client", CONSTRUCTOR_LOCK);
+		static public const BOTH:ConnectionType = new ConnectionType("both", CONSTRUCTOR_LOCK);
 		
 		static public const SOURCE_TYPES:ArrayList = new ArrayList([SERVER, CLIENT]);
 		static public const DEST_TYPES:ArrayList = new ArrayList([SERVER, CLIENT, BOTH]);
-		
-		public function toString():String { return _type; }
-		public function ConnectionType(type:String)
+
+		static public function fromString(string:String):ConnectionType // for serialization only
 		{
+			return s_lookup[string];
+		}
+		private var _type:String;
+		public function toString():String { return _type; }
+		public function ConnectionType(type:String, constructorLock:Class)
+		{
+			if (constructorLock != CONSTRUCTOR_LOCK) throw "constructed from the class factory only";
+			if (fromString(type)) throw "duplicate ConnectionType";
+			
 			_type = type;
+			
+			s_lookup[type] = this;
 		}
 	}
 }
+
+final internal class CONSTRUCTOR_LOCK {}

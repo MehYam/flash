@@ -7,18 +7,14 @@
 			sortableColumns="true"
 			editable="true"
 			creationComplete="onInit()"
-			dataProvider="{_connectionData}"
+			dataProvider="{Settings.connectionData}"
 			>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<s:columns>
 		<s:ArrayList>
-			<s:GridColumn headerText="Run" dataField="running" editable="false">
-				<s:itemRenderer><fx:Component>
-						<s:GridItemRenderer><s:CheckBox horizontalCenter="0" verticalCenter="0"/></s:GridItemRenderer>
-				</fx:Component></s:itemRenderer>
-			</s:GridColumn>
+			<s:GridColumn headerText="Run" itemRenderer="ui.CheckBoxDataGridItemRenderer" dataField="running" editable="false"/>
 			<s:GridColumn headerText="Name" dataField="name" sortable="true"></s:GridColumn>
 			<s:GridColumn headerText="Status" itemRenderer="ui.StatusGridItemRenderer" dataField="status" editable="false"></s:GridColumn>
 			<s:GridColumn headerText="Source" itemRenderer="ui.SocketSourceGridItemRenderer" editable="false"></s:GridColumn>
@@ -41,9 +37,9 @@
 			import spark.components.gridClasses.GridColumn;
 			import spark.events.GridEvent;
 			
-			private const _connectionData:ArrayList = new ArrayList([new ConnectionItem]);
 			private function onInit():void
 			{
+				var foo:* = Settings.instance;
 				if (Settings.instance.data.connectionsColumnWidths)
 				{
 					for each(var column:GridColumn in columns.toArray())

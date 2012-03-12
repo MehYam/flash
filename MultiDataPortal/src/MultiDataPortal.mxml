@@ -80,6 +80,7 @@
 				{
 					nativeWindow.maximize();
 				}
+				Settings.loadConnections();
 			}
 			private function onInvoke(event:InvokeEvent):void
 			{

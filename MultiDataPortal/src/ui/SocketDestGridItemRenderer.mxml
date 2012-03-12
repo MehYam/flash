@@ -6,7 +6,9 @@
 	<fx:Script>
 		<![CDATA[
 			import data.ConnectionItem;
+			import data.ConnectionType;
 			import data.MRUData;
+			import data.Settings;
 			override public function prepare(hasBeenRecycled:Boolean):void
 			{
 				const item:ConnectionItem = data as ConnectionItem;
@@ -15,6 +17,12 @@
 					IP.selectedItem = item.destIP;
 					clientPort.selectedItem = item.destPort;
 					serverPort.selectedItem = item.destServerPort;
+
+					const doClient:Boolean = !item.running && item.destType != ConnectionType.SERVER;
+					const doServer:Boolean = !item.running && item.destType != ConnectionType.CLIENT;
+					IP.enabled = doClient;
+					clientPort.enabled = doClient;
+					serverPort.enabled = doServer;
 				}
 			}
 			private function handleChange():void
@@ -25,6 +33,9 @@
 					item.destIP = IP.selectedItem;
 					item.destPort = parseInt(clientPort.selectedItem);
 					item.destServerPort = parseInt(serverPort.selectedItem);
+					
+					// hack because I'm not using IGridItemEditor correctly
+					Settings.connectionData.itemUpdated(data);
 				}
 			}
 		]]>
