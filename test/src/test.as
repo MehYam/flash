@@ -26,6 +26,7 @@ package
 	import flash.geom.Rectangle;
 	import flash.net.SharedObject;
 	import flash.net.URLRequest;
+	import flash.net.URLVariables;
 	import flash.net.navigateToURL;
 	import flash.net.registerClassAlias;
 	import flash.text.AntiAliasType;
@@ -70,9 +71,9 @@ package
 //			testMovieclipDynamicObj();
 //			testParsing();
 //			testPixelSnapping();
-//			testRegularExpressions();
+			testRegularExpressions();
 //			testSimpleAnimationPerformance();
-			testSocket();
+//			testSocket();
 //			testStorageObject(false);
 //			testStorageObject(true);
 //			testTime();
@@ -80,6 +81,33 @@ package
 //			testTint();
 //			testTypeStuff();
 //			testVector();
+//			testURLVariables();
+		}
+		private function testURLVariables():void
+		{
+//			Using built-in URLVariables
+//			const urlv:URLVariables = new URLVariables("http://www.foo.com/blah?firstName=Tom&lastName=Jones&startTime1=qual&startTime2=qual-16m&startTime3=qual+6h");
+//			for (var key:String in urlv)
+//			{
+//				trace("key:", key, "val:", urlv[key]);
+//			}
+//			
+//			const urlv2:URLVariables = new URLVariables("http://www.foo.com/blah?");
+//			for (key in urlv2)
+//			{
+//				trace("key:", key, "val:", urlv2[key]);
+//			}
+
+			var surl:SmartURL = new SmartURL("http://www.foo.com/blah?firstName=Tom&lastName=Jones&startTime1=qual&startTime2=qual-16m&startTime3=qual+6h");
+			for (var key:String in surl.queryObject)
+			{
+				trace("key:", key, "val:", surl.queryObject[key]);
+			}
+			surl = new SmartURL("http://www.foo.com/blah?");
+			for (key in surl.queryObject)
+			{
+				trace("key:", key, "val:", surl.queryObject[key]);
+			}
 		}
 		private var _socketTest:SocketTest
 		private function testSocket():void
@@ -147,6 +175,12 @@ package
 		{
 			// strip out all numeric chars from a string
 			trace("this3is0a223-555-111test1234".replace(/[^0-9]/g, ""));
+			
+			const ws:RegExp = /^\s+|\s+$/g;
+			trace("   foo    ".replace(ws, ""));
+			trace("foo    ".replace(ws, ""));
+			trace("        foo".replace(ws, ""));
+			trace("  f   o   o   ".replace(ws, ""));
 		}
 		private function testEnumeratingObjectMembers():void
 		{
@@ -930,4 +964,55 @@ final class PseudoEnum
 	
 	public var val:int;
 	public function PseudoEnum(v:int):void { this.val = v; }
+}
+
+
+internal class SmartURL  {
+	public var rawString : String;
+	public var protocol : String;
+	public var port : int;
+	public var host : String;
+	public var path : String;
+	public var queryString : String;
+	public var queryObject : Object;
+	public var queryLength : int = 0;
+	public var fileName : String;
+	
+	public function SmartURL(rawString : String){
+		this.rawString = rawString;
+		var URL_RE : RegExp = /((?P<protocol>[a-zA-Z]+: \/\/)   (?P<host>[^:\/]*) (:(?P<port>\d+))?)?  (?P<path>[^?]*)? ((?P<query>.*))? /x; 
+		var match : * = URL_RE.exec(rawString);
+		if (match){
+			protocol = Boolean(match.protocol) ? match.protocol : "http://";
+			protocol = protocol.substr(0, protocol.indexOf("://"));
+			host = match.host || null;
+			port = match.port ? int(match.port) : 80;
+			path = match.path;
+			fileName = path.substring(path.lastIndexOf("/"), path.lastIndexOf("."));
+			queryString = match.query;
+			if (queryString){
+				queryObject = {};
+				queryString = queryString.substr(1);
+				var value : String;
+				var varName : String;
+				for each (var pair : String in queryString.split("&")){
+					varName = pair.split("=")[0];
+					value = pair.split("=")[1];
+					queryObject[varName] = value;
+					queryLength ++;
+				}
+			}
+		}else{
+			trace("no match")
+		}
+	}
+	
+	/** If called as t<code>oString(true)</code> will output a verbose version of this URL.
+	 **/
+	public function toString(...rest) : String{
+		if (rest.length > 0 && rest[0] == true){
+			return "[URL] rawString :" + rawString + ", protocol: " + protocol + ", port: " + port + ", host: " + host + ", path: " + path + ". queryLength: "  + queryLength;
+		}
+		return rawString;
+	}
 }

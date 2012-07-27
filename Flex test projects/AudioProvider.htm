@@ -1,0 +1,161 @@
+<HTML>
+<HEAD>
+<TITLE>ATL 8.0 test page for object AudioProvider</TITLE>
+</HEAD>
+<BODY>
+
+
+<OBJECT ID="AudioProvider" CLASSID="CLSID:4C6CA26A-FADB-4E04-8296-E1F92C445F2D"></OBJECT>
+<!--<OBJECT ID="AudioProvider2" CLASSID="CLSID:4C6CA26A-FADB-4E04-8296-E1F92C445F2D"></OBJECT>
+-->
+
+<span>Device: </span><select id="selectDevice"></select>
+<hr />
+<span>Queue up new track: </span>
+<input id="txtPlayFile" type="text" style="width:200px" value="c:\source\testclicks.wav" title="Enter multiple filenames separated by semicolons"/>
+<input id="btnAdd" type="button" value="add" />
+<input id="btnRemoveAll" type="button" value="remove all" />
+<br />
+<span>Recording destination file: </span>
+<input id="txtRecordFile" type="text" style="width:200px" value="c:\source\testrecord.wav" />
+<br />
+<input id="btnPlay" type="button" value="play" />
+<input id="btnRecord" type="button" value="record" />
+<input id="btnRecordWithPlayback" type="button" value="record + play synced" />
+<input id="btnStop" type="button" value="stop" />
+<input id="btnRewind" type="button" value="rewind" />
+<input id="test" type="button" value="test" />
+<hr />
+<span>Delay compensation samples:</span>
+<input id="dcs" type="text" value="0" />
+<input id="btnSetDCS" type="button" value="set" />
+<input id="checkMonitoring" type="checkbox" /><label for="checkMonitoring">Monitoring</label>
+<hr />
+<span>Waveform samples per interval:</span>
+<input id="wformSamples" type="text" value="5050" />
+<input id="btnSetWformSamples" type="button" value="set" />
+<input id="btnGetWaveform" type="button" value="get waveform data" />
+<br />
+<input id="btnGetPeakLevels" type="button" value="get peak levels" />
+<hr />
+<span>IE7 in protected mode:</span><span id="protMode"></span>
+<input id="btnGetWriteableFolder" type="button" value="get writable folder" />
+<hr />
+<textarea id="output" style="width:100%; height:40%"></textarea>
+</BODY>
+
+<script>
+
+var eventSink =
+{
+   testEvent: function(str)
+   {
+      output.value += str + "\n";
+   }
+};
+
+var g_gainLevels = [1, 0.75, 0.25, 0, 1.5];
+
+window.onload = function() {
+   AudioProvider.setCallback(eventSink);
+
+   var AP2 = null;
+   try {
+      AP2 = AudioProvider2;
+   }
+   catch (e) { }
+   if (AP2) {
+      AP2.setCallback(eventSink);
+   }
+
+   test.onclick = function() {
+      //AudioProvider.test(txtPlayFile.value);
+
+      g_gainLevels.push(g_gainLevels.shift());
+      AudioProvider.setTrackGain(1, g_gainLevels[0]);
+   }
+   btnAdd.onclick = function() {
+
+      var files = txtPlayFile.value.replace(" ", "").split(";");
+
+      for (var file = 0; file < files.length; ++file) {
+
+         var i = AudioProvider.addTrack(files[file]);
+
+         eventSink.testEvent("Added track " + i);
+      }
+      updateButton();
+   }
+   btnGetPeakLevels.onclick = function() {
+      eventSink.testEvent(AudioProvider.getPeakLevels(true));
+   }
+   btnRemoveAll.onclick = function() {
+      AudioProvider.removeAllTracks();
+      updateButton();
+   }
+   btnPlay.onclick = function() {
+      AudioProvider.play();
+   };
+   btnRecord.onclick = function() {
+      AudioProvider.record(txtRecordFile.value);
+   };
+   btnRecordWithPlayback.onclick = function() {
+      AudioProvider.recordWithPlayback(txtRecordFile.value);
+   };
+   btnStop.onclick = function() {
+      AudioProvider.stop();
+
+      eventSink.testEvent("Stopped with playback at " + AudioProvider.playbackPos + " seconds");
+   };
+   btnRewind.onclick = function() {
+      AudioProvider.playbackPos = 0;
+   }
+   selectDevice.onchange = function() {
+      //alert(selectDevice.options[selectDevice.selectedIndex].text);
+      AudioProvider.setDevice(selectDevice.options[selectDevice.selectedIndex].text);
+   }
+   btnGetWaveform.onclick = function() {
+      eventSink.testEvent(AudioProvider.getWaveformSamples());
+   }
+   btnSetWformSamples.onclick = function() {
+      AudioProvider.numWaveformSamplesPerInterval = parseInt(wformSamples.value);
+   }
+   btnSetDCS.onclick = function() {
+      AudioProvider.setDelayCompensationInSamples(parseInt(dcs.value));
+   }
+   checkMonitoring.onclick = function() {
+      if (AP2) {
+         AP2.monitoring = checkMonitoring.checked;
+      }
+      else {
+         AudioProvider.monitoring = checkMonitoring.checked;
+      }
+   };
+   btnGetWriteableFolder.onclick = function() {
+      output.innerText = AudioProvider.getWriteableFolder();
+   }
+   function updateButton() {
+      btnRecordWithPlayback.value = "Record while playing " + AudioProvider.numTracks + " tracks";
+   }
+   txtPlayFile.onkeyup = function() {
+      updateButton();
+   }
+
+   updateButton();
+
+   populateCombo();
+
+   output.innerText = "AudioProvider version: " + AudioProvider.versionString;
+   protMode.innerHTML = AudioProvider.ieInProtectedMode ? " <b>yes</b>" : " <b>no</b>";
+};
+
+function populateCombo()
+{
+   var numDevices = AudioProvider.numDevices;
+   for (var i = 0; i < numDevices; ++i)
+   {
+      selectDevice.options[i] = new Option(AudioProvider.getDeviceName(i), "bar", true, false);
+   }
+}
+</script>
+</HTML>
