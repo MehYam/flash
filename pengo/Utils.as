@@ -65,9 +65,9 @@ package
 		{
 			return selectAnimatorNode(xml, directions[directionToFourWayIndex(velocity)]);
 		}
-		public static function selectAnimatorNode(xml:XML, name:String):XML
+		public static function selectAnimatorNode(xml:XML, attrName:String):XML
 		{
-			return xml.tileset.tile.(@name == name)[0];	
+			return xml.tileset.tile.(@name == attrName)[0];	
 		}
 		
 	}

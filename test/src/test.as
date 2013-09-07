@@ -4,6 +4,7 @@ package
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.GradientType;
+	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.PixelSnapping;
 	import flash.display.Shape;
@@ -56,7 +57,7 @@ package
 //			testBrowserZoomDetection();
 //			testByteArray();
 //			testCleverOr();
-//			teste4x();
+			teste4x();
 //			testEmbeddedFont();
 //			testEnumeratingObjectMembers();
 //			testException();
@@ -71,7 +72,7 @@ package
 //			testMovieclipDynamicObj();
 //			testParsing();
 //			testPixelSnapping();
-			testRegularExpressions();
+//			testRegularExpressions();
 //			testSimpleAnimationPerformance();
 //			testSocket();
 //			testStorageObject(false);
@@ -81,7 +82,21 @@ package
 //			testTint();
 //			testTypeStuff();
 //			testVector();
+//			testURLLoader();
 //			testURLVariables();
+		}
+		private function testJSON():void
+		{
+			var json:* = JSON.stringify({});
+		}
+		private function testURLLoader():void
+		{
+//			var url:URLRequest = new URLRequest("http://kaidevwin7/Raceview/build/debug/cup/flash/url_config.json?ts=22395954");
+//			var url:URLRequest = new URLRequest("http://kai.sportvision.com/Raceview/build/debug/cup/img/360_Tag_splash.jpg");
+			var url:URLRequest = new URLRequest("c:/source/sv/Raceview/build/debug/cup/img/360_Tag_splash.jpg");
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(e:Event):void { trace("loaded it",  loader.contentLoaderInfo.contentType); });
+			loader.load(url);
 		}
 		private function testURLVariables():void
 		{
@@ -444,13 +459,37 @@ package
 					</layer>
 				</foo>;
 			
-//			for each (var bar:XML in xml..bar)
 			for each (var bar:XML in xml..bar.(@blah == "true" && @id > 1))
 			{
 				trace(bar.@id.toString());
 			}
+			trace("len", xml.layer.bar.(@blah == "true").length());
+			
 			var foo:Object = xml..bar.(attribute("static") == "true");
 			trace(foo[0].@id);
+			
+			const xml2:XML =
+				<gamedata>
+				<tileset defaultWidth="32" defaultHeight="32" defaultFrameLength="5">
+					<tile name="brick">
+						<frame x="0" y="0"/>
+					</tile>
+					<tile name="brickDissolve" frameLength="2">
+						<frame x="0" y="96"/>
+						<frame x="32" y="96"/>
+						<frame x="64" y="96"/>
+						<frame x="96" y="96"/>
+						<frame x="128" y="96"/>
+						<frame x="160" y="96"/>
+						<frame x="192" y="96"/>
+					</tile>
+					<tile name="pengoWait">
+						<frame x="32" y="0"/>
+					</tile>
+				</tileset></gamedata>;
+			
+			trace(xml2.tileset.tile.length());
+			trace(xml2.tileset.tile.(@name=="brick").length());
 		}
 		private function testStorageObject(write:Boolean):void
 		{
