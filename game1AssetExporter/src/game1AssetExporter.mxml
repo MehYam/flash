@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button x="109" y="80" label="GO" click="go()"/>
+	<s:SpriteVisualElement x="200" y="200" id="sve" />
+	<fx:Script>
+		<![CDATA[
+			import mx.graphics.codec.PNGEncoder;
+			private function go():void
+			{
+				openTrackURL("file://c:/source/flash/game1/assets/master.swf");
+			}
+			
+			private var _loader:Loader;
+			private function openTrackURL(url:String):void
+			{
+				_loader = new Loader;
+				_loader.load(new URLRequest(url));
+				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded, false, 0, true);
+			}
+			private function onLoaded(e:Event):void
+			{
+				const assets:Array = [
+				"ship2_0",
+				"ship2_0_0",
+				"ship2_0_1",
+				"ship2_1",
+				"ship2_1_0",
+				"ship2_1_1",
+				"ship2_2",
+				"ship2_2_0",
+				"ship2_2_1",
+				"ship2_3",
+				"ship2_3_0",
+				"ship2_3_1",
+				"ship2_4",
+				"ship2_4_0",
+				"ship2_4_1",
+				"ship2_5",
+				"ship2_5_0",
+				"ship2_5_1",
+				"ship2_6",
+				"ship2_6_0",
+				"ship2_6_1",
+				"ship2_7",
+				"ship2_7_0",
+				"ship2_7_1",
+				"ship2_8",
+				"ship2_9",
+				"ship2_9_1",
+				"ship2_9_2",
+				"ship2_10",
+				"ship2_10_1",
+				"ship2_10_2",
+				"ship2_11",
+				"ship2_11_1",
+				"ship2_11_2",
+				"ship2_12",
+				"ship2_12_0",
+				"ship2_12_1",
+				"rocket0",
+				"rocket1",
+				"rocket2",
+				"rocket3",
+				"flame",
+				"blueflame",
+				"shield",
+				"explosion1",
+				"explosion2",
+				"explosion3",
+				"explosion4",
+				"explosion5",
+				"explosionsmall1",
+				"explosionsmall2",
+				"smoke1",
+				"smoke2",
+				"tankhull0",
+				"tankhull1",
+				"tankhull2",
+				"tankhull3",
+				"tankhull4",
+				"tankturret0",
+				"tankturret1",
+				"tankturret2",
+				"tankturret3",
+				"tankturret4",
+				"tanktread",
+				"tanktreadtop",
+				"cannonround0",
+				"cannonround1",
+				"muzzleflash0",
+				"muzzleflash1",
+				"muzzleflash2",
+				"checkmark",
+				"arrow",
+				"lock",
+				"question",
+				"planeIcon",
+				"tankIcon"];
+				
+				for each (var name:String in assets)
+				{
+					extractAndSave(_loader, name);
+				}
+			}
+			private function extractAndSave(loader:Loader, name:String):void
+			{
+				const type:Class = Class(_loader.contentLoaderInfo.applicationDomain.getDefinition(name));
+				const obj:DisplayObject = new type() as DisplayObject;
+
+				save(obj, name);
+			}
+			static private function getBitmap(target:DisplayObject, scale:Number):BitmapData
+			{
+				const bounds:Rectangle = target.getBounds(target);
+				var bitmapData:BitmapData = new BitmapData(bounds.width * scale, bounds.height * scale, true, 0);
+				
+				var matrix:Matrix = new Matrix;
+				matrix.translate(-bounds.left, -bounds.top);
+				matrix.scale(scale, scale);
+				bitmapData.draw(target, matrix);
+				return bitmapData;
+			}
+			private function save(obj:DisplayObject, name:String):void
+			{
+				var bmd:BitmapData = getBitmap(obj, 2); 
+				
+				var encoder:PNGEncoder = new PNGEncoder;
+				var pngFile:ByteArray = encoder.encode(bmd);
+				
+				var file:File = new File("c:/source/temp/" + name + ".png");
+				var stream:FileStream = new FileStream();
+				stream.open(file, FileMode.WRITE);
+				stream.writeBytes(pngFile);
+				stream.close();
+			}
+
+		]]>
+	</fx:Script>
+</s:WindowedApplication>

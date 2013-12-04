@@ -276,8 +276,6 @@ import flash.utils.Dictionary;
 import karnold.utils.MathUtil;
 import karnold.utils.Util;
 
-import org.osmf.traits.DownloadableTrait;
-
 import scripts.IPenetratingAmmo;
 
 class CannonBlast extends Actor
