@@ -27,7 +27,9 @@ package karnold.utils
 		{
 			// first we need to set the file class for our database (in this example test.db). If the Database doesn't exists it will be created when we open it.
 			var db:File = File.applicationStorageDirectory.resolvePath("custapp.db");
-			
+
+			Util.info("Opened db", db.nativePath);
+
 			// after we set the file for our database we need to open it with our SQLConnection.
 			_sqlc.openAsync(db);
 			
