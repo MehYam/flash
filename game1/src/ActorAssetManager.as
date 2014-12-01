@@ -72,13 +72,13 @@ package
 		static private var s_dropShadow:Array = [new DropShadowFilter(4, 45, 0, 0.5, 0, 0)];
 		static private var s_dropShadowTank:Array = [new DropShadowFilter(2, 45, 0, 0.5, 0, 0)];
 		
-		static private var s_blurLight:Array = [new BlurFilter(3, 3, BitmapFilterQuality.MEDIUM)];
+//		static private var s_blurLight:Array = [new BlurFilter(3, 3, BitmapFilterQuality.MEDIUM)];
 		static private var s_blur:Array = [new BlurFilter(5, 5, BitmapFilterQuality.MEDIUM)];
 		static private var s_blurHeavy:Array = [new BlurFilter(25, 25, BitmapFilterQuality.LOW)];
-		static public function get planeDropShadow():Array { return s_dropShadow; }
+//		static public function get planeDropShadow():Array { return s_dropShadow; }
 		static public function get tankDropShadow():Array { return s_dropShadowTank; }
-		static public function get blur():Array { return s_blur; }
-		static public function get lightBlur():Array { return s_blurLight; }
+//		static public function get blur():Array { return s_blur; }
+//		static public function get lightBlur():Array { return s_blurLight; }
 		static private function createAssetRasterized(clss:Class, 
 													  centered:Boolean,
 													  scale:Number = 1,

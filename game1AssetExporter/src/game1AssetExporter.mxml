@@ -9,7 +9,13 @@
 	<s:SpriteVisualElement x="200" y="200" id="sve" />
 	<fx:Script>
 		<![CDATA[
+			
+			import flash.filters.BitmapFilterQuality;
+			import flash.filters.BitmapFilter;
+			import flash.filters.BlurFilter;
+			
 			import mx.graphics.codec.PNGEncoder;
+			
 			private function go():void
 			{
 				openTrackURL("file://c:/source/flash/game1/assets/master.swf");
@@ -101,22 +107,94 @@
 				"question",
 				"planeIcon",
 				"tankIcon"];
+
+				const filterMap:Dictionary = new Dictionary;
+				filterMap["flame"] = s_blur;
+				filterMap["blueflame"] = s_blur;
+				filterMap["shield"] = s_blur;
+				filterMap["explosion1"] = s_blurHeavy;
+				filterMap["explosion2"] = s_blurHeavy;
+				filterMap["explosion3"] = s_blurHeavy;
+				filterMap["explosion4"] = s_blurHeavy;
+				filterMap["explosion5"] = s_blurHeavy;
+				filterMap["explosionsmall1"] = s_blur;
+				filterMap["explosionsmall2"] = s_blur;
+				filterMap["smoke1"] = s_blurHeavy;
+				filterMap["smoke2"] = s_blurHeavy;
+				filterMap["muzzleflash0"] = s_blur;
+				filterMap["muzzleflash1"] = s_blur;
+				filterMap["muzzleflash2"] = s_blur;
 				
 				for each (var name:String in assets)
 				{
-					extractAndSave(_loader, name);
+					extractAndSave(_loader, filterMap, name);
 				}
+				save(createFusionBlast(0xffffff), "fusionBlast");
+				save(createBullet(0xffffff, 8, 8/5), "bullet");
+				save(createLaser(0xffffff), "laser");
 			}
-			private function extractAndSave(loader:Loader, name:String):void
+			static private var s_blurLight:Array = [new BlurFilter(3, 3, BitmapFilterQuality.MEDIUM)];
+			static private var s_blur:Array = [new BlurFilter(5, 5, BitmapFilterQuality.MEDIUM)];
+			static private var s_blurHeavy:Array = [new BlurFilter(25, 25, BitmapFilterQuality.LOW)];
+			
+			private function extractAndSave(loader:Loader, filters:Dictionary, name:String):void
 			{
 				const type:Class = Class(_loader.contentLoaderInfo.applicationDomain.getDefinition(name));
 				const obj:DisplayObject = new type() as DisplayObject;
 
+				const filter:Array = filters[name];
+				if (filter)
+				{
+					obj.filters = filter;
+				}
 				save(obj, name);
 			}
+			// hacks, this whole program is a quick hack.....
+			static private function createFusionBlast(color:int):DisplayObject
+			{
+				const HEIGHT:Number = 20;
+				const WIDTH:Number = 10;
+
+				var blast:Shape = new Shape;
+				blast.graphics.lineStyle(0, 0, 0);
+				blast.graphics.beginFill(color, 0.5);
+				blast.graphics.drawRoundRect(-WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT, 4, 4);
+				blast.graphics.endFill();
+				return blast;
+			}
+			static private function createLaser(color:uint):DisplayObject
+			{
+				const LASER_LENGTH:Number = 10;
+				var bullet:Shape = new Shape;
+				bullet.graphics.lineStyle(3, color);
+				bullet.graphics.moveTo(0, -LASER_LENGTH/2);
+				bullet.graphics.lineTo(0, LASER_LENGTH/2);
+				return bullet;
+			}
+			static private function createBullet(color:uint, outerRadius:Number, innerRadius:Number):DisplayObject
+			{
+				var wo:Shape = new Shape;
+				wo.graphics.lineStyle(1, color);
+				wo.graphics.beginFill(color);
+				wo.graphics.moveTo(0, -outerRadius);
+				wo.graphics.lineTo(-innerRadius, -innerRadius);
+				wo.graphics.lineTo(-outerRadius, 0);
+				wo.graphics.lineTo(-innerRadius, innerRadius);
+				wo.graphics.lineTo(0, outerRadius);
+				wo.graphics.lineTo(innerRadius, innerRadius);
+				wo.graphics.lineTo(outerRadius, 0);
+				wo.graphics.lineTo(innerRadius, -innerRadius);
+				wo.graphics.lineTo(0, -outerRadius);
+				wo.graphics.endFill();
+				return wo;
+			}
+
 			static private function getBitmap(target:DisplayObject, scale:Number):BitmapData
 			{
 				const bounds:Rectangle = target.getBounds(target);
+				const margin:Number = target.filters.length > 0 ? 5 : 0; // add some margin if a filter's been put on it
+				bounds.inflate(margin, margin);
+				
 				var bitmapData:BitmapData = new BitmapData(bounds.width * scale, bounds.height * scale, true, 0);
 				
 				var matrix:Matrix = new Matrix;

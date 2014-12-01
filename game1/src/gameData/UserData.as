@@ -10,6 +10,7 @@ package gameData
 
 	public final class UserData implements IExternalizable
 	{
+		static private const KEY:String = "store3.PlanevTank.UserData";
 		static private var s_instance:UserData;
 		static public function get instance():UserData
 		{
@@ -19,7 +20,7 @@ package gameData
 				var so:SharedObject;
 				try
 				{
-					so = SharedObject.getLocal("store.PlanevTank.UserData");
+					so = SharedObject.getLocal(KEY);
 				}
 				catch (e:Error)
 				{
@@ -39,8 +40,12 @@ package gameData
 					{
 						so.data.userData = s_instance;
 					}
-// 					debug();
+ 					//debug();
 					
+// seed money for testing
+s_instance.credits = 4000;
+s_instance.levelsBeaten = 2;
+
 					s_instance.purchasePart(PlaneData.getPlane(0), 0);
 					s_instance.purchasePart(TankPartData.getHull(0), 0);
 					s_instance.purchasePart(TankPartData.getTurret(0), 0);
@@ -57,7 +62,7 @@ package gameData
 			s_instance = null;
 			try
 			{
-				var so:SharedObject = SharedObject.getLocal("store.PlanevTank.UserData");
+				var so:SharedObject = SharedObject.getLocal(KEY);
 				so.clear();
 			}
 			catch (e:Error)
@@ -68,7 +73,7 @@ package gameData
 		static private function debug():void
 		{
 			// TEST DATA BELOW
-			s_instance.credits = 100000;
+			s_instance.credits = 4000;
 			s_instance.purchasePart(PlaneData.getPlane(1), 0);
 			s_instance.purchasePart(PlaneData.getPlane(3), 0);
 			s_instance.purchasePart(PlaneData.getPlane(2), 0);
@@ -217,7 +222,7 @@ package gameData
 		{
 			try
 			{
-				var so:SharedObject = SharedObject.getLocal("store.PlanevTank.UserData");
+				var so:SharedObject = SharedObject.getLocal(KEY);
 				so.data.userData = this;
 				
 				try
